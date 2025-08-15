@@ -3,6 +3,9 @@
   "description": "AI components including message, conversation, input, response, suggestion, sources, tool and branch components for building chat interfaces.",
   "version": "0.0.0",
   "private": true,
+  "exports": {
+    "./*": "./src/*.tsx"
+  },
   "dependencies": {
     "@repo/shadcn-ui": "workspace:*",
     "@icons-pack/react-simple-icons": "^13.5.0",
