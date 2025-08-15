@@ -29,6 +29,12 @@ importers:
       '@repo/elements':
         specifier: workspace:*
         version: link:../../packages/elements
+      '@repo/shadcn-ui':
+        specifier: workspace:*
+        version: link:../../packages/shadcn-ui
+      lucide-react:
+        specifier: ^0.515.0
+        version: 0.515.0(react@19.1.0)
       next:
         specifier: 15.4.6
         version: 15.4.6(@opentelemetry/api@1.9.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -39,6 +45,9 @@ importers:
         specifier: 19.1.0
         version: 19.1.0(react@19.1.0)
     devDependencies:
+      '@repo/typescript-config':
+        specifier: workspace:*
+        version: link:../../packages/typescript-config
       '@tailwindcss/postcss':
         specifier: ^4
         version: 4.1.12
@@ -4734,6 +4743,10 @@ snapshots:
   lucide-react@0.515.0(react@19.0.0-rc-f994737d14-20240522):
     dependencies:
       react: 19.0.0-rc-f994737d14-20240522
+
+  lucide-react@0.515.0(react@19.1.0):
+    dependencies:
+      react: 19.1.0
 
   magic-string@0.30.17:
     dependencies:
