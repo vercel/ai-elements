@@ -1,3 +1,6 @@
+/** biome-ignore-all lint/performance/noImgElement: "ai-elements is framework agnostic" */
+/** biome-ignore-all lint/nursery/useImageSize: "size will be handled by props" */
+
 import { cn } from '@repo/shadcn-ui/lib/utils';
 import type { Experimental_GeneratedImage } from 'ai';
 
@@ -14,11 +17,11 @@ export const Image = ({
 }: ImageProps) => (
   <img
     {...props}
-    src={`data:${mediaType};base64,${base64}`}
     alt={props.alt}
     className={cn(
-      'max-w-full h-auto rounded-md overflow-hidden',
-      props.className,
+      'h-auto max-w-full overflow-hidden rounded-md',
+      props.className
     )}
+    src={`data:${mediaType};base64,${base64}`}
   />
 );

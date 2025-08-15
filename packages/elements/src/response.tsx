@@ -1,13 +1,13 @@
 'use client';
 
-import { CodeBlock, CodeBlockCopyButton } from './code-block';
+import { cn } from '@repo/shadcn-ui/lib/utils';
 import type { ComponentProps, HTMLAttributes } from 'react';
-import { memo, isValidElement } from 'react';
+import { isValidElement, memo } from 'react';
 import ReactMarkdown, { type Options } from 'react-markdown';
 import rehypeKatex from 'rehype-katex';
 import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
-import { cn } from '@repo/shadcn-ui/lib/utils';
+import { CodeBlock, CodeBlockCopyButton } from './code-block';
 import 'katex/dist/katex.min.css';
 import hardenReactMarkdown from 'harden-react-markdown';
 
@@ -127,7 +127,7 @@ function parseIncompleteMarkdown(text: string): string {
             i > 0 && result.substring(i - 1, i + 2) === '```';
           const isTripleEnd = i > 1 && result.substring(i - 2, i + 1) === '```';
 
-          if (!isTripleStart && !isTripleMiddle && !isTripleEnd) {
+          if (!(isTripleStart || isTripleMiddle || isTripleEnd)) {
             singleBacktickCount++;
           }
         }
@@ -267,7 +267,7 @@ const components: Options['components'] = {
     </tbody>
   ),
   tr: ({ node, children, className, ...props }) => (
-    <tr className={cn('border-b border-border', className)} {...props}>
+    <tr className={cn('border-border border-b', className)} {...props}>
       {children}
     </tr>
   ),
@@ -287,8 +287,8 @@ const components: Options['components'] = {
   blockquote: ({ node, children, className, ...props }) => (
     <blockquote
       className={cn(
-        'my-4 border-l-4 border-muted-foreground/30 pl-4 italic text-muted-foreground',
-        className,
+        'my-4 border-muted-foreground/30 border-l-4 pl-4 text-muted-foreground italic',
+        className
       )}
       {...props}
     >
@@ -306,7 +306,7 @@ const components: Options['components'] = {
       <code
         className={cn(
           'rounded bg-muted px-1.5 py-0.5 font-mono text-sm',
-          className,
+          className
         )}
         {...props}
       />
@@ -367,17 +367,17 @@ export const Response = memo(
       <div
         className={cn(
           'size-full [&>*:first-child]:mt-0 [&>*:last-child]:mb-0',
-          className,
+          className
         )}
         {...props}
       >
         <HardenedMarkdown
-          components={components}
-          rehypePlugins={[rehypeKatex]}
-          remarkPlugins={[remarkGfm, remarkMath]}
           allowedImagePrefixes={allowedImagePrefixes ?? ['*']}
           allowedLinkPrefixes={allowedLinkPrefixes ?? ['*']}
+          components={components}
           defaultOrigin={defaultOrigin}
+          rehypePlugins={[rehypeKatex]}
+          remarkPlugins={[remarkGfm, remarkMath]}
           {...options}
         >
           {parsedChildren}
@@ -385,7 +385,7 @@ export const Response = memo(
       </div>
     );
   },
-  (prevProps, nextProps) => prevProps.children === nextProps.children,
+  (prevProps, nextProps) => prevProps.children === nextProps.children
 );
 
 Response.displayName = 'Response';

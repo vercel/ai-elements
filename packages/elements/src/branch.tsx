@@ -1,11 +1,11 @@
 'use client';
 
-import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
-import type { ComponentProps, HTMLAttributes, ReactElement } from 'react';
-import { createContext, useContext, useEffect, useState } from 'react';
 import { Button } from '@repo/shadcn-ui/components/ui/button';
 import { cn } from '@repo/shadcn-ui/lib/utils';
 import type { UIMessage } from 'ai';
+import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
+import type { ComponentProps, HTMLAttributes, ReactElement } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 
 type BranchContextType = {
   currentBranch: number;
@@ -95,7 +95,7 @@ export const BranchMessages = ({ children, ...props }: BranchMessagesProps) => {
     <div
       className={cn(
         'grid gap-2 overflow-hidden [&>div]:pb-0',
-        index === currentBranch ? 'block' : 'hidden',
+        index === currentBranch ? 'block' : 'hidden'
       )}
       key={branch.key}
       {...props}
@@ -126,7 +126,7 @@ export const BranchSelector = ({
       className={cn(
         'flex items-center gap-2 self-end px-10',
         from === 'assistant' ? 'justify-start' : 'justify-end',
-        className,
+        className
       )}
       {...props}
     />
@@ -149,7 +149,7 @@ export const BranchPrevious = ({
         'size-7 shrink-0 rounded-full text-muted-foreground transition-colors',
         'hover:bg-accent hover:text-foreground',
         'disabled:pointer-events-none disabled:opacity-50',
-        className,
+        className
       )}
       disabled={totalBranches <= 1}
       onClick={goToPrevious}
@@ -179,7 +179,7 @@ export const BranchNext = ({
         'size-7 shrink-0 rounded-full text-muted-foreground transition-colors',
         'hover:bg-accent hover:text-foreground',
         'disabled:pointer-events-none disabled:opacity-50',
-        className,
+        className
       )}
       disabled={totalBranches <= 1}
       onClick={goToNext}
@@ -202,7 +202,7 @@ export const BranchPage = ({ className, ...props }: BranchPageProps) => {
     <span
       className={cn(
         'font-medium text-muted-foreground text-xs tabular-nums',
-        className,
+        className
       )}
       {...props}
     >

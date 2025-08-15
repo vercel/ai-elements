@@ -6,10 +6,10 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from '@repo/shadcn-ui/components/ui/collapsible';
+import { cn } from '@repo/shadcn-ui/lib/utils';
 import { BrainIcon, ChevronDownIcon } from 'lucide-react';
 import type { ComponentProps } from 'react';
 import { createContext, memo, useContext, useEffect, useState } from 'react';
-import { cn } from '@repo/shadcn-ui/lib/utils';
 import { Response } from './response';
 
 type ReasoningContextValue = {
@@ -36,6 +36,8 @@ export type ReasoningProps = ComponentProps<typeof Collapsible> & {
   onOpenChange?: (open: boolean) => void;
   duration?: number;
 };
+
+const AUTO_CLOSE_DELAY = 1000;
 
 export const Reasoning = memo(
   ({
@@ -82,13 +84,13 @@ export const Reasoning = memo(
         const timer = setTimeout(() => {
           setIsOpen(false);
           setHasAutoClosedRef(true);
-        }, 1000);
+        }, AUTO_CLOSE_DELAY);
         return () => clearTimeout(timer);
       }
     }, [isStreaming, isOpen, defaultOpen, setIsOpen, hasAutoClosedRef]);
 
-    const handleOpenChange = (open: boolean) => {
-      setIsOpen(open);
+    const handleOpenChange = (newOpen: boolean) => {
+      setIsOpen(newOpen);
     };
 
     return (
@@ -105,7 +107,7 @@ export const Reasoning = memo(
         </Collapsible>
       </ReasoningContext.Provider>
     );
-  },
+  }
 );
 
 export type ReasoningTriggerProps = ComponentProps<
@@ -127,7 +129,7 @@ export const ReasoningTrigger = memo(
       <CollapsibleTrigger
         className={cn(
           'flex items-center gap-2 text-muted-foreground text-sm',
-          className,
+          className
         )}
         {...props}
       >
@@ -142,14 +144,14 @@ export const ReasoningTrigger = memo(
             <ChevronDownIcon
               className={cn(
                 'size-4 text-muted-foreground transition-transform',
-                isOpen ? 'rotate-180' : 'rotate-0',
+                isOpen ? 'rotate-180' : 'rotate-0'
               )}
             />
           </>
         )}
       </CollapsibleTrigger>
     );
-  },
+  }
 );
 
 export type ReasoningContentProps = ComponentProps<
@@ -163,14 +165,14 @@ export const ReasoningContent = memo(
     <CollapsibleContent
       className={cn(
         'mt-4 text-sm',
-        'text-popover-foreground outline-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:slide-out-to-top-2 data-[state=open]:slide-in-from-top-2',
-        className,
+        'data-[state=closed]:fade-out-0 data-[state=closed]:slide-out-to-top-2 data-[state=open]:slide-in-from-top-2 text-popover-foreground outline-none data-[state=closed]:animate-out data-[state=open]:animate-in',
+        className
       )}
       {...props}
     >
       <Response className="grid gap-2">{children}</Response>
     </CollapsibleContent>
-  ),
+  )
 );
 
 Reasoning.displayName = 'Reasoning';

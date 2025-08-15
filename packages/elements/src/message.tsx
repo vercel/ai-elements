@@ -3,9 +3,9 @@ import {
   AvatarFallback,
   AvatarImage,
 } from '@repo/shadcn-ui/components/ui/avatar';
-import type { ComponentProps, HTMLAttributes } from 'react';
 import { cn } from '@repo/shadcn-ui/lib/utils';
 import type { UIMessage } from 'ai';
+import type { ComponentProps, HTMLAttributes } from 'react';
 
 export type MessageProps = HTMLAttributes<HTMLDivElement> & {
   from: UIMessage['role'];
@@ -17,7 +17,7 @@ export const Message = ({ className, from, ...props }: MessageProps) => (
       'group flex w-full items-end justify-end gap-2 py-4',
       from === 'user' ? 'is-user' : 'is-assistant flex-row-reverse justify-end',
       '[&>div]:max-w-[80%]',
-      className,
+      className
     )}
     {...props}
   />
@@ -32,10 +32,10 @@ export const MessageContent = ({
 }: MessageContentProps) => (
   <div
     className={cn(
-      'flex flex-col gap-2 rounded-lg text-sm text-foreground px-4 py-3 overflow-hidden',
+      'flex flex-col gap-2 overflow-hidden rounded-lg px-4 py-3 text-foreground text-sm',
       'group-[.is-user]:bg-primary group-[.is-user]:text-primary-foreground',
       'group-[.is-assistant]:bg-secondary group-[.is-assistant]:text-foreground',
-      className,
+      className
     )}
     {...props}
   >
