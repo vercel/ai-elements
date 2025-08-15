@@ -1,9 +1,9 @@
-import type { NextRequest } from 'next/server';
-import { NextResponse } from 'next/server';
-import { Project } from 'ts-morph';
 import { promises as fs, readdirSync } from 'node:fs';
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+import { Project } from 'ts-morph';
 
 const protocol = process.env.NODE_ENV === 'development' ? 'http' : 'https';
 const registryUrl = `${protocol}://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`;
@@ -13,7 +13,7 @@ const packagePath = join(packageDir, 'package.json');
 const packageJson = JSON.parse(await readFile(packagePath, 'utf-8'));
 
 const internalDependencies = Object.keys(packageJson.dependencies || {}).filter(
-  (dep) => dep.startsWith('@repo') && dep !== '@repo/shadcn-ui',
+  (dep) => dep.startsWith('@repo') && dep !== '@repo/shadcn-ui'
 );
 
 const dependenciesSet = new Set(
@@ -24,8 +24,8 @@ const dependenciesSet = new Set(
         'react-dom',
         '@repo/shadcn-ui',
         ...internalDependencies,
-      ].includes(dep),
-  ),
+      ].includes(dep)
+  )
 );
 
 const devDependenciesSet = new Set(
@@ -36,8 +36,8 @@ const devDependenciesSet = new Set(
         '@types/react',
         '@types/react-dom',
         'typescript',
-      ].includes(dep),
-  ),
+      ].includes(dep)
+  )
 );
 
 // Registry should auto-add ai sdk v5 as a dependency
@@ -47,10 +47,11 @@ dependenciesSet.add('zod');
 
 const dependencies = Array.from(dependenciesSet);
 const devDependencies = Array.from(devDependenciesSet);
+const srcDir = join(packageDir, 'src');
 
-const packageFiles = readdirSync(packageDir, { withFileTypes: true });
+const packageFiles = readdirSync(srcDir, { withFileTypes: true });
 const tsxFiles = packageFiles.filter(
-  (file) => file.isFile() && file.name.endsWith('.tsx'),
+  (file) => file.isFile() && file.name.endsWith('.tsx')
 );
 
 const files: {
@@ -62,7 +63,7 @@ const files: {
 
 const fileContents = await Promise.all(
   tsxFiles.map(async (file) => {
-    const filePath = join(packageDir, file.name);
+    const filePath = join(srcDir, file.name);
     const content = await fs.readFile(filePath, 'utf-8');
     const parsedContent = content.replace(/@repo\/shadcn-ui\//g, '@/');
 
@@ -72,7 +73,7 @@ const fileContents = await Promise.all(
       content: parsedContent,
       target: `components/ai-elements/${file.name}`,
     };
-  }),
+  })
 );
 
 files.push(...fileContents);
@@ -86,7 +87,7 @@ const shadcnComponents =
     .join('\n')
     .match(/@\/components\/ui\/([a-z-]+)/g)
     ?.map((path) => path.split('/').pop())
-    .filter((name): name is string => !!name) || [];
+    .filter((name): name is string => Boolean(name)) || [];
 
 // Add shadcn/ui components to set
 for (const component of shadcnComponents) {
@@ -123,13 +124,13 @@ export const GET = async (request: NextRequest, { params }: RequestProps) => {
 
   // Find the file for the requested component
   const file = response.files.find(
-    (f) => f.path.replace('.tsx', '') === parsedComponent,
+    (f) => f.path.replace('.tsx', '') === parsedComponent
   );
 
   if (!file) {
     return NextResponse.json(
       { error: `Component "${parsedComponent}" not found.` },
-      { status: 404 },
+      { status: 404 }
     );
   }
 
@@ -154,7 +155,7 @@ export const GET = async (request: NextRequest, { params }: RequestProps) => {
         const relativePath = moduleName.split('/').pop();
         if (relativePath) {
           usedRegistryDependencies.add(
-            new URL(`/${relativePath}.json`, registryUrl).toString(),
+            new URL(`/${relativePath}.json`, registryUrl).toString()
           );
         }
       }
@@ -185,7 +186,7 @@ export const GET = async (request: NextRequest, { params }: RequestProps) => {
   for (const dep of internalDependencies) {
     const packageName = dep.replace('@repo/', '');
     usedRegistryDependencies.add(
-      new URL(`/elements/${packageName}.json`, registryUrl).toString(),
+      new URL(`/elements/${packageName}.json`, registryUrl).toString()
     );
   }
 
