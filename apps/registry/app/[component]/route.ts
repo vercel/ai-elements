@@ -1,6 +1,9 @@
+/** biome-ignore-all lint/suspicious/noConsole: "server only" */
+
 import { promises as fs, readdirSync } from 'node:fs';
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
+import { track } from '@vercel/analytics/server';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 import { Project } from 'ts-morph';
@@ -117,7 +120,18 @@ export const GET = async (request: NextRequest, { params }: RequestProps) => {
   const parsedComponent = component.replace('.json', '');
 
   if (parsedComponent === 'all') {
+    try {
+      track('registry:all');
+    } catch (error) {
+      console.warn('Failed to track registry:all:', error);
+    }
     return NextResponse.json(response);
+  }
+
+  try {
+    track(`registry:${parsedComponent}`);
+  } catch (error) {
+    console.warn(`Failed to track ${parsedComponent}:`, error);
   }
 
   // Only process the parsedComponent, not an array
