@@ -157,6 +157,15 @@ For the best experience, we recommend:
 2. **CSS Variables**: Use shadcn/ui's CSS Variables mode for theming
 3. **TypeScript**: Enable TypeScript for better development experience
 
+## Contributing
+
+If you'd like to contribute to AI Elements, please follow these steps:
+
+1. Fork the repository
+2. Create a new branch
+3. Make your changes to the components in `packages/elements`.
+4. Open a PR to the `main` branch.
+
 ---
 
 Made with ❤️ by [Vercel](https://vercel.com)
