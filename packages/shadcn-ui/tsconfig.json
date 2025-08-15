@@ -1,0 +1,17 @@
+{
+  "extends": "@ai-studio/typescript-config/nextjs.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "paths": {
+      "@ai-studio/shadcn-ui/*": ["./*"],
+      "@ai-studio/*": ["../*"]
+    }
+  },
+  "include": ["**/*.ts", "**/*.tsx"],
+  "exclude": ["node_modules"]
+}

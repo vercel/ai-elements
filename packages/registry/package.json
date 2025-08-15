@@ -1,0 +1,9 @@
+{
+  "name": "ai-elements",
+  "version": "1.0.3",
+  "description": "AI Elements is a component library and custom registry built on top of shadcn/ui to help you build AI-native applications faster.",
+  "bin": {
+    "elements": "index.js"
+  },
+  "files": ["index.js", "README.md"]
+}
