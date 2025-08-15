@@ -23,6 +23,9 @@ importers:
 
   apps/test:
     dependencies:
+      '@icons-pack/react-simple-icons':
+        specifier: ^13.5.0
+        version: 13.7.0(react@19.1.0)
       '@repo/elements':
         specifier: workspace:*
         version: link:../../packages/elements
@@ -3090,6 +3093,10 @@ snapshots:
   '@icons-pack/react-simple-icons@13.7.0(react@19.0.0-rc-f994737d14-20240522)':
     dependencies:
       react: 19.0.0-rc-f994737d14-20240522
+
+  '@icons-pack/react-simple-icons@13.7.0(react@19.1.0)':
+    dependencies:
+      react: 19.1.0
 
   '@img/sharp-darwin-arm64@0.34.3':
     optionalDependencies:
