@@ -20,6 +20,9 @@ importers:
 
   apps/test:
     dependencies:
+      '@repo/elements':
+        specifier: workspace:*
+        version: link:../../packages/elements
       next:
         specifier: 15.4.6
         version: 15.4.6(@opentelemetry/api@1.9.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -51,15 +54,15 @@ importers:
 
   packages/elements:
     dependencies:
-      '@ai-studio/shadcn-ui':
-        specifier: workspace:*
-        version: link:../shadcn-ui
       '@icons-pack/react-simple-icons':
         specifier: ^13.5.0
         version: 13.7.0(react@19.0.0-rc-f994737d14-20240522)
       '@radix-ui/react-use-controllable-state':
         specifier: ^1.2.2
         version: 1.2.2(@types/react@18.2.69)(react@19.0.0-rc-f994737d14-20240522)
+      '@repo/shadcn-ui':
+        specifier: workspace:*
+        version: link:../shadcn-ui
       ai:
         specifier: 5.0.0
         version: 5.0.0(zod@3.25.76)
@@ -97,7 +100,7 @@ importers:
         specifier: ^1.1.1
         version: 1.1.1(react@19.0.0-rc-f994737d14-20240522)
     devDependencies:
-      '@ai-studio/typescript-config':
+      '@repo/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
       '@types/react':
@@ -181,7 +184,7 @@ importers:
         specifier: ^3.25.64
         version: 3.25.76
     devDependencies:
-      '@ai-studio/typescript-config':
+      '@repo/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
       '@types/react':

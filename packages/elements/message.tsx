@@ -2,9 +2,9 @@ import {
   Avatar,
   AvatarFallback,
   AvatarImage,
-} from '@ai-studio/shadcn-ui/components/ui/avatar';
+} from '@repo/shadcn-ui/components/ui/avatar';
 import type { ComponentProps, HTMLAttributes } from 'react';
-import { cn } from '@ai-studio/shadcn-ui/lib/utils';
+import { cn } from '@repo/shadcn-ui/lib/utils';
 import type { UIMessage } from 'ai';
 
 export type MessageProps = HTMLAttributes<HTMLDivElement> & {

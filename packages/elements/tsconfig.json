@@ -1,9 +1,9 @@
 {
-  "extends": "@ai-studio/typescript-config/nextjs.json",
+  "extends": "@repo/typescript-config/nextjs.json",
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@ai-studio/*": ["../*"],
+      "@repo/*": ["../*"],
       "@/components/*": ["../shadcn-ui/components/*"],
       "@/lib/*": ["../shadcn-ui/lib/*"]
     }

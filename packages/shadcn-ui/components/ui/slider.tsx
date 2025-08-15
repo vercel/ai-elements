@@ -3,7 +3,7 @@
 import * as React from "react"
 import { Slider as SliderPrimitive } from "radix-ui";
 
-import { cn } from "@ai-studio/shadcn-ui/lib/utils"
+import { cn } from "@repo/shadcn-ui/lib/utils"
 
 function Slider({
   className,

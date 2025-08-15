@@ -2,19 +2,19 @@
 
 import * as React from 'react';
 import type { ComponentProps } from 'react';
-import { cn } from '@ai-studio/shadcn-ui/lib/utils';
-import { Badge } from '@ai-studio/shadcn-ui/components/ui/badge';
+import { cn } from '@repo/shadcn-ui/lib/utils';
+import { Badge } from '@repo/shadcn-ui/components/ui/badge';
 import {
   HoverCard,
   HoverCardTrigger,
   HoverCardContent,
-} from '@ai-studio/shadcn-ui/components/ui/hover-card';
+} from '@repo/shadcn-ui/components/ui/hover-card';
 import {
   Carousel,
   CarouselContent,
   CarouselItem,
   useCarousel,
-} from '@ai-studio/shadcn-ui/components/ui/carousel';
+} from '@repo/shadcn-ui/components/ui/carousel';
 import { ArrowLeftIcon, ArrowRightIcon } from 'lucide-react';
 
 export type InlineCitationProps = ComponentProps<'span'>;

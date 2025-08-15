@@ -9,13 +9,13 @@ import {
   XCircleIcon,
 } from 'lucide-react';
 import type { ComponentProps, ReactNode } from 'react';
-import { Badge } from '@ai-studio/shadcn-ui/components/ui/badge';
+import { Badge } from '@repo/shadcn-ui/components/ui/badge';
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from '@ai-studio/shadcn-ui/components/ui/collapsible';
-import { cn } from '@ai-studio/shadcn-ui/lib/utils';
+} from '@repo/shadcn-ui/components/ui/collapsible';
+import { cn } from '@repo/shadcn-ui/lib/utils';
 import type { ToolUIPart } from 'ai';
 import { CodeBlock } from './code-block';
 

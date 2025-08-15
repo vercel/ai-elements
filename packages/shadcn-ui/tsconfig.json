@@ -1,5 +1,5 @@
 {
-  "extends": "@ai-studio/typescript-config/nextjs.json",
+  "extends": "@repo/typescript-config/nextjs.json",
   "compilerOptions": {
     "baseUrl": ".",
     "plugins": [
@@ -8,8 +8,8 @@
       }
     ],
     "paths": {
-      "@ai-studio/shadcn-ui/*": ["./*"],
-      "@ai-studio/*": ["../*"]
+      "@repo/shadcn-ui/*": ["./*"],
+      "@repo/*": ["../*"]
     }
   },
   "include": ["**/*.ts", "**/*.tsx"],

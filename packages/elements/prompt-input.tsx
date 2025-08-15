@@ -7,16 +7,16 @@ import type {
   KeyboardEventHandler,
 } from 'react';
 import { Children } from 'react';
-import { Button } from '@ai-studio/shadcn-ui/components/ui/button';
+import { Button } from '@repo/shadcn-ui/components/ui/button';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@ai-studio/shadcn-ui/components/ui/select';
-import { Textarea } from '@ai-studio/shadcn-ui/components/ui/textarea';
-import { cn } from '@ai-studio/shadcn-ui/lib/utils';
+} from '@repo/shadcn-ui/components/ui/select';
+import { Textarea } from '@repo/shadcn-ui/components/ui/textarea';
+import { cn } from '@repo/shadcn-ui/lib/utils';
 import type { ChatStatus } from 'ai';
 
 export type PromptInputProps = HTMLAttributes<HTMLFormElement>;

@@ -8,8 +8,8 @@ import {
   oneDark,
   oneLight,
 } from 'react-syntax-highlighter/dist/esm/styles/prism';
-import { Button } from '@ai-studio/shadcn-ui/components/ui/button';
-import { cn } from '@ai-studio/shadcn-ui/lib/utils';
+import { Button } from '@repo/shadcn-ui/components/ui/button';
+import { cn } from '@repo/shadcn-ui/lib/utils';
 
 type CodeBlockContextType = {
   code: string;

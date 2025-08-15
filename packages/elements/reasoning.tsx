@@ -5,11 +5,11 @@ import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from '@ai-studio/shadcn-ui/components/ui/collapsible';
+} from '@repo/shadcn-ui/components/ui/collapsible';
 import { BrainIcon, ChevronDownIcon } from 'lucide-react';
 import type { ComponentProps } from 'react';
 import { createContext, memo, useContext, useEffect, useState } from 'react';
-import { cn } from '@ai-studio/shadcn-ui/lib/utils';
+import { cn } from '@repo/shadcn-ui/lib/utils';
 import { Response } from './response';
 
 type ReasoningContextValue = {

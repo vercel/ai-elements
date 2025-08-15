@@ -1,12 +1,12 @@
 'use client';
 
 import type { ComponentProps } from 'react';
-import { Button } from '@ai-studio/shadcn-ui/components/ui/button';
+import { Button } from '@repo/shadcn-ui/components/ui/button';
 import {
   ScrollArea,
   ScrollBar,
-} from '@ai-studio/shadcn-ui/components/ui/scroll-area';
-import { cn } from '@ai-studio/shadcn-ui/lib/utils';
+} from '@repo/shadcn-ui/components/ui/scroll-area';
+import { cn } from '@repo/shadcn-ui/lib/utils';
 
 export type SuggestionsProps = ComponentProps<typeof ScrollArea>;
 

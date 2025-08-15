@@ -1,10 +1,10 @@
 {
-  "name": "@ai-studio/elements",
+  "name": "@repo/elements",
   "description": "AI components including message, conversation, input, response, suggestion, sources, tool and branch components for building chat interfaces.",
   "version": "0.0.0",
   "private": true,
   "dependencies": {
-    "@ai-studio/shadcn-ui": "workspace:*",
+    "@repo/shadcn-ui": "workspace:*",
     "@icons-pack/react-simple-icons": "^13.5.0",
     "@radix-ui/react-use-controllable-state": "^1.2.2",
     "ai": "5.0.0",
@@ -21,7 +21,7 @@
     "use-stick-to-bottom": "^1.1.1"
   },
   "devDependencies": {
-    "@ai-studio/typescript-config": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
     "@types/react": "18.2.69",
     "@types/react-dom": "^18.2.24",
     "@types/react-syntax-highlighter": "^15.5.13",

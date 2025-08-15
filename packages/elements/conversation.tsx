@@ -1,11 +1,11 @@
 'use client';
 
-import { Button } from '@ai-studio/shadcn-ui/components/ui/button';
+import { Button } from '@repo/shadcn-ui/components/ui/button';
 import { ArrowDownIcon } from 'lucide-react';
 import type { ComponentProps } from 'react';
 import { useCallback } from 'react';
 import { StickToBottom, useStickToBottomContext } from 'use-stick-to-bottom';
-import { cn } from '@ai-studio/shadcn-ui/lib/utils';
+import { cn } from '@repo/shadcn-ui/lib/utils';
 
 export type ConversationProps = ComponentProps<typeof StickToBottom>;
 

@@ -6,8 +6,8 @@ import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from '@ai-studio/shadcn-ui/components/ui/collapsible';
-import { cn } from '@ai-studio/shadcn-ui/lib/utils';
+} from '@repo/shadcn-ui/components/ui/collapsible';
+import { cn } from '@repo/shadcn-ui/lib/utils';
 
 export type SourcesProps = ComponentProps<'div'>;
 

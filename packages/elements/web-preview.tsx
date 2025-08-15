@@ -3,20 +3,20 @@
 import { ChevronDownIcon } from 'lucide-react';
 import type { ComponentProps, ReactNode } from 'react';
 import { createContext, useContext, useState } from 'react';
-import { Button } from '@ai-studio/shadcn-ui/components/ui/button';
+import { Button } from '@repo/shadcn-ui/components/ui/button';
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from '@ai-studio/shadcn-ui/components/ui/collapsible';
-import { Input } from '@ai-studio/shadcn-ui/components/ui/input';
+} from '@repo/shadcn-ui/components/ui/collapsible';
+import { Input } from '@repo/shadcn-ui/components/ui/input';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from '@ai-studio/shadcn-ui/components/ui/tooltip';
-import { cn } from '@ai-studio/shadcn-ui/lib/utils';
+} from '@repo/shadcn-ui/components/ui/tooltip';
+import { cn } from '@repo/shadcn-ui/lib/utils';
 
 export type WebPreviewContextValue = {
   url: string;

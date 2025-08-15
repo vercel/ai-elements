@@ -1,12 +1,12 @@
 'use client';
 
 import type { ComponentProps } from 'react';
-import { cn } from '@ai-studio/shadcn-ui/lib/utils';
+import { cn } from '@repo/shadcn-ui/lib/utils';
 import {
   Collapsible,
   CollapsibleTrigger,
   CollapsibleContent,
-} from '@ai-studio/shadcn-ui/components/ui/collapsible';
+} from '@repo/shadcn-ui/components/ui/collapsible';
 import { ChevronDownIcon, SearchIcon } from 'lucide-react';
 
 export type TaskItemFileProps = ComponentProps<'div'>;
