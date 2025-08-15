@@ -1,135 +1,162 @@
-# Turborepo starter
+# ▲ AI Elements
 
-This Turborepo starter is maintained by the Turborepo core team.
+[AI Elements](https://ai-sdk.dev/elements) is a component library built on top of [shadcn/ui](https://ui.shadcn.com/) to help you build AI-native applications faster.
 
-## Using this example
+## Overview
 
-Run the following command:
+AI Elements provides pre-built, customizable React components specifically designed for AI applications, including conversations, messages, code blocks, reasoning displays, and more. The CLI makes it easy to add these components to your Next.js project.
 
-```sh
-npx create-turbo@latest
+## Installation
+
+You can use the AI Elements CLI directly with npx, or install it globally:
+
+```bash
+# Use directly (recommended)
+npx ai-elements@latest
+
+# Or using shadcn cli
+npx shadcn@latest add https://registry.ai-sdk.dev/all.json
 ```
 
-## What's inside?
+## Prerequisites
 
-This Turborepo includes the following packages/apps:
+Before using AI Elements, ensure your project meets these requirements:
 
-### Apps and Packages
+- **Node.js** 18 or later
+- **Next.js** project with [AI SDK](https://ai-sdk.dev/) installed
+- **shadcn/ui** initialized in your project (`npx shadcn@latest init`)
+- **Tailwind CSS** configured (AI Elements supports CSS Variables mode only)
 
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
+## Usage
 
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+### Install All Components
 
-### Utilities
+Install all available AI Elements components at once:
 
-This Turborepo has some additional tools already setup for you:
-
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
-
-### Build
-
-To build all apps and packages, run the following command:
-
-```
-cd my-turborepo
-
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build
-yarn dlx turbo build
-pnpm exec turbo build
+```bash
+npx ai-elements@latest
 ```
 
-You can build a specific package by using a [filter](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters):
+This command will:
+- Set up shadcn/ui if not already configured
+- Install all AI Elements components to your configured components directory
+- Add necessary dependencies to your project
 
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build --filter=docs
+### Install Specific Components
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build --filter=docs
-yarn exec turbo build --filter=docs
-pnpm exec turbo build --filter=docs
-```
+Install individual components using the `add` command:
 
-### Develop
-
-To develop all apps and packages, run the following command:
-
-```
-cd my-turborepo
-
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev
-yarn exec turbo dev
-pnpm exec turbo dev
+```bash
+npx ai-elements@latest add <component-name>
 ```
 
-You can develop a specific package by using a [filter](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters):
+Examples:
+```bash
+# Install the message component
+npx ai-elements@latest add message
 
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev --filter=web
+# Install the conversation component
+npx ai-elements@latest add conversation
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev --filter=web
-yarn exec turbo dev --filter=web
-pnpm exec turbo dev --filter=web
-```
-
-### Remote Caching
-
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
-
-Turborepo can use a technique known as [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
-
-```
-cd my-turborepo
-
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo login
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo login
-yarn exec turbo login
-pnpm exec turbo login
+# Install the code-block component
+npx ai-elements@latest add code-block
 ```
 
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
+### Alternative: Use with shadcn CLI
 
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
+You can also install components using the standard shadcn/ui CLI:
 
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo link
+```bash
+# Install all components
+npx shadcn@latest add https://registry.ai-sdk.dev/all.json
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo link
-yarn exec turbo link
-pnpm exec turbo link
+# Install a specific component
+npx shadcn@latest add https://registry.ai-sdk.dev/message.json
 ```
 
-## Useful Links
+## Available Components
 
-Learn more about the power of Turborepo:
+AI Elements includes the following components:
 
-- [Tasks](https://turborepo.com/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.com/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.com/docs/reference/configuration)
-- [CLI Usage](https://turborepo.com/docs/reference/command-line-reference)
+| Component | Description |
+|-----------|-------------|
+| `actions` | Interactive action buttons for AI responses |
+| `branch` | Branch visualization for conversation flows |
+| `code-block` | Syntax-highlighted code display with copy functionality |
+| `conversation` | Container for chat conversations |
+| `image` | AI-generated image display component |
+| `inline-citation` | Inline source citations |
+| `loader` | Loading states for AI operations |
+| `message` | Individual chat messages with avatars |
+| `prompt-input` | Advanced input component with model selection |
+| `reasoning` | Display AI reasoning and thought processes |
+| `response` | Formatted AI response display |
+| `source` | Source attribution component |
+| `suggestion` | Quick action suggestions |
+| `task` | Task completion tracking |
+| `tool` | Tool usage visualization |
+| `web-preview` | Embedded web page previews |
+
+## Quick Start Example
+
+After installing components, you can use them in your React application:
+
+```tsx
+'use client';
+
+import { useChat } from '@ai-sdk/react';
+import {
+  Conversation,
+  ConversationContent,
+} from '@/components/ai-elements/conversation';
+import {
+  Message,
+  MessageContent,
+} from '@/components/ai-elements/message';
+import { Response } from '@/components/ai-elements/response';
+
+export default function Chat() {
+  const { messages } = useChat();
+
+  return (
+    <Conversation>
+      <ConversationContent>
+        {messages.map((message, index) => (
+          <Message key={index} from={message.role}>
+            <MessageContent>
+              <Response>{message.content}</Response>
+            </MessageContent>
+          </Message>
+        ))}
+      </ConversationContent>
+    </Conversation>
+  );
+}
+```
+
+## How It Works
+
+The AI Elements CLI:
+
+1. **Detects your package manager** (npm, pnpm, yarn, or bun) automatically
+2. **Fetches component registry** from `https://registry.ai-sdk.dev/all.json`
+3. **Installs components** using the shadcn/ui CLI under the hood
+4. **Adds dependencies** and integrates with your existing shadcn/ui setup
+
+Components are installed to your configured shadcn/ui components directory (typically `@/components/ai-elements/`) and become part of your codebase, allowing for full customization.
+
+## Configuration
+
+AI Elements uses your existing shadcn/ui configuration. Components will be installed to the directory specified in your `components.json` file.
+
+## Recommended Setup
+
+For the best experience, we recommend:
+
+1. **AI Gateway**: Set up [Vercel AI Gateway](https://vercel.com/docs/ai-gateway) and add `AI_GATEWAY_API_KEY` to your `.env.local`
+2. **CSS Variables**: Use shadcn/ui's CSS Variables mode for theming
+3. **TypeScript**: Enable TypeScript for better development experience
+
+---
+
+Made with ❤️ by [Vercel](https://vercel.com)
