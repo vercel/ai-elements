@@ -15,7 +15,8 @@
     "lucide-react": "^0.515.0",
     "next": "15.4.6",
     "react": "19.1.0",
-    "react-dom": "19.1.0"
+    "react-dom": "19.1.0",
+    "tw-animate-css": "^1.3.6"
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",

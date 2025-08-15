@@ -1,3 +1,9 @@
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from '@repo/shadcn-ui/components/ui/card';
 import Actions from '@/app/examples/actions';
 import Branch from '@/app/examples/branch';
 import CodeBlock from '@/app/examples/code-block';
@@ -13,28 +19,41 @@ import Sources from '@/app/examples/sources';
 import Suggestion from '@/app/examples/suggestion';
 import Task from '@/app/examples/task';
 import Tool from '@/app/examples/tool';
-import V0Clone from '@/app/examples/v0-clone';
 import WebPreview from '@/app/examples/web-preview';
 
+const components = [
+  { name: 'Actions', Component: Actions },
+  { name: 'Branch', Component: Branch },
+  { name: 'CodeBlock', Component: CodeBlock },
+  { name: 'Conversation', Component: Conversation },
+  { name: 'Image', Component: Image },
+  { name: 'InlineCitation', Component: InlineCitation },
+  { name: 'Loader', Component: Loader },
+  { name: 'Message', Component: Message },
+  { name: 'PromptInput', Component: PromptInput },
+  { name: 'Reasoning', Component: Reasoning },
+  { name: 'Response', Component: Response },
+  { name: 'Sources', Component: Sources },
+  { name: 'Suggestion', Component: Suggestion },
+  { name: 'Task', Component: Task },
+  { name: 'Tool', Component: Tool },
+  { name: 'WebPreview', Component: WebPreview },
+] as const;
+
 const Home = () => (
-  <div className="container mx-auto space-y-8">
-    <Actions />
-    <Branch />
-    <CodeBlock />
-    <Conversation />
-    <Image />
-    <InlineCitation />
-    <Loader />
-    <Message />
-    <PromptInput />
-    <Reasoning />
-    <Response />
-    <Sources />
-    <Suggestion />
-    <Task />
-    <Tool />
-    <V0Clone />
-    <WebPreview />
+  <div className="container mx-auto space-y-8 py-16">
+    {components.map(({ name, Component }) => (
+      <Card key={name}>
+        <CardHeader>
+          <CardTitle asChild>
+            <h2 className="font-semibold text-lg">{name}</h2>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Component />
+        </CardContent>
+      </Card>
+    ))}
   </div>
 );
 
