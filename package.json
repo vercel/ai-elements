@@ -9,7 +9,8 @@
     "@biomejs/biome": "2.2.0",
     "turbo": "^2.5.6",
     "typescript": "5.9.2",
-    "ultracite": "5.1.6"
+    "ultracite": "5.1.6",
+    "nanoid": "^4.0.0"
   },
   "packageManager": "pnpm@9.0.0",
   "engines": {
