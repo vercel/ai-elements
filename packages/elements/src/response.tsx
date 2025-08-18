@@ -173,6 +173,8 @@ export type ResponseProps = HTMLAttributes<HTMLDivElement> & {
   parseIncompleteMarkdown?: boolean;
 };
 
+const LANGUAGE_RE = /language-(\w+)/;
+
 const components: Options['components'] = {
   ol: ({ node, children, className, ...props }) => (
     <ol className={cn('ml-4 list-outside list-decimal', className)} {...props}>
@@ -295,29 +297,25 @@ const components: Options['components'] = {
       {children}
     </blockquote>
   ),
-  code: ({ node, className, ...props }) => {
+  code: ({ node, className, children, ...props }) => {
     const inline = node?.position?.start.line === node?.position?.end.line;
 
-    if (!inline) {
-      return <code className={className} {...props} />;
+    if (inline) {
+      return (
+        <code
+          className={cn(
+            'rounded bg-muted px-1.5 py-0.5 font-mono text-sm',
+            className
+          )}
+          {...props}
+        >
+          {children}
+        </code>
+      );
     }
 
-    return (
-      <code
-        className={cn(
-          'rounded bg-muted px-1.5 py-0.5 font-mono text-sm',
-          className
-        )}
-        {...props}
-      />
-    );
-  },
-  pre: ({ node, className, children }) => {
-    let language = 'javascript';
-
-    if (typeof node?.properties?.className === 'string') {
-      language = node.properties.className.replace('language-', '');
-    }
+    const match = className?.match(LANGUAGE_RE);
+    const language = match ? match[1] : 'plaintext';
 
     // Extract code content from children safely
     let code = '';
@@ -332,17 +330,16 @@ const components: Options['components'] = {
     }
 
     return (
-      <CodeBlock
-        className={cn('my-4 h-auto', className)}
-        code={code}
-        language={language}
-      >
+      <CodeBlock className={className} code={code} language={language}>
         <CodeBlockCopyButton
           onCopy={() => console.log('Copied code to clipboard')}
           onError={() => console.error('Failed to copy code to clipboard')}
         />
       </CodeBlock>
     );
+  },
+  pre: ({ className, children }) => {
+    return <pre className={cn('my-4 h-auto', className)}>{children}</pre>;
   },
 };
 
