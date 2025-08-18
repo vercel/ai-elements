@@ -1,11 +1,12 @@
 'use client';
 
-import { Button } from '@repo/shadcn-ui/components/ui/button';
-import { cn } from '@repo/shadcn-ui/lib/utils';
+import { ScrollArea } from '@repo/shadcn-ui/components/ui/scroll-area';
 import { ArrowDownIcon } from 'lucide-react';
 import type { ComponentProps } from 'react';
 import { useCallback } from 'react';
 import { StickToBottom, useStickToBottomContext } from 'use-stick-to-bottom';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
 export type ConversationProps = ComponentProps<typeof StickToBottom>;
 
@@ -26,9 +27,17 @@ export type ConversationContentProps = ComponentProps<
 export const ConversationContent = ({
   className,
   ...props
-}: ConversationContentProps) => (
-  <StickToBottom.Content className={cn('p-4', className)} {...props} />
-);
+}: ConversationContentProps) => {
+  const { scrollRef } = useStickToBottomContext();
+  return (
+    <ScrollArea
+      className={cn('relative flex-1 overflow-y-auto', className)}
+      ref={scrollRef}
+    >
+      <StickToBottom.Content className={cn('p-4', className)} {...props} />
+    </ScrollArea>
+  );
+};
 
 export type ConversationScrollButtonProps = ComponentProps<typeof Button>;
 
