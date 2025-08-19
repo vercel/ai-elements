@@ -128,8 +128,8 @@ importers:
         specifier: ^15.6.1
         version: 15.6.1(react@19.0.0-rc-f994737d14-20240522)
       streamdown:
-        specifier: ^1.0.9
-        version: 1.0.9(@types/react@18.2.69)(react@19.0.0-rc-f994737d14-20240522)
+        specifier: ^1.0.10
+        version: 1.0.10(@types/react@18.2.69)(react@19.0.0-rc-f994737d14-20240522)
       use-stick-to-bottom:
         specifier: ^1.1.1
         version: 1.1.1(react@19.0.0-rc-f994737d14-20240522)
@@ -3001,8 +3001,8 @@ packages:
   std-env@3.9.0:
     resolution: {integrity: sha512-UGvjygr6F6tpH7o2qyqR6QYpwraIjKSdtzyBdyytFOHmPZY917kwdwLG0RbOjWOnKmnm3PeHjaoLLMie7kPLQw==}
 
-  streamdown@1.0.9:
-    resolution: {integrity: sha512-UVyA4oPoDQy2FlGJvlFxJOmtiQPjji5CP5gChQyAl8SRex/IyjVKQ9NA2LZIc+41KVoke1MkfTdDcS5sqMvrRA==}
+  streamdown@1.0.10:
+    resolution: {integrity: sha512-P8woE/IEAHyT1apPv5AcX7lgpBLbuNtUOOUXZz9dbau5JeDkBKkzpfxG0ev2RnzKBktIbQp+mqX7eCnBmLKQyw==}
     peerDependencies:
       react: ^19.1.1
 
@@ -6300,7 +6300,7 @@ snapshots:
 
   std-env@3.9.0: {}
 
-  streamdown@1.0.9(@types/react@18.2.69)(react@19.0.0-rc-f994737d14-20240522):
+  streamdown@1.0.10(@types/react@18.2.69)(react@19.0.0-rc-f994737d14-20240522):
     dependencies:
       clsx: 2.1.1
       harden-react-markdown: 1.0.4(react-markdown@10.1.0(@types/react@18.2.69)(react@19.0.0-rc-f994737d14-20240522))(react@19.0.0-rc-f994737d14-20240522)
