@@ -45,7 +45,7 @@ const Home = () => (
     {components.map(({ name, Component }) => (
       <Card key={name}>
         <CardHeader>
-          <CardTitle asChild>
+          <CardTitle>
             <h2 className="font-semibold text-lg">{name}</h2>
           </CardTitle>
         </CardHeader>
