@@ -103,7 +103,10 @@ export const InlineCitationCarouselItem = ({
   className,
   ...props
 }: InlineCitationCarouselItemProps) => (
-  <CarouselItem className={cn('w-full space-y-2 p-4', className)} {...props} />
+  <CarouselItem
+    className={cn('w-full space-y-2 p-4 pl-8', className)}
+    {...props}
+  />
 );
 
 export type InlineCitationCarouselHeaderProps = ComponentProps<'div'>;
