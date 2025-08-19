@@ -13,7 +13,7 @@
     "lucide-react": "^0.515.0",
     "react": "19.0.0-rc-f994737d14-20240522",
     "react-syntax-highlighter": "^15.6.1",
-    "streamdown": "^1.0.6",
+    "streamdown": "^1.0.8",
     "use-stick-to-bottom": "^1.1.1"
   },
   "devDependencies": {
