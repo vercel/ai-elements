@@ -4,13 +4,13 @@ const { execSync } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
 
-console.log(`Adding AI Elements...`);
+console.log('Adding AI Elements...');
 
 // Check for components.json in the current working directory
 const componentsJsonPath = path.join(process.cwd(), 'components.json');
 if (!fs.existsSync(componentsJsonPath)) {
   console.error(
-    'components.json not found in the current directory. Run `npx shadcn@latest init` to create one.',
+    'components.json not found in the current directory. Run `npx shadcn@latest init` to create one.'
   );
   process.exit(1);
 }
@@ -23,21 +23,17 @@ function getCommandPrefix() {
 
     if (userAgent.includes('pnpm')) {
       return 'pnpm dlx';
-    } else if (userAgent.includes('yarn')) {
+    }
+    if (userAgent.includes('yarn')) {
       return 'yarn dlx';
-    } else if (userAgent.includes('bun')) {
+    }
+    if (userAgent.includes('bun')) {
       return 'bunx';
     }
   }
 
-  // Check process argv for npx usage
-  const argv = process.argv.join(' ');
-  if (argv.includes('npx')) {
-    return 'npx';
-  }
-
   // Default fallback
-  return 'npx';
+  return 'npx -y';
 }
 
 const commandPrefix = getCommandPrefix();
@@ -51,9 +47,9 @@ if (args.length >= 2 && args[0] === 'add') {
   const component = args[1];
   targetUrl = new URL(
     `/${component}.json`,
-    'https://registry.ai-sdk.dev',
+    'https://registry.ai-sdk.dev'
   ).toString();
   console.log(`Adding component: ${component}`);
 }
 
-execSync(`${commandPrefix} -y shadcn@latest add ${targetUrl}`);
+execSync(`${commandPrefix} shadcn@latest add ${targetUrl}`);
