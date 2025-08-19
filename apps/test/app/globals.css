@@ -3,6 +3,7 @@
 
 @source "../**/*.{ts,tsx}";
 @source "../node_modules/@repo/**/*.{ts,tsx}";
+@source "../node_modules/@repo/elements/node_modules/streamdown/dist/index.js";
 
 @custom-variant dark (&:is(.dark *));
 

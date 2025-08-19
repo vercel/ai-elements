@@ -243,7 +243,9 @@ const Example = () => {
     return () => clearInterval(interval);
   }, []);
 
-  return <Response style={{ height: '500px' }}>{content}</Response>;
+  return (
+    <Response style={{ height: '500px', overflow: 'auto' }}>{content}</Response>
+  );
 };
 
 export default Example;

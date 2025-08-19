@@ -7,26 +7,18 @@
     "./*": "./src/*.tsx"
   },
   "dependencies": {
-    "@repo/shadcn-ui": "workspace:*",
-    "@icons-pack/react-simple-icons": "^13.5.0",
     "@radix-ui/react-use-controllable-state": "^1.2.2",
+    "@repo/shadcn-ui": "workspace:*",
     "ai": "5.0.0",
-    "harden-react-markdown": "^1.0.3",
-    "katex": "^0.16.22",
     "lucide-react": "^0.515.0",
     "react": "19.0.0-rc-f994737d14-20240522",
-    "react-dom": "19.0.0-rc-f994737d14-20240522",
-    "react-markdown": "^10.1.0",
     "react-syntax-highlighter": "^15.6.1",
-    "rehype-katex": "^7.0.1",
-    "remark-gfm": "^4.0.1",
-    "remark-math": "^6.0.0",
+    "streamdown": "^1.0.11",
     "use-stick-to-bottom": "^1.1.1"
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
     "@types/react": "18.2.69",
-    "@types/react-dom": "^18.2.24",
     "@types/react-syntax-highlighter": "^15.5.13",
     "typescript": "^5.8.3"
   }
