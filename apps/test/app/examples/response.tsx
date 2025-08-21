@@ -244,7 +244,9 @@ const Example = () => {
   }, []);
 
   return (
-    <Response style={{ height: '500px', overflow: 'auto' }}>{content}</Response>
+    <Response style={{ height: '1500px', overflow: 'auto' }}>
+      {content}
+    </Response>
   );
 };
 
