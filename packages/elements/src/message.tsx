@@ -32,11 +32,11 @@ const messageContentVariants = cva(
           'max-w-[80%] px-4 py-3',
           'group-[.is-user]:bg-primary group-[.is-user]:text-primary-foreground',
           'group-[.is-assistant]:bg-secondary group-[.is-assistant]:text-foreground',
-        ].join(' '),
+        ],
         flat: [
           'group-[.is-user]:max-w-[80%] group-[.is-user]:border group-[.is-user]:border-secondary/50 group-[.is-user]:bg-secondary/50 group-[.is-user]:px-4 group-[.is-user]:py-3 group-[.is-user]:text-secondary-foreground',
           'group-[.is-assistant]:bg-background group-[.is-assistant]:text-foreground',
-        ].join(' '),
+        ],
       },
     },
     defaultVariants: {
