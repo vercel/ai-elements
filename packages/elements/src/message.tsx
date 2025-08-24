@@ -5,6 +5,7 @@ import {
 } from '@repo/shadcn-ui/components/ui/avatar';
 import { cn } from '@repo/shadcn-ui/lib/utils';
 import type { UIMessage } from 'ai';
+import { cva, type VariantProps } from 'class-variance-authority';
 import type { ComponentProps, HTMLAttributes } from 'react';
 
 export type MessageProps = HTMLAttributes<HTMLDivElement> & {
@@ -16,27 +17,45 @@ export const Message = ({ className, from, ...props }: MessageProps) => (
     className={cn(
       'group flex w-full items-end justify-end gap-2 py-4',
       from === 'user' ? 'is-user' : 'is-assistant flex-row-reverse justify-end',
-      '[&>div]:max-w-[80%]',
       className
     )}
     {...props}
   />
 );
 
-export type MessageContentProps = HTMLAttributes<HTMLDivElement>;
+const messageContentVariants = cva(
+  'flex flex-col gap-2 overflow-hidden rounded-lg text-sm',
+  {
+    variants: {
+      variant: {
+        contained: [
+          'max-w-[80%] px-4 py-3',
+          'group-[.is-user]:bg-primary group-[.is-user]:text-primary-foreground',
+          'group-[.is-assistant]:bg-secondary group-[.is-assistant]:text-foreground',
+        ].join(' '),
+        flat: [
+          'group-[.is-user]:max-w-[80%] group-[.is-user]:border group-[.is-user]:border-secondary/50 group-[.is-user]:bg-secondary/50 group-[.is-user]:px-4 group-[.is-user]:py-3 group-[.is-user]:text-secondary-foreground',
+          'group-[.is-assistant]:bg-background group-[.is-assistant]:text-foreground',
+        ].join(' '),
+      },
+    },
+    defaultVariants: {
+      variant: 'contained',
+    },
+  }
+);
+
+export type MessageContentProps = HTMLAttributes<HTMLDivElement> &
+  VariantProps<typeof messageContentVariants>;
 
 export const MessageContent = ({
   children,
   className,
+  variant,
   ...props
 }: MessageContentProps) => (
   <div
-    className={cn(
-      'flex flex-col gap-2 overflow-hidden rounded-lg px-4 py-3 text-foreground text-sm',
-      'group-[.is-user]:bg-primary group-[.is-user]:text-primary-foreground',
-      'group-[.is-assistant]:bg-secondary group-[.is-assistant]:text-foreground',
-      className
-    )}
+    className={cn(messageContentVariants({ variant, className }))}
     {...props}
   >
     <div className="is-user:dark">{children}</div>
