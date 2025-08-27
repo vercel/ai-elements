@@ -147,6 +147,40 @@ importers:
         specifier: ^5.8.3
         version: 5.9.2
 
+  packages/examples:
+    dependencies:
+      '@icons-pack/react-simple-icons':
+        specifier: ^13.5.0
+        version: 13.7.0(react@19.0.0-rc-f994737d14-20240522)
+      '@repo/elements':
+        specifier: workspace:*
+        version: link:../elements
+      ai:
+        specifier: 5.0.0
+        version: 5.0.0(zod@4.0.17)
+      lucide-react:
+        specifier: ^0.515.0
+        version: 0.515.0(react@19.0.0-rc-f994737d14-20240522)
+      nanoid:
+        specifier: ^5.1.5
+        version: 5.1.5
+      react:
+        specifier: 19.0.0-rc-f994737d14-20240522
+        version: 19.0.0-rc-f994737d14-20240522
+      sonner:
+        specifier: ^2.0.5
+        version: 2.0.7(react-dom@19.1.0(react@19.0.0-rc-f994737d14-20240522))(react@19.0.0-rc-f994737d14-20240522)
+    devDependencies:
+      '@repo/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      '@types/react':
+        specifier: 18.2.69
+        version: 18.2.69
+      typescript:
+        specifier: ^5.8.3
+        version: 5.9.2
+
   packages/registry: {}
 
   packages/shadcn-ui:
@@ -3923,6 +3957,10 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  '@icons-pack/react-simple-icons@13.7.0(react@19.0.0-rc-f994737d14-20240522)':
+    dependencies:
+      react: 19.0.0-rc-f994737d14-20240522
+
   '@icons-pack/react-simple-icons@13.7.0(react@19.1.0)':
     dependencies:
       react: 19.1.0
@@ -6785,6 +6823,11 @@ snapshots:
       react: 19.0.0-rc-f994737d14-20240522
       scheduler: 0.25.0-rc-f994737d14-20240522
 
+  react-dom@19.1.0(react@19.0.0-rc-f994737d14-20240522):
+    dependencies:
+      react: 19.0.0-rc-f994737d14-20240522
+      scheduler: 0.26.0
+
   react-dom@19.1.0(react@19.1.0):
     dependencies:
       react: 19.1.0
@@ -7098,6 +7141,11 @@ snapshots:
     dependencies:
       react: 19.0.0-rc-f994737d14-20240522
       react-dom: 19.0.0-rc-f994737d14-20240522(react@19.0.0-rc-f994737d14-20240522)
+
+  sonner@2.0.7(react-dom@19.1.0(react@19.0.0-rc-f994737d14-20240522))(react@19.0.0-rc-f994737d14-20240522):
+    dependencies:
+      react: 19.0.0-rc-f994737d14-20240522
+      react-dom: 19.1.0(react@19.0.0-rc-f994737d14-20240522)
 
   source-map-js@1.2.1: {}
 
