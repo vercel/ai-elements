@@ -38,7 +38,7 @@ import {
   Sources,
   SourcesContent,
   SourcesTrigger,
-} from '@repo/elements/source';
+} from '@repo/elements/sources';
 import { Suggestion, Suggestions } from '@repo/elements/suggestion';
 import type { ToolUIPart } from 'ai';
 import {

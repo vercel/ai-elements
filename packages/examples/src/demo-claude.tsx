@@ -38,7 +38,7 @@ import {
   Sources,
   SourcesContent,
   SourcesTrigger,
-} from '@repo/elements/source';
+} from '@repo/elements/sources';
 import type { ToolUIPart } from 'ai';
 import {
   ArrowUpIcon,
