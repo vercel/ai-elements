@@ -119,7 +119,7 @@ export const GET = async (request: NextRequest, { params }: RequestProps) => {
   const { component } = await params;
   const parsedComponent = component.replace('.json', '');
 
-  if (parsedComponent === 'all') {
+  if (parsedComponent === 'all' || parsedComponent === 'registry') {
     try {
       track('registry:all');
     } catch (error) {
@@ -162,7 +162,9 @@ export const GET = async (request: NextRequest, { params }: RequestProps) => {
       .map((d) => d.getModuleSpecifierValue());
 
     for (const moduleName of imports) {
-      if (!moduleName) continue;
+      if (!moduleName) {
+        continue;
+      }
 
       // Check if it's a relative dependency
       if (moduleName.startsWith('./')) {
