@@ -40,16 +40,27 @@ const commandPrefix = getCommandPrefix();
 
 // Parse command line arguments
 const args = process.argv.slice(2);
-let targetUrl = new URL('/all.json', 'https://registry.ai-sdk.dev').toString();
 
 // Check if the command is 'add <component>'
 if (args.length >= 2 && args[0] === 'add') {
   const component = args[1];
-  targetUrl = new URL(
+  const targetUrl = new URL(
     `/${component}.json`,
     'https://registry.ai-sdk.dev'
   ).toString();
   console.log(`Adding component: ${component}`);
-}
+  execSync(`${commandPrefix} shadcn@latest add ${targetUrl}`);
+} else {
+  const targetUrl = new URL(
+    '/all.json',
+    'https://registry.ai-sdk.dev'
+  ).toString();
 
-execSync(`${commandPrefix} shadcn@latest add ${targetUrl}`);
+  const response = await fetch(targetUrl);
+  const data = await response.json();
+
+  for (const item of data.items) {
+    console.log(`Adding component: ${item.name}`);
+    execSync(`${commandPrefix} shadcn@latest add ${item.name}`);
+  }
+}
