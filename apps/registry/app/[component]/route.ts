@@ -211,8 +211,22 @@ const shadcnComponents =
     ?.map((path) => path.split('/').pop())
     .filter((name): name is string => Boolean(name)) || [];
 
+// Extract AI element components from file content
+const aiElementComponents =
+  files
+    .map((f) => f.content)
+    .join('\n')
+    .match(/@\/components\/ai-elements\/([a-z-]+)/g)
+    ?.map((path) => path.split('/').pop())
+    .filter((name): name is string => Boolean(name)) || [];
+
 // Add shadcn/ui components to set
 for (const component of shadcnComponents) {
+  registryDependenciesSet.add(component);
+}
+
+// Add AI element components to set (these become registry dependencies)
+for (const component of aiElementComponents) {
   registryDependenciesSet.add(component);
 }
 
@@ -373,6 +387,16 @@ export const GET = async (_request: NextRequest, { params }: RequestProps) => {
         const componentName = moduleName.split('/').pop();
         if (componentName) {
           usedRegistryDependencies.add(componentName);
+        }
+      }
+
+      // Check if it's an AI element dependency
+      if (moduleName.startsWith('@/components/ai-elements/')) {
+        const componentName = moduleName.split('/').pop();
+        if (componentName) {
+          usedRegistryDependencies.add(
+            new URL(`/${componentName}.json`, registryUrl).toString()
+          );
         }
       }
     }
