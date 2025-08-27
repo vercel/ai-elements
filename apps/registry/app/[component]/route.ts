@@ -8,6 +8,97 @@ import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 import { Project } from 'ts-morph';
 
+type RegistryItemSchema = {
+  name: string;
+  type:
+    | 'registry:lib'
+    | 'registry:block'
+    | 'registry:component'
+    | 'registry:ui'
+    | 'registry:hook'
+    | 'registry:theme'
+    | 'registry:page'
+    | 'registry:file'
+    | 'registry:style'
+    | 'registry:item';
+  description?: string;
+  title?: string;
+  author?: string;
+  dependencies?: string[];
+  devDependencies?: string[];
+  registryDependencies?: string[];
+  files?: {
+    path?: string;
+    content?: string;
+    type?:
+      | 'registry:lib'
+      | 'registry:block'
+      | 'registry:component'
+      | 'registry:ui'
+      | 'registry:hook'
+      | 'registry:theme'
+      | 'registry:page'
+      | 'registry:file'
+      | 'registry:style'
+      | 'registry:item';
+    target?: string;
+    [k: string]: unknown;
+  }[];
+  tailwind?: {
+    config?: {
+      content?: string[];
+      theme?: {
+        [k: string]: unknown;
+      };
+      plugins?: string[];
+      [k: string]: unknown;
+    };
+    [k: string]: unknown;
+  };
+  cssVars?: {
+    theme?: {
+      [k: string]: string;
+    };
+    light?: {
+      [k: string]: string;
+    };
+    dark?: {
+      [k: string]: string;
+    };
+    [k: string]: unknown;
+  };
+  css?: {
+    [k: string]:
+      | string
+      | {
+          [k: string]:
+            | string
+            | {
+                /**
+                 * CSS property value for nested rule
+                 */
+                [k: string]: string;
+              };
+        };
+  };
+  envVars?: {
+    [k: string]: string;
+  };
+  meta?: {
+    [k: string]: unknown;
+  };
+  docs?: string;
+  categories?: string[];
+  extends?: string;
+};
+
+type RegistrySchema = {
+  $schema: 'https://ui.shadcn.com/schema/registry.json';
+  name: string;
+  homepage: string;
+  items: RegistryItemSchema[];
+};
+
 const protocol = process.env.NODE_ENV === 'development' ? 'http' : 'https';
 const registryUrl = `${protocol}://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`;
 
@@ -61,7 +152,6 @@ const files: {
   type: string;
   path: string;
   content: string;
-  target: string;
 }[] = [];
 
 const fileContents = await Promise.all(
@@ -71,10 +161,9 @@ const fileContents = await Promise.all(
     const parsedContent = content.replace(/@repo\/shadcn-ui\//g, '@/');
 
     return {
-      type: 'registry:ui',
-      path: file.name,
+      type: 'registry:component',
+      path: `registry/default/ai-elements/${file.name}`,
       content: parsedContent,
-      target: `components/ai-elements/${file.name}`,
     };
   })
 );
@@ -97,25 +186,45 @@ for (const component of shadcnComponents) {
   registryDependenciesSet.add(component);
 }
 
-const registryDependencies = Array.from(registryDependenciesSet);
+// Create items for the root registry response
+const items: RegistryItemSchema[] = tsxFiles.map((file) => {
+  const componentName = file.name.replace('.tsx', '');
+  const fileContent = files.find(
+    (f) => f.path === `registry/default/ai-elements/${file.name}`
+  );
 
-const response = {
+  const item: RegistryItemSchema = {
+    name: componentName,
+    type: 'registry:component',
+    title: componentName
+      .split('-')
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' '),
+    description: `AI-powered ${componentName.replace('-', ' ')} component.`,
+    files: [
+      {
+        path: `registry/default/ai-elements/${file.name}`,
+        type: 'registry:component',
+        content: fileContent?.content || '',
+      },
+    ],
+  };
+
+  return item;
+});
+
+const response: RegistrySchema = {
   $schema: 'https://ui.shadcn.com/schema/registry.json',
-  homepage: new URL('/elements', registryUrl).toString(),
   name: 'ai-elements',
-  type: 'registry:ui',
-  author: 'Hayden Bleasel <hayden.bleasel@vercel.com>',
-  dependencies,
-  devDependencies,
-  registryDependencies,
-  files,
+  homepage: new URL('/elements', registryUrl).toString(),
+  items,
 };
 
 type RequestProps = {
   params: Promise<{ component: string }>;
 };
 
-export const GET = async (request: NextRequest, { params }: RequestProps) => {
+export const GET = async (_request: NextRequest, { params }: RequestProps) => {
   const { component } = await params;
   const parsedComponent = component.replace('.json', '');
 
@@ -136,14 +245,24 @@ export const GET = async (request: NextRequest, { params }: RequestProps) => {
 
   // Only process the parsedComponent, not an array
 
-  // Find the file for the requested component
-  const file = response.files.find(
-    (f) => f.path.replace('.tsx', '') === parsedComponent
+  // Find the item for the requested component
+  const item = response.items.find((i) => i.name === parsedComponent);
+
+  if (!item) {
+    return NextResponse.json(
+      { error: `Component "${parsedComponent}" not found.` },
+      { status: 404 }
+    );
+  }
+
+  // Find the corresponding file content
+  const file = files.find(
+    (f) => f.path === `registry/default/ai-elements/${parsedComponent}.tsx`
   );
 
   if (!file) {
     return NextResponse.json(
-      { error: `Component "${parsedComponent}" not found.` },
+      { error: `Component file "${parsedComponent}" not found.` },
       { status: 404 }
     );
   }
@@ -206,13 +325,23 @@ export const GET = async (request: NextRequest, { params }: RequestProps) => {
     );
   }
 
-  const newResponse = {
-    ...response,
-    files: [file],
+  const itemResponse = {
+    $schema: 'https://ui.shadcn.com/schema/registry-item.json',
+    name: item.name,
+    type: item.type,
+    title: item.title,
+    description: item.description,
+    files: [
+      {
+        path: file.path,
+        type: file.type,
+        content: file.content,
+      },
+    ],
     dependencies: Array.from(usedDependencies),
     devDependencies: Array.from(usedDevDependencies),
     registryDependencies: Array.from(usedRegistryDependencies),
   };
 
-  return NextResponse.json(newResponse);
+  return NextResponse.json(itemResponse);
 };
