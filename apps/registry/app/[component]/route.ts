@@ -106,6 +106,15 @@ const packageDir = join(process.cwd(), '..', '..', 'packages', 'elements');
 const packagePath = join(packageDir, 'package.json');
 const packageJson = JSON.parse(await readFile(packagePath, 'utf-8'));
 
+const examplesDir = join(
+  process.cwd(),
+  '..',
+  '..',
+  'packages',
+  'examples',
+  'src'
+);
+
 const internalDependencies = Object.keys(packageJson.dependencies || {}).filter(
   (dep) => dep.startsWith('@repo') && dep !== '@repo/shadcn-ui'
 );
@@ -148,6 +157,11 @@ const tsxFiles = packageFiles.filter(
   (file) => file.isFile() && file.name.endsWith('.tsx')
 );
 
+const exampleFiles = readdirSync(examplesDir, { withFileTypes: true });
+const exampleTsxFiles = exampleFiles.filter(
+  (file) => file.isFile() && file.name.endsWith('.tsx')
+);
+
 const files: {
   type: string;
   path: string;
@@ -155,20 +169,36 @@ const files: {
 }[] = [];
 
 const fileContents = await Promise.all(
-  tsxFiles.map(async (file) => {
-    const filePath = join(srcDir, file.name);
+  tsxFiles.map(async (tsxFile) => {
+    const filePath = join(srcDir, tsxFile.name);
     const content = await fs.readFile(filePath, 'utf-8');
     const parsedContent = content.replace(/@repo\/shadcn-ui\//g, '@/');
 
     return {
       type: 'registry:component',
-      path: `registry/default/ai-elements/${file.name}`,
+      path: `registry/default/ai-elements/${tsxFile.name}`,
       content: parsedContent,
     };
   })
 );
 
-files.push(...fileContents);
+const exampleContents = await Promise.all(
+  exampleTsxFiles.map(async (exampleFile) => {
+    const filePath = join(examplesDir, exampleFile.name);
+    const content = await fs.readFile(filePath, 'utf-8');
+    const parsedContent = content
+      .replace(/@repo\/shadcn-ui\//g, '@/')
+      .replace(/@repo\/elements\//g, '@/components/ai-elements/');
+
+    return {
+      type: 'registry:block',
+      path: `registry/default/examples/${exampleFile.name}`,
+      content: parsedContent,
+    };
+  })
+);
+
+files.push(...fileContents, ...exampleContents);
 
 const registryDependenciesSet = new Set<string>();
 
@@ -187,8 +217,8 @@ for (const component of shadcnComponents) {
 }
 
 // Create items for the root registry response
-const items: RegistryItemSchema[] = tsxFiles.map((file) => {
-  const componentName = file.name.replace('.tsx', '');
+const componentItems: RegistryItemSchema[] = tsxFiles.map((componentFile) => {
+  const componentName = componentFile.name.replace('.tsx', '');
 
   const item: RegistryItemSchema = {
     name: componentName,
@@ -200,7 +230,7 @@ const items: RegistryItemSchema[] = tsxFiles.map((file) => {
     description: `AI-powered ${componentName.replace('-', ' ')} component.`,
     files: [
       {
-        path: `registry/default/ai-elements/${file.name}`,
+        path: `registry/default/ai-elements/${componentFile.name}`,
         type: 'registry:component',
       },
     ],
@@ -208,6 +238,32 @@ const items: RegistryItemSchema[] = tsxFiles.map((file) => {
 
   return item;
 });
+
+const exampleItems: RegistryItemSchema[] = exampleTsxFiles.map(
+  (exampleFile) => {
+    const exampleName = exampleFile.name.replace('.tsx', '');
+
+    const item: RegistryItemSchema = {
+      name: `example-${exampleName}`,
+      type: 'registry:block',
+      title: `${exampleName
+        .split('-')
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ')} Example`,
+      description: `Example implementation of ${exampleName.replace('-', ' ')}.`,
+      files: [
+        {
+          path: `registry/default/examples/${exampleFile.name}`,
+          type: 'registry:block',
+        },
+      ],
+    };
+
+    return item;
+  }
+);
+
+const items: RegistryItemSchema[] = [...componentItems, ...exampleItems];
 
 const response: RegistrySchema = {
   $schema: 'https://ui.shadcn.com/schema/registry.json',
@@ -241,7 +297,7 @@ export const GET = async (_request: NextRequest, { params }: RequestProps) => {
 
   // Only process the parsedComponent, not an array
 
-  // Find the item for the requested component
+  // Find the item for the requested component or example
   const item = response.items.find((i) => i.name === parsedComponent);
 
   if (!item) {
@@ -252,13 +308,24 @@ export const GET = async (_request: NextRequest, { params }: RequestProps) => {
   }
 
   // Find the corresponding file content
-  const file = files.find(
-    (f) => f.path === `registry/default/ai-elements/${parsedComponent}.tsx`
-  );
+  let file: { type: string; path: string; content: string } | undefined;
+  if (item.type === 'registry:component') {
+    file = files.find(
+      (f) => f.path === `registry/default/ai-elements/${parsedComponent}.tsx`
+    );
+  } else if (
+    item.type === 'registry:block' &&
+    parsedComponent.startsWith('example-')
+  ) {
+    const exampleFileName = `${parsedComponent.replace('example-', '')}.tsx`;
+    file = files.find(
+      (f) => f.path === `registry/default/examples/${exampleFileName}`
+    );
+  }
 
   if (!file) {
     return NextResponse.json(
-      { error: `Component file "${parsedComponent}" not found.` },
+      { error: `File for "${parsedComponent}" not found.` },
       { status: 404 }
     );
   }
