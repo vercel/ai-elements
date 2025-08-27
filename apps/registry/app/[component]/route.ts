@@ -189,9 +189,6 @@ for (const component of shadcnComponents) {
 // Create items for the root registry response
 const items: RegistryItemSchema[] = tsxFiles.map((file) => {
   const componentName = file.name.replace('.tsx', '');
-  const fileContent = files.find(
-    (f) => f.path === `registry/default/ai-elements/${file.name}`
-  );
 
   const item: RegistryItemSchema = {
     name: componentName,
@@ -205,7 +202,6 @@ const items: RegistryItemSchema[] = tsxFiles.map((file) => {
       {
         path: `registry/default/ai-elements/${file.name}`,
         type: 'registry:component',
-        content: fileContent?.content || '',
       },
     ],
   };
