@@ -1,19 +1,6 @@
 #!/usr/bin/env node
 
-const { execSync } = require('node:child_process');
-const fs = require('node:fs');
-const path = require('node:path');
-
-console.log('Adding AI Elements...');
-
-// Check for components.json in the current working directory
-const componentsJsonPath = path.join(process.cwd(), 'components.json');
-if (!fs.existsSync(componentsJsonPath)) {
-  console.error(
-    'components.json not found in the current directory. Run `npx shadcn@latest init` to create one.'
-  );
-  process.exit(1);
-}
+const { spawnSync } = require('node:child_process');
 
 // Function to detect the command used to invoke this script
 function getCommandPrefix() {
@@ -48,8 +35,12 @@ if (args.length >= 2 && args[0] === 'add') {
     `/${component}.json`,
     'https://registry.ai-sdk.dev'
   ).toString();
-  console.log(`Adding component: ${component}`);
-  execSync(`${commandPrefix} shadcn@latest add ${targetUrl}`);
+
+  const [command, ...commandArgs] = commandPrefix.split(' ');
+  spawnSync(command, [...commandArgs, 'shadcn@latest', 'add', targetUrl], {
+    stdio: 'inherit',
+    shell: false,
+  });
 } else {
   const targetUrl = new URL(
     '/all.json',
@@ -64,12 +55,20 @@ if (args.length >= 2 && args[0] === 'add') {
       );
 
       for (const item of components) {
-        console.log(`Adding component: ${item.name}`);
         const componentUrl = new URL(
           `/${item.name}.json`,
           'https://registry.ai-sdk.dev'
         ).toString();
-        execSync(`${commandPrefix} shadcn@latest add ${componentUrl}`);
+
+        const [command, ...commandArgs] = commandPrefix.split(' ');
+        spawnSync(
+          command,
+          [...commandArgs, 'shadcn@latest', 'add', componentUrl],
+          {
+            stdio: 'inherit',
+            shell: false,
+          }
+        );
       }
     });
 }
