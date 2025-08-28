@@ -37,10 +37,14 @@ if (args.length >= 2 && args[0] === 'add') {
   ).toString();
 
   const [command, ...commandArgs] = commandPrefix.split(' ');
-  const result = spawnSync(command, [...commandArgs, 'shadcn@latest', 'add', targetUrl], {
-    stdio: 'inherit',
-    shell: false,
-  });
+  const result = spawnSync(
+    command,
+    [...commandArgs, 'shadcn@latest', 'add', targetUrl],
+    {
+      stdio: 'inherit',
+      shell: false,
+    }
+  );
 
   if (result.error) {
     console.error('Failed to execute command:', result.error.message);
@@ -62,29 +66,29 @@ if (args.length >= 2 && args[0] === 'add') {
         (item) => item.type === 'registry:component'
       );
 
-      for (const item of components) {
-        const componentUrl = new URL(
+      const componentUrls = components.map((item) =>
+        new URL(
           `/${item.name}.json`,
           'https://registry.ai-sdk.dev'
-        ).toString();
+        ).toString()
+      );
 
-        const [command, ...commandArgs] = commandPrefix.split(' ');
-        const result = spawnSync(
-          command,
-          [...commandArgs, 'shadcn@latest', 'add', componentUrl],
-          {
-            stdio: 'inherit',
-            shell: false,
-          }
-        );
-
-        if (result.error) {
-          console.error('Failed to execute command:', result.error.message);
-          process.exit(1);
-        } else if (result.status !== 0) {
-          console.error(`Command failed with exit code ${result.status}`);
-          process.exit(1);
+      const [command, ...commandArgs] = commandPrefix.split(' ');
+      const result = spawnSync(
+        command,
+        [...commandArgs, 'shadcn@latest', 'add', ...componentUrls],
+        {
+          stdio: 'inherit',
+          shell: false,
         }
+      );
+
+      if (result.error) {
+        console.error('Failed to execute command:', result.error.message);
+        process.exit(1);
+      } else if (result.status !== 0) {
+        console.error(`Command failed with exit code ${result.status}`);
+        process.exit(1);
       }
     });
 }
