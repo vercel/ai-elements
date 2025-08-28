@@ -69,7 +69,7 @@ if (args.length >= 2 && args[0] === 'add') {
         ).toString();
 
         const [command, ...commandArgs] = commandPrefix.split(' ');
-        spawnSync(
+        const result = spawnSync(
           command,
           [...commandArgs, 'shadcn@latest', 'add', componentUrl],
           {
@@ -77,6 +77,14 @@ if (args.length >= 2 && args[0] === 'add') {
             shell: false,
           }
         );
+
+        if (result.error) {
+          console.error('Failed to execute command:', result.error.message);
+          process.exit(1);
+        } else if (result.status !== 0) {
+          console.error(`Command failed with exit code ${result.status}`);
+          process.exit(1);
+        }
       }
     });
 }
