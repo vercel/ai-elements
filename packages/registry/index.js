@@ -56,11 +56,20 @@ if (args.length >= 2 && args[0] === 'add') {
     'https://registry.ai-sdk.dev'
   ).toString();
 
-  const response = await fetch(targetUrl);
-  const data = await response.json();
+  fetch(targetUrl)
+    .then((response) => response.json())
+    .then((data) => {
+      const components = data.items.filter(
+        (item) => item.type === 'registry:component'
+      );
 
-  for (const item of data.items) {
-    console.log(`Adding component: ${item.name}`);
-    execSync(`${commandPrefix} shadcn@latest add ${item.name}`);
-  }
+      for (const item of components) {
+        console.log(`Adding component: ${item.name}`);
+        const componentUrl = new URL(
+          `/${item.name}.json`,
+          'https://registry.ai-sdk.dev'
+        ).toString();
+        execSync(`${commandPrefix} shadcn@latest add ${componentUrl}`);
+      }
+    });
 }
