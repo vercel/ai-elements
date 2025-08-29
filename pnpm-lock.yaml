@@ -118,6 +118,9 @@ importers:
       ai:
         specifier: 5.0.0
         version: 5.0.0(zod@4.0.17)
+      class-variance-authority:
+        specifier: ^0.7.1
+        version: 0.7.1
       lucide-react:
         specifier: ^0.515.0
         version: 0.515.0(react@19.0.0-rc-f994737d14-20240522)
