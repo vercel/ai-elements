@@ -6,6 +6,7 @@ import {
   SourcesContent,
   SourcesTrigger,
 } from '@repo/elements/sources';
+import { ChevronDownIcon, ExternalLinkIcon } from 'lucide-react';
 
 const sources = [
   { href: 'https://stripe.com/docs/api', title: 'Stripe API Documentation' },
@@ -19,10 +20,16 @@ const sources = [
 const Example = () => (
   <div style={{ height: '110px' }}>
     <Sources>
-      <SourcesTrigger count={sources.length} />
+      <SourcesTrigger count={sources.length}>
+        <p className="font-medium">Using {sources.length} citations</p>
+        <ChevronDownIcon className="size-4" />
+      </SourcesTrigger>
       <SourcesContent>
         {sources.map((source) => (
-          <Source href={source.href} key={source.href} title={source.title} />
+          <Source href={source.href} key={source.href}>
+            {source.title}
+            <ExternalLinkIcon className="size-4" />
+          </Source>
         ))}
       </SourcesContent>
     </Sources>

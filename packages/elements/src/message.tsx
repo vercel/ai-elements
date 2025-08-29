@@ -24,7 +24,7 @@ export const Message = ({ className, from, ...props }: MessageProps) => (
 );
 
 const messageContentVariants = cva(
-  'flex flex-col gap-2 overflow-hidden rounded-lg text-sm',
+  'is-user:dark flex flex-col gap-2 overflow-hidden rounded-lg text-sm',
   {
     variants: {
       variant: {
@@ -58,7 +58,7 @@ export const MessageContent = ({
     className={cn(messageContentVariants({ variant, className }))}
     {...props}
   >
-    <div className="is-user:dark">{children}</div>
+    {children}
   </div>
 );
 
@@ -73,10 +73,7 @@ export const MessageAvatar = ({
   className,
   ...props
 }: MessageAvatarProps) => (
-  <Avatar
-    className={cn('size-8 ring ring-1 ring-border', className)}
-    {...props}
-  >
+  <Avatar className={cn('size-8 ring-1 ring-border', className)} {...props}>
     <AvatarImage alt="" className="mt-0 mb-0" src={src} />
     <AvatarFallback>{name?.slice(0, 2) || 'ME'}</AvatarFallback>
   </Avatar>

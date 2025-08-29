@@ -1,0 +1,23 @@
+{
+  "name": "@repo/examples",
+  "description": "Examples for the repo.",
+  "version": "0.0.0",
+  "private": true,
+  "exports": {
+    "./*": "./src/*.tsx"
+  },
+  "dependencies": {
+    "@icons-pack/react-simple-icons": "^13.5.0",
+    "@repo/elements": "workspace:*",
+    "ai": "5.0.0",
+    "lucide-react": "^0.515.0",
+    "nanoid": "^5.1.5",
+    "react": "19.0.0-rc-f994737d14-20240522",
+    "sonner": "^2.0.5"
+  },
+  "devDependencies": {
+    "@repo/typescript-config": "workspace:*",
+    "@types/react": "18.2.69",
+    "typescript": "^5.8.3"
+  }
+}
