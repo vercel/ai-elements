@@ -36,15 +36,11 @@ if (args.length >= 2 && args[0] === 'add') {
     'https://registry.ai-sdk.dev'
   ).toString();
 
-  const [command, ...commandArgs] = commandPrefix.split(' ');
-  const result = spawnSync(
-    command,
-    [...commandArgs, 'shadcn@latest', 'add', targetUrl],
-    {
-      stdio: 'inherit',
-      shell: false,
-    }
-  );
+  const fullCommand = `${commandPrefix} shadcn@latest add ${targetUrl}`;
+  const result = spawnSync(fullCommand, {
+    stdio: 'inherit',
+    shell: true,
+  });
 
   if (result.error) {
     console.error('Failed to execute command:', result.error.message);
@@ -73,15 +69,11 @@ if (args.length >= 2 && args[0] === 'add') {
         ).toString()
       );
 
-      const [command, ...commandArgs] = commandPrefix.split(' ');
-      const result = spawnSync(
-        command,
-        [...commandArgs, 'shadcn@latest', 'add', ...componentUrls],
-        {
-          stdio: 'inherit',
-          shell: false,
-        }
-      );
+      const fullCommand = `${commandPrefix} shadcn@latest add ${componentUrls.join(' ')}`;
+      const result = spawnSync(fullCommand, {
+        stdio: 'inherit',
+        shell: true,
+      });
 
       if (result.error) {
         console.error('Failed to execute command:', result.error.message);
