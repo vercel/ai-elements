@@ -71,7 +71,7 @@ export const Reasoning = memo(
           setStartTime(Date.now());
         }
       } else if (startTime !== null) {
-        setDuration(Math.round((Date.now() - startTime) / MS_IN_S));
+        setDuration(Math.ceil((Date.now() - startTime) / MS_IN_S));
         setStartTime(null);
       }
     }, [isStreaming, startTime, setDuration]);
@@ -79,14 +79,14 @@ export const Reasoning = memo(
     // Auto-open when streaming starts, auto-close when streaming ends (once only)
     useEffect(() => {
       if (defaultOpen && !isStreaming && isOpen && !hasAutoClosedRef) {
-          // Add a small delay before closing to allow user to see the content
-          const timer = setTimeout(() => {
-            setIsOpen(false);
-            setHasAutoClosedRef(true);
-          }, AUTO_CLOSE_DELAY);
+        // Add a small delay before closing to allow user to see the content
+        const timer = setTimeout(() => {
+          setIsOpen(false);
+          setHasAutoClosedRef(true);
+        }, AUTO_CLOSE_DELAY);
 
-          return () => clearTimeout(timer);
-        }
+        return () => clearTimeout(timer);
+      }
     }, [isStreaming, isOpen, defaultOpen, setIsOpen, hasAutoClosedRef]);
 
     const handleOpenChange = (newOpen: boolean) => {
@@ -130,7 +130,9 @@ export const ReasoningTrigger = memo(
             {isStreaming || duration === 0 ? (
               <p>Thinking...</p>
             ) : (
-              <p>Thought for {duration} seconds</p>
+              <p>
+                Thought for {duration} {duration === 1 ? 'second' : 'seconds'}
+              </p>
             )}
             <ChevronDownIcon
               className={cn(
