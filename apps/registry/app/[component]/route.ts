@@ -246,6 +246,7 @@ const componentItems: RegistryItemSchema[] = tsxFiles.map((componentFile) => {
       {
         path: `registry/default/ai-elements/${componentFile.name}`,
         type: 'registry:component',
+        target: `components/ai-elements/${componentFile.name}.tsx`,
       },
     ],
   };
@@ -269,6 +270,7 @@ const exampleItems: RegistryItemSchema[] = exampleTsxFiles.map(
         {
           path: `registry/default/examples/${exampleFile.name}`,
           type: 'registry:block',
+          target: `components/ai-elements/examples/${exampleFile.name}.tsx`,
         },
       ],
     };
@@ -423,6 +425,7 @@ export const GET = async (_request: NextRequest, { params }: RequestProps) => {
         path: file.path,
         type: file.type,
         content: file.content,
+        target: `components/ai-elements/${item.name}.tsx`,
       },
     ],
     dependencies: Array.from(usedDependencies),
