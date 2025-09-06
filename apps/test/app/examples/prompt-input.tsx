@@ -1,7 +1,11 @@
 'use client';
 
+import { PromptForm, type PromptFormPayload } from '@repo/elements/prompt-form';
 import {
   PromptInput,
+  PromptInputActionMenu,
+  PromptInputActionMenuContent,
+  PromptInputActionMenuTrigger,
   PromptInputButton,
   PromptInputModelSelect,
   PromptInputModelSelectContent,
@@ -13,8 +17,14 @@ import {
   PromptInputToolbar,
   PromptInputTools,
 } from '@repo/elements/prompt-input';
-import { GlobeIcon, MicIcon, PlusIcon } from 'lucide-react';
-import { type FormEventHandler, useState } from 'react';
+import {
+  PromptAttachmentsPreview,
+  PromptAttachmentsProvider,
+  PromptInputActionAddAttachments,
+  useAttachments,
+} from '@repo/elements/prompt-input-attachments';
+import { GlobeIcon, MicIcon } from 'lucide-react';
+import { useState } from 'react';
 
 const models = [
   { id: 'gpt-4', name: 'GPT-4' },
@@ -35,13 +45,14 @@ const Example = () => {
     'submitted' | 'streaming' | 'ready' | 'error'
   >('ready');
 
-  const handleSubmit: FormEventHandler<HTMLFormElement> = (event) => {
-    event.preventDefault();
+  const { attachments } = useAttachments();
+  const disabled = !(text || attachments.length > 0);
 
-    if (!text) {
+  const handleSubmit = ({ prompt }: PromptFormPayload) => {
+    // Allow submission only if there is text or attachments
+    if (!(prompt || attachments.length > 0)) {
       return;
     }
-
     setStatus('submitted');
 
     setTimeout(() => {
@@ -54,39 +65,54 @@ const Example = () => {
   };
 
   return (
-    <PromptInput onSubmit={handleSubmit}>
-      <PromptInputTextarea
-        onChange={(e) => setText(e.target.value)}
-        value={text}
-      />
-      <PromptInputToolbar>
-        <PromptInputTools>
-          <PromptInputButton>
-            <PlusIcon size={16} />
-          </PromptInputButton>
-          <PromptInputButton>
-            <MicIcon size={16} />
-          </PromptInputButton>
-          <PromptInputButton>
-            <GlobeIcon size={16} />
-            <span>Search</span>
-          </PromptInputButton>
-          <PromptInputModelSelect onValueChange={setModel} value={model}>
-            <PromptInputModelSelectTrigger>
-              <PromptInputModelSelectValue />
-            </PromptInputModelSelectTrigger>
-            <PromptInputModelSelectContent>
-              {models.map((model) => (
-                <PromptInputModelSelectItem key={model.id} value={model.id}>
-                  {model.name}
-                </PromptInputModelSelectItem>
-              ))}
-            </PromptInputModelSelectContent>
-          </PromptInputModelSelect>
-        </PromptInputTools>
-        <PromptInputSubmit disabled={!text} status={status} />
-      </PromptInputToolbar>
-    </PromptInput>
+    <PromptForm onSubmit={handleSubmit} resetOnSubmit>
+      {({ formProps }) => (
+        <PromptInput {...formProps}>
+          <PromptAttachmentsProvider globalDrop multiple name="attachments">
+            <div className="flex flex-col">
+              <PromptAttachmentsPreview />
+              <PromptInputTextarea
+                onChange={(e) => setText(e.target.value)}
+                value={text}
+              />
+            </div>
+            <PromptInputToolbar>
+              <PromptInputTools>
+                <PromptInputActionMenu>
+                  <PromptInputActionMenuTrigger />
+                  <PromptInputActionMenuContent>
+                    <PromptInputActionAddAttachments />
+                  </PromptInputActionMenuContent>
+                </PromptInputActionMenu>
+                <PromptInputButton>
+                  <MicIcon size={16} />
+                </PromptInputButton>
+                <PromptInputButton>
+                  <GlobeIcon size={16} />
+                  <span>Search</span>
+                </PromptInputButton>
+                <PromptInputModelSelect onValueChange={setModel} value={model}>
+                  <PromptInputModelSelectTrigger>
+                    <PromptInputModelSelectValue />
+                  </PromptInputModelSelectTrigger>
+                  <PromptInputModelSelectContent>
+                    {models.map((modelOption) => (
+                      <PromptInputModelSelectItem
+                        key={modelOption.id}
+                        value={modelOption.id}
+                      >
+                        {modelOption.name}
+                      </PromptInputModelSelectItem>
+                    ))}
+                  </PromptInputModelSelectContent>
+                </PromptInputModelSelect>
+              </PromptInputTools>
+              <PromptInputSubmit disabled={disabled} status={status} />
+            </PromptInputToolbar>
+          </PromptAttachmentsProvider>
+        </PromptInput>
+      )}
+    </PromptForm>
   );
 };
 

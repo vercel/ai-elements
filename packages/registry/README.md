@@ -88,7 +88,9 @@ AI Elements includes the following components:
 | `inline-citation` | Inline source citations |
 | `loader` | Loading states for AI operations |
 | `message` | Individual chat messages with avatars |
+| `prompt-form` | Controlled form wrapper for prompt submission |
 | `prompt-input` | Advanced input component with model selection |
+| `prompt-input-attachments` | Opt-in file/image attachments for prompt input |
 | `reasoning` | Display AI reasoning and thought processes |
 | `response` | Formatted AI response display |
 | `source` | Source attribution component |
