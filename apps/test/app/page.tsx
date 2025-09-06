@@ -10,6 +10,7 @@ import CodeBlock from '@/app/examples/code-block';
 import Conversation from '@/app/examples/conversation';
 import Image from '@/app/examples/image';
 import InlineCitation from '@/app/examples/inline-citation';
+import Context from '@/app/examples/context';
 import Loader from '@/app/examples/loader';
 import Message from '@/app/examples/message';
 import PromptInput from '@/app/examples/prompt-input';
@@ -28,6 +29,7 @@ const components = [
   { name: 'Conversation', Component: Conversation },
   { name: 'Image', Component: Image },
   { name: 'InlineCitation', Component: InlineCitation },
+  { name: 'Context', Component: Context },
   { name: 'Loader', Component: Loader },
   { name: 'Message', Component: Message },
   { name: 'PromptInput', Component: PromptInput },

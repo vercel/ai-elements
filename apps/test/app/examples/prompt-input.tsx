@@ -1,5 +1,6 @@
 'use client';
 
+import { Context } from '@repo/elements/context';
 import {
   PromptInput,
   PromptInputButton,
@@ -27,6 +28,11 @@ const models = [
   { id: 'cohere-command', name: 'Command' },
   { id: 'mistral-7b', name: 'Mistral 7B' },
 ];
+
+const context = {
+  maxTokens: 500_000,
+  usedTokens: 82_100,
+};
 
 const Example = () => {
   const [text, setText] = useState<string>('');
@@ -83,6 +89,10 @@ const Example = () => {
               ))}
             </PromptInputModelSelectContent>
           </PromptInputModelSelect>
+          <Context
+            maxTokens={context.maxTokens}
+            usedTokens={context.usedTokens}
+          />
         </PromptInputTools>
         <PromptInputSubmit disabled={!text} status={status} />
       </PromptInputToolbar>
