@@ -24,6 +24,8 @@ type AttachmentItem = {
 
 type AttachmentsCtx = {
   items: AttachmentItem[];
+  // Alias for DX: same as `items`.
+  attachments: AttachmentItem[];
   files: File[];
   addFiles: (files: File[] | FileList) => void;
   remove: (id: string) => void;
@@ -38,10 +40,11 @@ export function usePromptAttachments() {
   return useContext(AttachmentsContext);
 }
 
-export function usePromptAttachmentsInfo() {
+// Small DX helper for read-only consumption in apps
+export function useAttachments() {
   const ctx = usePromptAttachments();
-  const items = ctx?.items ?? [];
   return useMemo(() => {
+    const items = ctx?.attachments ?? [];
     const hasAttachments = items.length > 0;
     let hasImages = false;
     let hasPDF = false;
@@ -59,8 +62,15 @@ export function usePromptAttachmentsInfo() {
         hasOther = true;
       }
     }
-    return { hasAttachments, hasImages, hasPDF, hasOther };
-  }, [items]);
+    return {
+      items,
+      attachments: items,
+      hasAttachments,
+      hasImages,
+      hasPDF,
+      hasOther,
+    };
+  }, [ctx]);
 }
 
 export type PromptAttachmentsProviderProps = {
@@ -293,6 +303,7 @@ export function PromptAttachmentsProvider({
   const ctx = useMemo<AttachmentsCtx>(
     () => ({
       items,
+      attachments: items,
       files: items.map((i) => i.file),
       addFiles,
       remove,

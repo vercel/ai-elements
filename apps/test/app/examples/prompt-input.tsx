@@ -5,7 +5,6 @@ import {
   PromptInput,
   PromptInputActionMenu,
   PromptInputActionMenuContent,
-  PromptInputActionMenuItem,
   PromptInputActionMenuTrigger,
   PromptInputButton,
   PromptInputModelSelect,
@@ -22,7 +21,7 @@ import {
   PromptAttachmentsPreview,
   PromptAttachmentsProvider,
   PromptInputActionAddAttachments,
-  usePromptAttachmentsInfo,
+  useAttachments,
 } from '@repo/elements/prompt-input-attachments';
 import { GlobeIcon, MicIcon } from 'lucide-react';
 import { useState } from 'react';
@@ -46,16 +45,23 @@ const Example = () => {
     'submitted' | 'streaming' | 'ready' | 'error'
   >('ready');
 
-  const { hasAttachments } = usePromptAttachmentsInfo();
-  const disabled = !(text || hasAttachments);
+  const { attachments } = useAttachments();
+  const disabled = !(text || attachments.length > 0);
 
-  const handleSubmit = async (_payload: PromptFormPayload) => {
+  const handleSubmit = ({ prompt }: PromptFormPayload) => {
+    // Allow submission only if there is text or attachments
+    if (!(prompt || attachments.length > 0)) {
+      return;
+    }
     setStatus('submitted');
-    setText('');
-    await new Promise((r) => setTimeout(r, 200));
-    setStatus('streaming');
-    await new Promise((r) => setTimeout(r, 1800));
-    setStatus('ready');
+
+    setTimeout(() => {
+      setStatus('streaming');
+    }, 200);
+
+    setTimeout(() => {
+      setStatus('ready');
+    }, 2000);
   };
 
   return (
@@ -90,12 +96,12 @@ const Example = () => {
                     <PromptInputModelSelectValue />
                   </PromptInputModelSelectTrigger>
                   <PromptInputModelSelectContent>
-                    {models.map((model) => (
+                    {models.map((modelOption) => (
                       <PromptInputModelSelectItem
-                        key={model.id}
-                        value={model.id}
+                        key={modelOption.id}
+                        value={modelOption.id}
                       >
-                        {model.name}
+                        {modelOption.name}
                       </PromptInputModelSelectItem>
                     ))}
                   </PromptInputModelSelectContent>

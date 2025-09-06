@@ -6,7 +6,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { usePromptAttachments } from './prompt-input-attachments';
 
 export type PromptFormPayload = {
-  message: string;
+  prompt: string;
   files: File[];
 };
 
@@ -20,7 +20,8 @@ export type PromptFormProps = Omit<
     payload: PromptFormPayload,
     event: FormEvent<HTMLFormElement>
   ) => void | Promise<void>;
-  nameMessage?: string;
+  namePrompt?: string;
+  nameAttachments?: string;
   resetOnSubmit?: boolean;
   children: (render: {
     formProps: { onSubmit: (e: FormEvent<HTMLFormElement>) => void };
@@ -30,7 +31,8 @@ export type PromptFormProps = Omit<
 
 export function PromptForm({
   onSubmit,
-  nameMessage = 'message',
+  namePrompt = 'prompt',
+  nameAttachments = 'attachments',
   resetOnSubmit = false,
   children,
   className,
@@ -44,18 +46,18 @@ export function PromptForm({
       e.preventDefault();
       const form = e.currentTarget;
       const fd = new FormData(form);
-      const message = String(fd.get(nameMessage) ?? '');
+      const prompt = String(fd.get(namePrompt) ?? '');
       // Prefer context files when provider is present; otherwise fall back to named field
       const filesFromCtx = attachments?.files ?? [];
       const filesFromForm = fd
-        .getAll('attachments')
+        .getAll(nameAttachments)
         .filter((v): v is File => v instanceof File);
       const files =
         filesFromCtx.length > 0 ? filesFromCtx : (filesFromForm as File[]);
 
       setStatus('submitting');
       try {
-        await onSubmit({ message, files }, e);
+        await onSubmit({ prompt, files }, e);
         if (resetOnSubmit) {
           attachments?.clear?.();
           // Reset uncontrolled inputs in the form
@@ -67,7 +69,14 @@ export function PromptForm({
         throw err;
       }
     },
-    [attachments?.files, onSubmit, nameMessage, resetOnSubmit, attachments]
+    [
+      attachments?.files,
+      namePrompt,
+      nameAttachments,
+      onSubmit,
+      resetOnSubmit,
+      attachments?.clear,
+    ]
   );
 
   const render = useMemo(
