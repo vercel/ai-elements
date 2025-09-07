@@ -74,7 +74,7 @@ const ContextIcon = ({ percent }: ContextIconProps) => {
       viewBox={`0 0 ${ICON_VIEWBOX} ${ICON_VIEWBOX}`}
       width="20"
     >
-      <title>Context availability</title>
+      <title className="sr-only">Context availability Icon</title>
       <circle
         cx={ICON_CENTER}
         cy={ICON_CENTER}
