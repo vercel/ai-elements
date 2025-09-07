@@ -126,7 +126,8 @@ export const Context = ({
         <button
           className={cn(
             'inline-flex select-none items-center gap-2 rounded-md px-2.5 py-1 text-sm',
-            'bg-background text-foreground'
+            'bg-background text-foreground',
+            className
           )}
           type="button"
           {...props}
