@@ -7,97 +7,7 @@ import { track } from "@vercel/analytics/server";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import { Project } from "ts-morph";
-
-type RegistryItemSchema = {
-  name: string;
-  type:
-    | "registry:lib"
-    | "registry:block"
-    | "registry:component"
-    | "registry:ui"
-    | "registry:hook"
-    | "registry:theme"
-    | "registry:page"
-    | "registry:file"
-    | "registry:style"
-    | "registry:item";
-  description?: string;
-  title?: string;
-  author?: string;
-  dependencies?: string[];
-  devDependencies?: string[];
-  registryDependencies?: string[];
-  files?: {
-    path?: string;
-    content?: string;
-    type?:
-      | "registry:lib"
-      | "registry:block"
-      | "registry:component"
-      | "registry:ui"
-      | "registry:hook"
-      | "registry:theme"
-      | "registry:page"
-      | "registry:file"
-      | "registry:style"
-      | "registry:item";
-    target?: string;
-    [k: string]: unknown;
-  }[];
-  tailwind?: {
-    config?: {
-      content?: string[];
-      theme?: {
-        [k: string]: unknown;
-      };
-      plugins?: string[];
-      [k: string]: unknown;
-    };
-    [k: string]: unknown;
-  };
-  cssVars?: {
-    theme?: {
-      [k: string]: string;
-    };
-    light?: {
-      [k: string]: string;
-    };
-    dark?: {
-      [k: string]: string;
-    };
-    [k: string]: unknown;
-  };
-  css?: {
-    [k: string]:
-      | string
-      | {
-          [k: string]:
-            | string
-            | {
-                /**
-                 * CSS property value for nested rule
-                 */
-                [k: string]: string;
-              };
-        };
-  };
-  envVars?: {
-    [k: string]: string;
-  };
-  meta?: {
-    [k: string]: unknown;
-  };
-  docs?: string;
-  categories?: string[];
-  extends?: string;
-};
-
-type RegistrySchema = {
-  $schema: "https://ui.shadcn.com/schema/registry.json";
-  name: string;
-  homepage: string;
-  items: RegistryItemSchema[];
-};
+import { RegistryItem, Registry } from "shadcn/schema";
 
 const protocol = process.env.NODE_ENV === "development" ? "http" : "https";
 const registryUrl = `${protocol}://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`;
@@ -231,10 +141,10 @@ for (const component of aiElementComponents) {
 }
 
 // Create items for the root registry response
-const componentItems: RegistryItemSchema[] = tsxFiles.map((componentFile) => {
+const componentItems: RegistryItem[] = tsxFiles.map((componentFile) => {
   const componentName = componentFile.name.replace(".tsx", "");
 
-  const item: RegistryItemSchema = {
+  const item: RegistryItem = {
     name: componentName,
     type: "registry:component",
     title: componentName
@@ -254,11 +164,11 @@ const componentItems: RegistryItemSchema[] = tsxFiles.map((componentFile) => {
   return item;
 });
 
-const exampleItems: RegistryItemSchema[] = exampleTsxFiles.map(
+const exampleItems: RegistryItem[] = exampleTsxFiles.map(
   (exampleFile) => {
     const exampleName = exampleFile.name.replace(".tsx", "");
 
-    const item: RegistryItemSchema = {
+    const item: RegistryItem = {
       name: `example-${exampleName}`,
       type: "registry:block",
       title: `${exampleName
@@ -279,10 +189,9 @@ const exampleItems: RegistryItemSchema[] = exampleTsxFiles.map(
   }
 );
 
-const items: RegistryItemSchema[] = [...componentItems, ...exampleItems];
+const items: RegistryItem[] = [...componentItems, ...exampleItems];
 
-const response: RegistrySchema = {
-  $schema: "https://ui.shadcn.com/schema/registry.json",
+const response: Registry = {
   name: "ai-elements",
   homepage: new URL("/elements", registryUrl).toString(),
   items,
@@ -296,7 +205,7 @@ export const GET = async (_request: NextRequest, { params }: RequestProps) => {
   const { component } = await params;
   const parsedComponent = component.replace(".json", "");
 
-  if (parsedComponent === "all" || parsedComponent === "registry") {
+  if (parsedComponent === "registry") {
     try {
       track("registry:all");
     } catch (error) {
@@ -414,7 +323,7 @@ export const GET = async (_request: NextRequest, { params }: RequestProps) => {
     );
   }
 
-  const itemResponse = {
+  const itemResponse: RegistryItem = {
     $schema: "https://ui.shadcn.com/schema/registry-item.json",
     name: item.name,
     type: item.type,
@@ -423,7 +332,7 @@ export const GET = async (_request: NextRequest, { params }: RequestProps) => {
     files: [
       {
         path: file.path,
-        type: file.type,
+        type: file.type as RegistryItem["type"],
         content: file.content,
         target: `components/ai-elements/${item.name}.tsx`,
       },

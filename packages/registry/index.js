@@ -51,7 +51,7 @@ if (args.length >= 2 && args[0] === "add") {
   }
 } else {
   const targetUrl = new URL(
-    "/all.json",
+    "/registry.json",
     "https://registry.ai-sdk.dev"
   ).toString();
 

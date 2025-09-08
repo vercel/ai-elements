@@ -11,6 +11,7 @@
     "next": "15.5.2",
     "react": "19.1.1",
     "react-dom": "19.1.1",
+    "shadcn": "^3.2.1",
     "ts-morph": "^27.0.0"
   },
   "devDependencies": {
