@@ -3,9 +3,11 @@
 import {
   Conversation,
   ConversationContent,
+  ConversationEmptyState,
   ConversationScrollButton,
 } from "@repo/elements/conversation";
 import { Message, MessageAvatar, MessageContent } from "@repo/elements/message";
+import { MessageSquareIcon } from "lucide-react";
 import { nanoid } from "nanoid";
 import { useEffect, useState } from "react";
 
@@ -170,12 +172,20 @@ const Example = () => {
   return (
     <Conversation className="relative size-full" style={{ height: "498px" }}>
       <ConversationContent>
-        {visibleMessages.map(({ key, value, name, avatar }, index) => (
-          <Message from={index % 2 === 0 ? "user" : "assistant"} key={key}>
-            <MessageContent>{value}</MessageContent>
-            <MessageAvatar name={name} src={avatar} />
-          </Message>
-        ))}
+        {visibleMessages.length === 0 ? (
+          <ConversationEmptyState
+            icon={<MessageSquareIcon className="size-6" />}
+            title="Start a conversation"
+            description="Messages will appear here as the conversation progresses."
+          />
+        ) : (
+          visibleMessages.map(({ key, value, name, avatar }, index) => (
+            <Message from={index % 2 === 0 ? 'user' : 'assistant'} key={key}>
+              <MessageContent>{value}</MessageContent>
+              <MessageAvatar name={name} src={avatar} />
+            </Message>
+          ))
+        )}
       </ConversationContent>
       <ConversationScrollButton />
     </Conversation>
