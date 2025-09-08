@@ -15,14 +15,14 @@ const Example = () => {
   const sampleQuery = "How can I implement authentication in Next.js?";
 
   return (
-    <OpenIn>
+    <OpenIn query={sampleQuery}>
       <OpenInTrigger />
       <OpenInContent>
-        <OpenInChatGPT query={sampleQuery} />
-        <OpenInClaude query={sampleQuery} />
-        <OpenInT3 query={sampleQuery} />
-        <OpenInScira query={sampleQuery} />
-        <OpenInv0 query={sampleQuery} />
+        <OpenInChatGPT />
+        <OpenInClaude />
+        <OpenInT3 />
+        <OpenInScira />
+        <OpenInv0 />
       </OpenInContent>
     </OpenIn>
   );

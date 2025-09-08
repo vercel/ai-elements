@@ -12,7 +12,6 @@ import {
   BrainIcon,
   ChevronDownIcon,
   DotIcon,
-  GlobeIcon,
   type LucideIcon,
 } from "lucide-react";
 import type { ComponentProps } from "react";
