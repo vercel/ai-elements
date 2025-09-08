@@ -1,6 +1,5 @@
 "use client";
 
-import { Context } from "@repo/elements/context";
 import {
   PromptInput,
   PromptInputActionAddAttachments,
@@ -36,11 +35,6 @@ const models = [
   { id: "cohere-command", name: "Command" },
   { id: "mistral-7b", name: "Mistral 7B" },
 ];
-
-const context = {
-  maxTokens: 500_000,
-  usedTokens: 82_100,
-};
 
 const SUBMITTING_TIMEOUT = 200;
 const STREAMING_TIMEOUT = 2000;
@@ -114,10 +108,6 @@ const Example = () => {
               ))}
             </PromptInputModelSelectContent>
           </PromptInputModelSelect>
-          <Context
-            maxTokens={context.maxTokens}
-            usedTokens={context.usedTokens}
-          />
         </PromptInputTools>
         <PromptInputSubmit status={status} />
       </PromptInputToolbar>
