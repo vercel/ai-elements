@@ -106,12 +106,12 @@ export function PromptInputAttachment({
       <Button
         aria-label="Remove attachment"
         size="icon"
-        className="size-5 rounded-full absolute -right-1.5 -top-1.5 opacity-0 group-hover:opacity-100"
+        className="w-6 h-6 rounded-full absolute -right-1.5 -top-1.5 opacity-0 group-hover:opacity-100"
         variant="outline"
         onClick={() => attachments.remove(data.id)}
         type="button"
       >
-        <XIcon className="size-3" />
+        <XIcon className="w-3 h-3" />
       </Button>
     </div>
   );
