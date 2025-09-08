@@ -2,6 +2,12 @@
 
 import { Button } from '@repo/shadcn-ui/components/ui/button';
 import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@repo/shadcn-ui/components/ui/dropdown-menu';
+import {
   Select,
   SelectContent,
   SelectItem,
@@ -11,7 +17,14 @@ import {
 import { Textarea } from '@repo/shadcn-ui/components/ui/textarea';
 import { cn } from '@repo/shadcn-ui/lib/utils';
 import type { ChatStatus } from 'ai';
-import { Loader2Icon, SendIcon, SquareIcon, XIcon } from 'lucide-react';
+import {
+  Loader2Icon,
+  PlusIcon,
+  SendIcon,
+  SquareIcon,
+  XIcon,
+} from 'lucide-react';
+import type React from 'react';
 import type {
   ComponentProps,
   HTMLAttributes,
@@ -138,6 +151,49 @@ export const PromptInputButton = ({
     />
   );
 };
+
+export type PromptInputActionMenuProps = ComponentProps<typeof DropdownMenu>;
+export const PromptInputActionMenu = (props: PromptInputActionMenuProps) => (
+  <DropdownMenu {...props} />
+);
+
+export type PromptInputActionMenuTriggerProps = ComponentProps<
+  typeof Button
+> & {};
+export const PromptInputActionMenuTrigger = ({
+  className,
+  children,
+  ...props
+}: PromptInputActionMenuTriggerProps) => (
+  <DropdownMenuTrigger asChild>
+    <PromptInputButton className={className} {...props}>
+      {children ?? <PlusIcon className="size-4" />}
+    </PromptInputButton>
+  </DropdownMenuTrigger>
+);
+
+export type PromptInputActionMenuContentProps = ComponentProps<
+  typeof DropdownMenuContent
+>;
+export const PromptInputActionMenuContent = ({
+  className,
+  ...props
+}: PromptInputActionMenuContentProps) => (
+  <DropdownMenuContent align="start" className={cn(className)} {...props} />
+);
+
+export type PromptInputActionMenuItemProps = ComponentProps<
+  typeof DropdownMenuItem
+>;
+export const PromptInputActionMenuItem = ({
+  className,
+  ...props
+}: PromptInputActionMenuItemProps) => (
+  <DropdownMenuItem className={cn(className)} {...props} />
+);
+
+// Note: Actions that perform side-effects (like opening a file dialog)
+// are provided in opt-in modules (e.g., prompt-input-attachments).
 
 export type PromptInputSubmitProps = ComponentProps<typeof Button> & {
   status?: ChatStatus;
