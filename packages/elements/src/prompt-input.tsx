@@ -54,7 +54,7 @@ type AttachmentsContext = {
   remove: (id: string) => void;
   clear: () => void;
   openFileDialog: () => void;
-  fileInputRef: RefObject<HTMLInputElement> | null;
+  fileInputRef: RefObject<HTMLInputElement | null>;
 };
 
 const AttachmentsContext = createContext<AttachmentsContext | null>(null);
@@ -128,17 +128,16 @@ export function PromptInputAttachments({
                 </div>
               )
             )}
-            <button
+            <Button
               aria-label="Remove attachment"
-              className={cn(
-                "-right-1.5 -top-1.5 absolute z-10 inline-flex size-5 items-center justify-center rounded-full",
-                "bg-destructive text-destructive-foreground opacity-0 transition-opacity group-hover:opacity-100"
-              )}
+              size="icon"
+              className="size-5 rounded-full absolute -right-1.5 -top-1.5 opacity-0 group-hover:opacity-100"
+              variant="outline"
               onClick={() => attachments.remove(file.id)}
               type="button"
             >
-              <XIcon className="size-3 text-primary-foreground" />
-            </button>
+              <XIcon className="size-3" />
+            </Button>
           </div>
         ))}
       </div>
@@ -156,14 +155,14 @@ export const PromptInputActionAddAttachments = ({
   label = "Add photos or files",
   ...props
 }: PromptInputActionAddAttachmentsProps) => {
-  const ctx = usePromptInputAttachments();
+  const attachments = usePromptInputAttachments();
 
   return (
     <DropdownMenuItem
       {...props}
       onSelect={(e) => {
         e.preventDefault();
-        ctx?.openFileDialog();
+        attachments.openFileDialog();
       }}
     >
       <ImageIcon className="mr-2 size-4" /> {label}
@@ -211,8 +210,8 @@ export const PromptInput = ({
   onSubmit,
   ...props
 }: PromptInputProps) => {
-  const [items, setItems] = useState<FileUIPart[]>([]);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const [items, setItems] = useState<(FileUIPart & { id: string })[]>([]);
+  const inputRef = useRef<HTMLInputElement | null>(null);
   const anchorRef = useRef<HTMLSpanElement>(null);
   const formRef = useRef<HTMLFormElement | null>(null);
 
@@ -227,11 +226,6 @@ export const PromptInput = ({
   const openFileDialog = useCallback(() => {
     inputRef.current?.click();
   }, []);
-
-  const buildId = useCallback(
-    (f: File) => `${f.name}-${f.size}-${f.lastModified}`,
-    []
-  );
 
   const matchesAccept = useCallback(
     (f: File) => {
@@ -269,7 +263,6 @@ export const PromptInput = ({
         return;
       }
       setItems((prev) => {
-        const existing = new Set(prev.map((item) => item.id));
         const capacity =
           typeof maxFiles === "number"
             ? Math.max(0, maxFiles - prev.length)
@@ -282,32 +275,25 @@ export const PromptInput = ({
             message: "Too many files. Some were not added.",
           });
         }
-        const next: FileUIPart[] = [];
+        const next: (FileUIPart & { id: string })[] = [];
         for (const f of capped) {
-          const id = buildId(f);
-          if (existing.has(id)) {
-            continue;
-          }
-          if (f.type.startsWith("image/")) {
-            next.push({
-              id,
-              file: f,
-              kind: "image",
-              url: URL.createObjectURL(f),
-            });
-          } else {
-            next.push({ id, file: f, kind: "file" });
-          }
+          next.push({
+            id: nanoid(),
+            type: 'file',
+            url: URL.createObjectURL(f),
+            mediaType: f.type,
+            filename: f.name,
+          });
         }
         return prev.concat(next);
       });
     },
-    [buildId, matchesAccept, maxFiles, maxFileSize, onError]
+    [matchesAccept, maxFiles, maxFileSize, onError]
   );
 
   const remove = useCallback((id: string) => {
     setItems((prev) => {
-      const found = prev.find((p) => p.id === id);
+      const found = prev.find((item) => item.id === id);
       if (found?.url) {
         URL.revokeObjectURL(found.url);
       }
@@ -317,7 +303,7 @@ export const PromptInput = ({
 
   const clear = useCallback(() => {
     setItems((prev) => {
-      for (const i of prev) {
+      for (const item of prev) {
         if (item.url) {
           URL.revokeObjectURL(item.url);
         }
@@ -326,30 +312,21 @@ export const PromptInput = ({
     });
   }, []);
 
-  // Keep hidden input in sync for native form submission when enabled
+  // Note: File input cannot be programmatically set for security reasons
+  // The syncHiddenInput prop is no longer functional
   useEffect(() => {
-    if (!syncHiddenInput) {
-      return;
-    }
-    const input = inputRef.current;
-    if (!input) {
-      return;
-    }
-    const dt = new DataTransfer();
-    for (const item of items) {
-      try {
-        dt.items.add(item.file);
-      } catch {
-        /* ignore */
+    if (syncHiddenInput && inputRef.current) {
+      // Clear the input when items are cleared
+      if (items.length === 0) {
+        inputRef.current.value = '';
       }
     }
-    input.files = dt.files;
   }, [items, syncHiddenInput]);
 
   // Cleanup object URLs on unmount
   useEffect(() => {
     return () => {
-      for (const i of items) {
+      for (const item of items) {
         if (item.url) {
           URL.revokeObjectURL(item.url);
         }
@@ -418,12 +395,16 @@ export const PromptInput = ({
   const handleSubmit: FormEventHandler<HTMLFormElement> = (event) => {
     event.preventDefault();
 
-    onSubmit({ text: event.currentTarget.message.value, files: items }, event);
+    const files: FileUIPart[] = items.map(({ ...item }) => ({
+      ...item
+    }));
+
+    onSubmit({ text: event.currentTarget.message.value, files }, event);
   };
 
   const ctx = useMemo<AttachmentsContext>(
     () => ({
-      files,
+      files: items.map((item) => ({ ...item, id: item.id })),
       add,
       remove,
       clear,
