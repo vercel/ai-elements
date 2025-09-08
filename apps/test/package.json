@@ -9,21 +9,21 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@icons-pack/react-simple-icons": "^13.5.0",
+    "@icons-pack/react-simple-icons": "^13.7.0",
     "@repo/elements": "workspace:*",
     "@repo/shadcn-ui": "workspace:*",
-    "ai": "5.0.0",
-    "lucide-react": "^0.515.0",
+    "ai": "5.0.37",
+    "lucide-react": "^0.542.0",
     "nanoid": "^5.1.5",
-    "next": "15.4.6",
-    "react": "19.1.0",
-    "react-dom": "19.1.0",
-    "tw-animate-css": "^1.3.6"
+    "next": "15.5.2",
+    "react": "19.1.1",
+    "react-dom": "19.1.1",
+    "tw-animate-css": "^1.3.8"
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
     "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
+    "@types/node": "^24",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "tailwindcss": "^4",
