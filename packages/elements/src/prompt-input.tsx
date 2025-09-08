@@ -9,7 +9,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@repo/shadcn-ui/components/ui/dropdown-menu";
-import { nanoid } from "nanoid";
 import {
   Select,
   SelectContent,
@@ -29,6 +28,7 @@ import {
   SquareIcon,
   XIcon,
 } from "lucide-react";
+import { nanoid } from "nanoid";
 import {
   type ChangeEventHandler,
   Children,
@@ -105,19 +105,22 @@ export function PromptInputAttachment({
       )}
       <Button
         aria-label="Remove attachment"
-        size="icon"
-        className="w-6 h-6 rounded-full absolute -right-1.5 -top-1.5 opacity-0 group-hover:opacity-100"
-        variant="outline"
+        className="-right-1.5 -top-1.5 absolute h-6 w-6 rounded-full opacity-0 group-hover:opacity-100"
         onClick={() => attachments.remove(data.id)}
+        size="icon"
         type="button"
+        variant="outline"
       >
-        <XIcon className="w-3 h-3" />
+        <XIcon className="h-3 w-3" />
       </Button>
     </div>
   );
 }
 
-export type PromptInputAttachmentsProps = Omit<HTMLAttributes<HTMLDivElement>, 'children'> & {
+export type PromptInputAttachmentsProps = Omit<
+  HTMLAttributes<HTMLDivElement>,
+  "children"
+> & {
   children: (attachment: FileUIPart & { id: string }) => React.ReactNode;
 };
 
@@ -155,9 +158,7 @@ export function PromptInputAttachments({
     >
       <div className="flex flex-wrap gap-2 p-3 pt-3" ref={contentRef}>
         {attachments.files.map((file) => (
-          <Fragment key={file.id}>
-            {children(file)}
-          </Fragment>
+          <Fragment key={file.id}>{children(file)}</Fragment>
         ))}
       </div>
     </div>
@@ -298,7 +299,7 @@ export const PromptInput = ({
         for (const file of capped) {
           next.push({
             id: nanoid(),
-            type: 'file',
+            type: "file",
             url: URL.createObjectURL(file),
             mediaType: file.type,
             filename: file.name,
@@ -337,7 +338,7 @@ export const PromptInput = ({
     if (syncHiddenInput && inputRef.current) {
       // Clear the input when items are cleared
       if (items.length === 0) {
-        inputRef.current.value = '';
+        inputRef.current.value = "";
       }
     }
   }, [items, syncHiddenInput]);
@@ -404,7 +405,7 @@ export const PromptInput = ({
     event.preventDefault();
 
     const files: FileUIPart[] = items.map(({ ...item }) => ({
-      ...item
+      ...item,
     }));
 
     onSubmit({ text: event.currentTarget.message.value, files }, event);
