@@ -1,8 +1,17 @@
 "use client";
 
+import { Context } from "@repo/elements/context";
 import {
   PromptInput,
+  PromptInputActionAddAttachments,
+  PromptInputActionMenu,
+  PromptInputActionMenuContent,
+  PromptInputActionMenuTrigger,
+  PromptInputAttachment,
+  PromptInputAttachments,
+  PromptInputBody,
   PromptInputButton,
+  type PromptInputMessage,
   PromptInputModelSelect,
   PromptInputModelSelectContent,
   PromptInputModelSelectItem,
@@ -13,8 +22,8 @@ import {
   PromptInputToolbar,
   PromptInputTools,
 } from "@repo/elements/prompt-input";
-import { GlobeIcon, MicIcon, PlusIcon } from "lucide-react";
-import { type FormEventHandler, useState } from "react";
+import { GlobeIcon, MicIcon } from "lucide-react";
+import { useState } from "react";
 
 const models = [
   { id: "gpt-4", name: "GPT-4" },
@@ -28,6 +37,14 @@ const models = [
   { id: "mistral-7b", name: "Mistral 7B" },
 ];
 
+const context = {
+  maxTokens: 500_000,
+  usedTokens: 82_100,
+};
+
+const SUBMITTING_TIMEOUT = 200;
+const STREAMING_TIMEOUT = 2000;
+
 const Example = () => {
   const [text, setText] = useState<string>("");
   const [model, setModel] = useState<string>(models[0].id);
@@ -35,35 +52,46 @@ const Example = () => {
     "submitted" | "streaming" | "ready" | "error"
   >("ready");
 
-  const handleSubmit: FormEventHandler<HTMLFormElement> = (event) => {
-    event.preventDefault();
+  const handleSubmit = (message: PromptInputMessage) => {
+    const hasText = Boolean(message.text);
+    const hasAttachments = Boolean(message.files?.length);
 
-    if (!text) {
+    if (!(hasText || hasAttachments)) {
       return;
     }
 
     setStatus("submitted");
 
+    console.log("Submitting message:", message);
+
     setTimeout(() => {
       setStatus("streaming");
-    }, 200);
+    }, SUBMITTING_TIMEOUT);
 
     setTimeout(() => {
       setStatus("ready");
-    }, 2000);
+    }, STREAMING_TIMEOUT);
   };
 
   return (
-    <PromptInput onSubmit={handleSubmit}>
-      <PromptInputTextarea
-        onChange={(e) => setText(e.target.value)}
-        value={text}
-      />
+    <PromptInput globalDrop multiple onSubmit={handleSubmit}>
+      <PromptInputBody>
+        <PromptInputAttachments>
+          {(attachment) => <PromptInputAttachment data={attachment} />}
+        </PromptInputAttachments>
+        <PromptInputTextarea
+          onChange={(e) => setText(e.target.value)}
+          value={text}
+        />
+      </PromptInputBody>
       <PromptInputToolbar>
         <PromptInputTools>
-          <PromptInputButton>
-            <PlusIcon size={16} />
-          </PromptInputButton>
+          <PromptInputActionMenu>
+            <PromptInputActionMenuTrigger />
+            <PromptInputActionMenuContent>
+              <PromptInputActionAddAttachments />
+            </PromptInputActionMenuContent>
+          </PromptInputActionMenu>
           <PromptInputButton>
             <MicIcon size={16} />
           </PromptInputButton>
@@ -76,15 +104,22 @@ const Example = () => {
               <PromptInputModelSelectValue />
             </PromptInputModelSelectTrigger>
             <PromptInputModelSelectContent>
-              {models.map((model) => (
-                <PromptInputModelSelectItem key={model.id} value={model.id}>
-                  {model.name}
+              {models.map((modelOption) => (
+                <PromptInputModelSelectItem
+                  key={modelOption.id}
+                  value={modelOption.id}
+                >
+                  {modelOption.name}
                 </PromptInputModelSelectItem>
               ))}
             </PromptInputModelSelectContent>
           </PromptInputModelSelect>
+          <Context
+            maxTokens={context.maxTokens}
+            usedTokens={context.usedTokens}
+          />
         </PromptInputTools>
-        <PromptInputSubmit disabled={!text} status={status} />
+        <PromptInputSubmit status={status} />
       </PromptInputToolbar>
     </PromptInput>
   );
