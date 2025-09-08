@@ -107,7 +107,7 @@ export const ToolInput = ({ className, input, ...props }: ToolInputProps) => (
 );
 
 export type ToolOutputProps = ComponentProps<"div"> & {
-  output: ReactNode;
+  output: ToolUIPart["output"];
   errorText: ToolUIPart["errorText"];
 };
 
@@ -119,6 +119,14 @@ export const ToolOutput = ({
 }: ToolOutputProps) => {
   if (!(output || errorText)) {
     return null;
+  }
+
+  let Output = <div>{output as ReactNode}</div>;
+
+  if (typeof output === "object") {
+    Output = <CodeBlock code={JSON.stringify(output, null, 2)} language="json" />;
+  } else if (typeof output === "string") {
+    Output = <CodeBlock code={output} language="json" />;
   }
 
   return (
@@ -135,7 +143,7 @@ export const ToolOutput = ({
         )}
       >
         {errorText && <div>{errorText}</div>}
-        {output && <div>{output}</div>}
+        {Output}
       </div>
     </div>
   );

@@ -37,10 +37,7 @@ const Example = () => (
       <ToolContent>
         <ToolInput input={toolCall.input} />
         {toolCall.state === "output-available" && (
-          <ToolOutput
-            errorText={toolCall.errorText}
-            output={<Response>{toolCall.output as string}</Response>}
-          />
+          <ToolOutput errorText={toolCall.errorText} output={toolCall.output} />
         )}
       </ToolContent>
     </Tool>
