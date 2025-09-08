@@ -6,6 +6,7 @@ import {
 } from "@repo/shadcn-ui/components/ui/card";
 import Actions from "@/app/examples/actions";
 import Branch from "@/app/examples/branch";
+import ChainOfThought from "@/app/examples/chain-of-thought";
 import CodeBlock from "@/app/examples/code-block";
 import Context from "@/app/examples/context";
 import Conversation from "@/app/examples/conversation";
@@ -26,6 +27,7 @@ import WebPreview from "@/app/examples/web-preview";
 const components = [
   { name: "Actions", Component: Actions },
   { name: "Branch", Component: Branch },
+  { name: "ChainOfThought", Component: ChainOfThought },
   { name: "CodeBlock", Component: CodeBlock },
   { name: "Context", Component: Context },
   { name: "Conversation", Component: Conversation },
