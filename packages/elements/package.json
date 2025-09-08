@@ -12,6 +12,7 @@
     "ai": "5.0.37",
     "class-variance-authority": "^0.7.1",
     "lucide-react": "^0.542.0",
+    "nanoid": "^5.1.5",
     "react": "19.1.1",
     "react-syntax-highlighter": "^15.6.6",
     "streamdown": "^1.2.0",

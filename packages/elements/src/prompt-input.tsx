@@ -1,3 +1,5 @@
+/** biome-ignore-all lint/performance/noImgElement: "AI Elements is framework agnostic" */
+
 "use client";
 
 import { Button } from "@repo/shadcn-ui/components/ui/button";
@@ -7,6 +9,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@repo/shadcn-ui/components/ui/dropdown-menu";
+import { nanoid } from "nanoid";
 import {
   Select,
   SelectContent,
@@ -35,6 +38,7 @@ import {
   type FormEventHandler,
   type HTMLAttributes,
   type KeyboardEventHandler,
+  type RefObject,
   useCallback,
   useContext,
   useEffect,
@@ -44,20 +48,16 @@ import {
   useState,
 } from "react";
 
-/* ------ Attachments ------ */
-
-type AttachmentsCtx = {
-  items: FileUIPart[];
-  attachments: FileUIPart[];
-  files: File[];
-  addFiles: (files: File[] | FileList) => void;
+type AttachmentsContext = {
+  files: (FileUIPart & { id: string })[];
+  add: (files: File[] | FileList) => void;
   remove: (id: string) => void;
   clear: () => void;
   openFileDialog: () => void;
-  fileInputRef: React.RefObject<HTMLInputElement> | null;
+  fileInputRef: RefObject<HTMLInputElement> | null;
 };
 
-const AttachmentsContext = createContext<AttachmentsCtx | null>(null);
+const AttachmentsContext = createContext<AttachmentsContext | null>(null);
 
 export const usePromptInputAttachments = () => {
   const context = useContext(AttachmentsContext);
@@ -71,41 +71,7 @@ export const usePromptInputAttachments = () => {
   return context;
 };
 
-// Small DX helper for read-only consumption in apps
-export const useAttachments = () => {
-  const ctx = usePromptInputAttachments();
-  return useMemo(() => {
-    const items = ctx?.attachments ?? [];
-    const hasAttachments = items.length > 0;
-    let hasImages = false;
-    let hasPDF = false;
-    let hasOther = false;
-    for (const i of items) {
-      const t = i.file?.type || "";
-      const name = i.file?.name?.toLowerCase() ?? "";
-      const isImage = t.startsWith("image/");
-      const isPDF = t === "application/pdf" || name.endsWith(".pdf");
-      if (isImage) {
-        hasImages = true;
-      } else if (isPDF) {
-        hasPDF = true;
-      } else {
-        hasOther = true;
-      }
-    }
-    return {
-      items,
-      attachments: items,
-      hasAttachments,
-      hasImages,
-      hasPDF,
-      hasOther,
-    };
-  }, [ctx]);
-};
-
 export type PromptInputAttachmentsProps = HTMLAttributes<HTMLDivElement> & {
-  // When true, also show non-image files as small badges
   showFiles?: boolean;
 };
 
@@ -114,10 +80,9 @@ export function PromptInputAttachments({
   showFiles = true,
   ...props
 }: PromptInputAttachmentsProps) {
-  const ctx = usePromptInputAttachments();
+  const attachments = usePromptInputAttachments();
   const [height, setHeight] = useState(0);
   const contentRef = useRef<HTMLDivElement>(null);
-  const hasAny = (ctx?.items?.length ?? 0) > 0;
 
   useLayoutEffect(() => {
     const el = contentRef.current;
@@ -139,20 +104,22 @@ export function PromptInputAttachments({
         "overflow-hidden transition-[height] duration-200 ease-out",
         className
       )}
-      style={{ height: hasAny ? height : 0 }}
+      style={{ height: attachments.files.length ? height : 0 }}
       {...props}
     >
       <div className="flex flex-wrap gap-2 p-3 pt-3" ref={contentRef}>
-        {ctx?.items?.map((att) => (
+        {attachments.files.map((file) => (
           <div
             className="group relative h-14 w-14 rounded-md border"
-            key={att.id}
+            key={file.id}
           >
-            {att.kind === "image" && att.url ? (
+            {file.mediaType.startsWith("image/") && file.url ? (
               <img
-                alt={att.file?.name || "attachment"}
+                alt={file.filename || "attachment"}
                 className="h-full w-full rounded-md object-cover"
-                src={att.url}
+                height={56}
+                src={file.url}
+                width={56}
               />
             ) : (
               showFiles && (
@@ -167,7 +134,7 @@ export function PromptInputAttachments({
                 "-right-1.5 -top-1.5 absolute z-10 inline-flex size-5 items-center justify-center rounded-full",
                 "bg-destructive text-destructive-foreground opacity-0 transition-opacity group-hover:opacity-100"
               )}
-              onClick={() => ctx?.remove(att.id)}
+              onClick={() => attachments.remove(file.id)}
               type="button"
             >
               <XIcon className="size-3 text-primary-foreground" />
@@ -280,7 +247,7 @@ export const PromptInput = ({
     [accept]
   );
 
-  const addFiles = useCallback(
+  const add = useCallback(
     (files: File[] | FileList) => {
       const incoming = Array.from(files);
       const accepted = incoming.filter((f) => matchesAccept(f));
@@ -302,7 +269,7 @@ export const PromptInput = ({
         return;
       }
       setItems((prev) => {
-        const existing = new Set(prev.map((i) => i.id));
+        const existing = new Set(prev.map((item) => item.id));
         const capacity =
           typeof maxFiles === "number"
             ? Math.max(0, maxFiles - prev.length)
@@ -351,8 +318,8 @@ export const PromptInput = ({
   const clear = useCallback(() => {
     setItems((prev) => {
       for (const i of prev) {
-        if (i.url) {
-          URL.revokeObjectURL(i.url);
+        if (item.url) {
+          URL.revokeObjectURL(item.url);
         }
       }
       return [];
@@ -369,9 +336,9 @@ export const PromptInput = ({
       return;
     }
     const dt = new DataTransfer();
-    for (const i of items) {
+    for (const item of items) {
       try {
-        dt.items.add(i.file);
+        dt.items.add(item.file);
       } catch {
         /* ignore */
       }
@@ -383,8 +350,8 @@ export const PromptInput = ({
   useEffect(() => {
     return () => {
       for (const i of items) {
-        if (i.url) {
-          URL.revokeObjectURL(i.url);
+        if (item.url) {
+          URL.revokeObjectURL(item.url);
         }
       }
     };
@@ -406,7 +373,7 @@ export const PromptInput = ({
         e.preventDefault();
       }
       if (e.dataTransfer?.files && e.dataTransfer.files.length > 0) {
-        addFiles(e.dataTransfer.files);
+        add(e.dataTransfer.files);
       }
     };
     form.addEventListener("dragover", onDragOver);
@@ -415,7 +382,7 @@ export const PromptInput = ({
       form.removeEventListener("dragover", onDragOver);
       form.removeEventListener("drop", onDrop);
     };
-  }, [addFiles]);
+  }, [add]);
 
   useEffect(() => {
     if (!globalDrop) {
@@ -431,7 +398,7 @@ export const PromptInput = ({
         e.preventDefault();
       }
       if (e.dataTransfer?.files && e.dataTransfer.files.length > 0) {
-        addFiles(e.dataTransfer.files);
+        add(e.dataTransfer.files);
       }
     };
     document.addEventListener("dragover", onDragOver);
@@ -440,11 +407,11 @@ export const PromptInput = ({
       document.removeEventListener("dragover", onDragOver);
       document.removeEventListener("drop", onDrop);
     };
-  }, [addFiles, globalDrop]);
+  }, [add, globalDrop]);
 
   const handleChange: ChangeEventHandler<HTMLInputElement> = (event) => {
     if (event.currentTarget.files) {
-      addFiles(event.currentTarget.files);
+      add(event.currentTarget.files);
     }
   };
 
@@ -454,18 +421,16 @@ export const PromptInput = ({
     onSubmit({ text: event.currentTarget.message.value, files: items }, event);
   };
 
-  const ctx = useMemo<AttachmentsCtx>(
+  const ctx = useMemo<AttachmentsContext>(
     () => ({
-      items,
-      attachments: items,
-      files: items.map((i) => i.file),
-      addFiles,
+      files,
+      add,
       remove,
       clear,
       openFileDialog,
       fileInputRef: inputRef,
     }),
-    [items, addFiles, remove, clear, openFileDialog]
+    [items, add, remove, clear, openFileDialog]
   );
 
   return (
