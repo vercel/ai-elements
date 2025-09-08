@@ -1,5 +1,3 @@
-/** biome-ignore-all lint/performance/noImgElement: "AI Elements is framework agnostic" */
-
 import {
   ChainOfThought,
   ChainOfThoughtContent,
@@ -35,13 +33,6 @@ const ChainOfThoughtExample = () => (
             "https://www.github.com",
           ].map((website) => (
             <ChainOfThoughtSearchResult key={website}>
-              <img
-                alt=""
-                className="size-4"
-                height={16}
-                src={`https://img.logo.dev/${new URL(website).hostname}?token=${process.env.NEXT_PUBLIC_LOGO_DEV_TOKEN}`}
-                width={16}
-              />
               {new URL(website).hostname}
             </ChainOfThoughtSearchResult>
           ))}
@@ -76,13 +67,6 @@ const ChainOfThoughtExample = () => (
           {["https://www.github.com", "https://www.dribbble.com"].map(
             (website) => (
               <ChainOfThoughtSearchResult key={website}>
-                <img
-                  alt=""
-                  className="size-4"
-                  height={16}
-                  src={`https://img.logo.dev/${new URL(website).hostname}?token=${process.env.NEXT_PUBLIC_LOGO_DEV_TOKEN}`}
-                  width={16}
-                />
                 {new URL(website).hostname}
               </ChainOfThoughtSearchResult>
             )

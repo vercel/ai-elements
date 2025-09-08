@@ -11,7 +11,6 @@ import {
 } from "@repo/elements/chain-of-thought";
 import { Image } from "@repo/elements/src/image";
 import { ImageIcon, SearchIcon } from "lucide-react";
-import NextImage from "next/image";
 
 const exampleImage = {
   base64:
@@ -36,13 +35,6 @@ const ChainOfThoughtExample = () => (
             "https://www.github.com",
           ].map((website) => (
             <ChainOfThoughtSearchResult key={website}>
-              <NextImage
-                alt=""
-                className="size-4"
-                height={16}
-                src={`https://img.logo.dev/${new URL(website).hostname}?token=${process.env.NEXT_PUBLIC_LOGO_DEV_TOKEN}`}
-                width={16}
-              />
               {new URL(website).hostname}
             </ChainOfThoughtSearchResult>
           ))}
@@ -77,13 +69,6 @@ const ChainOfThoughtExample = () => (
           {["https://www.github.com", "https://www.dribbble.com"].map(
             (website) => (
               <ChainOfThoughtSearchResult key={website}>
-                <NextImage
-                  alt=""
-                  className="size-4"
-                  height={16}
-                  src={`https://img.logo.dev/${new URL(website).hostname}?token=${process.env.NEXT_PUBLIC_LOGO_DEV_TOKEN}`}
-                  width={16}
-                />
                 {new URL(website).hostname}
               </ChainOfThoughtSearchResult>
             )
