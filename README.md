@@ -83,6 +83,7 @@ AI Elements includes the following components:
 | `actions`                  | Interactive action buttons for AI responses             |
 | `branch`                   | Branch visualization for conversation flows             |
 | `code-block`               | Syntax-highlighted code display with copy functionality |
+| `context`                  | Display Context consumption                             |
 | `conversation`             | Container for chat conversations                        |
 | `image`                    | AI-generated image display component                    |
 | `inline-citation`          | Inline source citations                                 |
