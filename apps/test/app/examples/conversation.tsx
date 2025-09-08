@@ -174,13 +174,13 @@ const Example = () => {
       <ConversationContent>
         {visibleMessages.length === 0 ? (
           <ConversationEmptyState
+            description="Messages will appear here as the conversation progresses."
             icon={<MessageSquareIcon className="size-6" />}
             title="Start a conversation"
-            description="Messages will appear here as the conversation progresses."
           />
         ) : (
           visibleMessages.map(({ key, value, name, avatar }, index) => (
-            <Message from={index % 2 === 0 ? 'user' : 'assistant'} key={key}>
+            <Message from={index % 2 === 0 ? "user" : "assistant"} key={key}>
               <MessageContent>{value}</MessageContent>
               <MessageAvatar name={name} src={avatar} />
             </Message>

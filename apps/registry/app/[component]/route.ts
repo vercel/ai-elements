@@ -6,8 +6,8 @@ import { join } from "node:path";
 import { track } from "@vercel/analytics/server";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
+import type { Registry, RegistryItem } from "shadcn/schema";
 import { Project } from "ts-morph";
-import { RegistryItem, Registry } from "shadcn/schema";
 
 const protocol = process.env.NODE_ENV === "development" ? "http" : "https";
 const registryUrl = `${protocol}://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`;
@@ -164,30 +164,28 @@ const componentItems: RegistryItem[] = tsxFiles.map((componentFile) => {
   return item;
 });
 
-const exampleItems: RegistryItem[] = exampleTsxFiles.map(
-  (exampleFile) => {
-    const exampleName = exampleFile.name.replace(".tsx", "");
+const exampleItems: RegistryItem[] = exampleTsxFiles.map((exampleFile) => {
+  const exampleName = exampleFile.name.replace(".tsx", "");
 
-    const item: RegistryItem = {
-      name: `example-${exampleName}`,
-      type: "registry:block",
-      title: `${exampleName
-        .split("-")
-        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-        .join(" ")} Example`,
-      description: `Example implementation of ${exampleName.replace("-", " ")}.`,
-      files: [
-        {
-          path: `registry/default/examples/${exampleFile.name}`,
-          type: "registry:block",
-          target: `components/ai-elements/examples/${exampleFile.name}.tsx`,
-        },
-      ],
-    };
+  const item: RegistryItem = {
+    name: `example-${exampleName}`,
+    type: "registry:block",
+    title: `${exampleName
+      .split("-")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ")} Example`,
+    description: `Example implementation of ${exampleName.replace("-", " ")}.`,
+    files: [
+      {
+        path: `registry/default/examples/${exampleFile.name}`,
+        type: "registry:block",
+        target: `components/ai-elements/examples/${exampleFile.name}.tsx`,
+      },
+    ],
+  };
 
-    return item;
-  }
-);
+  return item;
+});
 
 const items: RegistryItem[] = [...componentItems, ...exampleItems];
 
