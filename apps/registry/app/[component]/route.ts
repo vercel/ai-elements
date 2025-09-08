@@ -1,26 +1,26 @@
 /** biome-ignore-all lint/suspicious/noConsole: "server only" */
 
-import { promises as fs, readdirSync } from 'node:fs';
-import { readFile } from 'node:fs/promises';
-import { join } from 'node:path';
-import { track } from '@vercel/analytics/server';
-import type { NextRequest } from 'next/server';
-import { NextResponse } from 'next/server';
-import { Project } from 'ts-morph';
+import { promises as fs, readdirSync } from "node:fs";
+import { readFile } from "node:fs/promises";
+import { join } from "node:path";
+import { track } from "@vercel/analytics/server";
+import type { NextRequest } from "next/server";
+import { NextResponse } from "next/server";
+import { Project } from "ts-morph";
 
 type RegistryItemSchema = {
   name: string;
   type:
-    | 'registry:lib'
-    | 'registry:block'
-    | 'registry:component'
-    | 'registry:ui'
-    | 'registry:hook'
-    | 'registry:theme'
-    | 'registry:page'
-    | 'registry:file'
-    | 'registry:style'
-    | 'registry:item';
+    | "registry:lib"
+    | "registry:block"
+    | "registry:component"
+    | "registry:ui"
+    | "registry:hook"
+    | "registry:theme"
+    | "registry:page"
+    | "registry:file"
+    | "registry:style"
+    | "registry:item";
   description?: string;
   title?: string;
   author?: string;
@@ -31,16 +31,16 @@ type RegistryItemSchema = {
     path?: string;
     content?: string;
     type?:
-      | 'registry:lib'
-      | 'registry:block'
-      | 'registry:component'
-      | 'registry:ui'
-      | 'registry:hook'
-      | 'registry:theme'
-      | 'registry:page'
-      | 'registry:file'
-      | 'registry:style'
-      | 'registry:item';
+      | "registry:lib"
+      | "registry:block"
+      | "registry:component"
+      | "registry:ui"
+      | "registry:hook"
+      | "registry:theme"
+      | "registry:page"
+      | "registry:file"
+      | "registry:style"
+      | "registry:item";
     target?: string;
     [k: string]: unknown;
   }[];
@@ -93,39 +93,39 @@ type RegistryItemSchema = {
 };
 
 type RegistrySchema = {
-  $schema: 'https://ui.shadcn.com/schema/registry.json';
+  $schema: "https://ui.shadcn.com/schema/registry.json";
   name: string;
   homepage: string;
   items: RegistryItemSchema[];
 };
 
-const protocol = process.env.NODE_ENV === 'development' ? 'http' : 'https';
+const protocol = process.env.NODE_ENV === "development" ? "http" : "https";
 const registryUrl = `${protocol}://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`;
 
-const packageDir = join(process.cwd(), '..', '..', 'packages', 'elements');
-const packagePath = join(packageDir, 'package.json');
-const packageJson = JSON.parse(await readFile(packagePath, 'utf-8'));
+const packageDir = join(process.cwd(), "..", "..", "packages", "elements");
+const packagePath = join(packageDir, "package.json");
+const packageJson = JSON.parse(await readFile(packagePath, "utf-8"));
 
 const examplesDir = join(
   process.cwd(),
-  '..',
-  '..',
-  'packages',
-  'examples',
-  'src'
+  "..",
+  "..",
+  "packages",
+  "examples",
+  "src"
 );
 
 const internalDependencies = Object.keys(packageJson.dependencies || {}).filter(
-  (dep) => dep.startsWith('@repo') && dep !== '@repo/shadcn-ui'
+  (dep) => dep.startsWith("@repo") && dep !== "@repo/shadcn-ui"
 );
 
 const dependenciesSet = new Set(
   Object.keys(packageJson.dependencies || {}).filter(
     (dep) =>
       ![
-        'react',
-        'react-dom',
-        '@repo/shadcn-ui',
+        "react",
+        "react-dom",
+        "@repo/shadcn-ui",
         ...internalDependencies,
       ].includes(dep)
   )
@@ -135,31 +135,31 @@ const devDependenciesSet = new Set(
   Object.keys(packageJson.devDependencies || {}).filter(
     (dep) =>
       ![
-        '@repo/typescript-config',
-        '@types/react',
-        '@types/react-dom',
-        'typescript',
+        "@repo/typescript-config",
+        "@types/react",
+        "@types/react-dom",
+        "typescript",
       ].includes(dep)
   )
 );
 
 // Registry should auto-add ai sdk v5 as a dependency
-dependenciesSet.add('ai');
-dependenciesSet.add('@ai-sdk/react');
-dependenciesSet.add('zod');
+dependenciesSet.add("ai");
+dependenciesSet.add("@ai-sdk/react");
+dependenciesSet.add("zod");
 
 const dependencies = Array.from(dependenciesSet);
 const devDependencies = Array.from(devDependenciesSet);
-const srcDir = join(packageDir, 'src');
+const srcDir = join(packageDir, "src");
 
 const packageFiles = readdirSync(srcDir, { withFileTypes: true });
 const tsxFiles = packageFiles.filter(
-  (file) => file.isFile() && file.name.endsWith('.tsx')
+  (file) => file.isFile() && file.name.endsWith(".tsx")
 );
 
 const exampleFiles = readdirSync(examplesDir, { withFileTypes: true });
 const exampleTsxFiles = exampleFiles.filter(
-  (file) => file.isFile() && file.name.endsWith('.tsx')
+  (file) => file.isFile() && file.name.endsWith(".tsx")
 );
 
 const files: {
@@ -171,11 +171,11 @@ const files: {
 const fileContents = await Promise.all(
   tsxFiles.map(async (tsxFile) => {
     const filePath = join(srcDir, tsxFile.name);
-    const content = await fs.readFile(filePath, 'utf-8');
-    const parsedContent = content.replace(/@repo\/shadcn-ui\//g, '@/');
+    const content = await fs.readFile(filePath, "utf-8");
+    const parsedContent = content.replace(/@repo\/shadcn-ui\//g, "@/");
 
     return {
-      type: 'registry:component',
+      type: "registry:component",
       path: `registry/default/ai-elements/${tsxFile.name}`,
       content: parsedContent,
     };
@@ -185,13 +185,13 @@ const fileContents = await Promise.all(
 const exampleContents = await Promise.all(
   exampleTsxFiles.map(async (exampleFile) => {
     const filePath = join(examplesDir, exampleFile.name);
-    const content = await fs.readFile(filePath, 'utf-8');
+    const content = await fs.readFile(filePath, "utf-8");
     const parsedContent = content
-      .replace(/@repo\/shadcn-ui\//g, '@/')
-      .replace(/@repo\/elements\//g, '@/components/ai-elements/');
+      .replace(/@repo\/shadcn-ui\//g, "@/")
+      .replace(/@repo\/elements\//g, "@/components/ai-elements/");
 
     return {
-      type: 'registry:block',
+      type: "registry:block",
       path: `registry/default/examples/${exampleFile.name}`,
       content: parsedContent,
     };
@@ -206,18 +206,18 @@ const registryDependenciesSet = new Set<string>();
 const shadcnComponents =
   files
     .map((f) => f.content)
-    .join('\n')
+    .join("\n")
     .match(/@\/components\/ui\/([a-z-]+)/g)
-    ?.map((path) => path.split('/').pop())
+    ?.map((path) => path.split("/").pop())
     .filter((name): name is string => Boolean(name)) || [];
 
 // Extract AI element components from file content
 const aiElementComponents =
   files
     .map((f) => f.content)
-    .join('\n')
+    .join("\n")
     .match(/@\/components\/ai-elements\/([a-z-]+)/g)
-    ?.map((path) => path.split('/').pop())
+    ?.map((path) => path.split("/").pop())
     .filter((name): name is string => Boolean(name)) || [];
 
 // Add shadcn/ui components to set
@@ -232,20 +232,20 @@ for (const component of aiElementComponents) {
 
 // Create items for the root registry response
 const componentItems: RegistryItemSchema[] = tsxFiles.map((componentFile) => {
-  const componentName = componentFile.name.replace('.tsx', '');
+  const componentName = componentFile.name.replace(".tsx", "");
 
   const item: RegistryItemSchema = {
     name: componentName,
-    type: 'registry:component',
+    type: "registry:component",
     title: componentName
-      .split('-')
+      .split("-")
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(' '),
-    description: `AI-powered ${componentName.replace('-', ' ')} component.`,
+      .join(" "),
+    description: `AI-powered ${componentName.replace("-", " ")} component.`,
     files: [
       {
         path: `registry/default/ai-elements/${componentFile.name}`,
-        type: 'registry:component',
+        type: "registry:component",
         target: `components/ai-elements/${componentFile.name}.tsx`,
       },
     ],
@@ -256,20 +256,20 @@ const componentItems: RegistryItemSchema[] = tsxFiles.map((componentFile) => {
 
 const exampleItems: RegistryItemSchema[] = exampleTsxFiles.map(
   (exampleFile) => {
-    const exampleName = exampleFile.name.replace('.tsx', '');
+    const exampleName = exampleFile.name.replace(".tsx", "");
 
     const item: RegistryItemSchema = {
       name: `example-${exampleName}`,
-      type: 'registry:block',
+      type: "registry:block",
       title: `${exampleName
-        .split('-')
+        .split("-")
         .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-        .join(' ')} Example`,
-      description: `Example implementation of ${exampleName.replace('-', ' ')}.`,
+        .join(" ")} Example`,
+      description: `Example implementation of ${exampleName.replace("-", " ")}.`,
       files: [
         {
           path: `registry/default/examples/${exampleFile.name}`,
-          type: 'registry:block',
+          type: "registry:block",
           target: `components/ai-elements/examples/${exampleFile.name}.tsx`,
         },
       ],
@@ -282,9 +282,9 @@ const exampleItems: RegistryItemSchema[] = exampleTsxFiles.map(
 const items: RegistryItemSchema[] = [...componentItems, ...exampleItems];
 
 const response: RegistrySchema = {
-  $schema: 'https://ui.shadcn.com/schema/registry.json',
-  name: 'ai-elements',
-  homepage: new URL('/elements', registryUrl).toString(),
+  $schema: "https://ui.shadcn.com/schema/registry.json",
+  name: "ai-elements",
+  homepage: new URL("/elements", registryUrl).toString(),
   items,
 };
 
@@ -294,13 +294,13 @@ type RequestProps = {
 
 export const GET = async (_request: NextRequest, { params }: RequestProps) => {
   const { component } = await params;
-  const parsedComponent = component.replace('.json', '');
+  const parsedComponent = component.replace(".json", "");
 
-  if (parsedComponent === 'all' || parsedComponent === 'registry') {
+  if (parsedComponent === "all" || parsedComponent === "registry") {
     try {
-      track('registry:all');
+      track("registry:all");
     } catch (error) {
-      console.warn('Failed to track registry:all:', error);
+      console.warn("Failed to track registry:all:", error);
     }
     return NextResponse.json(response);
   }
@@ -325,15 +325,15 @@ export const GET = async (_request: NextRequest, { params }: RequestProps) => {
 
   // Find the corresponding file content
   let file: { type: string; path: string; content: string } | undefined;
-  if (item.type === 'registry:component') {
+  if (item.type === "registry:component") {
     file = files.find(
       (f) => f.path === `registry/default/ai-elements/${parsedComponent}.tsx`
     );
   } else if (
-    item.type === 'registry:block' &&
-    parsedComponent.startsWith('example-')
+    item.type === "registry:block" &&
+    parsedComponent.startsWith("example-")
   ) {
-    const exampleFileName = `${parsedComponent.replace('example-', '')}.tsx`;
+    const exampleFileName = `${parsedComponent.replace("example-", "")}.tsx`;
     file = files.find(
       (f) => f.path === `registry/default/examples/${exampleFileName}`
     );
@@ -365,8 +365,8 @@ export const GET = async (_request: NextRequest, { params }: RequestProps) => {
       }
 
       // Check if it's a relative dependency
-      if (moduleName.startsWith('./')) {
-        const relativePath = moduleName.split('/').pop();
+      if (moduleName.startsWith("./")) {
+        const relativePath = moduleName.split("/").pop();
         if (relativePath) {
           usedRegistryDependencies.add(
             new URL(`/${relativePath}.json`, registryUrl).toString()
@@ -385,16 +385,16 @@ export const GET = async (_request: NextRequest, { params }: RequestProps) => {
       }
 
       // Check if it's a registry dependency (shadcn/ui components)
-      if (moduleName.startsWith('@/components/ui/')) {
-        const componentName = moduleName.split('/').pop();
+      if (moduleName.startsWith("@/components/ui/")) {
+        const componentName = moduleName.split("/").pop();
         if (componentName) {
           usedRegistryDependencies.add(componentName);
         }
       }
 
       // Check if it's an AI element dependency
-      if (moduleName.startsWith('@/components/ai-elements/')) {
-        const componentName = moduleName.split('/').pop();
+      if (moduleName.startsWith("@/components/ai-elements/")) {
+        const componentName = moduleName.split("/").pop();
         if (componentName) {
           usedRegistryDependencies.add(
             new URL(`/${componentName}.json`, registryUrl).toString()
@@ -408,14 +408,14 @@ export const GET = async (_request: NextRequest, { params }: RequestProps) => {
 
   // Add internal dependencies for the requested component
   for (const dep of internalDependencies) {
-    const packageName = dep.replace('@repo/', '');
+    const packageName = dep.replace("@repo/", "");
     usedRegistryDependencies.add(
       new URL(`/elements/${packageName}.json`, registryUrl).toString()
     );
   }
 
   const itemResponse = {
-    $schema: 'https://ui.shadcn.com/schema/registry-item.json',
+    $schema: "https://ui.shadcn.com/schema/registry-item.json",
     name: item.name,
     type: item.type,
     title: item.title,

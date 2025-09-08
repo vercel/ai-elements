@@ -1,15 +1,15 @@
-'use client';
+"use client";
 
-import { SiReact } from '@icons-pack/react-simple-icons';
+import { SiReact } from "@icons-pack/react-simple-icons";
 import {
   Task,
   TaskContent,
   TaskItem,
   TaskItemFile,
   TaskTrigger,
-} from '@repo/elements/task';
-import { nanoid } from 'nanoid';
-import type { ReactNode } from 'react';
+} from "@repo/elements/task";
+import { nanoid } from "nanoid";
+import type { ReactNode } from "react";
 
 const Example = () => {
   const tasks: { key: string; value: ReactNode }[] = [
@@ -26,8 +26,8 @@ const Example = () => {
         </span>
       ),
     },
-    { key: nanoid(), value: 'Scanning 52 files' },
-    { key: nanoid(), value: 'Scanning 2 files' },
+    { key: nanoid(), value: "Scanning 52 files" },
+    { key: nanoid(), value: "Scanning 2 files" },
     {
       key: nanoid(),
       value: (
@@ -43,7 +43,7 @@ const Example = () => {
   ];
 
   return (
-    <div style={{ height: '200px' }}>
+    <div style={{ height: "200px" }}>
       <Task className="w-full">
         <TaskTrigger title="Found project files" />
         <TaskContent>

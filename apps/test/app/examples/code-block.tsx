@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { CodeBlock, CodeBlockCopyButton } from '@repo/elements/code-block';
+import { CodeBlock, CodeBlockCopyButton } from "@repo/elements/code-block";
 
 const code = `function MyComponent(props) {
   return (
@@ -14,8 +14,8 @@ const code = `function MyComponent(props) {
 const Example = () => (
   <CodeBlock code={code} language="jsx">
     <CodeBlockCopyButton
-      onCopy={() => console.log('Copied code to clipboard')}
-      onError={() => console.error('Failed to copy code to clipboard')}
+      onCopy={() => console.log("Copied code to clipboard")}
+      onError={() => console.error("Failed to copy code to clipboard")}
     />
   </CodeBlock>
 );

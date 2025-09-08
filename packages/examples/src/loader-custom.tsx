@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { Loader } from '@repo/elements/loader';
+import { Loader } from "@repo/elements/loader";
 
 const Example = () => {
   return (
@@ -30,7 +30,7 @@ const Example = () => {
         <Loader
           className="animate-spin text-blue-500"
           size={24}
-          style={{ animationDuration: '3s' }}
+          style={{ animationDuration: "3s" }}
         />
       </div>
 
@@ -39,7 +39,7 @@ const Example = () => {
         <Loader
           className="animate-spin text-red-500"
           size={24}
-          style={{ animationDuration: '0.5s' }}
+          style={{ animationDuration: "0.5s" }}
         />
       </div>
 

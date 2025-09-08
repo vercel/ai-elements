@@ -3,43 +3,43 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-} from '@repo/shadcn-ui/components/ui/card';
-import Actions from '@/app/examples/actions';
-import Branch from '@/app/examples/branch';
-import CodeBlock from '@/app/examples/code-block';
-import Conversation from '@/app/examples/conversation';
-import Image from '@/app/examples/image';
-import InlineCitation from '@/app/examples/inline-citation';
-import Context from '@/app/examples/context';
-import Loader from '@/app/examples/loader';
-import Message from '@/app/examples/message';
-import PromptInput from '@/app/examples/prompt-input';
-import Reasoning from '@/app/examples/reasoning';
-import Response from '@/app/examples/response';
-import Sources from '@/app/examples/sources';
-import Suggestion from '@/app/examples/suggestion';
-import Task from '@/app/examples/task';
-import Tool from '@/app/examples/tool';
-import WebPreview from '@/app/examples/web-preview';
+} from "@repo/shadcn-ui/components/ui/card";
+import Actions from "@/app/examples/actions";
+import Branch from "@/app/examples/branch";
+import CodeBlock from "@/app/examples/code-block";
+import Context from "@/app/examples/context";
+import Conversation from "@/app/examples/conversation";
+import Image from "@/app/examples/image";
+import InlineCitation from "@/app/examples/inline-citation";
+import Loader from "@/app/examples/loader";
+import Message from "@/app/examples/message";
+import PromptInput from "@/app/examples/prompt-input";
+import Reasoning from "@/app/examples/reasoning";
+import Response from "@/app/examples/response";
+import Sources from "@/app/examples/sources";
+import Suggestion from "@/app/examples/suggestion";
+import Task from "@/app/examples/task";
+import Tool from "@/app/examples/tool";
+import WebPreview from "@/app/examples/web-preview";
 
 const components = [
-  { name: 'Actions', Component: Actions },
-  { name: 'Branch', Component: Branch },
-  { name: 'CodeBlock', Component: CodeBlock },
-  { name: 'Conversation', Component: Conversation },
-  { name: 'Image', Component: Image },
-  { name: 'InlineCitation', Component: InlineCitation },
-  { name: 'Context', Component: Context },
-  { name: 'Loader', Component: Loader },
-  { name: 'Message', Component: Message },
-  { name: 'PromptInput', Component: PromptInput },
-  { name: 'Reasoning', Component: Reasoning },
-  { name: 'Response', Component: Response },
-  { name: 'Sources', Component: Sources },
-  { name: 'Suggestion', Component: Suggestion },
-  { name: 'Task', Component: Task },
-  { name: 'Tool', Component: Tool },
-  { name: 'WebPreview', Component: WebPreview },
+  { name: "Actions", Component: Actions },
+  { name: "Branch", Component: Branch },
+  { name: "CodeBlock", Component: CodeBlock },
+  { name: "Conversation", Component: Conversation },
+  { name: "Image", Component: Image },
+  { name: "InlineCitation", Component: InlineCitation },
+  { name: "Context", Component: Context },
+  { name: "Loader", Component: Loader },
+  { name: "Message", Component: Message },
+  { name: "PromptInput", Component: PromptInput },
+  { name: "Reasoning", Component: Reasoning },
+  { name: "Response", Component: Response },
+  { name: "Sources", Component: Sources },
+  { name: "Suggestion", Component: Suggestion },
+  { name: "Task", Component: Task },
+  { name: "Tool", Component: Tool },
+  { name: "WebPreview", Component: WebPreview },
 ] as const;
 
 const Home = () => (

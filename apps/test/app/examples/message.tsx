@@ -1,21 +1,21 @@
-'use client';
+"use client";
 
-import { Message, MessageAvatar, MessageContent } from '@repo/elements/message';
-import { nanoid } from 'nanoid';
+import { Message, MessageAvatar, MessageContent } from "@repo/elements/message";
+import { nanoid } from "nanoid";
 
 const messages: {
   key: string;
-  from: 'user' | 'assistant';
+  from: "user" | "assistant";
   content: string;
   avatar: string;
   name: string;
 }[] = [
   {
     key: nanoid(),
-    from: 'user',
-    content: 'Hello, how are you?',
-    avatar: 'https://github.com/haydenbleasel.png',
-    name: 'Hayden Bleasel',
+    from: "user",
+    content: "Hello, how are you?",
+    avatar: "https://github.com/haydenbleasel.png",
+    name: "Hayden Bleasel",
   },
 ];
 

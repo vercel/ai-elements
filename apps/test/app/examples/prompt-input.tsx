@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { PromptForm, type PromptFormPayload } from '@repo/elements/prompt-form';
-import { Context } from '@repo/elements/context';
+import { Context } from "@repo/elements/context";
+import { PromptForm, type PromptFormPayload } from "@repo/elements/prompt-form";
 import {
   PromptInput,
   PromptInputActionMenu,
@@ -17,26 +17,26 @@ import {
   PromptInputTextarea,
   PromptInputToolbar,
   PromptInputTools,
-} from '@repo/elements/prompt-input';
+} from "@repo/elements/prompt-input";
 import {
   PromptAttachmentsPreview,
   PromptAttachmentsProvider,
   PromptInputActionAddAttachments,
   useAttachments,
-} from '@repo/elements/prompt-input-attachments';
-import { GlobeIcon, MicIcon } from 'lucide-react';
-import { useState } from 'react';
+} from "@repo/elements/prompt-input-attachments";
+import { GlobeIcon, MicIcon } from "lucide-react";
+import { useState } from "react";
 
 const models = [
-  { id: 'gpt-4', name: 'GPT-4' },
-  { id: 'gpt-3.5-turbo', name: 'GPT-3.5 Turbo' },
-  { id: 'claude-2', name: 'Claude 2' },
-  { id: 'claude-instant', name: 'Claude Instant' },
-  { id: 'palm-2', name: 'PaLM 2' },
-  { id: 'llama-2-70b', name: 'Llama 2 70B' },
-  { id: 'llama-2-13b', name: 'Llama 2 13B' },
-  { id: 'cohere-command', name: 'Command' },
-  { id: 'mistral-7b', name: 'Mistral 7B' },
+  { id: "gpt-4", name: "GPT-4" },
+  { id: "gpt-3.5-turbo", name: "GPT-3.5 Turbo" },
+  { id: "claude-2", name: "Claude 2" },
+  { id: "claude-instant", name: "Claude Instant" },
+  { id: "palm-2", name: "PaLM 2" },
+  { id: "llama-2-70b", name: "Llama 2 70B" },
+  { id: "llama-2-13b", name: "Llama 2 13B" },
+  { id: "cohere-command", name: "Command" },
+  { id: "mistral-7b", name: "Mistral 7B" },
 ];
 
 const context = {
@@ -45,11 +45,11 @@ const context = {
 };
 
 const Example = () => {
-  const [text, setText] = useState<string>('');
+  const [text, setText] = useState<string>("");
   const [model, setModel] = useState<string>(models[0].id);
   const [status, setStatus] = useState<
-    'submitted' | 'streaming' | 'ready' | 'error'
-  >('ready');
+    "submitted" | "streaming" | "ready" | "error"
+  >("ready");
 
   const { attachments } = useAttachments();
   const disabled = !(text || attachments.length > 0);
@@ -59,14 +59,14 @@ const Example = () => {
     if (!(prompt || attachments.length > 0)) {
       return;
     }
-    setStatus('submitted');
+    setStatus("submitted");
 
     setTimeout(() => {
-      setStatus('streaming');
+      setStatus("streaming");
     }, 200);
 
     setTimeout(() => {
-      setStatus('ready');
+      setStatus("ready");
     }, 2000);
   };
 

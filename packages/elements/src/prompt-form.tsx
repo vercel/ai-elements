@@ -1,20 +1,20 @@
-'use client';
+"use client";
 
-import { cn } from '@repo/shadcn-ui/lib/utils';
-import type { FormEvent, HTMLAttributes } from 'react';
-import { useCallback, useMemo, useState } from 'react';
-import { usePromptAttachments } from './prompt-input-attachments';
+import { cn } from "@repo/shadcn-ui/lib/utils";
+import type { FormEvent, HTMLAttributes } from "react";
+import { useCallback, useMemo, useState } from "react";
+import { usePromptAttachments } from "./prompt-input-attachments";
 
 export type PromptFormPayload = {
   prompt: string;
   files: File[];
 };
 
-export type PromptFormStatus = 'idle' | 'submitting' | 'error';
+export type PromptFormStatus = "idle" | "submitting" | "error";
 
 export type PromptFormProps = Omit<
   HTMLAttributes<HTMLFormElement>,
-  'onSubmit' | 'children'
+  "onSubmit" | "children"
 > & {
   onSubmit: (
     payload: PromptFormPayload,
@@ -31,22 +31,22 @@ export type PromptFormProps = Omit<
 
 export function PromptForm({
   onSubmit,
-  namePrompt = 'prompt',
-  nameAttachments = 'attachments',
+  namePrompt = "prompt",
+  nameAttachments = "attachments",
   resetOnSubmit = false,
   children,
   className,
   ...rest
 }: PromptFormProps) {
   const attachments = usePromptAttachments();
-  const [status, setStatus] = useState<PromptFormStatus>('idle');
+  const [status, setStatus] = useState<PromptFormStatus>("idle");
 
   const handleSubmit = useCallback(
     async (e: FormEvent<HTMLFormElement>) => {
       e.preventDefault();
       const form = e.currentTarget;
       const fd = new FormData(form);
-      const prompt = String(fd.get(namePrompt) ?? '');
+      const prompt = String(fd.get(namePrompt) ?? "");
       // Prefer context files when provider is present; otherwise fall back to named field
       const filesFromCtx = attachments?.files ?? [];
       const filesFromForm = fd
@@ -55,7 +55,7 @@ export function PromptForm({
       const files =
         filesFromCtx.length > 0 ? filesFromCtx : (filesFromForm as File[]);
 
-      setStatus('submitting');
+      setStatus("submitting");
       try {
         await onSubmit({ prompt, files }, e);
         if (resetOnSubmit) {
@@ -63,9 +63,9 @@ export function PromptForm({
           // Reset uncontrolled inputs in the form
           e.currentTarget.reset();
         }
-        setStatus('idle');
+        setStatus("idle");
       } catch (err) {
-        setStatus('error');
+        setStatus("error");
         throw err;
       }
     },

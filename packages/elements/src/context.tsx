@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
 import {
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
-} from '@repo/shadcn-ui/components/ui/hover-card';
-import { cn } from '@repo/shadcn-ui/lib/utils';
-import type { ComponentProps } from 'react';
+} from "@repo/shadcn-ui/components/ui/hover-card";
+import { cn } from "@repo/shadcn-ui/lib/utils";
+import type { ComponentProps } from "react";
 
-export type ContextProps = ComponentProps<'button'> & {
+export type ContextProps = ComponentProps<"button"> & {
   /** Total context window size in tokens */
   maxTokens: number;
   /** Tokens used so far */
@@ -48,7 +48,7 @@ const formatTokens = (tokens?: number) => {
 
 const formatPercent = (value: number) => {
   if (!Number.isFinite(value)) {
-    return '0%';
+    return "0%";
   }
   const rounded = Math.round(value * 10) / 10;
   return Number.isInteger(rounded)
@@ -70,7 +70,7 @@ const ContextIcon = ({ percent }: ContextIconProps) => {
       aria-label={`${formatPercent(percent)} of model context used`}
       height="20"
       role="img"
-      style={{ color: 'currentcolor' }}
+      style={{ color: "currentcolor" }}
       viewBox={`0 0 ${ICON_VIEWBOX} ${ICON_VIEWBOX}`}
       width="20"
     >
@@ -125,8 +125,8 @@ export const Context = ({
       <HoverCardTrigger asChild>
         <button
           className={cn(
-            'inline-flex select-none items-center gap-2 rounded-md px-2.5 py-1 text-sm',
-            'bg-background text-foreground',
+            "inline-flex select-none items-center gap-2 rounded-md px-2.5 py-1 text-sm",
+            "bg-background text-foreground",
             className
           )}
           type="button"
