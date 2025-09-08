@@ -63,6 +63,7 @@ type ContextIconProps = {
 const ContextIcon = ({ percent }: ContextIconProps) => {
   const radius = ICON_RADIUS;
   const circumference = 2 * Math.PI * radius;
+  // Calculate dashOffset for the progress
   const dashOffset = circumference * (1 - percent / PERCENT_MAX);
 
   return (
@@ -94,7 +95,7 @@ const ContextIcon = ({ percent }: ContextIconProps) => {
         strokeDashoffset={dashOffset}
         strokeLinecap="round"
         strokeWidth={ICON_STROKE_WIDTH}
-        transform={`rotate(-90 ${ICON_CENTER} ${ICON_CENTER})`}
+        style={{ transformOrigin: "center", transform: "rotate(-90deg)" }}
       />
     </svg>
   );
