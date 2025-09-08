@@ -36,6 +36,7 @@ import {
   createContext,
   type FormEvent,
   type FormEventHandler,
+  Fragment,
   type HTMLAttributes,
   type KeyboardEventHandler,
   type RefObject,
@@ -71,13 +72,58 @@ export const usePromptInputAttachments = () => {
   return context;
 };
 
-export type PromptInputAttachmentsProps = HTMLAttributes<HTMLDivElement> & {
-  showFiles?: boolean;
+export type PromptInputAttachmentProps = HTMLAttributes<HTMLDivElement> & {
+  data: FileUIPart & { id: string };
+  className?: string;
+};
+
+export function PromptInputAttachment({
+  data,
+  className,
+  ...props
+}: PromptInputAttachmentProps) {
+  const attachments = usePromptInputAttachments();
+
+  return (
+    <div
+      className={cn("group relative h-14 w-14 rounded-md border", className)}
+      key={data.id}
+      {...props}
+    >
+      {data.mediaType?.startsWith("image/") && data.url ? (
+        <img
+          alt={data.filename || "attachment"}
+          className="size-full rounded-md object-cover"
+          height={56}
+          src={data.url}
+          width={56}
+        />
+      ) : (
+        <div className="flex size-full items-center justify-center text-muted-foreground">
+          <PaperclipIcon className="size-4" />
+        </div>
+      )}
+      <Button
+        aria-label="Remove attachment"
+        size="icon"
+        className="size-5 rounded-full absolute -right-1.5 -top-1.5 opacity-0 group-hover:opacity-100"
+        variant="outline"
+        onClick={() => attachments.remove(data.id)}
+        type="button"
+      >
+        <XIcon className="size-3" />
+      </Button>
+    </div>
+  );
+}
+
+export type PromptInputAttachmentsProps = Omit<HTMLAttributes<HTMLDivElement>, 'children'> & {
+  children: (attachment: FileUIPart & { id: string }) => React.ReactNode;
 };
 
 export function PromptInputAttachments({
   className,
-  showFiles = true,
+  children,
   ...props
 }: PromptInputAttachmentsProps) {
   const attachments = usePromptInputAttachments();
@@ -109,36 +155,9 @@ export function PromptInputAttachments({
     >
       <div className="flex flex-wrap gap-2 p-3 pt-3" ref={contentRef}>
         {attachments.files.map((file) => (
-          <div
-            className="group relative h-14 w-14 rounded-md border"
-            key={file.id}
-          >
-            {file.mediaType.startsWith("image/") && file.url ? (
-              <img
-                alt={file.filename || "attachment"}
-                className="h-full w-full rounded-md object-cover"
-                height={56}
-                src={file.url}
-                width={56}
-              />
-            ) : (
-              showFiles && (
-                <div className="flex h-full w-full items-center justify-center text-muted-foreground">
-                  <PaperclipIcon className="size-4" />
-                </div>
-              )
-            )}
-            <Button
-              aria-label="Remove attachment"
-              size="icon"
-              className="size-5 rounded-full absolute -right-1.5 -top-1.5 opacity-0 group-hover:opacity-100"
-              variant="outline"
-              onClick={() => attachments.remove(file.id)}
-              type="button"
-            >
-              <XIcon className="size-3" />
-            </Button>
-          </div>
+          <Fragment key={file.id}>
+            {children(file)}
+          </Fragment>
         ))}
       </div>
     </div>
@@ -276,13 +295,13 @@ export const PromptInput = ({
           });
         }
         const next: (FileUIPart & { id: string })[] = [];
-        for (const f of capped) {
+        for (const file of capped) {
           next.push({
             id: nanoid(),
             type: 'file',
-            url: URL.createObjectURL(f),
-            mediaType: f.type,
-            filename: f.name,
+            url: URL.createObjectURL(file),
+            mediaType: file.type,
+            filename: file.name,
           });
         }
         return prev.concat(next);
@@ -293,19 +312,19 @@ export const PromptInput = ({
 
   const remove = useCallback((id: string) => {
     setItems((prev) => {
-      const found = prev.find((item) => item.id === id);
+      const found = prev.find((file) => file.id === id);
       if (found?.url) {
         URL.revokeObjectURL(found.url);
       }
-      return prev.filter((p) => p.id !== id);
+      return prev.filter((file) => file.id !== id);
     });
   }, []);
 
   const clear = useCallback(() => {
     setItems((prev) => {
-      for (const item of prev) {
-        if (item.url) {
-          URL.revokeObjectURL(item.url);
+      for (const file of prev) {
+        if (file.url) {
+          URL.revokeObjectURL(file.url);
         }
       }
       return [];
@@ -322,17 +341,6 @@ export const PromptInput = ({
       }
     }
   }, [items, syncHiddenInput]);
-
-  // Cleanup object URLs on unmount
-  useEffect(() => {
-    return () => {
-      for (const item of items) {
-        if (item.url) {
-          URL.revokeObjectURL(item.url);
-        }
-      }
-    };
-  }, [items]);
 
   // Attach drop handlers on nearest form and document (opt-in)
   useEffect(() => {
@@ -437,7 +445,7 @@ export const PromptInput = ({
   );
 };
 
-export type PromptInputBodyProps = ComponentProps<"div">;
+export type PromptInputBodyProps = HTMLAttributes<HTMLDivElement>;
 
 export const PromptInputBody = ({
   className,

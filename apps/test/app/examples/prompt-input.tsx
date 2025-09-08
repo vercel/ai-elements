@@ -7,6 +7,7 @@ import {
   PromptInputActionMenu,
   PromptInputActionMenuContent,
   PromptInputActionMenuTrigger,
+  PromptInputAttachment,
   PromptInputAttachments,
   PromptInputBody,
   PromptInputButton,
@@ -20,7 +21,6 @@ import {
   PromptInputTextarea,
   PromptInputToolbar,
   PromptInputTools,
-  useAttachments,
 } from "@repo/elements/prompt-input";
 import { GlobeIcon, MicIcon } from "lucide-react";
 import { useState } from "react";
@@ -42,6 +42,9 @@ const context = {
   usedTokens: 82_100,
 };
 
+const SUBMITTING_TIMEOUT = 200;
+const STREAMING_TIMEOUT = 2000;
+
 const Example = () => {
   const [text, setText] = useState<string>("");
   const [model, setModel] = useState<string>(models[0].id);
@@ -50,7 +53,6 @@ const Example = () => {
   >("ready");
 
   const handleSubmit = (message: PromptInputMessage) => {
-    // Allow submission only if there is text or attachments
     const hasText = Boolean(message.text);
     const hasAttachments = Boolean(message.files?.length);
 
@@ -60,21 +62,23 @@ const Example = () => {
 
     setStatus("submitted");
 
-    console.log('Submitting message:', message);
+    console.log("Submitting message:", message);
 
     setTimeout(() => {
       setStatus("streaming");
-    }, 200);
+    }, SUBMITTING_TIMEOUT);
 
     setTimeout(() => {
       setStatus("ready");
-    }, 2000);
+    }, STREAMING_TIMEOUT);
   };
 
   return (
     <PromptInput globalDrop multiple onSubmit={handleSubmit}>
       <PromptInputBody>
-        <PromptInputAttachments />
+        <PromptInputAttachments>
+          {(attachment) => <PromptInputAttachment data={attachment} />}
+        </PromptInputAttachments>
         <PromptInputTextarea
           onChange={(e) => setText(e.target.value)}
           value={text}
