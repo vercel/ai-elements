@@ -1,13 +1,16 @@
 "use client";
 
 import { Context } from "@repo/elements/context";
-import { PromptForm, type PromptFormPayload } from "@repo/elements/prompt-form";
 import {
   PromptInput,
+  PromptInputActionAddAttachments,
   PromptInputActionMenu,
   PromptInputActionMenuContent,
   PromptInputActionMenuTrigger,
+  PromptInputAttachments,
+  PromptInputBody,
   PromptInputButton,
+  type PromptInputMessage,
   PromptInputModelSelect,
   PromptInputModelSelectContent,
   PromptInputModelSelectItem,
@@ -17,13 +20,8 @@ import {
   PromptInputTextarea,
   PromptInputToolbar,
   PromptInputTools,
-} from "@repo/elements/prompt-input";
-import {
-  PromptAttachmentsPreview,
-  PromptAttachmentsProvider,
-  PromptInputActionAddAttachments,
   useAttachments,
-} from "@repo/elements/prompt-input-attachments";
+} from "@repo/elements/prompt-input";
 import { GlobeIcon, MicIcon } from "lucide-react";
 import { useState } from "react";
 
@@ -51,14 +49,15 @@ const Example = () => {
     "submitted" | "streaming" | "ready" | "error"
   >("ready");
 
-  const { attachments } = useAttachments();
-  const disabled = !(text || attachments.length > 0);
-
-  const handleSubmit = ({ prompt }: PromptFormPayload) => {
+  const handleSubmit = (message: PromptInputMessage) => {
     // Allow submission only if there is text or attachments
-    if (!(prompt || attachments.length > 0)) {
+    const hasText = Boolean(message.text);
+    const hasAttachments = Boolean(message.files?.length);
+
+    if (!(hasText || hasAttachments)) {
       return;
     }
+
     setStatus("submitted");
 
     setTimeout(() => {
@@ -71,58 +70,52 @@ const Example = () => {
   };
 
   return (
-    <PromptForm onSubmit={handleSubmit} resetOnSubmit>
-      {({ formProps }) => (
-        <PromptInput {...formProps}>
-          <PromptAttachmentsProvider globalDrop multiple name="attachments">
-            <div className="flex flex-col">
-              <PromptAttachmentsPreview />
-              <PromptInputTextarea
-                onChange={(e) => setText(e.target.value)}
-                value={text}
-              />
-            </div>
-            <PromptInputToolbar>
-              <PromptInputTools>
-                <PromptInputActionMenu>
-                  <PromptInputActionMenuTrigger />
-                  <PromptInputActionMenuContent>
-                    <PromptInputActionAddAttachments />
-                  </PromptInputActionMenuContent>
-                </PromptInputActionMenu>
-                <PromptInputButton>
-                  <MicIcon size={16} />
-                </PromptInputButton>
-                <PromptInputButton>
-                  <GlobeIcon size={16} />
-                  <span>Search</span>
-                </PromptInputButton>
-                <PromptInputModelSelect onValueChange={setModel} value={model}>
-                  <PromptInputModelSelectTrigger>
-                    <PromptInputModelSelectValue />
-                  </PromptInputModelSelectTrigger>
-                  <PromptInputModelSelectContent>
-                    {models.map((modelOption) => (
-                      <PromptInputModelSelectItem
-                        key={modelOption.id}
-                        value={modelOption.id}
-                      >
-                        {modelOption.name}
-                      </PromptInputModelSelectItem>
-                    ))}
-                  </PromptInputModelSelectContent>
-                </PromptInputModelSelect>
-                <Context
-                  maxTokens={context.maxTokens}
-                  usedTokens={context.usedTokens}
-                />
-              </PromptInputTools>
-              <PromptInputSubmit disabled={disabled} status={status} />
-            </PromptInputToolbar>
-          </PromptAttachmentsProvider>
-        </PromptInput>
-      )}
-    </PromptForm>
+    <PromptInput globalDrop multiple onSubmit={handleSubmit}>
+      <PromptInputBody>
+        <PromptInputAttachments />
+        <PromptInputTextarea
+          onChange={(e) => setText(e.target.value)}
+          value={text}
+        />
+      </PromptInputBody>
+      <PromptInputToolbar>
+        <PromptInputTools>
+          <PromptInputActionMenu>
+            <PromptInputActionMenuTrigger />
+            <PromptInputActionMenuContent>
+              <PromptInputActionAddAttachments />
+            </PromptInputActionMenuContent>
+          </PromptInputActionMenu>
+          <PromptInputButton>
+            <MicIcon size={16} />
+          </PromptInputButton>
+          <PromptInputButton>
+            <GlobeIcon size={16} />
+            <span>Search</span>
+          </PromptInputButton>
+          <PromptInputModelSelect onValueChange={setModel} value={model}>
+            <PromptInputModelSelectTrigger>
+              <PromptInputModelSelectValue />
+            </PromptInputModelSelectTrigger>
+            <PromptInputModelSelectContent>
+              {models.map((modelOption) => (
+                <PromptInputModelSelectItem
+                  key={modelOption.id}
+                  value={modelOption.id}
+                >
+                  {modelOption.name}
+                </PromptInputModelSelectItem>
+              ))}
+            </PromptInputModelSelectContent>
+          </PromptInputModelSelect>
+          <Context
+            maxTokens={context.maxTokens}
+            usedTokens={context.usedTokens}
+          />
+        </PromptInputTools>
+        <PromptInputSubmit status={status} />
+      </PromptInputToolbar>
+    </PromptInput>
   );
 };
 
