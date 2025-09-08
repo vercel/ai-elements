@@ -13,6 +13,7 @@ import Image from "@/app/examples/image";
 import InlineCitation from "@/app/examples/inline-citation";
 import Loader from "@/app/examples/loader";
 import Message from "@/app/examples/message";
+import OpenInChat from "@/app/examples/open-in-chat";
 import PromptInput from "@/app/examples/prompt-input";
 import Reasoning from "@/app/examples/reasoning";
 import Response from "@/app/examples/response";
@@ -26,12 +27,13 @@ const components = [
   { name: "Actions", Component: Actions },
   { name: "Branch", Component: Branch },
   { name: "CodeBlock", Component: CodeBlock },
+  { name: "Context", Component: Context },
   { name: "Conversation", Component: Conversation },
   { name: "Image", Component: Image },
   { name: "InlineCitation", Component: InlineCitation },
-  { name: "Context", Component: Context },
   { name: "Loader", Component: Loader },
   { name: "Message", Component: Message },
+  { name: "OpenInChat", Component: OpenInChat },
   { name: "PromptInput", Component: PromptInput },
   { name: "Reasoning", Component: Reasoning },
   { name: "Response", Component: Response },
