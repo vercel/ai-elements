@@ -10,12 +10,7 @@ import { Progress } from "@repo/shadcn-ui/components/ui/progress";
 import { cn } from "@repo/shadcn-ui/lib/utils";
 import type { LanguageModelUsage } from "ai";
 import { type ComponentProps, createContext, useContext } from "react";
-import {
-  breakdownTokens,
-  estimateCost,
-  type ModelId,
-  normalizeUsage,
-} from "tokenlens";
+import { estimateCost, type ModelId } from "tokenlens";
 
 const PERCENT_MAX = 100;
 const ICON_RADIUS = 10;
