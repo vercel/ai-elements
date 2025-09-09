@@ -93,7 +93,7 @@ const ContextIcon = () => {
         strokeDashoffset={dashOffset}
         strokeLinecap="round"
         strokeWidth={ICON_STROKE_WIDTH}
-        transform={`rotate(-90 ${ICON_CENTER} ${ICON_CENTER})`}
+        style={{ transformOrigin: "center", transform: "rotate(-90deg)" }}
       />
     </svg>
   );

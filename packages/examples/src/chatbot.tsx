@@ -16,7 +16,15 @@ import {
 import { Message, MessageAvatar, MessageContent } from "@repo/elements/message";
 import {
   PromptInput,
+  PromptInputActionAddAttachments,
+  PromptInputActionMenu,
+  PromptInputActionMenuContent,
+  PromptInputActionMenuTrigger,
+  PromptInputAttachment,
+  PromptInputAttachments,
+  PromptInputBody,
   PromptInputButton,
+  type PromptInputMessage,
   PromptInputModelSelect,
   PromptInputModelSelectContent,
   PromptInputModelSelectItem,
@@ -41,24 +49,10 @@ import {
 } from "@repo/elements/sources";
 import { Suggestion, Suggestions } from "@repo/elements/suggestion";
 import type { ToolUIPart } from "ai";
-import {
-  CameraIcon,
-  FileIcon,
-  GlobeIcon,
-  ImageIcon,
-  MicIcon,
-  PlusIcon,
-  ScreenShareIcon,
-} from "lucide-react";
+import { GlobeIcon, MicIcon } from "lucide-react";
 import { nanoid } from "nanoid";
-import { type FormEventHandler, useCallback, useState } from "react";
+import { useCallback, useState } from "react";
 import { toast } from "sonner";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 
 type MessageType = {
   key: string;
@@ -399,22 +393,24 @@ const Example = () => {
     [streamResponse]
   );
 
-  const handleSubmit: FormEventHandler<HTMLFormElement> = (event) => {
-    event.preventDefault();
+  const handleSubmit = (message: PromptInputMessage) => {
+    const hasText = Boolean(message.text);
+    const hasAttachments = Boolean(message.files?.length);
 
-    if (!text.trim()) {
+    if (!(hasText || hasAttachments)) {
       return;
     }
 
     setStatus("submitted");
-    addUserMessage(text.trim());
-    setText("");
-  };
 
-  const handleFileAction = (action: string) => {
-    toast.success("File action", {
-      description: action,
-    });
+    if (message.files?.length) {
+      toast.success("Files attached", {
+        description: `${message.files.length} file(s) attached to message`,
+      });
+    }
+
+    addUserMessage(message.text || "Sent with attachments");
+    setText("");
   };
 
   const handleSuggestionClick = (suggestion: string) => {
@@ -488,47 +484,24 @@ const Example = () => {
           ))}
         </Suggestions>
         <div className="w-full px-4 pb-4">
-          <PromptInput onSubmit={handleSubmit}>
-            <PromptInputTextarea
-              onChange={(event) => setText(event.target.value)}
-              value={text}
-            />
+          <PromptInput globalDrop multiple onSubmit={handleSubmit}>
+            <PromptInputBody>
+              <PromptInputAttachments>
+                {(attachment) => <PromptInputAttachment data={attachment} />}
+              </PromptInputAttachments>
+              <PromptInputTextarea
+                onChange={(event) => setText(event.target.value)}
+                value={text}
+              />
+            </PromptInputBody>
             <PromptInputToolbar>
               <PromptInputTools>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <PromptInputButton>
-                      <PlusIcon size={16} />
-                      <span className="sr-only">Add attachment</span>
-                    </PromptInputButton>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="start">
-                    <DropdownMenuItem
-                      onClick={() => handleFileAction("upload-file")}
-                    >
-                      <FileIcon className="mr-2" size={16} />
-                      Upload file
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onClick={() => handleFileAction("upload-photo")}
-                    >
-                      <ImageIcon className="mr-2" size={16} />
-                      Upload photo
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onClick={() => handleFileAction("take-screenshot")}
-                    >
-                      <ScreenShareIcon className="mr-2" size={16} />
-                      Take screenshot
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onClick={() => handleFileAction("take-photo")}
-                    >
-                      <CameraIcon className="mr-2" size={16} />
-                      Take photo
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                <PromptInputActionMenu>
+                  <PromptInputActionMenuTrigger />
+                  <PromptInputActionMenuContent>
+                    <PromptInputActionAddAttachments />
+                  </PromptInputActionMenuContent>
+                </PromptInputActionMenu>
                 <PromptInputButton
                   onClick={() => setUseMicrophone(!useMicrophone)}
                   variant={useMicrophone ? "default" : "ghost"}
@@ -560,7 +533,7 @@ const Example = () => {
                 </PromptInputModelSelect>
               </PromptInputTools>
               <PromptInputSubmit
-                disabled={!text.trim() || status === "streaming"}
+                disabled={!(text.trim() || status) || status === "streaming"}
                 status={status}
               />
             </PromptInputToolbar>
