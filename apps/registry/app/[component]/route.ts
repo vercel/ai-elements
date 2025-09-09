@@ -205,11 +205,91 @@ export const GET = async (_request: NextRequest, { params }: RequestProps) => {
 
   if (parsedComponent === "registry") {
     try {
+      track("registry:registry");
+    } catch (error) {
+      console.warn("Failed to track registry:registry:", error);
+    }
+    return NextResponse.json(response);
+  }
+
+  // Handle "all.json" - bundle all components into a single RegistryItem
+  if (parsedComponent === "all") {
+    try {
       track("registry:all");
     } catch (error) {
       console.warn("Failed to track registry:all:", error);
     }
-    return NextResponse.json(response);
+
+    // Collect all dependencies and registry dependencies from all components
+    const allDependencies = new Set<string>();
+    const allDevDependencies = new Set<string>();
+    const allRegistryDependencies = new Set<string>();
+    const allFiles: RegistryItem["files"] = [];
+
+    // Process each component file
+    for (const componentFile of tsxFiles) {
+      const file = files.find(
+        (f) => f.path === `registry/default/ai-elements/${componentFile.name}`
+      );
+
+      if (file) {
+        allFiles.push({
+          path: file.path,
+          type: file.type as RegistryItem["type"],
+          content: file.content,
+          target: `components/ai-elements/${componentFile.name}`,
+        });
+
+        // Parse imports for dependencies
+        const project = new Project({ useInMemoryFileSystem: true });
+        try {
+          const sourceFile = project.createSourceFile(file.path, file.content);
+          const imports = sourceFile
+            .getImportDeclarations()
+            .map((d) => d.getModuleSpecifierValue());
+
+          for (const moduleName of imports) {
+            if (!moduleName) {
+              continue;
+            }
+
+            // Check if it's a regular dependency
+            if (dependencies.includes(moduleName)) {
+              allDependencies.add(moduleName);
+            }
+
+            // Check if it's a dev dependency
+            if (devDependencies.includes(moduleName)) {
+              allDevDependencies.add(moduleName);
+            }
+
+            // Check if it's a registry dependency (shadcn/ui components)
+            if (moduleName.startsWith("@/components/ui/")) {
+              const componentName = moduleName.split("/").pop();
+              if (componentName) {
+                allRegistryDependencies.add(componentName);
+              }
+            }
+          }
+        } catch (error) {
+          console.warn(`Failed to parse imports for ${file.path}:`, error);
+        }
+      }
+    }
+
+    const allComponentsItem: RegistryItem = {
+      $schema: "https://ui.shadcn.com/schema/registry-item.json",
+      name: "all",
+      type: "registry:component",
+      title: "All AI Elements",
+      description: "Bundle containing all AI-powered components.",
+      files: allFiles,
+      dependencies: Array.from(allDependencies),
+      devDependencies: Array.from(allDevDependencies),
+      registryDependencies: Array.from(allRegistryDependencies),
+    };
+
+    return NextResponse.json(allComponentsItem);
   }
 
   try {
