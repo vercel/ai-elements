@@ -81,7 +81,9 @@ AI Elements includes the following components:
 | Component                  | Description                                             |
 | -------------------------- | ------------------------------------------------------- |
 | `actions`                  | Interactive action buttons for AI responses             |
+| `artifact`                 | Display a code or document                              |
 | `branch`                   | Branch visualization for conversation flows             |
+| `chain-of-thought`         | Display AI reasoning and thought processes              |
 | `code-block`               | Syntax-highlighted code display with copy functionality |
 | `context`                  | Display Context consumption                             |
 | `conversation`             | Container for chat conversations                        |
@@ -89,12 +91,11 @@ AI Elements includes the following components:
 | `inline-citation`          | Inline source citations                                 |
 | `loader`                   | Loading states for AI operations                        |
 | `message`                  | Individual chat messages with avatars                   |
-| `prompt-form`              | Controlled form wrapper for prompt submission           |
+| `open-in-chat`             | Open in chat button for a message                       |
 | `prompt-input`             | Advanced input component with model selection           |
-| `prompt-input-attachments` | Opt-in file/image attachments for prompt input          |
 | `reasoning`                | Display AI reasoning and thought processes              |
 | `response`                 | Formatted AI response display                           |
-| `source`                   | Source attribution component                            |
+| `sources`                  | Source attribution component                            |
 | `suggestion`               | Quick action suggestions                                |
 | `task`                     | Task completion tracking                                |
 | `tool`                     | Tool usage visualization                                |
