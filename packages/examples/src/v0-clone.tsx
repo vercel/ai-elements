@@ -5,6 +5,7 @@ import { Loader } from "@repo/elements/loader";
 import { Message, MessageContent } from "@repo/elements/message";
 import {
   PromptInput,
+  type PromptInputMessage,
   PromptInputSubmit,
   PromptInputTextarea,
 } from "@repo/elements/prompt-input";
@@ -18,10 +19,10 @@ import {
 import { nanoid } from "nanoid";
 import { useState } from "react";
 
-interface Chat {
+type Chat = {
   id: string;
   demo: string;
-}
+};
 
 export default function Home() {
   const [message, setMessage] = useState("");
@@ -35,11 +36,15 @@ export default function Home() {
     }>
   >([]);
 
-  const handleSendMessage = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (!message.trim() || isLoading) return;
+  const handleSendMessage = async (promptMessage: PromptInputMessage) => {
+    const hasText = Boolean(promptMessage.text);
+    const hasAttachments = Boolean(promptMessage.files?.length);
 
-    const userMessage = message.trim();
+    if (!(hasText || hasAttachments) || isLoading) {
+      return;
+    }
+
+    const userMessage = promptMessage.text?.trim() || "Sent with attachments";
     setMessage("");
     setIsLoading(true);
 
