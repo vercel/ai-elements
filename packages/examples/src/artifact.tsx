@@ -9,7 +9,7 @@ import {
   ArtifactHeader,
   ArtifactTitle,
 } from "@repo/elements/artifact";
-import { CodeBlock } from "@repo/elements/src/code-block";
+import { CodeBlock } from "@repo/elements/code-block";
 import {
   CopyIcon,
   DownloadIcon,
