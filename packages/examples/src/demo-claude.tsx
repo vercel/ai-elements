@@ -17,6 +17,7 @@ import { Message, MessageAvatar, MessageContent } from "@repo/elements/message";
 import {
   PromptInput,
   PromptInputButton,
+  type PromptInputMessage,
   PromptInputModelSelect,
   PromptInputModelSelectContent,
   PromptInputModelSelectItem,
@@ -50,7 +51,7 @@ import {
   Settings2Icon,
 } from "lucide-react";
 import { nanoid } from "nanoid";
-import { type FormEventHandler, useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import {
   DropdownMenu,
@@ -548,15 +549,16 @@ const Example = () => {
     };
   }, [streamMessage]);
 
-  const handleSubmit: FormEventHandler<HTMLFormElement> = (event) => {
-    event.preventDefault();
+  const handleSubmit = (message: PromptInputMessage) => {
+    const hasText = Boolean(message.text);
+    const hasAttachments = Boolean(message.files?.length);
 
-    if (!text.trim()) {
+    if (!(hasText || hasAttachments)) {
       return;
     }
 
     setStatus("submitted");
-    addUserMessage(text.trim());
+    addUserMessage(message.text || "Sent with attachments");
     setText("");
   };
 
