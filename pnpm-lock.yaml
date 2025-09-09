@@ -139,6 +139,9 @@ importers:
       streamdown:
         specifier: ^1.2.0
         version: 1.2.0(@types/react@19.1.12)(react@19.1.1)
+      tokenlens:
+        specifier: ^1.1.2
+        version: 1.1.2
       use-stick-to-bottom:
         specifier: ^1.1.1
         version: 1.1.1(react@19.1.1)
@@ -4220,6 +4223,9 @@ packages:
   toidentifier@1.0.1:
     resolution: {integrity: sha512-o5sSPKEkg/DIQNmH43V0/uerLrpzVedkUh8tGNvaeXpfpuwjKenlSox/2O/BTlZUtEe+JG7s5YhEz608PlAHRA==}
     engines: {node: '>=0.6'}
+
+  tokenlens@1.1.2:
+    resolution: {integrity: sha512-PICXahAiVS/2nyc30SijuYZj5wIm2G9+2U7fdvQbl5pa/hIUpQ8H+RdYOzOrSvva6GMqPM5+6cWd9Hqi81Yv3g==}
 
   tough-cookie@6.0.0:
     resolution: {integrity: sha512-kXuRi1mtaKMrsLUxz3sQYvVl37B0Ns6MzfrtV5DvJceE9bPyspOqk9xxv7XbZWcfLWbFmm997vl83qUWVJA64w==}
@@ -8944,6 +8950,8 @@ snapshots:
       is-number: 7.0.0
 
   toidentifier@1.0.1: {}
+
+  tokenlens@1.1.2: {}
 
   tough-cookie@6.0.0:
     dependencies:

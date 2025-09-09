@@ -5,14 +5,22 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from "@repo/shadcn-ui/components/ui/hover-card";
+import { Progress } from "@repo/shadcn-ui/components/ui/progress";
+import { Separator } from "@repo/shadcn-ui/components/ui/separator";
 import { cn } from "@repo/shadcn-ui/lib/utils";
+import type { LanguageModelUsage } from "ai";
 import type { ComponentProps } from "react";
+import { breakdownTokens, estimateCost, normalizeUsage } from "tokenlens";
 
 export type ContextProps = ComponentProps<"button"> & {
   /** Total context window size in tokens */
   maxTokens: number;
   /** Tokens used so far */
   usedTokens: number;
+  /** Optional full usage payload to enable breakdown view */
+  usage?: LanguageModelUsage | undefined;
+  /** Optional model id (canonical or alias) to compute cost */
+  modelId?: string;
 };
 
 const THOUSAND = 1000;
@@ -56,14 +64,34 @@ const formatPercent = (value: number) => {
     : `${rounded.toFixed(1)}%`;
 };
 
+const formatUSD = (value?: number) => {
+  if (value === undefined || !Number.isFinite(value)) return;
+  const abs = Math.abs(value);
+  // Finer precision for very small amounts common in LLM pricing
+  let decimals = 2;
+  if (abs < 0.001) decimals = 5;
+  else if (abs < 0.01) decimals = 4;
+  else if (abs < 0.1) decimals = 3;
+  else if (abs < 10) decimals = 2;
+  else decimals = 1;
+  const text = value.toFixed(decimals);
+  // Trim trailing zeros/decimal if not needed (e.g., 1.2300 -> 1.23, 2.0 -> 2)
+  const trimmed = text.replace(/\.0+$/, "").replace(/(\.\d*?)0+$/, "$1");
+  return `$${trimmed}`;
+};
+
+const formatUSDFixed = (value?: number, decimals = 5) => {
+  if (value === undefined || !Number.isFinite(value)) return;
+  return `$${Number(value).toFixed(decimals)}`;
+};
+
 type ContextIconProps = {
   percent: number; // 0 - 100
 };
 
-const ContextIcon = ({ percent }: ContextIconProps) => {
+export const ContextIcon = ({ percent }: ContextIconProps) => {
   const radius = ICON_RADIUS;
   const circumference = 2 * Math.PI * radius;
-  // Calculate dashOffset for the progress
   const dashOffset = circumference * (1 - percent / PERCENT_MAX);
 
   return (
@@ -95,16 +123,52 @@ const ContextIcon = ({ percent }: ContextIconProps) => {
         strokeDashoffset={dashOffset}
         strokeLinecap="round"
         strokeWidth={ICON_STROKE_WIDTH}
-        style={{ transformOrigin: "center", transform: "rotate(-90deg)" }}
+        transform={`rotate(-90 ${ICON_CENTER} ${ICON_CENTER})`}
       />
     </svg>
   );
 };
 
+function TokensWithCost({
+  tokens,
+  costText,
+}: {
+  tokens?: number;
+  costText?: string;
+}) {
+  return (
+    <span>
+      {tokens === undefined ? "—" : formatTokens(tokens)}
+      {costText ? (
+        <span className="ml-2 text-muted-foreground">• {costText}</span>
+      ) : null}
+    </span>
+  );
+}
+
+function InfoRow({
+  label,
+  tokens,
+  costText,
+}: {
+  label: string;
+  tokens?: number;
+  costText?: string;
+}) {
+  return (
+    <div className="flex items-center justify-between text-xs">
+      <span className="text-muted-foreground">{label}</span>
+      <TokensWithCost costText={costText} tokens={tokens} />
+    </div>
+  );
+}
+
 export const Context = ({
   className,
   maxTokens,
   usedTokens,
+  usage,
+  modelId,
   ...props
 }: ContextProps) => {
   const safeMax = Math.max(0, Number.isFinite(maxTokens) ? maxTokens : 0);
@@ -112,23 +176,107 @@ export const Context = ({
     Math.max(0, Number.isFinite(usedTokens) ? usedTokens : 0),
     safeMax
   );
+
+  // used percent and used tokens to display (demo-aware)
+  const displayUsedTokens = safeUsed;
   const usedPercent =
     safeMax > 0
-      ? Math.min(PERCENT_MAX, Math.max(0, (safeUsed / safeMax) * PERCENT_MAX))
+      ? Math.min(
+          PERCENT_MAX,
+          Math.max(0, (displayUsedTokens / safeMax) * PERCENT_MAX)
+        )
       : 0;
 
   const displayPct = formatPercent(Math.round(usedPercent * 10) / 10);
 
-  const used = formatTokens(safeUsed);
+  const used = formatTokens(displayUsedTokens);
   const total = formatTokens(safeMax);
+
+  const uNorm = normalizeUsage(usage);
+  const uBreakdown = breakdownTokens(usage);
+
+  const hasUsage =
+    !!usage &&
+    ((uNorm.input ?? 0) > 0 ||
+      (uNorm.output ?? 0) > 0 ||
+      (uBreakdown.cacheReads ?? 0) > 0 ||
+      (uBreakdown.cacheWrites ?? 0) > 0 ||
+      (uBreakdown.reasoningTokens ?? 0) > 0);
+
+  // Values to render in rows (demo or real)
+  const displayInput = uNorm.input;
+  const displayOutput = uNorm.output;
+
+  // Per-segment costs
+  const inputCostText = modelId
+    ? formatUSDFixed(
+        estimateCost({
+          modelId,
+          usage: { input: displayInput ?? 0, output: 0 },
+        }).inputUSD
+      )
+    : undefined;
+  const outputCostText = modelId
+    ? formatUSDFixed(
+        estimateCost({
+          modelId,
+          usage: { input: 0, output: displayOutput ?? 0 },
+        }).outputUSD
+      )
+    : undefined;
+  // Not supported by tokenlens pricing hints; leave undefined so no bullet is shown
+  const cacheReadsTokens = uBreakdown.cacheReads ?? 0;
+  const cacheWritesTokens = uBreakdown.cacheWrites ?? 0;
+  const cacheReadsCostText =
+    modelId && cacheReadsTokens > 0
+      ? formatUSDFixed(
+          estimateCost({
+            modelId,
+            // Cast to any to support extended pricing fields provided by tokenlens
+            usage: { cacheReads: cacheReadsTokens } as any,
+          }).totalUSD
+        )
+      : undefined;
+  const cacheWritesCostText =
+    modelId && cacheWritesTokens > 0
+      ? formatUSDFixed(
+          estimateCost({
+            modelId,
+            usage: { cacheWrites: cacheWritesTokens } as any,
+          }).totalUSD
+        )
+      : undefined;
+
+  const reasoningTokens = uBreakdown.reasoningTokens ?? 0;
+  let reasoningCostText: string | undefined;
+  if (modelId && reasoningTokens > 0) {
+    const est = estimateCost({
+      modelId,
+      usage: { reasoningTokens },
+    }).totalUSD;
+    // TokenLens does not provide reasoning pricing for some models. Show em dash when unknown.
+    reasoningCostText =
+      est && Number.isFinite(est) && est > 0 ? formatUSDFixed(est) : "—";
+  }
+
+  const costUSD = modelId
+    ? estimateCost({
+        modelId,
+        usage: { input: displayInput ?? 0, output: displayOutput ?? 0 },
+      }).totalUSD
+    : undefined;
+  const costText = formatUSDFixed(costUSD);
+
+  const fmtOrUnknown = (n?: number) =>
+    n === undefined ? "—" : formatTokens(n);
+
   return (
     <HoverCard closeDelay={100} openDelay={100}>
       <HoverCardTrigger asChild>
         <button
           className={cn(
-            "inline-flex select-none items-center gap-2 rounded-md px-2.5 py-1 text-sm",
-            "bg-background text-foreground",
-            className
+            "inline-flex select-none items-center gap-1 rounded-md px-2.5 py-1 text-sm",
+            "bg-background text-foreground"
           )}
           type="button"
           {...props}
@@ -139,13 +287,58 @@ export const Context = ({
           <ContextIcon percent={usedPercent} />
         </button>
       </HoverCardTrigger>
-      <HoverCardContent align="center" className="w-fit p-2">
-        <p className="text-center text-sm">
-          {displayPct} • {used} / {total} context used
-        </p>
+      <HoverCardContent align="end" className="w-fit p-3" side="top">
+        <div className="min-w-[240px] space-y-2">
+          <p className="text-start text-sm">
+            {displayPct} • {used} / {total} tokens
+          </p>
+          <div className="space-y-2">
+            <Progress className="h-2 bg-muted" value={usedPercent} />
+          </div>
+          <div className="mt-1 space-y-1">
+            {hasUsage && uBreakdown.cacheReads && uBreakdown.cacheReads > 0 && (
+              <InfoRow
+                costText={cacheReadsCostText}
+                label="Cache Hits"
+                tokens={uBreakdown.cacheReads}
+              />
+            )}
+            {hasUsage &&
+              uBreakdown.cacheWrites &&
+              uBreakdown.cacheWrites > 0 && (
+                <InfoRow
+                  costText={cacheWritesCostText}
+                  label="Cache Writes"
+                  tokens={uBreakdown.cacheWrites}
+                />
+              )}
+            <InfoRow
+              costText={inputCostText}
+              label="Input"
+              tokens={displayInput}
+            />
+            <InfoRow
+              costText={outputCostText}
+              label="Output"
+              tokens={displayOutput}
+            />
+            <InfoRow
+              costText={reasoningCostText}
+              label="Reasoning"
+              tokens={reasoningTokens > 0 ? reasoningTokens : undefined}
+            />
+            {costText && (
+              <>
+                <Separator className="mt-1" />
+                <div className="flex items-center justify-between pt-1 text-xs">
+                  <span className="text-muted-foreground">Total cost</span>
+                  <span>{costText}</span>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
       </HoverCardContent>
     </HoverCard>
   );
 };
-
-export default Context;
