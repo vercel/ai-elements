@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { Action, Actions } from '@repo/elements/actions';
-import { Message, MessageContent } from '@repo/elements/message';
+import { Action, Actions } from "@repo/elements/actions";
+import { Message, MessageContent } from "@repo/elements/message";
 import {
   CopyIcon,
   HeartIcon,
@@ -9,8 +9,8 @@ import {
   ShareIcon,
   ThumbsDownIcon,
   ThumbsUpIcon,
-} from 'lucide-react';
-import { useState } from 'react';
+} from "lucide-react";
+import { useState } from "react";
 
 const Example = () => {
   const [liked, setLiked] = useState(false);
@@ -22,47 +22,47 @@ const Example = () => {
 Try hovering over this message to see the actions appear!`;
 
   const handleRetry = () => {
-    console.log('Retrying request...');
+    console.log("Retrying request...");
   };
 
   const handleCopy = (content?: string) => {
-    console.log('Copied:', content);
+    console.log("Copied:", content);
   };
 
   const handleShare = (content?: string) => {
-    console.log('Sharing:', content);
+    console.log("Sharing:", content);
   };
 
   const actions = [
     {
       icon: RefreshCcwIcon,
-      label: 'Retry',
+      label: "Retry",
       onClick: handleRetry,
     },
     {
       icon: ThumbsUpIcon,
-      label: 'Like',
+      label: "Like",
       onClick: () => setLiked(!liked),
     },
 
     {
       icon: ThumbsDownIcon,
-      label: 'Dislike',
+      label: "Dislike",
       onClick: () => setDisliked(!disliked),
     },
     {
       icon: CopyIcon,
-      label: 'Copy',
+      label: "Copy",
       onClick: () => handleCopy(responseContent),
     },
     {
       icon: ShareIcon,
-      label: 'Share',
+      label: "Share",
       onClick: () => handleShare(responseContent),
     },
     {
       icon: HeartIcon,
-      label: 'Favorite',
+      label: "Favorite",
       onClick: () => setFavorited(!favorited),
     },
   ];

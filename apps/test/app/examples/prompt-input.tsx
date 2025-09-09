@@ -1,8 +1,16 @@
-'use client';
+"use client";
 
 import {
   PromptInput,
+  PromptInputActionAddAttachments,
+  PromptInputActionMenu,
+  PromptInputActionMenuContent,
+  PromptInputActionMenuTrigger,
+  PromptInputAttachment,
+  PromptInputAttachments,
+  PromptInputBody,
   PromptInputButton,
+  type PromptInputMessage,
   PromptInputModelSelect,
   PromptInputModelSelectContent,
   PromptInputModelSelectItem,
@@ -12,58 +20,72 @@ import {
   PromptInputTextarea,
   PromptInputToolbar,
   PromptInputTools,
-} from '@repo/elements/prompt-input';
-import { GlobeIcon, MicIcon, PlusIcon } from 'lucide-react';
-import { type FormEventHandler, useState } from 'react';
+} from "@repo/elements/prompt-input";
+import { GlobeIcon, MicIcon } from "lucide-react";
+import { useState } from "react";
 
 const models = [
-  { id: 'gpt-4', name: 'GPT-4' },
-  { id: 'gpt-3.5-turbo', name: 'GPT-3.5 Turbo' },
-  { id: 'claude-2', name: 'Claude 2' },
-  { id: 'claude-instant', name: 'Claude Instant' },
-  { id: 'palm-2', name: 'PaLM 2' },
-  { id: 'llama-2-70b', name: 'Llama 2 70B' },
-  { id: 'llama-2-13b', name: 'Llama 2 13B' },
-  { id: 'cohere-command', name: 'Command' },
-  { id: 'mistral-7b', name: 'Mistral 7B' },
+  { id: "gpt-4", name: "GPT-4" },
+  { id: "gpt-3.5-turbo", name: "GPT-3.5 Turbo" },
+  { id: "claude-2", name: "Claude 2" },
+  { id: "claude-instant", name: "Claude Instant" },
+  { id: "palm-2", name: "PaLM 2" },
+  { id: "llama-2-70b", name: "Llama 2 70B" },
+  { id: "llama-2-13b", name: "Llama 2 13B" },
+  { id: "cohere-command", name: "Command" },
+  { id: "mistral-7b", name: "Mistral 7B" },
 ];
 
+const SUBMITTING_TIMEOUT = 200;
+const STREAMING_TIMEOUT = 2000;
+
 const Example = () => {
-  const [text, setText] = useState<string>('');
+  const [text, setText] = useState<string>("");
   const [model, setModel] = useState<string>(models[0].id);
   const [status, setStatus] = useState<
-    'submitted' | 'streaming' | 'ready' | 'error'
-  >('ready');
+    "submitted" | "streaming" | "ready" | "error"
+  >("ready");
 
-  const handleSubmit: FormEventHandler<HTMLFormElement> = (event) => {
-    event.preventDefault();
+  const handleSubmit = (message: PromptInputMessage) => {
+    const hasText = Boolean(message.text);
+    const hasAttachments = Boolean(message.files?.length);
 
-    if (!text) {
+    if (!(hasText || hasAttachments)) {
       return;
     }
 
-    setStatus('submitted');
+    setStatus("submitted");
+
+    console.log("Submitting message:", message);
 
     setTimeout(() => {
-      setStatus('streaming');
-    }, 200);
+      setStatus("streaming");
+    }, SUBMITTING_TIMEOUT);
 
     setTimeout(() => {
-      setStatus('ready');
-    }, 2000);
+      setStatus("ready");
+    }, STREAMING_TIMEOUT);
   };
 
   return (
-    <PromptInput onSubmit={handleSubmit}>
-      <PromptInputTextarea
-        onChange={(e) => setText(e.target.value)}
-        value={text}
-      />
+    <PromptInput globalDrop multiple onSubmit={handleSubmit}>
+      <PromptInputBody>
+        <PromptInputAttachments>
+          {(attachment) => <PromptInputAttachment data={attachment} />}
+        </PromptInputAttachments>
+        <PromptInputTextarea
+          onChange={(e) => setText(e.target.value)}
+          value={text}
+        />
+      </PromptInputBody>
       <PromptInputToolbar>
         <PromptInputTools>
-          <PromptInputButton>
-            <PlusIcon size={16} />
-          </PromptInputButton>
+          <PromptInputActionMenu>
+            <PromptInputActionMenuTrigger />
+            <PromptInputActionMenuContent>
+              <PromptInputActionAddAttachments />
+            </PromptInputActionMenuContent>
+          </PromptInputActionMenu>
           <PromptInputButton>
             <MicIcon size={16} />
           </PromptInputButton>
@@ -76,15 +98,18 @@ const Example = () => {
               <PromptInputModelSelectValue />
             </PromptInputModelSelectTrigger>
             <PromptInputModelSelectContent>
-              {models.map((model) => (
-                <PromptInputModelSelectItem key={model.id} value={model.id}>
-                  {model.name}
+              {models.map((modelOption) => (
+                <PromptInputModelSelectItem
+                  key={modelOption.id}
+                  value={modelOption.id}
+                >
+                  {modelOption.name}
                 </PromptInputModelSelectItem>
               ))}
             </PromptInputModelSelectContent>
           </PromptInputModelSelect>
         </PromptInputTools>
-        <PromptInputSubmit disabled={!text} status={status} />
+        <PromptInputSubmit status={status} />
       </PromptInputToolbar>
     </PromptInput>
   );

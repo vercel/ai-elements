@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import {
   Branch,
@@ -7,22 +7,22 @@ import {
   BranchPage,
   BranchPrevious,
   BranchSelector,
-} from '@repo/elements/branch';
-import { Message, MessageAvatar, MessageContent } from '@repo/elements/message';
-import { nanoid } from 'nanoid';
+} from "@repo/elements/branch";
+import { Message, MessageAvatar, MessageContent } from "@repo/elements/message";
+import { nanoid } from "nanoid";
 
 const userMessages = [
   {
     id: nanoid(),
-    content: 'What are the key strategies for optimizing React performance?',
+    content: "What are the key strategies for optimizing React performance?",
   },
   {
     id: nanoid(),
-    content: 'How can I improve the performance of my React application?',
+    content: "How can I improve the performance of my React application?",
   },
   {
     id: nanoid(),
-    content: 'What performance optimization techniques should I use in React?',
+    content: "What performance optimization techniques should I use in React?",
   },
 ];
 
@@ -46,11 +46,11 @@ const assistantMessages = [
 
 const Example = () => {
   const handleBranchChange = (branchIndex: number) => {
-    console.log('Branch changed to:', branchIndex);
+    console.log("Branch changed to:", branchIndex);
   };
 
   return (
-    <div style={{ height: '300px' }}>
+    <div style={{ height: "300px" }}>
       <Branch defaultBranch={0} onBranchChange={handleBranchChange}>
         <BranchMessages>
           {userMessages.map((message) => (

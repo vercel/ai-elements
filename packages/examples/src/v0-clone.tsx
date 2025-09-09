@@ -1,58 +1,63 @@
-'use client';
+"use client";
 
-import { Conversation, ConversationContent } from '@repo/elements/conversation';
-import { Loader } from '@repo/elements/loader';
-import { Message, MessageContent } from '@repo/elements/message';
+import { Conversation, ConversationContent } from "@repo/elements/conversation";
+import { Loader } from "@repo/elements/loader";
+import { Message, MessageContent } from "@repo/elements/message";
 import {
   PromptInput,
+  type PromptInputMessage,
   PromptInputSubmit,
   PromptInputTextarea,
-} from '@repo/elements/prompt-input';
-import { Suggestion, Suggestions } from '@repo/elements/suggestion';
+} from "@repo/elements/prompt-input";
+import { Suggestion, Suggestions } from "@repo/elements/suggestion";
 import {
   WebPreview,
   WebPreviewBody,
   WebPreviewNavigation,
   WebPreviewUrl,
-} from '@repo/elements/web-preview';
-import { nanoid } from 'nanoid';
-import { useState } from 'react';
+} from "@repo/elements/web-preview";
+import { nanoid } from "nanoid";
+import { useState } from "react";
 
-interface Chat {
+type Chat = {
   id: string;
   demo: string;
-}
+};
 
 export default function Home() {
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState("");
   const [currentChat, setCurrentChat] = useState<Chat | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [chatHistory, setChatHistory] = useState<
     Array<{
       id: string;
-      type: 'user' | 'assistant';
+      type: "user" | "assistant";
       content: string;
     }>
   >([]);
 
-  const handleSendMessage = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (!message.trim() || isLoading) return;
+  const handleSendMessage = async (promptMessage: PromptInputMessage) => {
+    const hasText = Boolean(promptMessage.text);
+    const hasAttachments = Boolean(promptMessage.files?.length);
 
-    const userMessage = message.trim();
-    setMessage('');
+    if (!(hasText || hasAttachments) || isLoading) {
+      return;
+    }
+
+    const userMessage = promptMessage.text?.trim() || "Sent with attachments";
+    setMessage("");
     setIsLoading(true);
 
     setChatHistory((prev) => [
       ...prev,
-      { id: nanoid(), type: 'user', content: userMessage },
+      { id: nanoid(), type: "user", content: userMessage },
     ]);
 
     try {
-      const response = await fetch('/api/v0', {
-        method: 'POST',
+      const response = await fetch("/api/v0", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           message: userMessage,
@@ -61,7 +66,7 @@ export default function Home() {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to create chat');
+        throw new Error("Failed to create chat");
       }
 
       const chat: Chat = await response.json();
@@ -71,19 +76,19 @@ export default function Home() {
         ...prev,
         {
           id: nanoid(),
-          type: 'assistant',
-          content: 'Generated new app preview. Check the preview panel!',
+          type: "assistant",
+          content: "Generated new app preview. Check the preview panel!",
         },
       ]);
     } catch (error) {
-      console.error('Error:', error);
+      console.error("Error:", error);
       setChatHistory((prev) => [
         ...prev,
         {
           id: nanoid(),
-          type: 'assistant',
+          type: "assistant",
           content:
-            'Sorry, there was an error creating your app. Please try again.',
+            "Sorry, there was an error creating your app. Please try again.",
         },
       ]);
     } finally {
@@ -136,17 +141,17 @@ export default function Home() {
             <Suggestions>
               <Suggestion
                 onClick={() =>
-                  setMessage('Create a responsive navbar with Tailwind CSS')
+                  setMessage("Create a responsive navbar with Tailwind CSS")
                 }
                 suggestion="Create a responsive navbar with Tailwind CSS"
               />
               <Suggestion
-                onClick={() => setMessage('Build a todo app with React')}
+                onClick={() => setMessage("Build a todo app with React")}
                 suggestion="Build a todo app with React"
               />
               <Suggestion
                 onClick={() =>
-                  setMessage('Make a landing page for a coffee shop')
+                  setMessage("Make a landing page for a coffee shop")
                 }
                 suggestion="Make a landing page for a coffee shop"
               />
@@ -165,7 +170,7 @@ export default function Home() {
               <PromptInputSubmit
                 className="absolute right-1 bottom-1"
                 disabled={!message}
-                status={isLoading ? 'streaming' : 'ready'}
+                status={isLoading ? "streaming" : "ready"}
               />
             </PromptInput>
           </div>

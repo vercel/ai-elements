@@ -1,24 +1,24 @@
-'use client';
+"use client";
 
-import { Response } from '@repo/elements/response';
+import { Response } from "@repo/elements/response";
 import {
   Tool,
   ToolContent,
   ToolHeader,
   ToolInput,
   ToolOutput,
-} from '@repo/elements/tool';
-import type { ToolUIPart } from 'ai';
-import { nanoid } from 'nanoid';
+} from "@repo/elements/tool";
+import type { ToolUIPart } from "ai";
+import { nanoid } from "nanoid";
 
 const toolCall: ToolUIPart = {
-  type: 'tool-database_query' as const,
+  type: "tool-database_query" as const,
   toolCallId: nanoid(),
-  state: 'output-available' as const,
+  state: "output-available" as const,
   input: {
-    query: 'SELECT COUNT(*) FROM users WHERE created_at >= ?',
-    params: ['2024-01-01'],
-    database: 'analytics',
+    query: "SELECT COUNT(*) FROM users WHERE created_at >= ?",
+    params: ["2024-01-01"],
+    database: "analytics",
   },
   output: `| User ID | Name | Email | Created At |
 |---------|------|-------|------------|
@@ -31,16 +31,13 @@ const toolCall: ToolUIPart = {
 };
 
 const Example = () => (
-  <div style={{ height: '500px' }}>
+  <div style={{ height: "500px" }}>
     <Tool>
       <ToolHeader state={toolCall.state} type={toolCall.type} />
       <ToolContent>
         <ToolInput input={toolCall.input} />
-        {toolCall.state === 'output-available' && (
-          <ToolOutput
-            errorText={toolCall.errorText}
-            output={<Response>{toolCall.output as string}</Response>}
-          />
+        {toolCall.state === "output-available" && (
+          <ToolOutput errorText={toolCall.errorText} output={toolCall.output} />
         )}
       </ToolContent>
     </Tool>

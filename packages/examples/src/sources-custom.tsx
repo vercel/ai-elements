@@ -1,24 +1,24 @@
-'use client';
+"use client";
 
 import {
   Source,
   Sources,
   SourcesContent,
   SourcesTrigger,
-} from '@repo/elements/sources';
-import { ChevronDownIcon, ExternalLinkIcon } from 'lucide-react';
+} from "@repo/elements/sources";
+import { ChevronDownIcon, ExternalLinkIcon } from "lucide-react";
 
 const sources = [
-  { href: 'https://stripe.com/docs/api', title: 'Stripe API Documentation' },
-  { href: 'https://docs.github.com/en/rest', title: 'GitHub REST API' },
+  { href: "https://stripe.com/docs/api", title: "Stripe API Documentation" },
+  { href: "https://docs.github.com/en/rest", title: "GitHub REST API" },
   {
-    href: 'https://docs.aws.amazon.com/sdk-for-javascript/',
-    title: 'AWS SDK for JavaScript',
+    href: "https://docs.aws.amazon.com/sdk-for-javascript/",
+    title: "AWS SDK for JavaScript",
   },
 ];
 
 const Example = () => (
-  <div style={{ height: '110px' }}>
+  <div style={{ height: "110px" }}>
     <Sources>
       <SourcesTrigger count={sources.length}>
         <p className="font-medium">Using {sources.length} citations</p>

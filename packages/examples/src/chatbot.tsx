@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import {
   Branch,
@@ -7,16 +7,24 @@ import {
   BranchPage,
   BranchPrevious,
   BranchSelector,
-} from '@repo/elements/branch';
+} from "@repo/elements/branch";
 import {
   Conversation,
   ConversationContent,
   ConversationScrollButton,
-} from '@repo/elements/conversation';
-import { Message, MessageAvatar, MessageContent } from '@repo/elements/message';
+} from "@repo/elements/conversation";
+import { Message, MessageAvatar, MessageContent } from "@repo/elements/message";
 import {
   PromptInput,
+  PromptInputActionAddAttachments,
+  PromptInputActionMenu,
+  PromptInputActionMenuContent,
+  PromptInputActionMenuTrigger,
+  PromptInputAttachment,
+  PromptInputAttachments,
+  PromptInputBody,
   PromptInputButton,
+  type PromptInputMessage,
   PromptInputModelSelect,
   PromptInputModelSelectContent,
   PromptInputModelSelectItem,
@@ -26,43 +34,29 @@ import {
   PromptInputTextarea,
   PromptInputToolbar,
   PromptInputTools,
-} from '@repo/elements/prompt-input';
+} from "@repo/elements/prompt-input";
 import {
   Reasoning,
   ReasoningContent,
   ReasoningTrigger,
-} from '@repo/elements/reasoning';
-import { Response } from '@repo/elements/response';
+} from "@repo/elements/reasoning";
+import { Response } from "@repo/elements/response";
 import {
   Source,
   Sources,
   SourcesContent,
   SourcesTrigger,
-} from '@repo/elements/sources';
-import { Suggestion, Suggestions } from '@repo/elements/suggestion';
-import type { ToolUIPart } from 'ai';
-import {
-  CameraIcon,
-  FileIcon,
-  GlobeIcon,
-  ImageIcon,
-  MicIcon,
-  PlusIcon,
-  ScreenShareIcon,
-} from 'lucide-react';
-import { nanoid } from 'nanoid';
-import { type FormEventHandler, useCallback, useState } from 'react';
-import { toast } from 'sonner';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+} from "@repo/elements/sources";
+import { Suggestion, Suggestions } from "@repo/elements/suggestion";
+import type { ToolUIPart } from "ai";
+import { GlobeIcon, MicIcon } from "lucide-react";
+import { nanoid } from "nanoid";
+import { useCallback, useState } from "react";
+import { toast } from "sonner";
 
 type MessageType = {
   key: string;
-  from: 'user' | 'assistant';
+  from: "user" | "assistant";
   sources?: { href: string; title: string }[];
   versions: {
     id: string;
@@ -75,7 +69,7 @@ type MessageType = {
   tools?: {
     name: string;
     description: string;
-    status: ToolUIPart['state'];
+    status: ToolUIPart["state"];
     parameters: Record<string, unknown>;
     result: string | undefined;
     error: string | undefined;
@@ -87,37 +81,37 @@ type MessageType = {
 const initialMessages: MessageType[] = [
   {
     key: nanoid(),
-    from: 'user',
+    from: "user",
     versions: [
       {
         id: nanoid(),
-        content: 'Can you explain how to use React hooks effectively?',
+        content: "Can you explain how to use React hooks effectively?",
       },
     ],
-    avatar: 'https://github.com/haydenbleasel.png',
-    name: 'Hayden Bleasel',
+    avatar: "https://github.com/haydenbleasel.png",
+    name: "Hayden Bleasel",
   },
   {
     key: nanoid(),
-    from: 'assistant',
+    from: "assistant",
     sources: [
       {
-        href: 'https://react.dev/reference/react',
-        title: 'React Documentation',
+        href: "https://react.dev/reference/react",
+        title: "React Documentation",
       },
       {
-        href: 'https://react.dev/reference/react-dom',
-        title: 'React DOM Documentation',
+        href: "https://react.dev/reference/react-dom",
+        title: "React DOM Documentation",
       },
     ],
     tools: [
       {
-        name: 'mcp',
-        description: 'Searching React documentation',
-        status: 'input-available',
+        name: "mcp",
+        description: "Searching React documentation",
+        status: "input-available",
         parameters: {
-          query: 'React hooks best practices',
-          source: 'react.dev',
+          query: "React hooks best practices",
+          source: "react.dev",
         },
         result: `{
   "query": "React hooks best practices",
@@ -183,17 +177,17 @@ function ProfilePage({ userId }) {
 Would you like me to explain any specific hook in more detail?`,
       },
     ],
-    avatar: 'https://github.com/openai.png',
-    name: 'OpenAI',
+    avatar: "https://github.com/openai.png",
+    name: "OpenAI",
   },
   {
     key: nanoid(),
-    from: 'user',
+    from: "user",
     versions: [
       {
         id: nanoid(),
         content:
-          'Yes, could you explain useCallback and useMemo in more detail? When should I use one over the other?',
+          "Yes, could you explain useCallback and useMemo in more detail? When should I use one over the other?",
       },
       {
         id: nanoid(),
@@ -203,15 +197,15 @@ Would you like me to explain any specific hook in more detail?`,
       {
         id: nanoid(),
         content:
-          'Thanks for the overview! Could you dive deeper into the specific use cases where useCallback and useMemo make the biggest difference in React applications?',
+          "Thanks for the overview! Could you dive deeper into the specific use cases where useCallback and useMemo make the biggest difference in React applications?",
       },
     ],
-    avatar: 'https://github.com/haydenbleasel.png',
-    name: 'Hayden Bleasel',
+    avatar: "https://github.com/haydenbleasel.png",
+    name: "Hayden Bleasel",
   },
   {
     key: nanoid(),
-    from: 'assistant',
+    from: "assistant",
     reasoning: {
       content: `The user is asking for a detailed explanation of useCallback and useMemo. I should provide a clear and concise explanation of each hook's purpose and how they differ.
       
@@ -272,32 +266,32 @@ const sortedList = useMemo(() => expensiveSort(items), [items]);
 Don't overuse these hooks! They come with their own overhead. Only use them when you have identified a genuine performance issue.`,
       },
     ],
-    avatar: 'https://github.com/openai.png',
-    name: 'OpenAI',
+    avatar: "https://github.com/openai.png",
+    name: "OpenAI",
   },
 ];
 
 const models = [
-  { id: 'gpt-4', name: 'GPT-4' },
-  { id: 'gpt-3.5-turbo', name: 'GPT-3.5 Turbo' },
-  { id: 'claude-2', name: 'Claude 2' },
-  { id: 'claude-instant', name: 'Claude Instant' },
-  { id: 'palm-2', name: 'PaLM 2' },
-  { id: 'llama-2-70b', name: 'Llama 2 70B' },
-  { id: 'llama-2-13b', name: 'Llama 2 13B' },
-  { id: 'cohere-command', name: 'Command' },
-  { id: 'mistral-7b', name: 'Mistral 7B' },
+  { id: "gpt-4", name: "GPT-4" },
+  { id: "gpt-3.5-turbo", name: "GPT-3.5 Turbo" },
+  { id: "claude-2", name: "Claude 2" },
+  { id: "claude-instant", name: "Claude Instant" },
+  { id: "palm-2", name: "PaLM 2" },
+  { id: "llama-2-70b", name: "Llama 2 70B" },
+  { id: "llama-2-13b", name: "Llama 2 13B" },
+  { id: "cohere-command", name: "Command" },
+  { id: "mistral-7b", name: "Mistral 7B" },
 ];
 
 const suggestions = [
-  'What are the latest trends in AI?',
-  'How does machine learning work?',
-  'Explain quantum computing',
-  'Best practices for React development',
-  'Tell me about TypeScript benefits',
-  'How to optimize database queries?',
-  'What is the difference between SQL and NoSQL?',
-  'Explain cloud computing basics',
+  "What are the latest trends in AI?",
+  "How does machine learning work?",
+  "Explain quantum computing",
+  "Best practices for React development",
+  "Tell me about TypeScript benefits",
+  "How to optimize database queries?",
+  "What is the difference between SQL and NoSQL?",
+  "Explain cloud computing basics",
 ];
 
 const mockResponses = [
@@ -310,12 +304,12 @@ const mockResponses = [
 
 const Example = () => {
   const [model, setModel] = useState<string>(models[0].id);
-  const [text, setText] = useState<string>('');
+  const [text, setText] = useState<string>("");
   const [useWebSearch, setUseWebSearch] = useState<boolean>(false);
   const [useMicrophone, setUseMicrophone] = useState<boolean>(false);
   const [status, setStatus] = useState<
-    'submitted' | 'streaming' | 'ready' | 'error'
-  >('ready');
+    "submitted" | "streaming" | "ready" | "error"
+  >("ready");
   const [messages, setMessages] = useState<MessageType[]>(initialMessages);
   const [streamingMessageId, setStreamingMessageId] = useState<string | null>(
     null
@@ -323,14 +317,14 @@ const Example = () => {
 
   const streamResponse = useCallback(
     async (messageId: string, content: string) => {
-      setStatus('streaming');
+      setStatus("streaming");
       setStreamingMessageId(messageId);
 
-      const words = content.split(' ');
-      let currentContent = '';
+      const words = content.split(" ");
+      let currentContent = "";
 
       for (let i = 0; i < words.length; i++) {
-        currentContent += (i > 0 ? ' ' : '') + words[i];
+        currentContent += (i > 0 ? " " : "") + words[i];
 
         setMessages((prev) =>
           prev.map((msg) => {
@@ -351,7 +345,7 @@ const Example = () => {
         );
       }
 
-      setStatus('ready');
+      setStatus("ready");
       setStreamingMessageId(null);
     },
     []
@@ -361,15 +355,15 @@ const Example = () => {
     (content: string) => {
       const userMessage: MessageType = {
         key: `user-${Date.now()}`,
-        from: 'user',
+        from: "user",
         versions: [
           {
             id: `user-${Date.now()}`,
             content,
           },
         ],
-        avatar: 'https://github.com/haydenbleasel.png',
-        name: 'User',
+        avatar: "https://github.com/haydenbleasel.png",
+        name: "User",
       };
 
       setMessages((prev) => [...prev, userMessage]);
@@ -381,15 +375,15 @@ const Example = () => {
 
         const assistantMessage: MessageType = {
           key: `assistant-${Date.now()}`,
-          from: 'assistant',
+          from: "assistant",
           versions: [
             {
               id: assistantMessageId,
-              content: '',
+              content: "",
             },
           ],
-          avatar: 'https://github.com/openai.png',
-          name: 'Assistant',
+          avatar: "https://github.com/openai.png",
+          name: "Assistant",
         };
 
         setMessages((prev) => [...prev, assistantMessage]);
@@ -399,26 +393,28 @@ const Example = () => {
     [streamResponse]
   );
 
-  const handleSubmit: FormEventHandler<HTMLFormElement> = (event) => {
-    event.preventDefault();
+  const handleSubmit = (message: PromptInputMessage) => {
+    const hasText = Boolean(message.text);
+    const hasAttachments = Boolean(message.files?.length);
 
-    if (!text.trim()) {
+    if (!(hasText || hasAttachments)) {
       return;
     }
 
-    setStatus('submitted');
-    addUserMessage(text.trim());
-    setText('');
-  };
+    setStatus("submitted");
 
-  const handleFileAction = (action: string) => {
-    toast.success('File action', {
-      description: action,
-    });
+    if (message.files?.length) {
+      toast.success("Files attached", {
+        description: `${message.files.length} file(s) attached to message`,
+      });
+    }
+
+    addUserMessage(message.text || "Sent with attachments");
+    setText("");
   };
 
   const handleSuggestionClick = (suggestion: string) => {
-    setStatus('submitted');
+    setStatus("submitted");
     addUserMessage(suggestion);
   };
 
@@ -488,57 +484,34 @@ const Example = () => {
           ))}
         </Suggestions>
         <div className="w-full px-4 pb-4">
-          <PromptInput onSubmit={handleSubmit}>
-            <PromptInputTextarea
-              onChange={(event) => setText(event.target.value)}
-              value={text}
-            />
+          <PromptInput globalDrop multiple onSubmit={handleSubmit}>
+            <PromptInputBody>
+              <PromptInputAttachments>
+                {(attachment) => <PromptInputAttachment data={attachment} />}
+              </PromptInputAttachments>
+              <PromptInputTextarea
+                onChange={(event) => setText(event.target.value)}
+                value={text}
+              />
+            </PromptInputBody>
             <PromptInputToolbar>
               <PromptInputTools>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <PromptInputButton>
-                      <PlusIcon size={16} />
-                      <span className="sr-only">Add attachment</span>
-                    </PromptInputButton>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="start">
-                    <DropdownMenuItem
-                      onClick={() => handleFileAction('upload-file')}
-                    >
-                      <FileIcon className="mr-2" size={16} />
-                      Upload file
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onClick={() => handleFileAction('upload-photo')}
-                    >
-                      <ImageIcon className="mr-2" size={16} />
-                      Upload photo
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onClick={() => handleFileAction('take-screenshot')}
-                    >
-                      <ScreenShareIcon className="mr-2" size={16} />
-                      Take screenshot
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onClick={() => handleFileAction('take-photo')}
-                    >
-                      <CameraIcon className="mr-2" size={16} />
-                      Take photo
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                <PromptInputActionMenu>
+                  <PromptInputActionMenuTrigger />
+                  <PromptInputActionMenuContent>
+                    <PromptInputActionAddAttachments />
+                  </PromptInputActionMenuContent>
+                </PromptInputActionMenu>
                 <PromptInputButton
                   onClick={() => setUseMicrophone(!useMicrophone)}
-                  variant={useMicrophone ? 'default' : 'ghost'}
+                  variant={useMicrophone ? "default" : "ghost"}
                 >
                   <MicIcon size={16} />
                   <span className="sr-only">Microphone</span>
                 </PromptInputButton>
                 <PromptInputButton
                   onClick={() => setUseWebSearch(!useWebSearch)}
-                  variant={useWebSearch ? 'default' : 'ghost'}
+                  variant={useWebSearch ? "default" : "ghost"}
                 >
                   <GlobeIcon size={16} />
                   <span>Search</span>
@@ -560,7 +533,7 @@ const Example = () => {
                 </PromptInputModelSelect>
               </PromptInputTools>
               <PromptInputSubmit
-                disabled={!text.trim() || status === 'streaming'}
+                disabled={!(text.trim() || status) || status === "streaming"}
                 status={status}
               />
             </PromptInputToolbar>

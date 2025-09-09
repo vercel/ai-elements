@@ -15,7 +15,7 @@ You can use the AI Elements CLI directly with npx, or install it globally:
 npx ai-elements@latest
 
 # Or using shadcn cli
-npx shadcn@latest add https://registry.ai-sdk.dev/all.json
+npx shadcn@latest add https://registry.ai-sdk.dev/registry.json
 ```
 
 ## Prerequisites
@@ -68,7 +68,7 @@ You can also install components using the standard shadcn/ui CLI:
 
 ```bash
 # Install all components
-npx shadcn@latest add https://registry.ai-sdk.dev/all.json
+npx shadcn@latest add https://registry.ai-sdk.dev/registry.json
 
 # Install a specific component
 npx shadcn@latest add https://registry.ai-sdk.dev/message.json
@@ -88,7 +88,9 @@ AI Elements includes the following components:
 | `inline-citation` | Inline source citations |
 | `loader` | Loading states for AI operations |
 | `message` | Individual chat messages with avatars |
+| `prompt-form` | Controlled form wrapper for prompt submission |
 | `prompt-input` | Advanced input component with model selection |
+| `prompt-input-attachments` | Opt-in file/image attachments for prompt input |
 | `reasoning` | Display AI reasoning and thought processes |
 | `response` | Formatted AI response display |
 | `source` | Source attribution component |
@@ -139,7 +141,7 @@ export default function Chat() {
 The AI Elements CLI:
 
 1. **Detects your package manager** (npm, pnpm, yarn, or bun) automatically
-2. **Fetches component registry** from `https://registry.ai-sdk.dev/all.json`
+2. **Fetches component registry** from `https://registry.ai-sdk.dev/registry.json`
 3. **Installs components** using the shadcn/ui CLI under the hood
 4. **Adds dependencies** and integrates with your existing shadcn/ui setup
 

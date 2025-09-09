@@ -1,6 +1,6 @@
 {
   "name": "@repo/elements",
-  "description": "AI components including message, conversation, input, response, suggestion, sources, tool and branch components for building chat interfaces.",
+  "description": "AI components including message, conversation, input, response, suggestion, sources, context, tool and branch components for building chat interfaces.",
   "version": "0.0.0",
   "private": true,
   "exports": {
@@ -9,17 +9,20 @@
   "dependencies": {
     "@radix-ui/react-use-controllable-state": "^1.2.2",
     "@repo/shadcn-ui": "workspace:*",
-    "ai": "5.0.0",
-    "lucide-react": "^0.515.0",
-    "react": "19.0.0-rc-f994737d14-20240522",
-    "react-syntax-highlighter": "^15.6.1",
+    "ai": "5.0.37",
+    "class-variance-authority": "^0.7.1",
+    "lucide-react": "^0.542.0",
+    "nanoid": "^5.1.5",
+    "react": "19.1.1",
+    "react-syntax-highlighter": "^15.6.6",
     "streamdown": "^1.2.0",
+    "tokenlens": "^1.1.2",
     "use-stick-to-bottom": "^1.1.1"
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
-    "@types/react": "18.2.69",
+    "@types/react": "19.1.12",
     "@types/react-syntax-highlighter": "^15.5.13",
-    "typescript": "^5.8.3"
+    "typescript": "^5.9.2"
   }
 }

@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { Loader } from '@repo/elements/loader';
+import { Loader } from "@repo/elements/loader";
 
 const Example = () => {
   return (

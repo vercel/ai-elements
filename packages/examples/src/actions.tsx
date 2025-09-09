@@ -1,38 +1,38 @@
-'use client';
+"use client";
 
-import { Action, Actions } from '@repo/elements/actions';
-import { Conversation, ConversationContent } from '@repo/elements/conversation';
-import { Message, MessageContent } from '@repo/elements/message';
+import { Action, Actions } from "@repo/elements/actions";
+import { Conversation, ConversationContent } from "@repo/elements/conversation";
+import { Message, MessageContent } from "@repo/elements/message";
 import {
   CopyIcon,
   RefreshCcwIcon,
   ShareIcon,
   ThumbsDownIcon,
   ThumbsUpIcon,
-} from 'lucide-react';
-import { nanoid } from 'nanoid';
-import { useState } from 'react';
+} from "lucide-react";
+import { nanoid } from "nanoid";
+import { useState } from "react";
 
 const messages: {
   key: string;
-  from: 'user' | 'assistant';
+  from: "user" | "assistant";
   content: string;
   avatar: string;
   name: string;
 }[] = [
   {
     key: nanoid(),
-    from: 'user',
-    content: 'Hello, how are you?',
-    avatar: 'https://github.com/haydenbleasel.png',
-    name: 'Hayden Bleasel',
+    from: "user",
+    content: "Hello, how are you?",
+    avatar: "https://github.com/haydenbleasel.png",
+    name: "Hayden Bleasel",
   },
   {
     key: nanoid(),
-    from: 'assistant',
-    content: 'I am fine, thank you!',
-    avatar: 'https://github.com/openai.png',
-    name: 'OpenAI',
+    from: "assistant",
+    content: "I am fine, thank you!",
+    avatar: "https://github.com/openai.png",
+    name: "OpenAI",
   },
 ];
 
@@ -50,28 +50,28 @@ const Example = () => {
   const actions = [
     {
       icon: RefreshCcwIcon,
-      label: 'Retry',
+      label: "Retry",
       onClick: handleRetry,
     },
     {
       icon: ThumbsUpIcon,
-      label: 'Like',
+      label: "Like",
       onClick: () => setLiked(!liked),
     },
 
     {
       icon: ThumbsDownIcon,
-      label: 'Dislike',
+      label: "Dislike",
       onClick: () => setDisliked(!disliked),
     },
     {
       icon: CopyIcon,
-      label: 'Copy',
+      label: "Copy",
       onClick: () => handleCopy(),
     },
     {
       icon: ShareIcon,
-      label: 'Share',
+      label: "Share",
       onClick: () => handleShare(),
     },
   ];
@@ -81,12 +81,12 @@ const Example = () => {
       <ConversationContent>
         {messages.map((message) => (
           <Message
-            className={`flex flex-col gap-2 ${message.from === 'assistant' ? 'items-start' : 'items-end'}`}
+            className={`flex flex-col gap-2 ${message.from === "assistant" ? "items-start" : "items-end"}`}
             from={message.from}
             key={message.key}
           >
             <MessageContent>{message.content}</MessageContent>
-            {message.from === 'assistant' && (
+            {message.from === "assistant" && (
               <Actions className="mt-2">
                 {actions.map((action) => (
                   <Action key={action.label} label={action.label}>

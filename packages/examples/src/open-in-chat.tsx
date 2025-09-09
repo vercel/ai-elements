@@ -1,0 +1,31 @@
+"use client";
+
+import {
+  OpenIn,
+  OpenInChatGPT,
+  OpenInClaude,
+  OpenInContent,
+  OpenInScira,
+  OpenInT3,
+  OpenInTrigger,
+  OpenInv0,
+} from "@repo/elements/open-in-chat";
+
+const Example = () => {
+  const sampleQuery = "How can I implement authentication in Next.js?";
+
+  return (
+    <OpenIn>
+      <OpenInTrigger />
+      <OpenInContent>
+        <OpenInChatGPT query={sampleQuery} />
+        <OpenInClaude query={sampleQuery} />
+        <OpenInT3 query={sampleQuery} />
+        <OpenInScira query={sampleQuery} />
+        <OpenInv0 query={sampleQuery} />
+      </OpenInContent>
+    </OpenIn>
+  );
+};
+
+export default Example;

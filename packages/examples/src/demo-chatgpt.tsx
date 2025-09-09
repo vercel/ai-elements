@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import {
   Branch,
@@ -7,34 +7,35 @@ import {
   BranchPage,
   BranchPrevious,
   BranchSelector,
-} from '@repo/elements/branch';
+} from "@repo/elements/branch";
 import {
   Conversation,
   ConversationContent,
   ConversationScrollButton,
-} from '@repo/elements/conversation';
-import { Message, MessageContent } from '@repo/elements/message';
+} from "@repo/elements/conversation";
+import { Message, MessageContent } from "@repo/elements/message";
 import {
   PromptInput,
   PromptInputButton,
+  type PromptInputMessage,
   PromptInputTextarea,
   PromptInputToolbar,
   PromptInputTools,
-} from '@repo/elements/prompt-input';
+} from "@repo/elements/prompt-input";
 import {
   Reasoning,
   ReasoningContent,
   ReasoningTrigger,
-} from '@repo/elements/reasoning';
-import { Response } from '@repo/elements/response';
+} from "@repo/elements/reasoning";
+import { Response } from "@repo/elements/response";
 import {
   Source,
   Sources,
   SourcesContent,
   SourcesTrigger,
-} from '@repo/elements/sources';
-import { Suggestion, Suggestions } from '@repo/elements/suggestion';
-import type { ToolUIPart } from 'ai';
+} from "@repo/elements/sources";
+import { Suggestion, Suggestions } from "@repo/elements/suggestion";
+import type { ToolUIPart } from "ai";
 import {
   AudioWaveformIcon,
   BarChartIcon,
@@ -48,21 +49,21 @@ import {
   NotepadTextIcon,
   PaperclipIcon,
   ScreenShareIcon,
-} from 'lucide-react';
-import { nanoid } from 'nanoid';
-import { type FormEventHandler, useCallback, useEffect, useState } from 'react';
-import { toast } from 'sonner';
+} from "lucide-react";
+import { nanoid } from "nanoid";
+import { useCallback, useEffect, useState } from "react";
+import { toast } from "sonner";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { cn } from '@/lib/utils';
+} from "@/components/ui/dropdown-menu";
+import { cn } from "@/lib/utils";
 
 type MessageType = {
   key: string;
-  from: 'user' | 'assistant';
+  from: "user" | "assistant";
   sources?: { href: string; title: string }[];
   versions: {
     id: string;
@@ -75,7 +76,7 @@ type MessageType = {
   tools?: {
     name: string;
     description: string;
-    status: ToolUIPart['state'];
+    status: ToolUIPart["state"];
     parameters: Record<string, unknown>;
     result: string | undefined;
     error: string | undefined;
@@ -89,39 +90,39 @@ type MessageType = {
 
 const mockMessages: MessageType[] = [
   {
-    avatar: '',
+    avatar: "",
     key: nanoid(),
-    from: 'user',
+    from: "user",
     versions: [
       {
         id: nanoid(),
-        content: 'Can you explain how to use React hooks effectively?',
+        content: "Can you explain how to use React hooks effectively?",
       },
     ],
-    name: 'Hayden Bleasel',
+    name: "Hayden Bleasel",
   },
   {
-    avatar: '',
+    avatar: "",
     key: nanoid(),
-    from: 'assistant',
+    from: "assistant",
     sources: [
       {
-        href: 'https://react.dev/reference/react',
-        title: 'React Documentation',
+        href: "https://react.dev/reference/react",
+        title: "React Documentation",
       },
       {
-        href: 'https://react.dev/reference/react-dom',
-        title: 'React DOM Documentation',
+        href: "https://react.dev/reference/react-dom",
+        title: "React DOM Documentation",
       },
     ],
     tools: [
       {
-        name: 'mcp',
-        description: 'Searching React documentation',
-        status: 'input-available',
+        name: "mcp",
+        description: "Searching React documentation",
+        status: "input-available",
         parameters: {
-          query: 'React hooks best practices',
-          source: 'react.dev',
+          query: "React hooks best practices",
+          source: "react.dev",
         },
         result: `{
   "query": "React hooks best practices",
@@ -187,17 +188,17 @@ function ProfilePage({ userId }) {
 Would you like me to explain any specific hook in more detail?`,
       },
     ],
-    name: 'OpenAI',
+    name: "OpenAI",
   },
   {
-    avatar: '',
+    avatar: "",
     key: nanoid(),
-    from: 'user',
+    from: "user",
     versions: [
       {
         id: nanoid(),
         content:
-          'Yes, could you explain useCallback and useMemo in more detail? When should I use one over the other?',
+          "Yes, could you explain useCallback and useMemo in more detail? When should I use one over the other?",
       },
       {
         id: nanoid(),
@@ -207,15 +208,15 @@ Would you like me to explain any specific hook in more detail?`,
       {
         id: nanoid(),
         content:
-          'Thanks for the overview! Could you dive deeper into the specific use cases where useCallback and useMemo make the biggest difference in React applications?',
+          "Thanks for the overview! Could you dive deeper into the specific use cases where useCallback and useMemo make the biggest difference in React applications?",
       },
     ],
-    name: 'Hayden Bleasel',
+    name: "Hayden Bleasel",
   },
   {
-    avatar: '',
+    avatar: "",
     key: nanoid(),
-    from: 'assistant',
+    from: "assistant",
     reasoning: {
       content: `The user is asking for a detailed explanation of useCallback and useMemo. I should provide a clear and concise explanation of each hook's purpose and how they differ.
       
@@ -280,17 +281,17 @@ Don't overuse these hooks! They come with their own overhead. Only use them when
 Note that ~~class-based lifecycle methods~~ like \`componentDidMount\` are now replaced by the \`useEffect\` hook in modern React development.`,
       },
     ],
-    name: 'OpenAI',
+    name: "OpenAI",
   },
 ];
 
 const suggestions = [
-  { icon: BarChartIcon, text: 'Analyze data', color: '#76d0eb' },
-  { icon: BoxIcon, text: 'Surprise me', color: '#76d0eb' },
-  { icon: NotepadTextIcon, text: 'Summarize text', color: '#ea8444' },
-  { icon: CodeSquareIcon, text: 'Code', color: '#6c71ff' },
-  { icon: GraduationCapIcon, text: 'Get advice', color: '#76d0eb' },
-  { icon: null, text: 'More' },
+  { icon: BarChartIcon, text: "Analyze data", color: "#76d0eb" },
+  { icon: BoxIcon, text: "Surprise me", color: "#76d0eb" },
+  { icon: NotepadTextIcon, text: "Summarize text", color: "#ea8444" },
+  { icon: CodeSquareIcon, text: "Code", color: "#6c71ff" },
+  { icon: GraduationCapIcon, text: "Get advice", color: "#76d0eb" },
+  { icon: null, text: "More" },
 ];
 
 const mockResponses = [
@@ -302,12 +303,12 @@ const mockResponses = [
 ];
 
 const Example = () => {
-  const [text, setText] = useState<string>('');
+  const [text, setText] = useState<string>("");
   const [useWebSearch, setUseWebSearch] = useState<boolean>(false);
   const [useMicrophone, setUseMicrophone] = useState<boolean>(false);
   const [status, setStatus] = useState<
-    'submitted' | 'streaming' | 'ready' | 'error'
-  >('ready');
+    "submitted" | "streaming" | "ready" | "error"
+  >("ready");
   const [messages, setMessages] = useState<MessageType[]>([]);
   const [streamingMessageId, setStreamingMessageId] = useState<string | null>(
     null
@@ -318,11 +319,11 @@ const Example = () => {
     versionId: string,
     reasoningContent: string
   ) => {
-    const words = reasoningContent.split(' ');
-    let currentContent = '';
+    const words = reasoningContent.split(" ");
+    let currentContent = "";
 
     for (let i = 0; i < words.length; i++) {
-      currentContent += (i > 0 ? ' ' : '') + words[i];
+      currentContent += (i > 0 ? " " : "") + words[i];
 
       setMessages((prev) =>
         prev.map((msg) => {
@@ -363,11 +364,11 @@ const Example = () => {
     versionId: string,
     content: string
   ) => {
-    const words = content.split(' ');
-    let currentContent = '';
+    const words = content.split(" ");
+    let currentContent = "";
 
     for (let i = 0; i < words.length; i++) {
-      currentContent += (i > 0 ? ' ' : '') + words[i];
+      currentContent += (i > 0 ? " " : "") + words[i];
 
       setMessages((prev) =>
         prev.map((msg) => {
@@ -406,7 +407,7 @@ const Example = () => {
       content: string,
       reasoning?: { content: string; duration: number }
     ) => {
-      setStatus('streaming');
+      setStatus("streaming");
       setStreamingMessageId(versionId);
 
       // First stream the reasoning if it exists
@@ -418,7 +419,7 @@ const Example = () => {
       // Then stream the content
       await streamContent(messageKey, versionId, content);
 
-      setStatus('ready');
+      setStatus("ready");
       setStreamingMessageId(null);
     },
     []
@@ -426,7 +427,7 @@ const Example = () => {
 
   const streamMessage = useCallback(
     async (message: MessageType) => {
-      if (message.from === 'user') {
+      if (message.from === "user") {
         setMessages((prev) => [...prev, message]);
         return;
       }
@@ -434,9 +435,9 @@ const Example = () => {
       // Add empty assistant message with reasoning structure
       const newMessage = {
         ...message,
-        versions: message.versions.map((v) => ({ ...v, content: '' })),
+        versions: message.versions.map((v) => ({ ...v, content: "" })),
         reasoning: message.reasoning
-          ? { ...message.reasoning, content: '' }
+          ? { ...message.reasoning, content: "" }
           : undefined,
         isReasoningComplete: false,
         isContentComplete: false,
@@ -464,15 +465,15 @@ const Example = () => {
     (content: string) => {
       const userMessage: MessageType = {
         key: `user-${Date.now()}`,
-        from: 'user',
+        from: "user",
         versions: [
           {
             id: `user-${Date.now()}`,
             content,
           },
         ],
-        name: 'User',
-        avatar: '',
+        name: "User",
+        avatar: "",
       };
 
       setMessages((prev) => [...prev, userMessage]);
@@ -495,16 +496,16 @@ const Example = () => {
 
         const assistantMessage: MessageType = {
           key: assistantMessageKey,
-          from: 'assistant',
+          from: "assistant",
           versions: [
             {
               id: assistantMessageId,
-              content: '',
+              content: "",
             },
           ],
-          name: 'Assistant',
-          avatar: '',
-          reasoning: reasoning ? { ...reasoning, content: '' } : undefined,
+          name: "Assistant",
+          avatar: "",
+          reasoning: reasoning ? { ...reasoning, content: "" } : undefined,
           isReasoningComplete: false,
           isContentComplete: false,
           isReasoningStreaming: !!reasoning,
@@ -548,26 +549,27 @@ const Example = () => {
     };
   }, [streamMessage]);
 
-  const handleSubmit: FormEventHandler<HTMLFormElement> = (event) => {
-    event.preventDefault();
+  const handleSubmit = (message: PromptInputMessage) => {
+    const hasText = Boolean(message.text);
+    const hasAttachments = Boolean(message.files?.length);
 
-    if (!text.trim()) {
+    if (!(hasText || hasAttachments)) {
       return;
     }
 
-    setStatus('submitted');
-    addUserMessage(text.trim());
-    setText('');
+    setStatus("submitted");
+    addUserMessage(message.text || "Sent with attachments");
+    setText("");
   };
 
   const handleFileAction = (action: string) => {
-    toast.success('File action', {
+    toast.success("File action", {
       description: action,
     });
   };
 
   const handleSuggestionClick = (suggestion: string) => {
-    setStatus('submitted');
+    setStatus("submitted");
     addUserMessage(suggestion);
   };
 
@@ -609,13 +611,13 @@ const Example = () => {
                           </ReasoningContent>
                         </Reasoning>
                       )}
-                      {(message.from === 'user' ||
+                      {(message.from === "user" ||
                         message.isReasoningComplete ||
                         !message.reasoning) && (
                         <MessageContent
                           className={cn(
-                            'group-[.is-user]:rounded-[24px] group-[.is-user]:bg-secondary group-[.is-user]:text-foreground',
-                            'group-[.is-assistant]:bg-transparent group-[.is-assistant]:p-0 group-[.is-assistant]:text-foreground'
+                            "group-[.is-user]:rounded-[24px] group-[.is-user]:bg-secondary group-[.is-user]:text-foreground",
+                            "group-[.is-assistant]:bg-transparent group-[.is-assistant]:p-0 group-[.is-assistant]:text-foreground"
                           )}
                         >
                           <Response>{version.content}</Response>
@@ -662,25 +664,25 @@ const Example = () => {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="start">
                   <DropdownMenuItem
-                    onClick={() => handleFileAction('upload-file')}
+                    onClick={() => handleFileAction("upload-file")}
                   >
                     <FileIcon className="mr-2" size={16} />
                     Upload file
                   </DropdownMenuItem>
                   <DropdownMenuItem
-                    onClick={() => handleFileAction('upload-photo')}
+                    onClick={() => handleFileAction("upload-photo")}
                   >
                     <ImageIcon className="mr-2" size={16} />
                     Upload photo
                   </DropdownMenuItem>
                   <DropdownMenuItem
-                    onClick={() => handleFileAction('take-screenshot')}
+                    onClick={() => handleFileAction("take-screenshot")}
                   >
                     <ScreenShareIcon className="mr-2" size={16} />
                     Take screenshot
                   </DropdownMenuItem>
                   <DropdownMenuItem
-                    onClick={() => handleFileAction('take-photo')}
+                    onClick={() => handleFileAction("take-photo")}
                   >
                     <CameraIcon className="mr-2" size={16} />
                     Take photo
