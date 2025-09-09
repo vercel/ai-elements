@@ -3,6 +3,7 @@
 import {
   PromptInput,
   PromptInputButton,
+  type PromptInputMessage,
   PromptInputModelSelect,
   PromptInputModelSelectContent,
   PromptInputModelSelectItem,
@@ -16,7 +17,7 @@ import {
 import { Suggestion, Suggestions } from "@repo/elements/suggestion";
 import { GlobeIcon, MicIcon, PlusIcon, SendIcon } from "lucide-react";
 import { nanoid } from "nanoid";
-import { type FormEventHandler, useState } from "react";
+import { useState } from "react";
 
 const suggestions: { key: string; value: string }[] = [
   { key: nanoid(), value: "What are the latest trends in AI?" },
@@ -45,11 +46,16 @@ const Example = () => {
   const [model, setModel] = useState<string>(models[0].id);
   const [text, setText] = useState<string>("");
 
-  const handleSubmit: FormEventHandler<HTMLFormElement> = (event) => {
-    event.preventDefault();
-    const formData = new FormData(event.currentTarget);
-    const message = formData.get("message");
-    console.log("Submitted message:", message);
+  const handleSubmit = (message: PromptInputMessage) => {
+    const hasText = Boolean(message.text);
+    const hasAttachments = Boolean(message.files?.length);
+
+    if (!(hasText || hasAttachments)) {
+      return;
+    }
+
+    console.log("Submitted message:", message.text || "Sent with attachments");
+    console.log("Attached files:", message.files);
   };
 
   const handleSuggestionClick = (suggestion: string) => {
