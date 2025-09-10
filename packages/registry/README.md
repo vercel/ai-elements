@@ -15,7 +15,7 @@ You can use the AI Elements CLI directly with npx, or install it globally:
 npx ai-elements@latest
 
 # Or using shadcn cli
-npx shadcn@latest add https://registry.ai-sdk.dev/registry.json
+npx shadcn@latest add https://registry.ai-sdk.dev/all.json
 ```
 
 ## Prerequisites
@@ -68,7 +68,7 @@ You can also install components using the standard shadcn/ui CLI:
 
 ```bash
 # Install all components
-npx shadcn@latest add https://registry.ai-sdk.dev/registry.json
+npx shadcn@latest add https://registry.ai-sdk.dev/all.json
 
 # Install a specific component
 npx shadcn@latest add https://registry.ai-sdk.dev/message.json
