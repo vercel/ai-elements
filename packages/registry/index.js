@@ -28,33 +28,18 @@ const commandPrefix = getCommandPrefix();
 // Parse command line arguments
 const args = process.argv.slice(2);
 
-// Check if the command is 'add <component>'
-if (args.length >= 2 && args[0] === "add") {
-  const component = args[1];
-  const targetUrl = new URL(
-    `/${component}.json`,
-    "https://registry.ai-sdk.dev"
-  ).toString();
+// Set the path as 'all' if no component is provided
+const component = args.length >= 2 ? args[1] : "all";
 
-  const fullCommand = `${commandPrefix} shadcn@latest add ${targetUrl}`;
-  const result = spawnSync(fullCommand, {
-    stdio: "inherit",
-    shell: true,
-  });
+// Get the target URL
+const targetUrl = new URL(
+  `/${component}.json`,
+  "https://registry.ai-sdk.dev"
+).toString();
 
-  if (result.error) {
-    console.error("Failed to execute command:", result.error.message);
-    process.exit(1);
-  } else if (result.status !== 0) {
-    console.error(`Command failed with exit code ${result.status}`);
-    process.exit(1);
-  }
-} else {
-  const targetUrl = new URL(
-    "/registry.json",
-    "https://registry.ai-sdk.dev"
-  ).toString();
-
+// Handle different component types
+if (component === "all") {
+  // For "all", fetch the registry and install all components
   fetch(targetUrl)
     .then((response) => {
       if (!response.ok) {
@@ -102,4 +87,19 @@ if (args.length >= 2 && args[0] === "add") {
       console.error("Please check your internet connection and try again");
       process.exit(1);
     });
+} else {
+  // For specific components, use the direct approach
+  const fullCommand = `${commandPrefix} shadcn@latest add ${targetUrl}`;
+  const result = spawnSync(fullCommand, {
+    stdio: "inherit",
+    shell: true,
+  });
+
+  if (result.error) {
+    console.error("Failed to execute command:", result.error.message);
+    process.exit(1);
+  } else if (result.status !== 0) {
+    console.error(`Command failed with exit code ${result.status}`);
+    process.exit(1);
+  }
 }
