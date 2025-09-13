@@ -17,6 +17,7 @@ import Loader from "@/app/examples/loader";
 import Message from "@/app/examples/message";
 import OpenInChat from "@/app/examples/open-in-chat";
 import PromptInput from "@/app/examples/prompt-input";
+import PromptInputContext from "@/app/examples/prompt-input-context";
 import Reasoning from "@/app/examples/reasoning";
 import Response from "@/app/examples/response";
 import Sources from "@/app/examples/sources";
@@ -39,6 +40,7 @@ const components = [
   { name: "Message", Component: Message },
   { name: "OpenInChat", Component: OpenInChat },
   { name: "PromptInput", Component: PromptInput },
+  { name: "PromptInputContext", Component: PromptInputContext },
   { name: "Reasoning", Component: Reasoning },
   { name: "Response", Component: Response },
   { name: "Sources", Component: Sources },
@@ -50,6 +52,9 @@ const components = [
 
 const Home = () => (
   <div className="container mx-auto space-y-8 py-16">
+    <header className="flex justify-between items-center">
+      <h1 className="text-2xl font-bold">AI Elements !!</h1>
+    </header>
     {components.map(({ name, Component }) => (
       <Card key={name}>
         <CardHeader>
