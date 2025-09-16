@@ -15,7 +15,7 @@
     "nanoid": "^5.1.5",
     "react": "19.1.1",
     "react-syntax-highlighter": "^15.6.6",
-    "streamdown": "^1.2.0",
+    "streamdown": "^1.3.0",
     "tokenlens": "^1.2.1",
     "use-stick-to-bottom": "^1.1.1"
   },
