@@ -29,6 +29,7 @@ export const Tool = ({ className, ...props }: ToolProps) => (
 );
 
 export type ToolHeaderProps = {
+  title?: string;
   type: ToolUIPart["type"];
   state: ToolUIPart["state"];
   className?: string;
@@ -59,6 +60,7 @@ const getStatusBadge = (status: ToolUIPart["state"]) => {
 
 export const ToolHeader = ({
   className,
+  title,
   type,
   state,
   ...props
@@ -72,7 +74,9 @@ export const ToolHeader = ({
   >
     <div className="flex items-center gap-2">
       <WrenchIcon className="size-4 text-muted-foreground" />
-      <span className="font-medium text-sm">{type}</span>
+      <span className="font-medium text-sm">
+        {title ?? type.split("-").slice(1).join("-")}
+      </span>
       {getStatusBadge(state)}
     </div>
     <ChevronDownIcon className="size-4 text-muted-foreground transition-transform group-data-[state=open]:rotate-180" />
