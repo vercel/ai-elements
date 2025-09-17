@@ -37,16 +37,69 @@ const targetUrl = new URL(
   "https://registry.ai-sdk.dev"
 ).toString();
 
-const fullCommand = `${commandPrefix} shadcn@latest add ${targetUrl}`;
-const result = spawnSync(fullCommand, {
-  stdio: "inherit",
-  shell: true,
-});
+// Handle different component types
+if (component === "all") {
+  // For "all", fetch the registry and install all components
+  fetch(targetUrl)
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      return response.json();
+    })
+    .then((data) => {
+      // Validate the response structure
+      if (!data || !data.items || !Array.isArray(data.items)) {
+        console.error("Error: Invalid registry response structure");
+        console.error("Expected registry.json to contain an 'items' array");
+        process.exit(1);
+      }
 
-if (result.error) {
-  console.error("Failed to execute command:", result.error.message);
-  process.exit(1);
-} else if (result.status !== 0) {
-  console.error(`Command failed with exit code ${result.status}`);
-  process.exit(1);
+      const components = data.items.filter(
+        (item) => item.type === "registry:component"
+      );
+
+      if (components.length === 0) {
+        console.log("No components found in the registry");
+        process.exit(0);
+      }
+
+      const componentUrls = components.map((item) =>
+        new URL(`/${item.name}.json`, "https://registry.ai-sdk.dev").toString()
+      );
+
+      const fullCommand = `${commandPrefix} shadcn@latest add ${componentUrls.join(" ")}`;
+      const result = spawnSync(fullCommand, {
+        stdio: "inherit",
+        shell: true,
+      });
+
+      if (result.error) {
+        console.error("Failed to execute command:", result.error.message);
+        process.exit(1);
+      } else if (result.status !== 0) {
+        console.error(`Command failed with exit code ${result.status}`);
+        process.exit(1);
+      }
+    })
+    .catch((error) => {
+      console.error("Error fetching registry data:", error.message);
+      console.error("Please check your internet connection and try again");
+      process.exit(1);
+    });
+} else {
+  // For specific components, use the direct approach
+  const fullCommand = `${commandPrefix} shadcn@latest add ${targetUrl}`;
+  const result = spawnSync(fullCommand, {
+    stdio: "inherit",
+    shell: true,
+  });
+
+  if (result.error) {
+    console.error("Failed to execute command:", result.error.message);
+    process.exit(1);
+  } else if (result.status !== 0) {
+    console.error(`Command failed with exit code ${result.status}`);
+    process.exit(1);
+  }
 }
