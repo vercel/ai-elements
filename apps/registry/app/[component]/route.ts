@@ -60,6 +60,30 @@ dependenciesSet.add("zod");
 
 const dependencies = Array.from(dependenciesSet);
 const devDependencies = Array.from(devDependenciesSet);
+
+// Normalize to package root (supports scoped and deep subpath imports)
+const getBasePackageName = (specifier: string) => {
+  if (specifier.startsWith("@")) {
+    const parts = specifier.split("/");
+    return parts.slice(0, 2).join("/");
+  }
+  return specifier.split("/")[0];
+};
+
+// Build a mapping from runtime package -> its @types devDependency package(s)
+const TYPES_PREFIX = "@types/";
+const typesDevDepsMap = new Map<string, string[]>();
+for (const devDep of devDependencies) {
+  if (devDep.startsWith(TYPES_PREFIX)) {
+    const name = devDep.slice(TYPES_PREFIX.length);
+    // Scoped packages in DefinitelyTyped use __ separator, e.g. @types/babel__core for @babel/core
+    const runtime = name.includes("__") ? name.replace("__", "/") : name;
+    const list = typesDevDepsMap.get(runtime) ?? [];
+    list.push(devDep);
+    typesDevDepsMap.set(runtime, list);
+  }
+}
+
 const srcDir = join(packageDir, "src");
 
 const packageFiles = readdirSync(srcDir, { withFileTypes: true });
@@ -253,9 +277,17 @@ export const GET = async (_request: NextRequest, { params }: RequestProps) => {
               continue;
             }
 
+            const pkg = getBasePackageName(moduleName);
             // Check if it's a regular dependency
-            if (dependencies.includes(moduleName)) {
-              allDependencies.add(moduleName);
+            if (dependencies.includes(pkg)) {
+              allDependencies.add(pkg);
+              // Check if it has a corresponding @types/ package
+              const typePkgs = typesDevDepsMap.get(pkg);
+              if (typePkgs) {
+                for (const t of typePkgs) {
+                  allDevDependencies.add(t);
+                }
+              }
             }
 
             // Check if it's a dev dependency
@@ -361,9 +393,17 @@ export const GET = async (_request: NextRequest, { params }: RequestProps) => {
         }
       }
 
+      const pkg = getBasePackageName(moduleName);
       // Check if it's a regular dependency
-      if (dependencies.includes(moduleName)) {
-        usedDependencies.add(moduleName);
+      if (dependencies.includes(pkg)) {
+        usedDependencies.add(pkg);
+        // Check if it has a corresponding @types/ package
+        const typePkgs = typesDevDepsMap.get(pkg);
+        if (typePkgs) {
+          for (const t of typePkgs) {
+            usedDevDependencies.add(t);
+          }
+        }
       }
 
       // Check if it's a dev dependency (though less common in component files)
