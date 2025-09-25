@@ -410,6 +410,7 @@ export const PromptInput = ({
     }));
 
     onSubmit({ text: event.currentTarget.message.value, files }, event);
+    clear();
   };
 
   const ctx = useMemo<AttachmentsContext>(
