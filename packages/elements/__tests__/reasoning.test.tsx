@@ -87,6 +87,34 @@ describe('ReasoningTrigger', () => {
     );
     expect(container.querySelector('svg')).toBeInTheDocument();
   });
+
+  it('rounds sub-second durations up to 1 second - #63', async () => {
+    vi.useFakeTimers();
+    const { rerender } = render(
+      <Reasoning isStreaming>
+        <ReasoningTrigger />
+      </Reasoning>
+    );
+
+    // Verify initial "Thinking..." state
+    expect(screen.getByText('Thinking...')).toBeInTheDocument();
+
+    // Advance time by 300ms (0.3 seconds)
+    vi.advanceTimersByTime(300);
+
+    // Stop streaming - should round up to 1 second using Math.ceil
+    rerender(
+      <Reasoning isStreaming={false}>
+        <ReasoningTrigger />
+      </Reasoning>
+    );
+
+    // Should display "Thought for 1 seconds" (rounds up from 0.3)
+    expect(screen.getByText('Thought for 1 seconds')).toBeInTheDocument();
+    expect(screen.queryByText('Thinking...')).not.toBeInTheDocument();
+
+    vi.useRealTimers();
+  });
 });
 
 describe('ReasoningContent', () => {

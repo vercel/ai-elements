@@ -224,6 +224,42 @@ describe('PromptInputTextarea', () => {
     expect(onSubmit).not.toHaveBeenCalled();
   });
 
+  it('does not submit on Enter during IME composition - #21', async () => {
+    const onSubmit = vi.fn();
+
+    render(
+      <PromptInput onSubmit={onSubmit}>
+        <PromptInputBody>
+          <PromptInputTextarea />
+          <PromptInputSubmit />
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    const textarea = screen.getByPlaceholderText('What would you like to know?') as HTMLTextAreaElement;
+
+    // Simulate IME composition (e.g., typing Japanese)
+    textarea.focus();
+
+    // Create a KeyboardEvent with isComposing = true
+    const enterKeyDuringComposition = new KeyboardEvent('keydown', {
+      key: 'Enter',
+      bubbles: true,
+      cancelable: true,
+    });
+
+    // Mock isComposing to true (simulates IME composition in progress)
+    Object.defineProperty(enterKeyDuringComposition, 'isComposing', {
+      value: true,
+      writable: false,
+    });
+
+    textarea.dispatchEvent(enterKeyDuringComposition);
+
+    // Should not submit during IME composition
+    expect(onSubmit).not.toHaveBeenCalled();
+  });
+
   it('uses custom placeholder', () => {
     const onSubmit = vi.fn();
     render(
