@@ -19,17 +19,17 @@ export type NodeProps = ComponentProps<typeof Card> & {
 };
 
 export const Node = ({ handles, className, ...props }: NodeProps) => (
-  <>
+  <Card
+    className={cn(
+      "relative size-full h-auto w-sm gap-0 rounded-sm p-0",
+      className
+    )}
+    {...props}
+  >
     {handles.target && <Handle position={Position.Left} type="target" />}
     {handles.source && <Handle position={Position.Right} type="source" />}
-    <Card
-      className={cn(
-        "relative size-full h-auto w-sm gap-0 rounded-sm p-0",
-        className
-      )}
-      {...props}
-    />
-  </>
+    {props.children}
+  </Card>
 );
 
 export type NodeHeaderProps = ComponentProps<typeof CardHeader>;
@@ -65,7 +65,7 @@ export type NodeFooterProps = ComponentProps<typeof CardFooter>;
 
 export const NodeFooter = ({ className, ...props }: NodeFooterProps) => (
   <CardFooter
-    className={cn("rounded-b-sm border-t bg-secondary p-3 py-3", className)}
+    className={cn("rounded-b-sm border-t bg-secondary p-3!", className)}
     {...props}
   />
 );
