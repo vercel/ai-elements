@@ -102,13 +102,7 @@ const getEdgeParams = (
   };
 };
 
-export const Animated = ({
-  id,
-  source,
-  target,
-  markerEnd,
-  style,
-}: EdgeProps) => {
+const Animated = ({ id, source, target, markerEnd, style }: EdgeProps) => {
   const sourceNode = useInternalNode(source);
   const targetNode = useInternalNode(target);
 
