@@ -50,14 +50,18 @@ describe('PromptInput', () => {
       </PromptInput>
     );
 
-    const textarea = screen.getByPlaceholderText('What would you like to know?');
+    const textarea = screen.getByPlaceholderText('What would you like to know?') as HTMLTextAreaElement;
     await user.type(textarea, 'Hello');
-    await user.click(screen.getByRole('button', { name: /submit/i }));
 
-    expect(onSubmit).toHaveBeenCalledWith(
-      expect.objectContaining({ text: 'Hello' }),
-      expect.anything()
-    );
+    // Ensure textarea has the value before submitting
+    expect(textarea.value).toBe('Hello');
+
+    await user.keyboard('{Enter}');
+
+    expect(onSubmit).toHaveBeenCalledTimes(1);
+    const [message] = onSubmit.mock.calls[0];
+    expect(message).toHaveProperty('text', 'Hello');
+    expect(message).toHaveProperty('files');
   });
 });
 

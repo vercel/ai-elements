@@ -40,7 +40,9 @@ describe('OpenInTrigger', () => {
   it('renders custom children', () => {
     render(
       <OpenIn defaultOpen query="test">
-        <OpenInTrigger>Custom trigger</OpenInTrigger>
+        <OpenInTrigger>
+          <button>Custom trigger</button>
+        </OpenInTrigger>
         <OpenInContent />
       </OpenIn>
     );
@@ -87,14 +89,14 @@ describe('OpenInLabel', () => {
 
 describe('OpenInSeparator', () => {
   it('renders separator', () => {
-    const { container } = render(
+    render(
       <OpenIn defaultOpen query="test">
         <OpenInContent>
           <OpenInSeparator />
         </OpenInContent>
       </OpenIn>
     );
-    expect(container.querySelector('[role="separator"]')).toBeInTheDocument();
+    expect(screen.getByRole('separator')).toBeInTheDocument();
   });
 });
 
@@ -108,7 +110,7 @@ describe('OpenInChatGPT', () => {
       </OpenIn>
     );
     expect(screen.getByText('Open in ChatGPT')).toBeInTheDocument();
-    const link = screen.getByRole('link', { name: /ChatGPT/i });
+    const link = screen.getByRole('menuitem', { name: /ChatGPT/i });
     expect(link).toHaveAttribute('href', expect.stringContaining('chatgpt.com'));
     expect(link).toHaveAttribute('target', '_blank');
   });
@@ -124,7 +126,7 @@ describe('OpenInClaude', () => {
       </OpenIn>
     );
     expect(screen.getByText('Open in Claude')).toBeInTheDocument();
-    const link = screen.getByRole('link', { name: /Claude/i });
+    const link = screen.getByRole('menuitem', { name: /Claude/i });
     expect(link).toHaveAttribute('href', expect.stringContaining('claude.ai'));
   });
 });
@@ -139,7 +141,7 @@ describe('OpenInT3', () => {
       </OpenIn>
     );
     expect(screen.getByText('Open in T3 Chat')).toBeInTheDocument();
-    const link = screen.getByRole('link', { name: /T3/i });
+    const link = screen.getByRole('menuitem', { name: /T3/i });
     expect(link).toHaveAttribute('href', expect.stringContaining('t3.chat'));
   });
 });
@@ -154,7 +156,7 @@ describe('OpenInScira', () => {
       </OpenIn>
     );
     expect(screen.getByText('Open in Scira')).toBeInTheDocument();
-    const link = screen.getByRole('link', { name: /Scira/i });
+    const link = screen.getByRole('menuitem', { name: /Scira/i });
     expect(link).toHaveAttribute('href', expect.stringContaining('scira.ai'));
   });
 });
@@ -168,8 +170,8 @@ describe('OpenInv0', () => {
         </OpenInContent>
       </OpenIn>
     );
-    expect(screen.getByText('Open in V0')).toBeInTheDocument();
-    const link = screen.getByRole('link', { name: /V0/i });
+    expect(screen.getByText('Open in v0')).toBeInTheDocument();
+    const link = screen.getByRole('menuitem', { name: /v0/i });
     expect(link).toHaveAttribute('href', expect.stringContaining('v0.app'));
   });
 });

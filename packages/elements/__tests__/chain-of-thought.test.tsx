@@ -27,7 +27,7 @@ describe('ChainOfThought', () => {
     );
 
     const content = screen.queryByText('Hidden content');
-    expect(content).not.toBeVisible();
+    expect(content).not.toBeInTheDocument();
   });
 
   it('can start open', () => {

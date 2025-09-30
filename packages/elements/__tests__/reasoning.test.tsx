@@ -30,7 +30,7 @@ describe('Reasoning', () => {
         <ReasoningContent>Hidden content</ReasoningContent>
       </Reasoning>
     );
-    expect(screen.queryByText('Hidden content')).not.toBeVisible();
+    expect(screen.queryByText('Hidden content')).not.toBeInTheDocument();
   });
 
   it('calls onOpenChange', async () => {

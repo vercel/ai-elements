@@ -15,13 +15,13 @@ import {
 
 describe('Context', () => {
   it('renders children', () => {
-    const { container } = render(
+    render(
       <Context defaultOpen maxTokens={100} usedTokens={50}>
         <ContextTrigger />
         <ContextContent>Content</ContextContent>
       </Context>
     );
-    expect(container.textContent).toContain('Content');
+    expect(screen.getByText('Content')).toBeInTheDocument();
   });
 
   it('displays percentage', () => {
@@ -56,13 +56,13 @@ describe('ContextTrigger', () => {
 
 describe('ContextContent', () => {
   it('renders content', () => {
-    const { container } = render(
+    render(
       <Context defaultOpen maxTokens={100} usedTokens={50}>
         <ContextTrigger />
         <ContextContent>Details</ContextContent>
       </Context>
     );
-    expect(container.textContent).toContain('Details');
+    expect(screen.getByText('Details')).toBeInTheDocument();
   });
 });
 
@@ -80,7 +80,7 @@ describe('ContextContentHeader', () => {
   });
 
   it('renders custom children', () => {
-    const { container } = render(
+    render(
       <Context defaultOpen maxTokens={100} usedTokens={50}>
         <ContextTrigger />
         <ContextContent>
@@ -88,7 +88,7 @@ describe('ContextContentHeader', () => {
         </ContextContent>
       </Context>
     );
-    expect(container.textContent).toContain('Custom Header');
+    expect(screen.getByText('Custom Header')).toBeInTheDocument();
   });
 });
 

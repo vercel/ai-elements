@@ -59,8 +59,8 @@ describe('CodeBlockCopyButton', () => {
   });
 
   it('copies code to clipboard', async () => {
-    const writeTextSpy = vi.spyOn(navigator.clipboard, 'writeText');
     const user = userEvent.setup();
+    const writeTextSpy = vi.spyOn(navigator.clipboard, 'writeText');
 
     render(
       <CodeBlock code="test code" language="javascript">

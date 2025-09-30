@@ -103,10 +103,13 @@ describe('WebPreviewUrl', () => {
       </WebPreview>
     );
 
-    const input = screen.getByPlaceholderText('Enter URL...');
+    const input = screen.getByPlaceholderText('Enter URL...') as HTMLInputElement;
     await user.type(input, 'https://example.com{Enter}');
 
-    expect(input).toHaveValue('https://example.com');
+    // Wait for the state to update
+    await vi.waitFor(() => {
+      expect(input).toHaveValue('https://example.com');
+    });
   });
 });
 

@@ -9,7 +9,11 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: ['./__tests__/setup.ts'],
     include: ['__tests__/**/*.test.{ts,tsx}'],
-    css: true,
+    server: {
+      deps: {
+        inline: ['streamdown', 'katex'],
+      },
+    },
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],
@@ -25,8 +29,7 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
       '@repo/shadcn-ui/lib/utils': path.resolve(__dirname, '../shadcn-ui/lib/utils.ts'),
       '@repo/shadcn-ui/components': path.resolve(__dirname, '../shadcn-ui/components'),
-      // Mock CSS imports
-      '\\.(css)$': path.resolve(__dirname, './__tests__/styleMock.js'),
+      'katex/dist/katex.min.css': path.resolve(__dirname, './__tests__/styleMock.js'),
     },
   },
 });

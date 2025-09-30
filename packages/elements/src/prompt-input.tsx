@@ -410,7 +410,8 @@ export const PromptInput = ({
       ...item,
     }));
 
-    const text = event.currentTarget.message?.value || "";
+    const formData = new FormData(event.currentTarget);
+    const text = (formData.get("message") as string) || "";
     onSubmit({ text, files }, event);
     clear();
   };
@@ -659,6 +660,7 @@ export const PromptInputSubmit = ({
 
   return (
     <Button
+      aria-label="Submit"
       className={cn("gap-1.5 rounded-lg", className)}
       size={size}
       type="submit"
