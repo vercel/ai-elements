@@ -1,8 +1,9 @@
 import { Background, ReactFlow, type ReactFlowProps } from "@xyflow/react";
 import type { ReactNode } from "react";
+import "@xyflow/react/dist/style.css";
 
 type CanvasProps = ReactFlowProps & {
-  children: ReactNode;
+  children?: ReactNode;
 };
 
 export const Canvas = ({ children, ...props }: CanvasProps) => (
@@ -15,7 +16,7 @@ export const Canvas = ({ children, ...props }: CanvasProps) => (
     zoomOnDoubleClick={false}
     {...props}
   >
-    <Background />
+    <Background bgColor="var(--sidebar)" />
     {children}
   </ReactFlow>
 );
