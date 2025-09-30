@@ -10,6 +10,7 @@ import {
   NodeHeader,
   NodeTitle,
 } from "@repo/elements/node";
+
 const nodeIds = {
   start: "start",
   process1: "process1",
@@ -154,7 +155,7 @@ const nodeTypes = {
         <p className="text-sm">{data.content}</p>
       </NodeContent>
       <NodeFooter>
-        <p className="text-xs text-muted-foreground">{data.footer}</p>
+        <p className="text-muted-foreground text-xs">{data.footer}</p>
       </NodeFooter>
     </Node>
   ),
