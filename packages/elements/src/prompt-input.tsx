@@ -32,7 +32,7 @@ import { nanoid } from "nanoid";
 import {
   type ChangeEventHandler,
   Children,
-  ClipboardEventHandler,
+  type ClipboardEventHandler,
   type ComponentProps,
   createContext,
   type FormEvent,
@@ -229,6 +229,7 @@ export const PromptInput = ({
   maxFileSize,
   onError,
   onSubmit,
+  children,
   ...props
 }: PromptInputProps) => {
   const [items, setItems] = useState<(FileUIPart & { id: string })[]>([]);
@@ -409,7 +410,8 @@ export const PromptInput = ({
       ...item,
     }));
 
-    onSubmit({ text: event.currentTarget.message.value, files }, event);
+    const text = event.currentTarget.message?.value || "";
+    onSubmit({ text, files }, event);
     clear();
   };
 
@@ -443,7 +445,9 @@ export const PromptInput = ({
         )}
         onSubmit={handleSubmit}
         {...props}
-      />
+      >
+        {children}
+      </form>
     </AttachmentsContext.Provider>
   );
 };
@@ -490,13 +494,13 @@ export const PromptInputTextarea = ({
 
   const handlePaste: ClipboardEventHandler<HTMLTextAreaElement> = (event) => {
     const items = event.clipboardData?.items;
-    
+
     if (!items) {
       return;
     }
 
     const files: File[] = [];
-    
+
     for (const item of items) {
       if (item.kind === "file") {
         const file = item.getAsFile();
