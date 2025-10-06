@@ -5,6 +5,7 @@ import {
   OpenInChatGPT,
   OpenInClaude,
   OpenInContent,
+  OpenInCursor,
   OpenInScira,
   OpenInT3,
   OpenInTrigger,
@@ -20,6 +21,7 @@ const Example = () => {
       <OpenInContent>
         <OpenInChatGPT query={sampleQuery} />
         <OpenInClaude query={sampleQuery} />
+        <OpenInCursor query={sampleQuery} />
         <OpenInT3 query={sampleQuery} />
         <OpenInScira query={sampleQuery} />
         <OpenInv0 query={sampleQuery} />

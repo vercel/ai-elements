@@ -10,13 +10,18 @@ import {
   DropdownMenuTrigger,
 } from "@repo/shadcn-ui/components/ui/dropdown-menu";
 import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupButton,
+  InputGroupTextarea,
+} from "@repo/shadcn-ui/components/ui/input-group";
+import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@repo/shadcn-ui/components/ui/select";
-import { Textarea } from "@repo/shadcn-ui/components/ui/textarea";
 import {
   Tooltip,
   TooltipContent,
@@ -37,6 +42,7 @@ import { nanoid } from "nanoid";
 import {
   type ChangeEventHandler,
   Children,
+  type ClipboardEventHandler,
   type ComponentProps,
   createContext,
   type FormEvent,
@@ -333,8 +339,13 @@ export function PromptInputAttachments({
     return () => ro.disconnect();
   }, []);
 
+  if (attachments.files.length === 0) {
+    return null;
+  }
+
   return (
-    <div
+    <InputGroupAddon
+      align="block-start"
       aria-live="polite"
       className={cn(
         "overflow-hidden transition-[height] duration-200 ease-out",
@@ -359,7 +370,7 @@ export function PromptInputAttachments({
             ))}
         </div>
       </div>
-    </div>
+    </InputGroupAddon>
   );
 }
 
@@ -413,7 +424,7 @@ export type PromptInputProps = Omit<
   onSubmit: (
     message: PromptInputMessage,
     event: FormEvent<HTMLFormElement>
-  ) => void;
+  ) => void | Promise<void>;
 };
 
 export const PromptInput = ({
@@ -426,6 +437,7 @@ export const PromptInput = ({
   maxFileSize,
   onError,
   onSubmit,
+  children,
   ...props
 }: PromptInputProps) => {
   // Try to use a provider controller if present
@@ -631,6 +643,17 @@ export const PromptInput = ({
     }
   };
 
+  const convertBlobUrlToDataUrl = async (url: string): Promise<string> => {
+    const response = await fetch(url);
+    const blob = await response.blob();
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result as string);
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+  };
+
   const ctx = useMemo<AttachmentsContext>(
     () => ({
       files: files.map((item) => ({ ...item, id: item.id })),
@@ -645,18 +668,59 @@ export const PromptInput = ({
 
   const handleSubmit: FormEventHandler<HTMLFormElement> = (event) => {
     event.preventDefault();
-    const filesToSend: FileUIPart[] = files.map(({ ...item }) => ({ ...item }));
+
+    const form = event.currentTarget;
     const text = usingProvider
       ? controller.textInput.value
       : (() => {
-          const form = event.currentTarget;
-          const el = form.elements.namedItem("message") as
-            | HTMLTextAreaElement
-            | HTMLInputElement
-            | null;
-          return el?.value ?? "";
+          const formData = new FormData(form);
+          return (formData.get("message") as string) || "";
         })();
-    onSubmit({ text, files: filesToSend }, event);
+
+    // Reset form immediately after capturing text to avoid race condition
+    // where user input during async blob conversion would be lost
+    if (!usingProvider) {
+      form.reset();
+    }
+
+    // Convert blob URLs to data URLs asynchronously
+    Promise.all(
+      files.map(async ({ id, ...item }) => {
+        if (item.url && item.url.startsWith("blob:")) {
+          return {
+            ...item,
+            url: await convertBlobUrlToDataUrl(item.url),
+          };
+        }
+        return item;
+      })
+    ).then((convertedFiles: FileUIPart[]) => {
+      try {
+        const result = onSubmit({ text, files: convertedFiles }, event);
+
+        // Handle both sync and async onSubmit
+        if (result instanceof Promise) {
+          result
+            .then(() => {
+              clear();
+              if (usingProvider) {
+                controller.textInput.clear();
+              }
+            })
+            .catch(() => {
+              // Don't clear on error - user may want to retry
+            });
+        } else {
+          // Sync function completed without throwing, clear attachments
+          clear();
+          if (usingProvider) {
+            controller.textInput.clear();
+          }
+        }
+      } catch (error) {
+        // Don't clear on error - user may want to retry
+      }
+    });
   };
 
   // Render with or without local provider
@@ -674,13 +738,12 @@ export const PromptInput = ({
         type="file"
       />
       <form
-        className={cn(
-          "w-full divide-y overflow-hidden rounded-xl border bg-background shadow-sm",
-          className
-        )}
+        className={cn("w-full", className)}
         onSubmit={handleSubmit}
         {...props}
-      />
+      >
+        <InputGroup>{children}</InputGroup>
+      </form>
     </>
   );
 
@@ -699,10 +762,12 @@ export const PromptInputBody = ({
   className,
   ...props
 }: PromptInputBodyProps) => (
-  <div className={cn(className, "flex flex-col")} {...props} />
+  <div className={cn("contents", className)} {...props} />
 );
 
-export type PromptInputTextareaProps = ComponentProps<typeof Textarea>;
+export type PromptInputTextareaProps = ComponentProps<
+  typeof InputGroupTextarea
+>;
 
 export const PromptInputTextarea = ({
   onChange,
@@ -711,6 +776,7 @@ export const PromptInputTextarea = ({
   ...props
 }: PromptInputTextareaProps) => {
   const controller = optional_usePromptInputController();
+  const attachments = usePromptInputAttachments();
 
   const handleKeyDown: KeyboardEventHandler<HTMLTextAreaElement> = (e) => {
     if (e.key === "Enter") {
@@ -721,6 +787,30 @@ export const PromptInputTextarea = ({
     }
   };
 
+  const handlePaste: ClipboardEventHandler<HTMLTextAreaElement> = (event) => {
+    const items = event.clipboardData?.items;
+
+    if (!items) {
+      return;
+    }
+
+    const files: File[] = [];
+
+    for (const item of items) {
+      if (item.kind === "file") {
+        const file = item.getAsFile();
+        if (file) {
+          files.push(file);
+        }
+      }
+    }
+
+    if (files.length > 0) {
+      event.preventDefault();
+      attachments.add(files);
+    }
+  };
+
   const controlledProps = controller
     ? {
         value: controller.textInput.value,
@@ -728,38 +818,36 @@ export const PromptInputTextarea = ({
           controller.textInput.setInput(e.currentTarget.value);
           onChange?.(e);
         },
-        name: "message",
       }
     : {
-        name: "message",
         onChange,
       };
 
   return (
-    <Textarea
-      className={cn(
-        "w-full resize-none rounded-none border-none p-3 shadow-none outline-none ring-0",
-        "field-sizing-content bg-transparent dark:bg-transparent",
-        "max-h-48 min-h-16",
-        "focus-visible:ring-0",
-        className
-      )}
-      placeholder={placeholder}
+    <InputGroupTextarea
+      className={cn("field-sizing-content max-h-48 min-h-16", className)}
+      name="message"
       onKeyDown={handleKeyDown}
+      onPaste={handlePaste}
+      placeholder={placeholder}
       {...props}
       {...controlledProps}
     />
   );
 };
 
-export type PromptInputToolbarProps = HTMLAttributes<HTMLDivElement>;
+export type PromptInputToolbarProps = Omit<
+  ComponentProps<typeof InputGroupAddon>,
+  "align"
+>;
 
 export const PromptInputToolbar = ({
   className,
   ...props
 }: PromptInputToolbarProps) => (
-  <div
-    className={cn("flex items-center justify-between p-1", className)}
+  <InputGroupAddon
+    align="block-end"
+    className={cn("justify-between gap-1", className)}
     {...props}
   />
 );
@@ -770,17 +858,10 @@ export const PromptInputTools = ({
   className,
   ...props
 }: PromptInputToolsProps) => (
-  <div
-    className={cn(
-      "flex items-center gap-1",
-      "[&_button:first-child]:rounded-bl-xl",
-      className
-    )}
-    {...props}
-  />
+  <div className={cn("flex items-center gap-1", className)} {...props} />
 );
 
-export type PromptInputButtonProps = ComponentProps<typeof Button>;
+export type PromptInputButtonProps = ComponentProps<typeof InputGroupButton>;
 
 export const PromptInputButton = ({
   variant = "ghost",
@@ -789,16 +870,11 @@ export const PromptInputButton = ({
   ...props
 }: PromptInputButtonProps) => {
   const newSize =
-    (size ?? Children.count(props.children) > 1) ? "default" : "icon";
+    size ?? (Children.count(props.children) > 1 ? "sm" : "icon-sm");
 
   return (
-    <Button
-      className={cn(
-        "shrink-0 gap-1.5 rounded-lg",
-        variant === "ghost" && "text-muted-foreground",
-        newSize === "default" && "px-3",
-        className
-      )}
+    <InputGroupButton
+      className={cn(className)}
       size={newSize}
       type="button"
       variant={variant}
@@ -812,9 +888,8 @@ export const PromptInputActionMenu = (props: PromptInputActionMenuProps) => (
   <DropdownMenu {...props} />
 );
 
-export type PromptInputActionMenuTriggerProps = ComponentProps<
-  typeof Button
-> & {};
+export type PromptInputActionMenuTriggerProps = PromptInputButtonProps;
+
 export const PromptInputActionMenuTrigger = ({
   className,
   children,
@@ -850,14 +925,14 @@ export const PromptInputActionMenuItem = ({
 // Note: Actions that perform side-effects (like opening a file dialog)
 // are provided in opt-in modules (e.g., prompt-input-attachments).
 
-export type PromptInputSubmitProps = ComponentProps<typeof Button> & {
+export type PromptInputSubmitProps = ComponentProps<typeof InputGroupButton> & {
   status?: ChatStatus;
 };
 
 export const PromptInputSubmit = ({
   className,
   variant = "default",
-  size = "icon",
+  size = "icon-sm",
   status,
   children,
   ...props
@@ -873,15 +948,16 @@ export const PromptInputSubmit = ({
   }
 
   return (
-    <Button
-      className={cn("gap-1.5 rounded-lg", className)}
+    <InputGroupButton
+      aria-label="Submit"
+      className={cn(className)}
       size={size}
       type="submit"
       variant={variant}
       {...props}
     >
       {children ?? Icon}
-    </Button>
+    </InputGroupButton>
   );
 };
 
