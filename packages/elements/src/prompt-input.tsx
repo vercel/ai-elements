@@ -417,8 +417,13 @@ export const PromptInput = ({
   const handleSubmit: FormEventHandler<HTMLFormElement> = (event) => {
     event.preventDefault();
 
-    const formData = new FormData(event.currentTarget);
+    const form = event.currentTarget;
+    const formData = new FormData(form);
     const text = (formData.get("message") as string) || "";
+
+    // Reset form immediately after capturing text to avoid race condition
+    // where user input during async blob conversion would be lost
+    form.reset();
 
     // Convert blob URLs to data URLs asynchronously
     Promise.all(

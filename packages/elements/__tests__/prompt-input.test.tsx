@@ -97,6 +97,76 @@ describe('PromptInput', () => {
     expect(message).toHaveProperty('files');
   });
 
+  it('clears textarea after form submission - #125', async () => {
+    const onSubmit = vi.fn();
+    const user = userEvent.setup();
+
+    render(
+      <PromptInput onSubmit={onSubmit}>
+        <PromptInputBody>
+          <PromptInputTextarea />
+          <PromptInputSubmit />
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    const textarea = screen.getByPlaceholderText('What would you like to know?') as HTMLTextAreaElement;
+    await user.type(textarea, 'Hello');
+
+    // Verify textarea has value before submit
+    expect(textarea.value).toBe('Hello');
+
+    // Submit the form
+    await user.keyboard('{Enter}');
+
+    // Wait for async submission
+    await vi.waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledTimes(1);
+    });
+
+    // Verify textarea is cleared after submission
+    expect(textarea.value).toBe('');
+  });
+
+  it('does not lose user input typed immediately after submission - #125', async () => {
+    const onSubmit = vi.fn();
+    const user = userEvent.setup();
+
+    render(
+      <PromptInput onSubmit={onSubmit}>
+        <PromptInputBody>
+          <PromptInputTextarea />
+          <PromptInputSubmit />
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    const textarea = screen.getByPlaceholderText('What would you like to know?') as HTMLTextAreaElement;
+
+    // Type and submit first message
+    await user.clear(textarea);
+    await user.type(textarea, 'First message');
+    await user.keyboard('{Enter}');
+
+    // Textarea should be cleared immediately after Enter (before async completes)
+    expect(textarea.value).toBe('');
+
+    // Immediately type a second message (without waiting for async completion)
+    await user.clear(textarea);  // Explicitly clear before typing
+    await user.type(textarea, 'Second message');
+
+    // Verify the second message is still there (not cleared by race condition)
+    expect(textarea.value).toBe('Second message');
+
+    // Wait for async submission to complete
+    await vi.waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledTimes(1);
+    });
+
+    // Second message should still be there after async completion
+    expect(textarea.value).toBe('Second message');
+  });
+
   it('converts blob URLs to data URLs on submit - #113', async () => {
     const onSubmit = vi.fn();
     const user = userEvent.setup();
