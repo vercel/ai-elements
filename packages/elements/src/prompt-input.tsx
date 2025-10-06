@@ -52,7 +52,9 @@ import {
   Fragment,
   type HTMLAttributes,
   type KeyboardEventHandler,
+  type PropsWithChildren,
   type ReactNode,
+  type RefObject,
   useCallback,
   useContext,
   useEffect,
@@ -71,7 +73,7 @@ export type AttachmentsContext = {
   remove: (id: string) => void;
   clear: () => void;
   openFileDialog: () => void;
-  fileInputRef: React.RefObject<HTMLInputElement | null>;
+  fileInputRef: RefObject<HTMLInputElement | null>;
 };
 
 export type TextInputContext = {
@@ -85,7 +87,7 @@ export type PromptInputController = {
   attachments: AttachmentsContext;
   /** INTERNAL: Allows PromptInput to register its file textInput + "open" callback */
   __registerFileInput: (
-    ref: React.RefObject<HTMLInputElement | null>,
+    ref: RefObject<HTMLInputElement | null>,
     open: () => void
   ) => void;
 };
@@ -124,7 +126,7 @@ const optional_useProviderAttachments = () => {
   return useContext(ProviderAttachmentsContext);
 };
 
-export type PromptInputProviderProps = React.PropsWithChildren<{
+export type PromptInputProviderProps = PropsWithChildren<{
   initialInput?: string;
 }>;
 
@@ -196,7 +198,7 @@ export function PromptInputProvider({
   );
 
   const __registerFileInput = useCallback(
-    (ref: React.RefObject<HTMLInputElement | null>, open: () => void) => {
+    (ref: RefObject<HTMLInputElement | null>, open: () => void) => {
       fileInputRef.current = ref.current;
       openRef.current = open;
     },
