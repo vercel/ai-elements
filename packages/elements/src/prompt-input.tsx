@@ -342,6 +342,15 @@ export function PromptInputAttachments({
     return () => ro.disconnect();
   }, []);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: Force height measurement when attachments change
+  useLayoutEffect(() => {
+    const el = contentRef.current;
+    if (!el) {
+      return;
+    }
+    setHeight(el.getBoundingClientRect().height);
+  }, [attachments.files.length]);
+
   if (attachments.files.length === 0) {
     return null;
   }
@@ -357,7 +366,7 @@ export function PromptInputAttachments({
       style={{ height: attachments.files.length ? height : 0 }}
       {...props}
     >
-      <div className="space-y-2 p-3 pt-3" ref={contentRef}>
+      <div className="space-y-2 py-1" ref={contentRef}>
         <div className="flex flex-wrap gap-2">
           {attachments.files
             .filter((f) => !(f.mediaType?.startsWith("image/") && f.url))
