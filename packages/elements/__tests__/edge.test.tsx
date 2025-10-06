@@ -364,4 +364,25 @@ describe("Edge.Animated", () => {
     // The component should handle nodes with no handles gracefully
     expect(container).toBeInTheDocument();
   });
+
+  it("renders with Top and Bottom positions", () => {
+    const { container } = render(
+      <ReactFlowProvider>
+        <svg>
+          <Edge.Animated
+            id="animated-top-bottom"
+            source="top-bottom"
+            target="top-bottom"
+            sourceX={0}
+            sourceY={0}
+            targetX={100}
+            targetY={100}
+            sourcePosition={Position.Top}
+            targetPosition={Position.Bottom}
+          />
+        </svg>
+      </ReactFlowProvider>
+    );
+    expect(container).toBeInTheDocument();
+  });
 });

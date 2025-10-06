@@ -49,6 +49,40 @@ describe("Reasoning", () => {
 
     expect(onOpenChange).toHaveBeenCalled();
   });
+
+  it("auto-closes after delay when streaming stops", async () => {
+    vi.useFakeTimers();
+    const { rerender } = render(
+      <Reasoning defaultOpen isStreaming>
+        <ReasoningTrigger />
+        <ReasoningContent>Reasoning content</ReasoningContent>
+      </Reasoning>
+    );
+
+    // Initially open
+    expect(screen.getByText("Reasoning content")).toBeVisible();
+
+    // Stop streaming
+    rerender(
+      <Reasoning defaultOpen isStreaming={false}>
+        <ReasoningTrigger />
+        <ReasoningContent>Reasoning content</ReasoningContent>
+      </Reasoning>
+    );
+
+    // Should still be open immediately
+    expect(screen.getByText("Reasoning content")).toBeVisible();
+
+    // Advance time past AUTO_CLOSE_DELAY (3000ms)
+    vi.advanceTimersByTime(3100);
+
+    // Should auto-close
+    await vi.waitFor(() => {
+      expect(screen.queryByText("Reasoning content")).not.toBeInTheDocument();
+    });
+
+    vi.useRealTimers();
+  });
 });
 
 describe("ReasoningTrigger", () => {
@@ -68,6 +102,15 @@ describe("ReasoningTrigger", () => {
       </Reasoning>
     );
     expect(screen.getByText("Thought for 5 seconds")).toBeInTheDocument();
+  });
+
+  it("renders thinking message when duration is 0", () => {
+    render(
+      <Reasoning duration={0} isStreaming={false}>
+        <ReasoningTrigger />
+      </Reasoning>
+    );
+    expect(screen.getByText("Thinking...")).toBeInTheDocument();
   });
 
   it("renders custom children", () => {
