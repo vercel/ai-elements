@@ -16,12 +16,15 @@ import {
   PromptInputModelSelectItem,
   PromptInputModelSelectTrigger,
   PromptInputModelSelectValue,
+  PromptInputProvider,
   PromptInputSpeechButton,
   PromptInputSubmit,
   PromptInputTextarea,
   PromptInputToolbar,
   PromptInputTools,
+  usePromptInputController,
 } from "@repo/elements/prompt-input";
+import { Button } from "@repo/shadcn-ui/components/ui/button";
 import { GlobeIcon } from "lucide-react";
 import { useRef, useState } from "react";
 
@@ -40,8 +43,48 @@ const models = [
 const SUBMITTING_TIMEOUT = 200;
 const STREAMING_TIMEOUT = 2000;
 
+function HeaderControls() {
+  const controller = usePromptInputController();
+  return (
+    <header className="mb-10">
+      <h4 className="text-sm mb-4">
+        Header Controls via{" "}
+        <code className="bg-gray-100 rounded-md p-1 font-bold">
+          PromptInputProvider
+        </code>
+      </h4>
+      <div className="flex gap-2 p-2 bg-gray-100 rounded-md mb-10">
+        <Button
+          type="button"
+          onClick={() => {
+            controller.textInput.clear();
+          }}
+        >
+          clear input
+        </Button>
+        <Button
+          type="button"
+          onClick={() => {
+            controller.textInput.setInput("Inserted via PromptInputProvider");
+          }}
+        >
+          set input
+        </Button>
+
+        <Button
+          type="button"
+          onClick={() => {
+            controller.attachments.clear();
+          }}
+        >
+          clear attachments
+        </Button>
+      </div>
+    </header>
+  );
+}
+
 const Example = () => {
-  const [text, setText] = useState<string>("");
   const [model, setModel] = useState<string>(models[0].id);
   const [status, setStatus] = useState<
     "submitted" | "streaming" | "ready" | "error"
@@ -58,6 +101,7 @@ const Example = () => {
 
     setStatus("submitted");
 
+    // eslint-disable-next-line no-console
     console.log("Submitting message:", message);
 
     setTimeout(() => {
@@ -70,52 +114,48 @@ const Example = () => {
   };
 
   return (
-    <PromptInput globalDrop multiple onSubmit={handleSubmit}>
-      <PromptInputBody>
-        <PromptInputAttachments>
-          {(attachment) => <PromptInputAttachment data={attachment} />}
-        </PromptInputAttachments>
-        <PromptInputTextarea
-          ref={textareaRef}
-          onChange={(e) => setText(e.target.value)}
-          value={text}
-        />
-      </PromptInputBody>
-      <PromptInputToolbar>
-        <PromptInputTools>
-          <PromptInputActionMenu>
-            <PromptInputActionMenuTrigger />
-            <PromptInputActionMenuContent>
-              <PromptInputActionAddAttachments />
-            </PromptInputActionMenuContent>
-          </PromptInputActionMenu>
-          <PromptInputSpeechButton
-            textareaRef={textareaRef}
-            onTranscriptionChange={(newText) => setText(newText)}
-          />
-          <PromptInputButton>
-            <GlobeIcon size={16} />
-            <span>Search</span>
-          </PromptInputButton>
-          <PromptInputModelSelect onValueChange={setModel} value={model}>
-            <PromptInputModelSelectTrigger>
-              <PromptInputModelSelectValue />
-            </PromptInputModelSelectTrigger>
-            <PromptInputModelSelectContent>
-              {models.map((modelOption) => (
-                <PromptInputModelSelectItem
-                  key={modelOption.id}
-                  value={modelOption.id}
-                >
-                  {modelOption.name}
-                </PromptInputModelSelectItem>
-              ))}
-            </PromptInputModelSelectContent>
-          </PromptInputModelSelect>
-        </PromptInputTools>
-        <PromptInputSubmit status={status} />
-      </PromptInputToolbar>
-    </PromptInput>
+    <PromptInputProvider>
+      <HeaderControls />
+      <PromptInput globalDrop multiple onSubmit={handleSubmit}>
+        <PromptInputBody>
+          <PromptInputAttachments>
+            {(attachment) => <PromptInputAttachment data={attachment} />}
+          </PromptInputAttachments>
+          <PromptInputTextarea ref={textareaRef} />
+        </PromptInputBody>
+        <PromptInputToolbar>
+          <PromptInputTools>
+            <PromptInputActionMenu>
+              <PromptInputActionMenuTrigger />
+              <PromptInputActionMenuContent>
+                <PromptInputActionAddAttachments />
+              </PromptInputActionMenuContent>
+            </PromptInputActionMenu>
+            <PromptInputSpeechButton textareaRef={textareaRef} />
+            <PromptInputButton>
+              <GlobeIcon size={16} />
+              <span>Search</span>
+            </PromptInputButton>
+            <PromptInputModelSelect onValueChange={setModel} value={model}>
+              <PromptInputModelSelectTrigger>
+                <PromptInputModelSelectValue />
+              </PromptInputModelSelectTrigger>
+              <PromptInputModelSelectContent>
+                {models.map((modelOption) => (
+                  <PromptInputModelSelectItem
+                    key={modelOption.id}
+                    value={modelOption.id}
+                  >
+                    {modelOption.name}
+                  </PromptInputModelSelectItem>
+                ))}
+              </PromptInputModelSelectContent>
+            </PromptInputModelSelect>
+          </PromptInputTools>
+          <PromptInputSubmit status={status} />
+        </PromptInputToolbar>
+      </PromptInput>
+    </PromptInputProvider>
   );
 };
 

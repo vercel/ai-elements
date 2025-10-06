@@ -5,6 +5,7 @@ import {
   OpenInChatGPT,
   OpenInClaude,
   OpenInContent,
+  OpenInCursor,
   OpenInScira,
   OpenInT3,
   OpenInTrigger,
@@ -20,6 +21,7 @@ const Example = () => {
       <OpenInContent>
         <OpenInChatGPT />
         <OpenInClaude />
+        <OpenInCursor />
         <OpenInT3 />
         <OpenInScira />
         <OpenInv0 />

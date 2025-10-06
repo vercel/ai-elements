@@ -3,12 +3,18 @@
   "description": "AI components including message, conversation, input, response, suggestion, sources, context, tool and branch components for building chat interfaces.",
   "version": "0.0.0",
   "private": true,
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest --watch",
+    "test:coverage": "vitest --coverage"
+  },
   "exports": {
     "./*": "./src/*.tsx"
   },
   "dependencies": {
     "@radix-ui/react-use-controllable-state": "^1.2.2",
     "@repo/shadcn-ui": "workspace:*",
+    "@xyflow/react": "^12.8.6",
     "ai": "5.0.37",
     "class-variance-authority": "^0.7.1",
     "lucide-react": "^0.542.0",
@@ -21,8 +27,15 @@
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.1.0",
+    "@testing-library/user-event": "^14.5.2",
     "@types/react": "19.1.12",
     "@types/react-syntax-highlighter": "^15.5.13",
-    "typescript": "^5.9.2"
+    "@vitejs/plugin-react": "^4.3.4",
+    "@vitest/coverage-v8": "^3.2.4",
+    "jsdom": "^26.0.0",
+    "typescript": "^5.9.2",
+    "vitest": "^3.2.4"
   }
 }

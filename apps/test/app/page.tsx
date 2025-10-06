@@ -24,11 +24,13 @@ import Suggestion from "@/app/examples/suggestion";
 import Task from "@/app/examples/task";
 import Tool from "@/app/examples/tool";
 import WebPreview from "@/app/examples/web-preview";
+import Workflow from "@/app/examples/workflow";
 
 const components = [
   { name: "Actions", Component: Actions },
   { name: "Artifact", Component: Artifact },
   { name: "Branch", Component: Branch },
+  { name: "Workflow", Component: Workflow },
   { name: "ChainOfThought", Component: ChainOfThought },
   { name: "CodeBlock", Component: CodeBlock },
   { name: "Context", Component: Context },
@@ -50,6 +52,9 @@ const components = [
 
 const Home = () => (
   <div className="container mx-auto space-y-8 py-16">
+    <header className="flex items-center justify-between">
+      <h1 className="font-bold text-2xl">AI Elements !!</h1>
+    </header>
     {components.map(({ name, Component }) => (
       <Card key={name}>
         <CardHeader>
