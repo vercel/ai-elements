@@ -18,6 +18,17 @@ describe("ChainOfThought", () => {
     expect(screen.getByText("Content")).toBeInTheDocument();
   });
 
+  it("throws error when component used outside provider", () => {
+    // Suppress console.error for this test
+    const spy = vi.spyOn(console, "error").mockImplementation(() => {});
+
+    expect(() => render(<ChainOfThoughtHeader>Test</ChainOfThoughtHeader>)).toThrow(
+      "ChainOfThought components must be used within ChainOfThought"
+    );
+
+    spy.mockRestore();
+  });
+
   it("starts closed by default", () => {
     render(
       <ChainOfThought>

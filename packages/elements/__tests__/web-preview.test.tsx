@@ -41,6 +41,17 @@ describe("WebPreview", () => {
 
     expect(onUrlChange).toHaveBeenCalled();
   });
+
+  it("throws error when component used outside provider", () => {
+    // Suppress console.error for this test
+    const spy = vi.spyOn(console, "error").mockImplementation(() => {});
+
+    expect(() => render(<WebPreviewUrl />)).toThrow(
+      "WebPreview components must be used within a WebPreview"
+    );
+
+    spy.mockRestore();
+  });
 });
 
 describe("WebPreviewNavigation", () => {

@@ -84,6 +84,11 @@ describe("ArtifactAction", () => {
     expect(screen.getByText("Action")).toHaveClass("sr-only");
   });
 
+  it("renders with tooltip only (no label)", () => {
+    render(<ArtifactAction tooltip="Help text">Content</ArtifactAction>);
+    expect(screen.getByText("Help text")).toHaveClass("sr-only");
+  });
+
   it("renders children when no icon", () => {
     render(<ArtifactAction label="Custom">Content</ArtifactAction>);
     expect(screen.getByText("Content")).toBeInTheDocument();

@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import {
   OpenIn,
   OpenInChatGPT,
@@ -24,6 +24,17 @@ describe("OpenIn", () => {
       </OpenIn>
     );
     expect(screen.getByText("Content")).toBeInTheDocument();
+  });
+
+  it("throws error when component used outside provider", () => {
+    // Suppress console.error for this test
+    const spy = vi.spyOn(console, "error").mockImplementation(() => {});
+
+    expect(() => render(<OpenInChatGPT />)).toThrow(
+      "OpenIn components must be used within an OpenIn provider"
+    );
+
+    spy.mockRestore();
   });
 });
 

@@ -112,4 +112,39 @@ describe("CodeBlockCopyButton", () => {
       expect(onError).toHaveBeenCalledWith(error);
     });
   });
+
+  it("calls onError when clipboard API is not available", async () => {
+    const onError = vi.fn();
+    const user = userEvent.setup();
+
+    // Temporarily remove clipboard writeText method
+    const originalClipboard = navigator.clipboard;
+    Object.defineProperty(navigator, "clipboard", {
+      value: { writeText: undefined },
+      writable: true,
+      configurable: true,
+    });
+
+    render(
+      <CodeBlock code="test code" language="javascript">
+        <CodeBlockCopyButton onError={onError} />
+      </CodeBlock>
+    );
+
+    const button = screen.getByRole("button");
+    await user.click(button);
+
+    expect(onError).toHaveBeenCalledWith(
+      expect.objectContaining({
+        message: "Clipboard API not available",
+      })
+    );
+
+    // Restore clipboard API
+    Object.defineProperty(navigator, "clipboard", {
+      value: originalClipboard,
+      writable: true,
+      configurable: true,
+    });
+  });
 });
