@@ -982,23 +982,23 @@ interface SpeechRecognitionEvent extends Event {
   results: SpeechRecognitionResultList;
 }
 
-interface SpeechRecognitionResultList {
+type SpeechRecognitionResultList = {
   readonly length: number;
   item(index: number): SpeechRecognitionResult;
   [index: number]: SpeechRecognitionResult;
-}
+};
 
-interface SpeechRecognitionResult {
+type SpeechRecognitionResult = {
   readonly length: number;
   item(index: number): SpeechRecognitionAlternative;
   [index: number]: SpeechRecognitionAlternative;
   isFinal: boolean;
-}
+};
 
-interface SpeechRecognitionAlternative {
+type SpeechRecognitionAlternative = {
   transcript: string;
   confidence: number;
-}
+};
 
 interface SpeechRecognitionErrorEvent extends Event {
   error: string;
@@ -1015,7 +1015,9 @@ declare global {
   }
 }
 
-export type PromptInputSpeechButtonProps = ComponentProps<typeof Button> & {
+export type PromptInputSpeechButtonProps = ComponentProps<
+  typeof PromptInputButton
+> & {
   textareaRef?: RefObject<HTMLTextAreaElement | null>;
   onTranscriptionChange?: (text: string) => void;
 };
