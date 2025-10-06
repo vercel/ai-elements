@@ -10,13 +10,18 @@ import {
   DropdownMenuTrigger,
 } from "@repo/shadcn-ui/components/ui/dropdown-menu";
 import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupButton,
+  InputGroupTextarea,
+} from "@repo/shadcn-ui/components/ui/input-group";
+import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@repo/shadcn-ui/components/ui/select";
-import { Textarea } from "@repo/shadcn-ui/components/ui/textarea";
 import { cn } from "@repo/shadcn-ui/lib/utils";
 import type { ChatStatus, FileUIPart } from "ai";
 import {
@@ -147,8 +152,13 @@ export function PromptInputAttachments({
     return () => ro.disconnect();
   }, []);
 
+  if (attachments.files.length === 0) {
+    return null;
+  }
+
   return (
-    <div
+    <InputGroupAddon
+      align="block-start"
       aria-live="polite"
       className={cn(
         "overflow-hidden transition-[height] duration-200 ease-out",
@@ -157,12 +167,12 @@ export function PromptInputAttachments({
       style={{ height: attachments.files.length ? height : 0 }}
       {...props}
     >
-      <div className="flex flex-wrap gap-2 p-3 pt-3" ref={contentRef}>
+      <div className="flex w-full flex-wrap gap-2" ref={contentRef}>
         {attachments.files.map((file) => (
           <Fragment key={file.id}>{children(file)}</Fragment>
         ))}
       </div>
-    </div>
+    </InputGroupAddon>
   );
 }
 
@@ -483,14 +493,11 @@ export const PromptInput = ({
         type="file"
       />
       <form
-        className={cn(
-          "w-full divide-y overflow-hidden rounded-xl border bg-background shadow-sm",
-          className
-        )}
+        className={cn("w-full", className)}
         onSubmit={handleSubmit}
         {...props}
       >
-        {children}
+        <InputGroup>{children}</InputGroup>
       </form>
     </AttachmentsContext.Provider>
   );
@@ -502,10 +509,12 @@ export const PromptInputBody = ({
   className,
   ...props
 }: PromptInputBodyProps) => (
-  <div className={cn(className, "flex flex-col")} {...props} />
+  <div className={cn("contents", className)} {...props} />
 );
 
-export type PromptInputTextareaProps = ComponentProps<typeof Textarea>;
+export type PromptInputTextareaProps = ComponentProps<
+  typeof InputGroupTextarea
+>;
 
 export const PromptInputTextarea = ({
   onChange,
@@ -561,14 +570,8 @@ export const PromptInputTextarea = ({
   };
 
   return (
-    <Textarea
-      className={cn(
-        "w-full resize-none rounded-none border-none p-3 shadow-none outline-none ring-0",
-        "field-sizing-content bg-transparent dark:bg-transparent",
-        "max-h-48 min-h-16",
-        "focus-visible:ring-0",
-        className
-      )}
+    <InputGroupTextarea
+      className={cn("field-sizing-content max-h-48 min-h-16", className)}
       name="message"
       onChange={(e) => {
         onChange?.(e);
@@ -581,14 +584,18 @@ export const PromptInputTextarea = ({
   );
 };
 
-export type PromptInputToolbarProps = HTMLAttributes<HTMLDivElement>;
+export type PromptInputToolbarProps = Omit<
+  ComponentProps<typeof InputGroupAddon>,
+  "align"
+>;
 
 export const PromptInputToolbar = ({
   className,
   ...props
 }: PromptInputToolbarProps) => (
-  <div
-    className={cn("flex items-center justify-between p-1", className)}
+  <InputGroupAddon
+    align="block-end"
+    className={cn("justify-between gap-1", className)}
     {...props}
   />
 );
@@ -599,17 +606,10 @@ export const PromptInputTools = ({
   className,
   ...props
 }: PromptInputToolsProps) => (
-  <div
-    className={cn(
-      "flex items-center gap-1",
-      "[&_button:first-child]:rounded-bl-xl",
-      className
-    )}
-    {...props}
-  />
+  <div className={cn("flex items-center gap-1", className)} {...props} />
 );
 
-export type PromptInputButtonProps = ComponentProps<typeof Button>;
+export type PromptInputButtonProps = ComponentProps<typeof InputGroupButton>;
 
 export const PromptInputButton = ({
   variant = "ghost",
@@ -618,16 +618,11 @@ export const PromptInputButton = ({
   ...props
 }: PromptInputButtonProps) => {
   const newSize =
-    (size ?? Children.count(props.children) > 1) ? "default" : "icon";
+    size ?? (Children.count(props.children) > 1 ? "sm" : "icon-sm");
 
   return (
-    <Button
-      className={cn(
-        "shrink-0 gap-1.5 rounded-lg",
-        variant === "ghost" && "text-muted-foreground",
-        newSize === "default" && "px-3",
-        className
-      )}
+    <InputGroupButton
+      className={cn(className)}
       size={newSize}
       type="button"
       variant={variant}
@@ -641,9 +636,8 @@ export const PromptInputActionMenu = (props: PromptInputActionMenuProps) => (
   <DropdownMenu {...props} />
 );
 
-export type PromptInputActionMenuTriggerProps = ComponentProps<
-  typeof Button
-> & {};
+export type PromptInputActionMenuTriggerProps = PromptInputButtonProps;
+
 export const PromptInputActionMenuTrigger = ({
   className,
   children,
@@ -679,14 +673,14 @@ export const PromptInputActionMenuItem = ({
 // Note: Actions that perform side-effects (like opening a file dialog)
 // are provided in opt-in modules (e.g., prompt-input-attachments).
 
-export type PromptInputSubmitProps = ComponentProps<typeof Button> & {
+export type PromptInputSubmitProps = ComponentProps<typeof InputGroupButton> & {
   status?: ChatStatus;
 };
 
 export const PromptInputSubmit = ({
   className,
   variant = "default",
-  size = "icon",
+  size = "icon-sm",
   status,
   children,
   ...props
@@ -702,16 +696,16 @@ export const PromptInputSubmit = ({
   }
 
   return (
-    <Button
+    <InputGroupButton
       aria-label="Submit"
-      className={cn("gap-1.5 rounded-lg", className)}
+      className={cn(className)}
       size={size}
       type="submit"
       variant={variant}
       {...props}
     >
       {children ?? Icon}
-    </Button>
+    </InputGroupButton>
   );
 };
 
