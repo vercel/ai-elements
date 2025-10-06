@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import {
   Context,
   ContextCacheUsage,
@@ -31,6 +31,17 @@ describe("Context", () => {
       </Context>
     );
     expect(screen.getByText("50%")).toBeInTheDocument();
+  });
+
+  it("throws error when components used outside Context provider", () => {
+    // Suppress console.error for this test
+    const spy = vi.spyOn(console, "error").mockImplementation(() => {});
+
+    expect(() => render(<ContextTrigger />)).toThrow(
+      "Context components must be used within Context"
+    );
+
+    spy.mockRestore();
   });
 });
 
@@ -148,6 +159,22 @@ describe("ContextInputUsage", () => {
     expect(screen.getByText("Input")).toBeInTheDocument();
   });
 
+  it("renders input usage without modelId", () => {
+    render(
+      <Context
+        defaultOpen
+        maxTokens={100}
+        usage={{ inputTokens: 50 }}
+        usedTokens={50}
+      >
+        <ContextContent>
+          <ContextInputUsage />
+        </ContextContent>
+      </Context>
+    );
+    expect(screen.getByText("Input")).toBeInTheDocument();
+  });
+
   it("renders nothing when no input tokens", () => {
     render(
       <Context defaultOpen maxTokens={100} usedTokens={0}>
@@ -158,6 +185,17 @@ describe("ContextInputUsage", () => {
       </Context>
     );
     expect(screen.queryByText("Input")).not.toBeInTheDocument();
+  });
+
+  it("renders custom children", () => {
+    render(
+      <Context defaultOpen maxTokens={100} usedTokens={50}>
+        <ContextContent>
+          <ContextInputUsage>Custom Input</ContextInputUsage>
+        </ContextContent>
+      </Context>
+    );
+    expect(screen.getByText("Custom Input")).toBeInTheDocument();
   });
 });
 
@@ -178,6 +216,44 @@ describe("ContextOutputUsage", () => {
     );
     expect(screen.getByText("Output")).toBeInTheDocument();
   });
+
+  it("renders output usage without modelId", () => {
+    render(
+      <Context
+        defaultOpen
+        maxTokens={100}
+        usage={{ outputTokens: 25 }}
+        usedTokens={25}
+      >
+        <ContextContent>
+          <ContextOutputUsage />
+        </ContextContent>
+      </Context>
+    );
+    expect(screen.getByText("Output")).toBeInTheDocument();
+  });
+
+  it("renders nothing when no output tokens", () => {
+    render(
+      <Context defaultOpen maxTokens={100} usedTokens={0}>
+        <ContextContent>
+          <ContextOutputUsage />
+        </ContextContent>
+      </Context>
+    );
+    expect(screen.queryByText("Output")).not.toBeInTheDocument();
+  });
+
+  it("renders custom children", () => {
+    render(
+      <Context defaultOpen maxTokens={100} usedTokens={50}>
+        <ContextContent>
+          <ContextOutputUsage>Custom Output</ContextOutputUsage>
+        </ContextContent>
+      </Context>
+    );
+    expect(screen.getByText("Custom Output")).toBeInTheDocument();
+  });
 });
 
 describe("ContextReasoningUsage", () => {
@@ -197,6 +273,44 @@ describe("ContextReasoningUsage", () => {
     );
     expect(screen.getByText("Reasoning")).toBeInTheDocument();
   });
+
+  it("renders reasoning usage without modelId", () => {
+    render(
+      <Context
+        defaultOpen
+        maxTokens={100}
+        usage={{ reasoningTokens: 10 }}
+        usedTokens={10}
+      >
+        <ContextContent>
+          <ContextReasoningUsage />
+        </ContextContent>
+      </Context>
+    );
+    expect(screen.getByText("Reasoning")).toBeInTheDocument();
+  });
+
+  it("renders nothing when no reasoning tokens", () => {
+    render(
+      <Context defaultOpen maxTokens={100} usedTokens={0}>
+        <ContextContent>
+          <ContextReasoningUsage />
+        </ContextContent>
+      </Context>
+    );
+    expect(screen.queryByText("Reasoning")).not.toBeInTheDocument();
+  });
+
+  it("renders custom children", () => {
+    render(
+      <Context defaultOpen maxTokens={100} usedTokens={50}>
+        <ContextContent>
+          <ContextReasoningUsage>Custom Reasoning</ContextReasoningUsage>
+        </ContextContent>
+      </Context>
+    );
+    expect(screen.getByText("Custom Reasoning")).toBeInTheDocument();
+  });
 });
 
 describe("ContextCacheUsage", () => {
@@ -215,5 +329,43 @@ describe("ContextCacheUsage", () => {
       </Context>
     );
     expect(screen.getByText("Cache")).toBeInTheDocument();
+  });
+
+  it("renders cache usage without modelId", () => {
+    render(
+      <Context
+        defaultOpen
+        maxTokens={100}
+        usage={{ cachedInputTokens: 20 }}
+        usedTokens={20}
+      >
+        <ContextContent>
+          <ContextCacheUsage />
+        </ContextContent>
+      </Context>
+    );
+    expect(screen.getByText("Cache")).toBeInTheDocument();
+  });
+
+  it("renders nothing when no cache tokens", () => {
+    render(
+      <Context defaultOpen maxTokens={100} usedTokens={0}>
+        <ContextContent>
+          <ContextCacheUsage />
+        </ContextContent>
+      </Context>
+    );
+    expect(screen.queryByText("Cache")).not.toBeInTheDocument();
+  });
+
+  it("renders custom children", () => {
+    render(
+      <Context defaultOpen maxTokens={100} usedTokens={50}>
+        <ContextContent>
+          <ContextCacheUsage>Custom Cache</ContextCacheUsage>
+        </ContextContent>
+      </Context>
+    );
+    expect(screen.getByText("Custom Cache")).toBeInTheDocument();
   });
 });
