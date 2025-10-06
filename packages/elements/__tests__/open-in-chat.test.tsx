@@ -5,6 +5,7 @@ import {
   OpenInChatGPT,
   OpenInClaude,
   OpenInContent,
+  OpenInCursor,
   OpenInItem,
   OpenInLabel,
   OpenInScira,
@@ -173,5 +174,21 @@ describe('OpenInv0', () => {
     expect(screen.getByText('Open in v0')).toBeInTheDocument();
     const link = screen.getByRole('menuitem', { name: /v0/i });
     expect(link).toHaveAttribute('href', expect.stringContaining('v0.app'));
+  });
+});
+
+describe('OpenInCursor', () => {
+  it('renders Cursor link', () => {
+    render(
+      <OpenIn defaultOpen query="test query">
+        <OpenInContent>
+          <OpenInCursor />
+        </OpenInContent>
+      </OpenIn>
+    );
+    expect(screen.getByText('Open in Cursor')).toBeInTheDocument();
+    const link = screen.getByRole('menuitem', { name: /Cursor/i });
+    expect(link).toHaveAttribute('href', expect.stringContaining('cursor.com'));
+    expect(link).toHaveAttribute('target', '_blank');
   });
 });
