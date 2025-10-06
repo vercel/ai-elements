@@ -10,6 +10,8 @@ import {
   InlineCitationCarouselHeader,
   InlineCitationCarouselIndex,
   InlineCitationCarouselItem,
+  InlineCitationCarouselNext,
+  InlineCitationCarouselPrev,
   InlineCitationQuote,
   InlineCitationSource,
   InlineCitationText,
@@ -150,5 +152,148 @@ describe("InlineCitationQuote", () => {
       <InlineCitationQuote>Quote</InlineCitationQuote>
     );
     expect(container.querySelector("blockquote")).toBeInTheDocument();
+  });
+});
+
+describe("InlineCitationCarouselIndex", () => {
+  it("renders index component", () => {
+    const { container } = render(
+      <InlineCitationCarousel>
+        <InlineCitationCarouselHeader>
+          <InlineCitationCarouselIndex count={5} current={2} />
+        </InlineCitationCarouselHeader>
+        <InlineCitationCarouselContent>
+          <InlineCitationCarouselItem>Item</InlineCitationCarouselItem>
+        </InlineCitationCarouselContent>
+      </InlineCitationCarousel>
+    );
+    const indexDiv = container.querySelector("[count='5'][current='2']");
+    expect(indexDiv).toBeInTheDocument();
+  });
+
+  it("renders custom children", () => {
+    render(
+      <InlineCitationCarousel>
+        <InlineCitationCarouselHeader>
+          <InlineCitationCarouselIndex count={5} current={2}>
+            Custom Index
+          </InlineCitationCarouselIndex>
+        </InlineCitationCarouselHeader>
+        <InlineCitationCarouselContent>
+          <InlineCitationCarouselItem>Item</InlineCitationCarouselItem>
+        </InlineCitationCarouselContent>
+      </InlineCitationCarousel>
+    );
+    expect(screen.getByText("Custom Index")).toBeInTheDocument();
+  });
+
+  it("applies custom className", () => {
+    const { container } = render(
+      <InlineCitationCarousel>
+        <InlineCitationCarouselHeader>
+          <InlineCitationCarouselIndex
+            className="custom-index"
+            count={3}
+            current={1}
+          />
+        </InlineCitationCarouselHeader>
+        <InlineCitationCarouselContent>
+          <InlineCitationCarouselItem>Item</InlineCitationCarouselItem>
+        </InlineCitationCarouselContent>
+      </InlineCitationCarousel>
+    );
+    expect(container.querySelector(".custom-index")).toBeInTheDocument();
+  });
+});
+
+describe("InlineCitationCarouselPrev", () => {
+  it("renders previous button", () => {
+    render(
+      <InlineCitationCarousel>
+        <InlineCitationCarouselHeader>
+          <InlineCitationCarouselPrev />
+        </InlineCitationCarouselHeader>
+        <InlineCitationCarouselContent>
+          <InlineCitationCarouselItem>Item</InlineCitationCarouselItem>
+        </InlineCitationCarouselContent>
+      </InlineCitationCarousel>
+    );
+    expect(screen.getByRole("button", { name: /previous/i })).toBeInTheDocument();
+  });
+
+  it("applies custom className", () => {
+    const { container } = render(
+      <InlineCitationCarousel>
+        <InlineCitationCarouselHeader>
+          <InlineCitationCarouselPrev className="custom-prev" />
+        </InlineCitationCarouselHeader>
+        <InlineCitationCarouselContent>
+          <InlineCitationCarouselItem>Item</InlineCitationCarouselItem>
+        </InlineCitationCarouselContent>
+      </InlineCitationCarousel>
+    );
+    const button = screen.getByRole("button", { name: /previous/i });
+    expect(button).toHaveClass("custom-prev");
+  });
+
+  it("renders ArrowLeftIcon", () => {
+    const { container } = render(
+      <InlineCitationCarousel>
+        <InlineCitationCarouselHeader>
+          <InlineCitationCarouselPrev />
+        </InlineCitationCarouselHeader>
+        <InlineCitationCarouselContent>
+          <InlineCitationCarouselItem>Item</InlineCitationCarouselItem>
+        </InlineCitationCarouselContent>
+      </InlineCitationCarousel>
+    );
+    const icon = container.querySelector("svg");
+    expect(icon).toBeInTheDocument();
+  });
+});
+
+describe("InlineCitationCarouselNext", () => {
+  it("renders next button", () => {
+    render(
+      <InlineCitationCarousel>
+        <InlineCitationCarouselHeader>
+          <InlineCitationCarouselNext />
+        </InlineCitationCarouselHeader>
+        <InlineCitationCarouselContent>
+          <InlineCitationCarouselItem>Item</InlineCitationCarouselItem>
+        </InlineCitationCarouselContent>
+      </InlineCitationCarousel>
+    );
+    expect(screen.getByRole("button", { name: /next/i })).toBeInTheDocument();
+  });
+
+  it("applies custom className", () => {
+    const { container } = render(
+      <InlineCitationCarousel>
+        <InlineCitationCarouselHeader>
+          <InlineCitationCarouselNext className="custom-next" />
+        </InlineCitationCarouselHeader>
+        <InlineCitationCarouselContent>
+          <InlineCitationCarouselItem>Item</InlineCitationCarouselItem>
+        </InlineCitationCarouselContent>
+      </InlineCitationCarousel>
+    );
+    const button = screen.getByRole("button", { name: /next/i });
+    expect(button).toHaveClass("custom-next");
+  });
+
+  it("renders ArrowRightIcon", () => {
+    const { container } = render(
+      <InlineCitationCarousel>
+        <InlineCitationCarouselHeader>
+          <InlineCitationCarouselNext />
+        </InlineCitationCarouselHeader>
+        <InlineCitationCarouselContent>
+          <InlineCitationCarouselItem>Item</InlineCitationCarouselItem>
+        </InlineCitationCarouselContent>
+      </InlineCitationCarousel>
+    );
+    const icon = container.querySelector("svg");
+    expect(icon).toBeInTheDocument();
   });
 });
