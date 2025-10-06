@@ -1,6 +1,6 @@
-import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import { describe, expect, it, vi } from 'vitest';
+import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { describe, expect, it, vi } from "vitest";
 import {
   WebPreview,
   WebPreviewBody,
@@ -8,25 +8,25 @@ import {
   WebPreviewNavigation,
   WebPreviewNavigationButton,
   WebPreviewUrl,
-} from '../src/web-preview';
+} from "../src/web-preview";
 
-describe('WebPreview', () => {
-  it('renders children', () => {
+describe("WebPreview", () => {
+  it("renders children", () => {
     render(<WebPreview>Content</WebPreview>);
-    expect(screen.getByText('Content')).toBeInTheDocument();
+    expect(screen.getByText("Content")).toBeInTheDocument();
   });
 
-  it('uses default URL', () => {
+  it("uses default URL", () => {
     render(
       <WebPreview defaultUrl="https://example.com">
         <WebPreviewUrl />
       </WebPreview>
     );
-    const input = screen.getByPlaceholderText('Enter URL...');
-    expect(input).toHaveValue('https://example.com');
+    const input = screen.getByPlaceholderText("Enter URL...");
+    expect(input).toHaveValue("https://example.com");
   });
 
-  it('calls onUrlChange', async () => {
+  it("calls onUrlChange", async () => {
     const onUrlChange = vi.fn();
     const user = userEvent.setup();
 
@@ -36,40 +36,40 @@ describe('WebPreview', () => {
       </WebPreview>
     );
 
-    const input = screen.getByPlaceholderText('Enter URL...');
-    await user.type(input, 'https://test.com{Enter}');
+    const input = screen.getByPlaceholderText("Enter URL...");
+    await user.type(input, "https://test.com{Enter}");
 
     expect(onUrlChange).toHaveBeenCalled();
   });
 });
 
-describe('WebPreviewNavigation', () => {
-  it('renders navigation', () => {
+describe("WebPreviewNavigation", () => {
+  it("renders navigation", () => {
     render(<WebPreviewNavigation>Nav content</WebPreviewNavigation>);
-    expect(screen.getByText('Nav content')).toBeInTheDocument();
+    expect(screen.getByText("Nav content")).toBeInTheDocument();
   });
 });
 
-describe('WebPreviewNavigationButton', () => {
-  it('renders button with tooltip', () => {
+describe("WebPreviewNavigationButton", () => {
+  it("renders button with tooltip", () => {
     render(
       <WebPreviewNavigationButton tooltip="Back">
         <span>←</span>
       </WebPreviewNavigationButton>
     );
-    expect(screen.getByText('←')).toBeInTheDocument();
+    expect(screen.getByText("←")).toBeInTheDocument();
   });
 
-  it('can be disabled', () => {
+  it("can be disabled", () => {
     render(
       <WebPreviewNavigationButton disabled tooltip="Forward">
         →
       </WebPreviewNavigationButton>
     );
-    expect(screen.getByRole('button')).toBeDisabled();
+    expect(screen.getByRole("button")).toBeDisabled();
   });
 
-  it('handles click', async () => {
+  it("handles click", async () => {
     const onClick = vi.fn();
     const user = userEvent.setup();
 
@@ -79,22 +79,22 @@ describe('WebPreviewNavigationButton', () => {
       </WebPreviewNavigationButton>
     );
 
-    await user.click(screen.getByRole('button'));
+    await user.click(screen.getByRole("button"));
     expect(onClick).toHaveBeenCalled();
   });
 });
 
-describe('WebPreviewUrl', () => {
-  it('renders URL input', () => {
+describe("WebPreviewUrl", () => {
+  it("renders URL input", () => {
     render(
       <WebPreview>
         <WebPreviewUrl />
       </WebPreview>
     );
-    expect(screen.getByPlaceholderText('Enter URL...')).toBeInTheDocument();
+    expect(screen.getByPlaceholderText("Enter URL...")).toBeInTheDocument();
   });
 
-  it('updates URL on Enter key', async () => {
+  it("updates URL on Enter key", async () => {
     const user = userEvent.setup();
 
     render(
@@ -103,59 +103,63 @@ describe('WebPreviewUrl', () => {
       </WebPreview>
     );
 
-    const input = screen.getByPlaceholderText('Enter URL...') as HTMLInputElement;
-    await user.type(input, 'https://example.com{Enter}');
+    const input = screen.getByPlaceholderText(
+      "Enter URL..."
+    ) as HTMLInputElement;
+    await user.type(input, "https://example.com{Enter}");
 
     // Wait for the state to update
     await vi.waitFor(() => {
-      expect(input).toHaveValue('https://example.com');
+      expect(input).toHaveValue("https://example.com");
     });
   });
 });
 
-describe('WebPreviewBody', () => {
-  it('renders iframe', () => {
+describe("WebPreviewBody", () => {
+  it("renders iframe", () => {
     render(
       <WebPreview>
         <WebPreviewBody src="https://example.com" />
       </WebPreview>
     );
-    const iframe = screen.getByTitle('Preview');
+    const iframe = screen.getByTitle("Preview");
     expect(iframe).toBeInTheDocument();
-    expect(iframe).toHaveAttribute('src', 'https://example.com');
+    expect(iframe).toHaveAttribute("src", "https://example.com");
   });
 
-  it('has sandbox attribute', () => {
+  it("has sandbox attribute", () => {
     render(
       <WebPreview>
         <WebPreviewBody />
       </WebPreview>
     );
-    const iframe = screen.getByTitle('Preview');
-    expect(iframe).toHaveAttribute('sandbox');
+    const iframe = screen.getByTitle("Preview");
+    expect(iframe).toHaveAttribute("sandbox");
   });
 
-  it('renders loading component', () => {
+  it("renders loading component", () => {
     render(
       <WebPreview>
         <WebPreviewBody loading={<div>Loading...</div>} />
       </WebPreview>
     );
-    expect(screen.getByText('Loading...')).toBeInTheDocument();
+    expect(screen.getByText("Loading...")).toBeInTheDocument();
   });
 });
 
-describe('WebPreviewConsole', () => {
-  it('renders console', () => {
+describe("WebPreviewConsole", () => {
+  it("renders console", () => {
     render(
       <WebPreview>
         <WebPreviewConsole />
       </WebPreview>
     );
-    expect(screen.getByRole('button', { name: /console/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /console/i })
+    ).toBeInTheDocument();
   });
 
-  it('displays no output message', async () => {
+  it("displays no output message", async () => {
     const user = userEvent.setup();
 
     render(
@@ -164,15 +168,19 @@ describe('WebPreviewConsole', () => {
       </WebPreview>
     );
 
-    await user.click(screen.getByRole('button', { name: /console/i }));
-    expect(screen.getByText('No console output')).toBeVisible();
+    await user.click(screen.getByRole("button", { name: /console/i }));
+    expect(screen.getByText("No console output")).toBeVisible();
   });
 
-  it('displays logs', async () => {
+  it("displays logs", async () => {
     const user = userEvent.setup();
     const logs = [
-      { level: 'log' as const, message: 'Test log', timestamp: new Date() },
-      { level: 'error' as const, message: 'Error message', timestamp: new Date() },
+      { level: "log" as const, message: "Test log", timestamp: new Date() },
+      {
+        level: "error" as const,
+        message: "Error message",
+        timestamp: new Date(),
+      },
     ];
 
     render(
@@ -181,8 +189,8 @@ describe('WebPreviewConsole', () => {
       </WebPreview>
     );
 
-    await user.click(screen.getByRole('button', { name: /console/i }));
-    expect(screen.getByText('Test log')).toBeVisible();
-    expect(screen.getByText('Error message')).toBeVisible();
+    await user.click(screen.getByRole("button", { name: /console/i }));
+    expect(screen.getByText("Test log")).toBeVisible();
+    expect(screen.getByText("Error message")).toBeVisible();
   });
 });

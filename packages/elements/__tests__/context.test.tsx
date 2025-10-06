@@ -1,5 +1,5 @@
-import { render, screen } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
+import { render, screen } from "@testing-library/react";
+import { describe, expect, it } from "vitest";
 import {
   Context,
   ContextCacheUsage,
@@ -11,63 +11,63 @@ import {
   ContextOutputUsage,
   ContextReasoningUsage,
   ContextTrigger,
-} from '../src/context';
+} from "../src/context";
 
-describe('Context', () => {
-  it('renders children', () => {
+describe("Context", () => {
+  it("renders children", () => {
     render(
       <Context defaultOpen maxTokens={100} usedTokens={50}>
         <ContextTrigger />
         <ContextContent>Content</ContextContent>
       </Context>
     );
-    expect(screen.getByText('Content')).toBeInTheDocument();
+    expect(screen.getByText("Content")).toBeInTheDocument();
   });
 
-  it('displays percentage', () => {
+  it("displays percentage", () => {
     render(
       <Context maxTokens={100} usedTokens={50}>
         <ContextTrigger />
       </Context>
     );
-    expect(screen.getByText('50%')).toBeInTheDocument();
+    expect(screen.getByText("50%")).toBeInTheDocument();
   });
 });
 
-describe('ContextTrigger', () => {
-  it('renders trigger button', () => {
+describe("ContextTrigger", () => {
+  it("renders trigger button", () => {
     render(
       <Context maxTokens={100} usedTokens={25}>
         <ContextTrigger />
       </Context>
     );
-    expect(screen.getByRole('button')).toBeInTheDocument();
+    expect(screen.getByRole("button")).toBeInTheDocument();
   });
 
-  it('displays formatted percentage', () => {
+  it("displays formatted percentage", () => {
     render(
       <Context maxTokens={100} usedTokens={33}>
         <ContextTrigger />
       </Context>
     );
-    expect(screen.getByText('33%')).toBeInTheDocument();
+    expect(screen.getByText("33%")).toBeInTheDocument();
   });
 });
 
-describe('ContextContent', () => {
-  it('renders content', () => {
+describe("ContextContent", () => {
+  it("renders content", () => {
     render(
       <Context defaultOpen maxTokens={100} usedTokens={50}>
         <ContextTrigger />
         <ContextContent>Details</ContextContent>
       </Context>
     );
-    expect(screen.getByText('Details')).toBeInTheDocument();
+    expect(screen.getByText("Details")).toBeInTheDocument();
   });
 });
 
-describe('ContextContentHeader', () => {
-  it('renders default header with stats', () => {
+describe("ContextContentHeader", () => {
+  it("renders default header with stats", () => {
     const { container } = render(
       <Context defaultOpen maxTokens={1000} usedTokens={500}>
         <ContextTrigger />
@@ -76,10 +76,10 @@ describe('ContextContentHeader', () => {
         </ContextContent>
       </Context>
     );
-    expect(container.textContent).toContain('50%');
+    expect(container.textContent).toContain("50%");
   });
 
-  it('renders custom children', () => {
+  it("renders custom children", () => {
     render(
       <Context defaultOpen maxTokens={100} usedTokens={50}>
         <ContextTrigger />
@@ -88,12 +88,12 @@ describe('ContextContentHeader', () => {
         </ContextContent>
       </Context>
     );
-    expect(screen.getByText('Custom Header')).toBeInTheDocument();
+    expect(screen.getByText("Custom Header")).toBeInTheDocument();
   });
 });
 
-describe('ContextContentBody', () => {
-  it('renders body content', () => {
+describe("ContextContentBody", () => {
+  it("renders body content", () => {
     render(
       <Context defaultOpen maxTokens={100} usedTokens={50}>
         <ContextContent>
@@ -101,12 +101,12 @@ describe('ContextContentBody', () => {
         </ContextContent>
       </Context>
     );
-    expect(screen.getByText('Body content')).toBeInTheDocument();
+    expect(screen.getByText("Body content")).toBeInTheDocument();
   });
 });
 
-describe('ContextContentFooter', () => {
-  it('renders default footer with cost', () => {
+describe("ContextContentFooter", () => {
+  it("renders default footer with cost", () => {
     render(
       <Context defaultOpen maxTokens={100} modelId="gpt-4" usedTokens={50}>
         <ContextContent>
@@ -114,10 +114,10 @@ describe('ContextContentFooter', () => {
         </ContextContent>
       </Context>
     );
-    expect(screen.getByText('Total cost')).toBeInTheDocument();
+    expect(screen.getByText("Total cost")).toBeInTheDocument();
   });
 
-  it('renders custom children', () => {
+  it("renders custom children", () => {
     render(
       <Context defaultOpen maxTokens={100} usedTokens={50}>
         <ContextContent>
@@ -125,12 +125,12 @@ describe('ContextContentFooter', () => {
         </ContextContent>
       </Context>
     );
-    expect(screen.getByText('Custom Footer')).toBeInTheDocument();
+    expect(screen.getByText("Custom Footer")).toBeInTheDocument();
   });
 });
 
-describe('ContextInputUsage', () => {
-  it('renders input usage', () => {
+describe("ContextInputUsage", () => {
+  it("renders input usage", () => {
     render(
       <Context
         defaultOpen
@@ -145,10 +145,10 @@ describe('ContextInputUsage', () => {
         </ContextContent>
       </Context>
     );
-    expect(screen.getByText('Input')).toBeInTheDocument();
+    expect(screen.getByText("Input")).toBeInTheDocument();
   });
 
-  it('renders nothing when no input tokens', () => {
+  it("renders nothing when no input tokens", () => {
     render(
       <Context defaultOpen maxTokens={100} usedTokens={0}>
         <ContextTrigger />
@@ -157,12 +157,12 @@ describe('ContextInputUsage', () => {
         </ContextContent>
       </Context>
     );
-    expect(screen.queryByText('Input')).not.toBeInTheDocument();
+    expect(screen.queryByText("Input")).not.toBeInTheDocument();
   });
 });
 
-describe('ContextOutputUsage', () => {
-  it('renders output usage', () => {
+describe("ContextOutputUsage", () => {
+  it("renders output usage", () => {
     render(
       <Context
         defaultOpen
@@ -176,12 +176,12 @@ describe('ContextOutputUsage', () => {
         </ContextContent>
       </Context>
     );
-    expect(screen.getByText('Output')).toBeInTheDocument();
+    expect(screen.getByText("Output")).toBeInTheDocument();
   });
 });
 
-describe('ContextReasoningUsage', () => {
-  it('renders reasoning usage', () => {
+describe("ContextReasoningUsage", () => {
+  it("renders reasoning usage", () => {
     render(
       <Context
         defaultOpen
@@ -195,12 +195,12 @@ describe('ContextReasoningUsage', () => {
         </ContextContent>
       </Context>
     );
-    expect(screen.getByText('Reasoning')).toBeInTheDocument();
+    expect(screen.getByText("Reasoning")).toBeInTheDocument();
   });
 });
 
-describe('ContextCacheUsage', () => {
-  it('renders cache usage', () => {
+describe("ContextCacheUsage", () => {
+  it("renders cache usage", () => {
     render(
       <Context
         defaultOpen
@@ -214,6 +214,6 @@ describe('ContextCacheUsage', () => {
         </ContextContent>
       </Context>
     );
-    expect(screen.getByText('Cache')).toBeInTheDocument();
+    expect(screen.getByText("Cache")).toBeInTheDocument();
   });
 });

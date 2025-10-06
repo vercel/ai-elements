@@ -41,6 +41,7 @@ import {
 } from "lucide-react";
 import { nanoid } from "nanoid";
 import {
+  type ChangeEvent,
   type ChangeEventHandler,
   Children,
   type ClipboardEventHandler,
@@ -51,7 +52,6 @@ import {
   Fragment,
   type HTMLAttributes,
   type KeyboardEventHandler,
-  type ChangeEvent,
   type ReactNode,
   useCallback,
   useContext,
@@ -86,20 +86,20 @@ export type PromptInputController = {
   /** INTERNAL: Allows PromptInput to register its file textInput + "open" callback */
   __registerFileInput: (
     ref: React.RefObject<HTMLInputElement | null>,
-    open: () => void,
+    open: () => void
   ) => void;
 };
 
 const PromptInputContext = createContext<PromptInputController | null>(null);
 const ProviderAttachmentsContext = createContext<AttachmentsContext | null>(
-  null,
+  null
 );
 
 export const usePromptInputController = () => {
   const ctx = useContext(PromptInputContext);
   if (!ctx) {
     throw new Error(
-      "Wrap your component inside <PromptInputProvider> to use usePromptInputController().",
+      "Wrap your component inside <PromptInputProvider> to use usePromptInputController()."
     );
   }
   return ctx;
@@ -114,7 +114,7 @@ export const useProviderAttachments = () => {
   const ctx = useContext(ProviderAttachmentsContext);
   if (!ctx) {
     throw new Error(
-      "Wrap your component inside <PromptInputProvider> to use useProviderAttachments().",
+      "Wrap your component inside <PromptInputProvider> to use useProviderAttachments()."
     );
   }
   return ctx;
@@ -159,8 +159,8 @@ export function PromptInputProvider({
           url: URL.createObjectURL(file),
           mediaType: file.type,
           filename: file.name,
-        })),
-      ),
+        }))
+      )
     );
   }, []);
 
@@ -192,7 +192,7 @@ export function PromptInputProvider({
       openFileDialog,
       fileInputRef,
     }),
-    [attachements, add, remove, clear, openFileDialog],
+    [attachements, add, remove, clear, openFileDialog]
   );
 
   const __registerFileInput = useCallback(
@@ -200,7 +200,7 @@ export function PromptInputProvider({
       fileInputRef.current = ref.current;
       openRef.current = open;
     },
-    [],
+    []
   );
 
   const controller = useMemo<PromptInputController>(
@@ -213,7 +213,7 @@ export function PromptInputProvider({
       attachments,
       __registerFileInput,
     }),
-    [textInput, clearInput, attachments, __registerFileInput],
+    [textInput, clearInput, attachments, __registerFileInput]
   );
 
   return (
@@ -238,7 +238,7 @@ export const usePromptInputAttachments = () => {
   const context = provider ?? local;
   if (!context) {
     throw new Error(
-      "usePromptInputAttachments must be used within a PromptInput or PromptInputProvider",
+      "usePromptInputAttachments must be used within a PromptInput or PromptInputProvider"
     );
   }
   return context;
@@ -264,7 +264,7 @@ export function PromptInputAttachment({
       className={cn(
         "group relative h-14 w-14 rounded-md border",
         className,
-        mediaType === "image" ? "w-14 h-14" : "w-auto h-8 max-w-full",
+        mediaType === "image" ? "h-14 w-14" : "h-8 w-auto max-w-full"
       )}
       key={data.id}
       {...props}
@@ -278,17 +278,17 @@ export function PromptInputAttachment({
           width={56}
         />
       ) : (
-        <div className="flex size-full items-center justify-start text-muted-foreground cursor-pointer gap-2 px-2 overflow-hidden max-w-full">
+        <div className="flex size-full max-w-full cursor-pointer items-center justify-start gap-2 overflow-hidden px-2 text-muted-foreground">
           <PaperclipIcon className="size-4 shrink-0" />
           <Tooltip delayDuration={400}>
-            <TooltipTrigger className="flex-1 min-w-0">
-              <h4 className="text-sm font-medium truncate w-full text-left">
+            <TooltipTrigger className="min-w-0 flex-1">
+              <h4 className="w-full truncate text-left font-medium text-sm">
                 {data.filename || "Unknown file"}
               </h4>
             </TooltipTrigger>
             <TooltipContent>
-              <div className="text-xs text-muted-foreground">
-                <h4 className="text-sm font-semibold overflow-hidden text-left max-w-[240px] whitespace-normal break-words">
+              <div className="text-muted-foreground text-xs">
+                <h4 className="max-w-[240px] overflow-hidden whitespace-normal break-words text-left font-semibold text-sm">
                   {data.filename || "Unknown file"}
                 </h4>
                 {data.mediaType && <div>{data.mediaType}</div>}
@@ -355,7 +355,7 @@ export function PromptInputAttachments({
       style={{ height: attachments.files.length ? height : 0 }}
       {...props}
     >
-      <div className="p-3 pt-3 space-y-2" ref={contentRef}>
+      <div className="space-y-2 p-3 pt-3" ref={contentRef}>
         <div className="flex flex-wrap gap-2">
           {attachments.files
             .filter((f) => !(f.mediaType?.startsWith("image/") && f.url))
@@ -571,10 +571,8 @@ export const PromptInput = ({
   // Note: File input cannot be programmatically set for security reasons
   // The syncHiddenInput prop is no longer functional
   useEffect(() => {
-    if (syncHiddenInput && inputRef.current) {
-      if (files.length === 0) {
-        inputRef.current.value = "";
-      }
+    if (syncHiddenInput && inputRef.current && files.length === 0) {
+      inputRef.current.value = "";
     }
   }, [files, syncHiddenInput]);
 
@@ -730,12 +728,12 @@ export const PromptInput = ({
       <span aria-hidden="true" className="hidden" ref={anchorRef} />
       <input
         accept={accept}
-        className="hidden"
         aria-label="Upload files"
-        title="Upload files"
+        className="hidden"
         multiple={multiple}
         onChange={handleChange}
         ref={inputRef}
+        title="Upload files"
         type="file"
       />
       <form
@@ -970,8 +968,12 @@ interface SpeechRecognition extends EventTarget {
   stop(): void;
   onstart: ((this: SpeechRecognition, ev: Event) => any) | null;
   onend: ((this: SpeechRecognition, ev: Event) => any) | null;
-  onresult: ((this: SpeechRecognition, ev: SpeechRecognitionEvent) => any) | null;
-  onerror: ((this: SpeechRecognition, ev: SpeechRecognitionErrorEvent) => any) | null;
+  onresult:
+    | ((this: SpeechRecognition, ev: SpeechRecognitionEvent) => any)
+    | null;
+  onerror:
+    | ((this: SpeechRecognition, ev: SpeechRecognitionErrorEvent) => any)
+    | null;
 }
 
 interface SpeechRecognitionEvent extends Event {
@@ -1023,12 +1025,18 @@ export const PromptInputSpeechButton = ({
   ...props
 }: PromptInputSpeechButtonProps) => {
   const [isListening, setIsListening] = useState(false);
-  const [recognition, setRecognition] = useState<SpeechRecognition | null>(null);
+  const [recognition, setRecognition] = useState<SpeechRecognition | null>(
+    null
+  );
   const recognitionRef = useRef<SpeechRecognition | null>(null);
 
   useEffect(() => {
-    if (typeof window !== "undefined" && ("SpeechRecognition" in window || "webkitSpeechRecognition" in window)) {
-      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (
+      typeof window !== "undefined" &&
+      ("SpeechRecognition" in window || "webkitSpeechRecognition" in window)
+    ) {
+      const SpeechRecognition =
+        window.SpeechRecognition || window.webkitSpeechRecognition;
       const speechRecognition = new SpeechRecognition();
 
       speechRecognition.continuous = true;
@@ -1055,10 +1063,11 @@ export const PromptInputSpeechButton = ({
         if (finalTranscript && textareaRef?.current) {
           const textarea = textareaRef.current;
           const currentValue = textarea.value;
-          const newValue = currentValue + (currentValue ? " " : "") + finalTranscript;
+          const newValue =
+            currentValue + (currentValue ? " " : "") + finalTranscript;
 
           textarea.value = newValue;
-          textarea.dispatchEvent(new Event('input', { bubbles: true }));
+          textarea.dispatchEvent(new Event("input", { bubbles: true }));
           onTranscriptionChange?.(newValue);
         }
       };
@@ -1096,8 +1105,8 @@ export const PromptInputSpeechButton = ({
         isListening && "animate-pulse bg-accent text-accent-foreground",
         className
       )}
-      onClick={toggleListening}
       disabled={!recognition}
+      onClick={toggleListening}
       {...props}
     >
       <MicIcon className="size-4" />

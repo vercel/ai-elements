@@ -47,35 +47,35 @@ function HeaderControls() {
   const controller = usePromptInputController();
   return (
     <header className="mb-10">
-      <h4 className="text-sm mb-4">
+      <h4 className="mb-4 text-sm">
         Header Controls via{" "}
-        <code className="bg-gray-100 rounded-md p-1 font-bold">
+        <code className="rounded-md bg-gray-100 p-1 font-bold">
           PromptInputProvider
         </code>
       </h4>
-      <div className="flex gap-2 p-2 bg-gray-100 rounded-md mb-10">
+      <div className="mb-10 flex gap-2 rounded-md bg-gray-100 p-2">
         <Button
-          type="button"
           onClick={() => {
             controller.textInput.clear();
           }}
+          type="button"
         >
           clear input
         </Button>
         <Button
-          type="button"
           onClick={() => {
             controller.textInput.setInput("Inserted via PromptInputProvider");
           }}
+          type="button"
         >
           set input
         </Button>
 
         <Button
-          type="button"
           onClick={() => {
             controller.attachments.clear();
           }}
+          type="button"
         >
           clear attachments
         </Button>

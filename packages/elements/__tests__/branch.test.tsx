@@ -1,6 +1,6 @@
-import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import { describe, expect, it, vi } from 'vitest';
+import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { describe, expect, it, vi } from "vitest";
 import {
   Branch,
   BranchMessages,
@@ -8,15 +8,15 @@ import {
   BranchPage,
   BranchPrevious,
   BranchSelector,
-} from '../src/branch';
+} from "../src/branch";
 
-describe('Branch', () => {
-  it('renders children', () => {
+describe("Branch", () => {
+  it("renders children", () => {
     render(<Branch>Content</Branch>);
-    expect(screen.getByText('Content')).toBeInTheDocument();
+    expect(screen.getByText("Content")).toBeInTheDocument();
   });
 
-  it('calls onBranchChange when branch changes', async () => {
+  it("calls onBranchChange when branch changes", async () => {
     const onBranchChange = vi.fn();
     const user = userEvent.setup();
 
@@ -33,15 +33,15 @@ describe('Branch', () => {
       </Branch>
     );
 
-    const nextButton = screen.getByRole('button', { name: /next/i });
+    const nextButton = screen.getByRole("button", { name: /next/i });
     await user.click(nextButton);
 
     expect(onBranchChange).toHaveBeenCalledWith(1);
   });
 });
 
-describe('BranchMessages', () => {
-  it('renders active branch', () => {
+describe("BranchMessages", () => {
+  it("renders active branch", () => {
     render(
       <Branch>
         <BranchMessages>
@@ -51,12 +51,12 @@ describe('BranchMessages', () => {
       </Branch>
     );
 
-    expect(screen.getByText('Branch 1')).toBeInTheDocument();
+    expect(screen.getByText("Branch 1")).toBeInTheDocument();
   });
 });
 
-describe('BranchSelector', () => {
-  it('hides when only one branch', () => {
+describe("BranchSelector", () => {
+  it("hides when only one branch", () => {
     const { container } = render(
       <Branch>
         <BranchMessages>
@@ -68,10 +68,10 @@ describe('BranchSelector', () => {
       </Branch>
     );
 
-    expect(screen.queryByText('Selector')).not.toBeInTheDocument();
+    expect(screen.queryByText("Selector")).not.toBeInTheDocument();
   });
 
-  it('shows when multiple branches', () => {
+  it("shows when multiple branches", () => {
     render(
       <Branch>
         <BranchMessages>
@@ -84,12 +84,12 @@ describe('BranchSelector', () => {
       </Branch>
     );
 
-    expect(screen.getByText('Selector')).toBeInTheDocument();
+    expect(screen.getByText("Selector")).toBeInTheDocument();
   });
 });
 
-describe('BranchPrevious', () => {
-  it('renders previous button', () => {
+describe("BranchPrevious", () => {
+  it("renders previous button", () => {
     render(
       <Branch>
         <BranchMessages>
@@ -100,12 +100,14 @@ describe('BranchPrevious', () => {
       </Branch>
     );
 
-    expect(screen.getByRole('button', { name: /previous/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /previous/i })
+    ).toBeInTheDocument();
   });
 });
 
-describe('BranchNext', () => {
-  it('renders next button', () => {
+describe("BranchNext", () => {
+  it("renders next button", () => {
     render(
       <Branch>
         <BranchMessages>
@@ -116,12 +118,12 @@ describe('BranchNext', () => {
       </Branch>
     );
 
-    expect(screen.getByRole('button', { name: /next/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /next/i })).toBeInTheDocument();
   });
 });
 
-describe('BranchPage', () => {
-  it('displays current page count', () => {
+describe("BranchPage", () => {
+  it("displays current page count", () => {
     render(
       <Branch>
         <BranchMessages>

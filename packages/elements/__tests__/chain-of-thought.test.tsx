@@ -1,7 +1,7 @@
-import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import { DotIcon } from 'lucide-react';
-import { describe, expect, it, vi } from 'vitest';
+import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { DotIcon } from "lucide-react";
+import { describe, expect, it, vi } from "vitest";
 import {
   ChainOfThought,
   ChainOfThoughtContent,
@@ -10,15 +10,15 @@ import {
   ChainOfThoughtSearchResult,
   ChainOfThoughtSearchResults,
   ChainOfThoughtStep,
-} from '../src/chain-of-thought';
+} from "../src/chain-of-thought";
 
-describe('ChainOfThought', () => {
-  it('renders children', () => {
+describe("ChainOfThought", () => {
+  it("renders children", () => {
     render(<ChainOfThought>Content</ChainOfThought>);
-    expect(screen.getByText('Content')).toBeInTheDocument();
+    expect(screen.getByText("Content")).toBeInTheDocument();
   });
 
-  it('starts closed by default', () => {
+  it("starts closed by default", () => {
     render(
       <ChainOfThought>
         <ChainOfThoughtHeader />
@@ -26,11 +26,11 @@ describe('ChainOfThought', () => {
       </ChainOfThought>
     );
 
-    const content = screen.queryByText('Hidden content');
+    const content = screen.queryByText("Hidden content");
     expect(content).not.toBeInTheDocument();
   });
 
-  it('can start open', () => {
+  it("can start open", () => {
     render(
       <ChainOfThought defaultOpen>
         <ChainOfThoughtHeader />
@@ -38,10 +38,10 @@ describe('ChainOfThought', () => {
       </ChainOfThought>
     );
 
-    expect(screen.getByText('Visible content')).toBeVisible();
+    expect(screen.getByText("Visible content")).toBeVisible();
   });
 
-  it('calls onOpenChange', async () => {
+  it("calls onOpenChange", async () => {
     const onOpenChange = vi.fn();
     const user = userEvent.setup();
 
@@ -52,74 +52,74 @@ describe('ChainOfThought', () => {
       </ChainOfThought>
     );
 
-    const trigger = screen.getByRole('button');
+    const trigger = screen.getByRole("button");
     await user.click(trigger);
 
     expect(onOpenChange).toHaveBeenCalled();
   });
 });
 
-describe('ChainOfThoughtHeader', () => {
-  it('renders default text', () => {
+describe("ChainOfThoughtHeader", () => {
+  it("renders default text", () => {
     render(
       <ChainOfThought>
         <ChainOfThoughtHeader />
       </ChainOfThought>
     );
 
-    expect(screen.getByText('Chain of Thought')).toBeInTheDocument();
+    expect(screen.getByText("Chain of Thought")).toBeInTheDocument();
   });
 
-  it('renders custom children', () => {
+  it("renders custom children", () => {
     render(
       <ChainOfThought>
         <ChainOfThoughtHeader>Custom Header</ChainOfThoughtHeader>
       </ChainOfThought>
     );
 
-    expect(screen.getByText('Custom Header')).toBeInTheDocument();
+    expect(screen.getByText("Custom Header")).toBeInTheDocument();
   });
 });
 
-describe('ChainOfThoughtStep', () => {
-  it('renders label', () => {
+describe("ChainOfThoughtStep", () => {
+  it("renders label", () => {
     render(
       <ChainOfThought>
         <ChainOfThoughtStep label="Step 1" />
       </ChainOfThought>
     );
 
-    expect(screen.getByText('Step 1')).toBeInTheDocument();
+    expect(screen.getByText("Step 1")).toBeInTheDocument();
   });
 
-  it('renders description', () => {
+  it("renders description", () => {
     render(
       <ChainOfThought>
-        <ChainOfThoughtStep label="Step" description="Details" />
+        <ChainOfThoughtStep description="Details" label="Step" />
       </ChainOfThought>
     );
 
-    expect(screen.getByText('Details')).toBeInTheDocument();
+    expect(screen.getByText("Details")).toBeInTheDocument();
   });
 
-  it('renders with custom icon', () => {
+  it("renders with custom icon", () => {
     const { container } = render(
       <ChainOfThought>
         <ChainOfThoughtStep icon={DotIcon} label="Step" />
       </ChainOfThought>
     );
 
-    expect(container.querySelector('svg')).toBeInTheDocument();
+    expect(container.querySelector("svg")).toBeInTheDocument();
   });
 
-  it('applies status styles', () => {
+  it("applies status styles", () => {
     const { rerender } = render(
       <ChainOfThought>
         <ChainOfThoughtStep label="Step" status="complete" />
       </ChainOfThought>
     );
 
-    expect(screen.getByText('Step')).toBeInTheDocument();
+    expect(screen.getByText("Step")).toBeInTheDocument();
 
     rerender(
       <ChainOfThought>
@@ -127,12 +127,12 @@ describe('ChainOfThoughtStep', () => {
       </ChainOfThought>
     );
 
-    expect(screen.getByText('Step')).toBeInTheDocument();
+    expect(screen.getByText("Step")).toBeInTheDocument();
   });
 });
 
-describe('ChainOfThoughtSearchResults', () => {
-  it('renders search results', () => {
+describe("ChainOfThoughtSearchResults", () => {
+  it("renders search results", () => {
     render(
       <ChainOfThought>
         <ChainOfThoughtSearchResults>
@@ -141,24 +141,24 @@ describe('ChainOfThoughtSearchResults', () => {
       </ChainOfThought>
     );
 
-    expect(screen.getByText('Result 1')).toBeInTheDocument();
+    expect(screen.getByText("Result 1")).toBeInTheDocument();
   });
 });
 
-describe('ChainOfThoughtSearchResult', () => {
-  it('renders result badge', () => {
+describe("ChainOfThoughtSearchResult", () => {
+  it("renders result badge", () => {
     render(
       <ChainOfThought>
         <ChainOfThoughtSearchResult>Source</ChainOfThoughtSearchResult>
       </ChainOfThought>
     );
 
-    expect(screen.getByText('Source')).toBeInTheDocument();
+    expect(screen.getByText("Source")).toBeInTheDocument();
   });
 });
 
-describe('ChainOfThoughtContent', () => {
-  it('renders content', () => {
+describe("ChainOfThoughtContent", () => {
+  it("renders content", () => {
     render(
       <ChainOfThought defaultOpen>
         <ChainOfThoughtHeader />
@@ -166,12 +166,12 @@ describe('ChainOfThoughtContent', () => {
       </ChainOfThought>
     );
 
-    expect(screen.getByText('Content text')).toBeInTheDocument();
+    expect(screen.getByText("Content text")).toBeInTheDocument();
   });
 });
 
-describe('ChainOfThoughtImage', () => {
-  it('renders image container', () => {
+describe("ChainOfThoughtImage", () => {
+  it("renders image container", () => {
     render(
       <ChainOfThought>
         <ChainOfThoughtImage>
@@ -180,10 +180,10 @@ describe('ChainOfThoughtImage', () => {
       </ChainOfThought>
     );
 
-    expect(screen.getByAltText('test')).toBeInTheDocument();
+    expect(screen.getByAltText("test")).toBeInTheDocument();
   });
 
-  it('renders caption', () => {
+  it("renders caption", () => {
     render(
       <ChainOfThought>
         <ChainOfThoughtImage caption="Image caption">
@@ -192,6 +192,6 @@ describe('ChainOfThoughtImage', () => {
       </ChainOfThought>
     );
 
-    expect(screen.getByText('Image caption')).toBeInTheDocument();
+    expect(screen.getByText("Image caption")).toBeInTheDocument();
   });
 });

@@ -1,39 +1,39 @@
-import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import { describe, expect, it, vi } from 'vitest';
+import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { describe, expect, it, vi } from "vitest";
 import {
   Reasoning,
   ReasoningContent,
   ReasoningTrigger,
-} from '../src/reasoning';
+} from "../src/reasoning";
 
-describe('Reasoning', () => {
-  it('renders children', () => {
+describe("Reasoning", () => {
+  it("renders children", () => {
     render(<Reasoning>Content</Reasoning>);
-    expect(screen.getByText('Content')).toBeInTheDocument();
+    expect(screen.getByText("Content")).toBeInTheDocument();
   });
 
-  it('starts open by default', () => {
+  it("starts open by default", () => {
     render(
       <Reasoning>
         <ReasoningTrigger />
         <ReasoningContent>Reasoning content</ReasoningContent>
       </Reasoning>
     );
-    expect(screen.getByText('Reasoning content')).toBeVisible();
+    expect(screen.getByText("Reasoning content")).toBeVisible();
   });
 
-  it('can start closed', () => {
+  it("can start closed", () => {
     render(
       <Reasoning defaultOpen={false}>
         <ReasoningTrigger />
         <ReasoningContent>Hidden content</ReasoningContent>
       </Reasoning>
     );
-    expect(screen.queryByText('Hidden content')).not.toBeInTheDocument();
+    expect(screen.queryByText("Hidden content")).not.toBeInTheDocument();
   });
 
-  it('calls onOpenChange', async () => {
+  it("calls onOpenChange", async () => {
     const onOpenChange = vi.fn();
     const user = userEvent.setup();
 
@@ -44,51 +44,51 @@ describe('Reasoning', () => {
       </Reasoning>
     );
 
-    const trigger = screen.getByRole('button');
+    const trigger = screen.getByRole("button");
     await user.click(trigger);
 
     expect(onOpenChange).toHaveBeenCalled();
   });
 });
 
-describe('ReasoningTrigger', () => {
-  it('renders default thinking message when streaming', () => {
+describe("ReasoningTrigger", () => {
+  it("renders default thinking message when streaming", () => {
     render(
       <Reasoning isStreaming>
         <ReasoningTrigger />
       </Reasoning>
     );
-    expect(screen.getByText('Thinking...')).toBeInTheDocument();
+    expect(screen.getByText("Thinking...")).toBeInTheDocument();
   });
 
-  it('renders duration message when not streaming', () => {
+  it("renders duration message when not streaming", () => {
     render(
       <Reasoning duration={5} isStreaming={false}>
         <ReasoningTrigger />
       </Reasoning>
     );
-    expect(screen.getByText('Thought for 5 seconds')).toBeInTheDocument();
+    expect(screen.getByText("Thought for 5 seconds")).toBeInTheDocument();
   });
 
-  it('renders custom children', () => {
+  it("renders custom children", () => {
     render(
       <Reasoning>
         <ReasoningTrigger>Custom trigger</ReasoningTrigger>
       </Reasoning>
     );
-    expect(screen.getByText('Custom trigger')).toBeInTheDocument();
+    expect(screen.getByText("Custom trigger")).toBeInTheDocument();
   });
 
-  it('has brain icon', () => {
+  it("has brain icon", () => {
     const { container } = render(
       <Reasoning>
         <ReasoningTrigger />
       </Reasoning>
     );
-    expect(container.querySelector('svg')).toBeInTheDocument();
+    expect(container.querySelector("svg")).toBeInTheDocument();
   });
 
-  it('rounds sub-second durations up to 1 second - #63', async () => {
+  it("rounds sub-second durations up to 1 second - #63", async () => {
     vi.useFakeTimers();
     const { rerender } = render(
       <Reasoning isStreaming>
@@ -97,7 +97,7 @@ describe('ReasoningTrigger', () => {
     );
 
     // Verify initial "Thinking..." state
-    expect(screen.getByText('Thinking...')).toBeInTheDocument();
+    expect(screen.getByText("Thinking...")).toBeInTheDocument();
 
     // Advance time by 300ms (0.3 seconds)
     vi.advanceTimersByTime(300);
@@ -110,29 +110,29 @@ describe('ReasoningTrigger', () => {
     );
 
     // Should display "Thought for 1 seconds" (rounds up from 0.3)
-    expect(screen.getByText('Thought for 1 seconds')).toBeInTheDocument();
-    expect(screen.queryByText('Thinking...')).not.toBeInTheDocument();
+    expect(screen.getByText("Thought for 1 seconds")).toBeInTheDocument();
+    expect(screen.queryByText("Thinking...")).not.toBeInTheDocument();
 
     vi.useRealTimers();
   });
 });
 
-describe('ReasoningContent', () => {
-  it('renders reasoning text', () => {
+describe("ReasoningContent", () => {
+  it("renders reasoning text", () => {
     render(
       <Reasoning>
         <ReasoningContent>The reasoning process</ReasoningContent>
       </Reasoning>
     );
-    expect(screen.getByText('The reasoning process')).toBeInTheDocument();
+    expect(screen.getByText("The reasoning process")).toBeInTheDocument();
   });
 
-  it('applies custom className', () => {
+  it("applies custom className", () => {
     const { container } = render(
       <Reasoning>
         <ReasoningContent className="custom">Content</ReasoningContent>
       </Reasoning>
     );
-    expect(container.querySelector('.custom')).toBeInTheDocument();
+    expect(container.querySelector(".custom")).toBeInTheDocument();
   });
 });

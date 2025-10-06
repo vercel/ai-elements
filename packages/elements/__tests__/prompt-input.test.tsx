@@ -1,6 +1,6 @@
-import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
   PromptInput,
   PromptInputActionAddAttachments,
@@ -22,31 +22,33 @@ import {
   PromptInputToolbar,
   PromptInputTools,
   usePromptInputAttachments,
-} from '../src/prompt-input';
+} from "../src/prompt-input";
 
 // Mock URL.createObjectURL and URL.revokeObjectURL for tests
 beforeEach(() => {
-  global.URL.createObjectURL = vi.fn((blob) => `blob:mock-url-${Math.random()}`);
+  global.URL.createObjectURL = vi.fn(
+    (blob) => `blob:mock-url-${Math.random()}`
+  );
   global.URL.revokeObjectURL = vi.fn();
 
   // Mock fetch for blob URL conversion
   global.fetch = vi.fn((url: string) => {
-    if (url.startsWith('blob:')) {
-      const blob = new Blob(['test content'], { type: 'text/plain' });
+    if (url.startsWith("blob:")) {
+      const blob = new Blob(["test content"], { type: "text/plain" });
       return Promise.resolve({
         blob: () => Promise.resolve(blob),
       } as Response);
     }
-    return Promise.reject(new Error('Not a blob URL'));
+    return Promise.reject(new Error("Not a blob URL"));
   });
 
   // Mock FileReader
   const mockFileReader = {
-    readAsDataURL: vi.fn(function(this: FileReader, blob: Blob) {
+    readAsDataURL: vi.fn(function (this: FileReader, blob: Blob) {
       // Simulate async file reading
       setTimeout(() => {
-        this.result = 'data:text/plain;base64,dGVzdCBjb250ZW50';
-        this.onloadend?.(new ProgressEvent('loadend'));
+        this.result = "data:text/plain;base64,dGVzdCBjb250ZW50";
+        this.onloadend?.(new ProgressEvent("loadend"));
       }, 0);
     }),
     result: null,
@@ -54,11 +56,13 @@ beforeEach(() => {
     onerror: null,
   } as unknown as FileReader;
 
-  global.FileReader = vi.fn(() => mockFileReader) as unknown as typeof FileReader;
+  global.FileReader = vi.fn(
+    () => mockFileReader
+  ) as unknown as typeof FileReader;
 });
 
-describe('PromptInput', () => {
-  it('renders form', () => {
+describe("PromptInput", () => {
+  it("renders form", () => {
     const onSubmit = vi.fn();
     const { container } = render(
       <PromptInput onSubmit={onSubmit}>
@@ -67,10 +71,10 @@ describe('PromptInput', () => {
         </PromptInputBody>
       </PromptInput>
     );
-    expect(container.querySelector('form')).toBeInTheDocument();
+    expect(container.querySelector("form")).toBeInTheDocument();
   });
 
-  it('calls onSubmit with message', async () => {
+  it("calls onSubmit with message", async () => {
     const onSubmit = vi.fn();
     const user = userEvent.setup();
 
@@ -83,21 +87,23 @@ describe('PromptInput', () => {
       </PromptInput>
     );
 
-    const textarea = screen.getByPlaceholderText('What would you like to know?') as HTMLTextAreaElement;
-    await user.type(textarea, 'Hello');
+    const textarea = screen.getByPlaceholderText(
+      "What would you like to know?"
+    ) as HTMLTextAreaElement;
+    await user.type(textarea, "Hello");
 
     // Ensure textarea has the value before submitting
-    expect(textarea.value).toBe('Hello');
+    expect(textarea.value).toBe("Hello");
 
-    await user.keyboard('{Enter}');
+    await user.keyboard("{Enter}");
 
     expect(onSubmit).toHaveBeenCalledTimes(1);
     const [message] = onSubmit.mock.calls[0];
-    expect(message).toHaveProperty('text', 'Hello');
-    expect(message).toHaveProperty('files');
+    expect(message).toHaveProperty("text", "Hello");
+    expect(message).toHaveProperty("files");
   });
 
-  it('clears textarea after form submission - #125', async () => {
+  it("clears textarea after form submission - #125", async () => {
     const onSubmit = vi.fn();
     const user = userEvent.setup();
 
@@ -110,14 +116,16 @@ describe('PromptInput', () => {
       </PromptInput>
     );
 
-    const textarea = screen.getByPlaceholderText('What would you like to know?') as HTMLTextAreaElement;
-    await user.type(textarea, 'Hello');
+    const textarea = screen.getByPlaceholderText(
+      "What would you like to know?"
+    ) as HTMLTextAreaElement;
+    await user.type(textarea, "Hello");
 
     // Verify textarea has value before submit
-    expect(textarea.value).toBe('Hello');
+    expect(textarea.value).toBe("Hello");
 
     // Submit the form
-    await user.keyboard('{Enter}');
+    await user.keyboard("{Enter}");
 
     // Wait for async submission
     await vi.waitFor(() => {
@@ -125,10 +133,10 @@ describe('PromptInput', () => {
     });
 
     // Verify textarea is cleared after submission
-    expect(textarea.value).toBe('');
+    expect(textarea.value).toBe("");
   });
 
-  it('does not lose user input typed immediately after submission - #125', async () => {
+  it("does not lose user input typed immediately after submission - #125", async () => {
     const onSubmit = vi.fn();
     const user = userEvent.setup();
 
@@ -141,22 +149,24 @@ describe('PromptInput', () => {
       </PromptInput>
     );
 
-    const textarea = screen.getByPlaceholderText('What would you like to know?') as HTMLTextAreaElement;
+    const textarea = screen.getByPlaceholderText(
+      "What would you like to know?"
+    ) as HTMLTextAreaElement;
 
     // Type and submit first message
     await user.clear(textarea);
-    await user.type(textarea, 'First message');
-    await user.keyboard('{Enter}');
+    await user.type(textarea, "First message");
+    await user.keyboard("{Enter}");
 
     // Textarea should be cleared immediately after Enter (before async completes)
-    expect(textarea.value).toBe('');
+    expect(textarea.value).toBe("");
 
     // Immediately type a second message (without waiting for async completion)
-    await user.clear(textarea);  // Explicitly clear before typing
-    await user.type(textarea, 'Second message');
+    await user.clear(textarea); // Explicitly clear before typing
+    await user.type(textarea, "Second message");
 
     // Verify the second message is still there (not cleared by race condition)
-    expect(textarea.value).toBe('Second message');
+    expect(textarea.value).toBe("Second message");
 
     // Wait for async submission to complete
     await vi.waitFor(() => {
@@ -164,29 +174,31 @@ describe('PromptInput', () => {
     });
 
     // Second message should still be there after async completion
-    expect(textarea.value).toBe('Second message');
+    expect(textarea.value).toBe("Second message");
   });
 
-  it('converts blob URLs to data URLs on submit - #113', async () => {
+  it("converts blob URLs to data URLs on submit - #113", async () => {
     const onSubmit = vi.fn();
     const user = userEvent.setup();
 
     // Create a mock file
-    const fileContent = 'test file content';
-    const blob = new Blob([fileContent], { type: 'text/plain' });
-    const file = new File([blob], 'test.txt', { type: 'text/plain' });
+    const fileContent = "test file content";
+    const blob = new Blob([fileContent], { type: "text/plain" });
+    const file = new File([blob], "test.txt", { type: "text/plain" });
 
     const AttachmentConsumer = () => {
       const attachments = usePromptInputAttachments();
       return (
         <>
           <input
-            type="button"
             data-testid="add-file-btn"
             onClick={() => attachments.add([file])}
+            type="button"
           />
           <PromptInputAttachments>
-            {(attachment) => <div key={attachment.id}>{attachment.filename}</div>}
+            {(attachment) => (
+              <div key={attachment.id}>{attachment.filename}</div>
+            )}
           </PromptInputAttachments>
         </>
       );
@@ -203,16 +215,18 @@ describe('PromptInput', () => {
     );
 
     // Add a file (which creates a blob URL)
-    const addFileBtn = screen.getByTestId('add-file-btn');
+    const addFileBtn = screen.getByTestId("add-file-btn");
     await user.click(addFileBtn);
 
     // Verify file was added with blob URL
-    expect(screen.getByText('test.txt')).toBeInTheDocument();
+    expect(screen.getByText("test.txt")).toBeInTheDocument();
 
     // Type a message and submit
-    const textarea = screen.getByPlaceholderText('What would you like to know?') as HTMLTextAreaElement;
-    await user.type(textarea, 'describe file');
-    await user.keyboard('{Enter}');
+    const textarea = screen.getByPlaceholderText(
+      "What would you like to know?"
+    ) as HTMLTextAreaElement;
+    await user.type(textarea, "describe file");
+    await user.keyboard("{Enter}");
 
     // Wait for async submission to complete
     await vi.waitFor(() => {
@@ -224,31 +238,33 @@ describe('PromptInput', () => {
     expect(message.files).toHaveLength(1);
     expect(message.files[0].url).toMatch(/^data:/);
     expect(message.files[0].url).not.toMatch(/^blob:/);
-    expect(message.files[0].filename).toBe('test.txt');
+    expect(message.files[0].filename).toBe("test.txt");
   });
 
-  it('does not clear attachments when onSubmit throws an error - #126', async () => {
+  it("does not clear attachments when onSubmit throws an error - #126", async () => {
     const onSubmit = vi.fn(() => {
-      throw new Error('Submission failed');
+      throw new Error("Submission failed");
     });
     const user = userEvent.setup();
 
     // Create a mock file
-    const fileContent = 'test file content';
-    const blob = new Blob([fileContent], { type: 'text/plain' });
-    const file = new File([blob], 'test.txt', { type: 'text/plain' });
+    const fileContent = "test file content";
+    const blob = new Blob([fileContent], { type: "text/plain" });
+    const file = new File([blob], "test.txt", { type: "text/plain" });
 
     const AttachmentConsumer = () => {
       const attachments = usePromptInputAttachments();
       return (
         <>
           <input
-            type="button"
             data-testid="add-file-btn"
             onClick={() => attachments.add([file])}
+            type="button"
           />
           <PromptInputAttachments>
-            {(attachment) => <div key={attachment.id}>{attachment.filename}</div>}
+            {(attachment) => (
+              <div key={attachment.id}>{attachment.filename}</div>
+            )}
           </PromptInputAttachments>
         </>
       );
@@ -265,16 +281,18 @@ describe('PromptInput', () => {
     );
 
     // Add a file
-    const addFileBtn = screen.getByTestId('add-file-btn');
+    const addFileBtn = screen.getByTestId("add-file-btn");
     await user.click(addFileBtn);
 
     // Verify file was added
-    expect(screen.getByText('test.txt')).toBeInTheDocument();
+    expect(screen.getByText("test.txt")).toBeInTheDocument();
 
     // Type a message and submit
-    const textarea = screen.getByPlaceholderText('What would you like to know?') as HTMLTextAreaElement;
-    await user.type(textarea, 'test message');
-    await user.keyboard('{Enter}');
+    const textarea = screen.getByPlaceholderText(
+      "What would you like to know?"
+    ) as HTMLTextAreaElement;
+    await user.type(textarea, "test message");
+    await user.keyboard("{Enter}");
 
     // Wait for async submission to complete
     await vi.waitFor(() => {
@@ -282,29 +300,33 @@ describe('PromptInput', () => {
     });
 
     // Verify that the attachment is still there (not cleared due to error)
-    expect(screen.getByText('test.txt')).toBeInTheDocument();
+    expect(screen.getByText("test.txt")).toBeInTheDocument();
   });
 
-  it('does not clear attachments when async onSubmit rejects - #126', async () => {
-    const onSubmit = vi.fn(() => Promise.reject(new Error('Async submission failed')));
+  it("does not clear attachments when async onSubmit rejects - #126", async () => {
+    const onSubmit = vi.fn(() =>
+      Promise.reject(new Error("Async submission failed"))
+    );
     const user = userEvent.setup();
 
     // Create a mock file
-    const fileContent = 'test file content';
-    const blob = new Blob([fileContent], { type: 'text/plain' });
-    const file = new File([blob], 'test.txt', { type: 'text/plain' });
+    const fileContent = "test file content";
+    const blob = new Blob([fileContent], { type: "text/plain" });
+    const file = new File([blob], "test.txt", { type: "text/plain" });
 
     const AttachmentConsumer = () => {
       const attachments = usePromptInputAttachments();
       return (
         <>
           <input
-            type="button"
             data-testid="add-file-btn"
             onClick={() => attachments.add([file])}
+            type="button"
           />
           <PromptInputAttachments>
-            {(attachment) => <div key={attachment.id}>{attachment.filename}</div>}
+            {(attachment) => (
+              <div key={attachment.id}>{attachment.filename}</div>
+            )}
           </PromptInputAttachments>
         </>
       );
@@ -321,16 +343,18 @@ describe('PromptInput', () => {
     );
 
     // Add a file
-    const addFileBtn = screen.getByTestId('add-file-btn');
+    const addFileBtn = screen.getByTestId("add-file-btn");
     await user.click(addFileBtn);
 
     // Verify file was added
-    expect(screen.getByText('test.txt')).toBeInTheDocument();
+    expect(screen.getByText("test.txt")).toBeInTheDocument();
 
     // Type a message and submit
-    const textarea = screen.getByPlaceholderText('What would you like to know?') as HTMLTextAreaElement;
-    await user.type(textarea, 'test message');
-    await user.keyboard('{Enter}');
+    const textarea = screen.getByPlaceholderText(
+      "What would you like to know?"
+    ) as HTMLTextAreaElement;
+    await user.type(textarea, "test message");
+    await user.keyboard("{Enter}");
 
     // Wait for async submission to be attempted
     await vi.waitFor(() => {
@@ -338,32 +362,34 @@ describe('PromptInput', () => {
     });
 
     // Give some time for the promise rejection to be handled
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await new Promise((resolve) => setTimeout(resolve, 100));
 
     // Verify that the attachment is still there (not cleared due to rejection)
-    expect(screen.getByText('test.txt')).toBeInTheDocument();
+    expect(screen.getByText("test.txt")).toBeInTheDocument();
   });
 
-  it('clears attachments when async onSubmit resolves successfully - #126', async () => {
+  it("clears attachments when async onSubmit resolves successfully - #126", async () => {
     const onSubmit = vi.fn(() => Promise.resolve());
     const user = userEvent.setup();
 
     // Create a mock file
-    const fileContent = 'test file content';
-    const blob = new Blob([fileContent], { type: 'text/plain' });
-    const file = new File([blob], 'test.txt', { type: 'text/plain' });
+    const fileContent = "test file content";
+    const blob = new Blob([fileContent], { type: "text/plain" });
+    const file = new File([blob], "test.txt", { type: "text/plain" });
 
     const AttachmentConsumer = () => {
       const attachments = usePromptInputAttachments();
       return (
         <>
           <input
-            type="button"
             data-testid="add-file-btn"
             onClick={() => attachments.add([file])}
+            type="button"
           />
           <PromptInputAttachments>
-            {(attachment) => <div key={attachment.id}>{attachment.filename}</div>}
+            {(attachment) => (
+              <div key={attachment.id}>{attachment.filename}</div>
+            )}
           </PromptInputAttachments>
         </>
       );
@@ -380,16 +406,18 @@ describe('PromptInput', () => {
     );
 
     // Add a file
-    const addFileBtn = screen.getByTestId('add-file-btn');
+    const addFileBtn = screen.getByTestId("add-file-btn");
     await user.click(addFileBtn);
 
     // Verify file was added
-    expect(screen.getByText('test.txt')).toBeInTheDocument();
+    expect(screen.getByText("test.txt")).toBeInTheDocument();
 
     // Type a message and submit
-    const textarea = screen.getByPlaceholderText('What would you like to know?') as HTMLTextAreaElement;
-    await user.type(textarea, 'test message');
-    await user.keyboard('{Enter}');
+    const textarea = screen.getByPlaceholderText(
+      "What would you like to know?"
+    ) as HTMLTextAreaElement;
+    await user.type(textarea, "test message");
+    await user.keyboard("{Enter}");
 
     // Wait for async submission to complete successfully
     await vi.waitFor(() => {
@@ -397,27 +425,27 @@ describe('PromptInput', () => {
     });
 
     // Give some time for the promise resolution to be handled
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await new Promise((resolve) => setTimeout(resolve, 100));
 
     // Verify that the attachment was cleared after successful async submission
-    expect(screen.queryByText('test.txt')).not.toBeInTheDocument();
+    expect(screen.queryByText("test.txt")).not.toBeInTheDocument();
   });
 });
 
-describe('PromptInputBody', () => {
-  it('renders body content', () => {
+describe("PromptInputBody", () => {
+  it("renders body content", () => {
     const onSubmit = vi.fn();
     render(
       <PromptInput onSubmit={onSubmit}>
         <PromptInputBody>Content</PromptInputBody>
       </PromptInput>
     );
-    expect(screen.getByText('Content')).toBeInTheDocument();
+    expect(screen.getByText("Content")).toBeInTheDocument();
   });
 });
 
-describe('PromptInputTextarea', () => {
-  it('renders textarea', () => {
+describe("PromptInputTextarea", () => {
+  it("renders textarea", () => {
     const onSubmit = vi.fn();
     render(
       <PromptInput onSubmit={onSubmit}>
@@ -426,10 +454,12 @@ describe('PromptInputTextarea', () => {
         </PromptInputBody>
       </PromptInput>
     );
-    expect(screen.getByPlaceholderText('What would you like to know?')).toBeInTheDocument();
+    expect(
+      screen.getByPlaceholderText("What would you like to know?")
+    ).toBeInTheDocument();
   });
 
-  it('submits on Enter key', async () => {
+  it("submits on Enter key", async () => {
     const onSubmit = vi.fn();
     const user = userEvent.setup();
 
@@ -442,14 +472,16 @@ describe('PromptInputTextarea', () => {
       </PromptInput>
     );
 
-    const textarea = screen.getByPlaceholderText('What would you like to know?');
-    await user.type(textarea, 'Test');
-    await user.keyboard('{Enter}');
+    const textarea = screen.getByPlaceholderText(
+      "What would you like to know?"
+    );
+    await user.type(textarea, "Test");
+    await user.keyboard("{Enter}");
 
     expect(onSubmit).toHaveBeenCalled();
   });
 
-  it('does not submit on Shift+Enter', async () => {
+  it("does not submit on Shift+Enter", async () => {
     const onSubmit = vi.fn();
     const user = userEvent.setup();
 
@@ -462,15 +494,17 @@ describe('PromptInputTextarea', () => {
       </PromptInput>
     );
 
-    const textarea = screen.getByPlaceholderText('What would you like to know?');
-    await user.type(textarea, 'Line 1');
-    await user.keyboard('{Shift>}{Enter}{/Shift}');
-    await user.type(textarea, 'Line 2');
+    const textarea = screen.getByPlaceholderText(
+      "What would you like to know?"
+    );
+    await user.type(textarea, "Line 1");
+    await user.keyboard("{Shift>}{Enter}{/Shift}");
+    await user.type(textarea, "Line 2");
 
     expect(onSubmit).not.toHaveBeenCalled();
   });
 
-  it('does not submit on Enter during IME composition - #21', async () => {
+  it("does not submit on Enter during IME composition - #21", async () => {
     const onSubmit = vi.fn();
 
     render(
@@ -482,20 +516,22 @@ describe('PromptInputTextarea', () => {
       </PromptInput>
     );
 
-    const textarea = screen.getByPlaceholderText('What would you like to know?') as HTMLTextAreaElement;
+    const textarea = screen.getByPlaceholderText(
+      "What would you like to know?"
+    ) as HTMLTextAreaElement;
 
     // Simulate IME composition (e.g., typing Japanese)
     textarea.focus();
 
     // Create a KeyboardEvent with isComposing = true
-    const enterKeyDuringComposition = new KeyboardEvent('keydown', {
-      key: 'Enter',
+    const enterKeyDuringComposition = new KeyboardEvent("keydown", {
+      key: "Enter",
       bubbles: true,
       cancelable: true,
     });
 
     // Mock isComposing to true (simulates IME composition in progress)
-    Object.defineProperty(enterKeyDuringComposition, 'isComposing', {
+    Object.defineProperty(enterKeyDuringComposition, "isComposing", {
       value: true,
       writable: false,
     });
@@ -506,7 +542,7 @@ describe('PromptInputTextarea', () => {
     expect(onSubmit).not.toHaveBeenCalled();
   });
 
-  it('uses custom placeholder', () => {
+  it("uses custom placeholder", () => {
     const onSubmit = vi.fn();
     render(
       <PromptInput onSubmit={onSubmit}>
@@ -515,12 +551,14 @@ describe('PromptInputTextarea', () => {
         </PromptInputBody>
       </PromptInput>
     );
-    expect(screen.getByPlaceholderText('Custom placeholder')).toBeInTheDocument();
+    expect(
+      screen.getByPlaceholderText("Custom placeholder")
+    ).toBeInTheDocument();
   });
 });
 
-describe('PromptInputToolbar', () => {
-  it('renders toolbar', () => {
+describe("PromptInputToolbar", () => {
+  it("renders toolbar", () => {
     const onSubmit = vi.fn();
     render(
       <PromptInput onSubmit={onSubmit}>
@@ -529,12 +567,12 @@ describe('PromptInputToolbar', () => {
         </PromptInputBody>
       </PromptInput>
     );
-    expect(screen.getByText('Toolbar content')).toBeInTheDocument();
+    expect(screen.getByText("Toolbar content")).toBeInTheDocument();
   });
 });
 
-describe('PromptInputTools', () => {
-  it('renders tools', () => {
+describe("PromptInputTools", () => {
+  it("renders tools", () => {
     const onSubmit = vi.fn();
     render(
       <PromptInput onSubmit={onSubmit}>
@@ -545,12 +583,12 @@ describe('PromptInputTools', () => {
         </PromptInputBody>
       </PromptInput>
     );
-    expect(screen.getByText('Tools')).toBeInTheDocument();
+    expect(screen.getByText("Tools")).toBeInTheDocument();
   });
 });
 
-describe('PromptInputButton', () => {
-  it('renders button', () => {
+describe("PromptInputButton", () => {
+  it("renders button", () => {
     const onSubmit = vi.fn();
     render(
       <PromptInput onSubmit={onSubmit}>
@@ -559,12 +597,12 @@ describe('PromptInputButton', () => {
         </PromptInputBody>
       </PromptInput>
     );
-    expect(screen.getByRole('button', { name: 'Action' })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Action" })).toBeInTheDocument();
   });
 });
 
-describe('PromptInputSubmit', () => {
-  it('renders submit button', () => {
+describe("PromptInputSubmit", () => {
+  it("renders submit button", () => {
     const onSubmit = vi.fn();
     render(
       <PromptInput onSubmit={onSubmit}>
@@ -573,11 +611,11 @@ describe('PromptInputSubmit', () => {
         </PromptInputBody>
       </PromptInput>
     );
-    const button = screen.getByRole('button', { name: /submit/i });
-    expect(button).toHaveAttribute('type', 'submit');
+    const button = screen.getByRole("button", { name: /submit/i });
+    expect(button).toHaveAttribute("type", "submit");
   });
 
-  it('shows loading icon when submitted', () => {
+  it("shows loading icon when submitted", () => {
     const onSubmit = vi.fn();
     const { container } = render(
       <PromptInput onSubmit={onSubmit}>
@@ -586,10 +624,10 @@ describe('PromptInputSubmit', () => {
         </PromptInputBody>
       </PromptInput>
     );
-    expect(container.querySelector('.animate-spin')).toBeInTheDocument();
+    expect(container.querySelector(".animate-spin")).toBeInTheDocument();
   });
 
-  it('shows stop icon when streaming', () => {
+  it("shows stop icon when streaming", () => {
     const onSubmit = vi.fn();
     render(
       <PromptInput onSubmit={onSubmit}>
@@ -598,12 +636,12 @@ describe('PromptInputSubmit', () => {
         </PromptInputBody>
       </PromptInput>
     );
-    expect(screen.getByRole('button')).toBeInTheDocument();
+    expect(screen.getByRole("button")).toBeInTheDocument();
   });
 });
 
-describe('PromptInputActionMenu', () => {
-  it('renders action menu', () => {
+describe("PromptInputActionMenu", () => {
+  it("renders action menu", () => {
     const onSubmit = vi.fn();
     render(
       <PromptInput onSubmit={onSubmit}>
@@ -617,12 +655,12 @@ describe('PromptInputActionMenu', () => {
         </PromptInputBody>
       </PromptInput>
     );
-    expect(screen.getByRole('button')).toBeInTheDocument();
+    expect(screen.getByRole("button")).toBeInTheDocument();
   });
 });
 
-describe('PromptInputModelSelect', () => {
-  it('renders model select', () => {
+describe("PromptInputModelSelect", () => {
+  it("renders model select", () => {
     const onSubmit = vi.fn();
     render(
       <PromptInput onSubmit={onSubmit}>
@@ -632,12 +670,14 @@ describe('PromptInputModelSelect', () => {
               <PromptInputModelSelectValue placeholder="Select model" />
             </PromptInputModelSelectTrigger>
             <PromptInputModelSelectContent>
-              <PromptInputModelSelectItem value="gpt-4">GPT-4</PromptInputModelSelectItem>
+              <PromptInputModelSelectItem value="gpt-4">
+                GPT-4
+              </PromptInputModelSelectItem>
             </PromptInputModelSelectContent>
           </PromptInputModelSelect>
         </PromptInputBody>
       </PromptInput>
     );
-    expect(screen.getByText('Select model')).toBeInTheDocument();
+    expect(screen.getByText("Select model")).toBeInTheDocument();
   });
 });

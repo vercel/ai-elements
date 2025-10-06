@@ -1,6 +1,6 @@
-import { render, screen } from '@testing-library/react';
-import { XIcon } from 'lucide-react';
-import { describe, expect, it } from 'vitest';
+import { render, screen } from "@testing-library/react";
+import { XIcon } from "lucide-react";
+import { describe, expect, it } from "vitest";
 import {
   Artifact,
   ArtifactAction,
@@ -10,89 +10,89 @@ import {
   ArtifactDescription,
   ArtifactHeader,
   ArtifactTitle,
-} from '../src/artifact';
+} from "../src/artifact";
 
-describe('Artifact', () => {
-  it('renders children', () => {
+describe("Artifact", () => {
+  it("renders children", () => {
     render(<Artifact>Content</Artifact>);
-    expect(screen.getByText('Content')).toBeInTheDocument();
+    expect(screen.getByText("Content")).toBeInTheDocument();
   });
 
-  it('applies custom className', () => {
+  it("applies custom className", () => {
     const { container } = render(<Artifact className="custom">Test</Artifact>);
-    expect(container.firstChild).toHaveClass('custom');
+    expect(container.firstChild).toHaveClass("custom");
   });
 });
 
-describe('ArtifactHeader', () => {
-  it('renders children', () => {
+describe("ArtifactHeader", () => {
+  it("renders children", () => {
     render(<ArtifactHeader>Header</ArtifactHeader>);
-    expect(screen.getByText('Header')).toBeInTheDocument();
+    expect(screen.getByText("Header")).toBeInTheDocument();
   });
 });
 
-describe('ArtifactClose', () => {
-  it('renders default close icon', () => {
+describe("ArtifactClose", () => {
+  it("renders default close icon", () => {
     const { container } = render(<ArtifactClose />);
-    expect(container.querySelector('svg')).toBeInTheDocument();
+    expect(container.querySelector("svg")).toBeInTheDocument();
   });
 
-  it('renders custom children', () => {
+  it("renders custom children", () => {
     render(<ArtifactClose>Custom Close</ArtifactClose>);
-    expect(screen.getByText('Custom Close')).toBeInTheDocument();
+    expect(screen.getByText("Custom Close")).toBeInTheDocument();
   });
 
-  it('has sr-only close text', () => {
+  it("has sr-only close text", () => {
     render(<ArtifactClose />);
-    expect(screen.getByText('Close')).toHaveClass('sr-only');
+    expect(screen.getByText("Close")).toHaveClass("sr-only");
   });
 });
 
-describe('ArtifactTitle', () => {
-  it('renders title text', () => {
+describe("ArtifactTitle", () => {
+  it("renders title text", () => {
     render(<ArtifactTitle>My Title</ArtifactTitle>);
-    expect(screen.getByText('My Title')).toBeInTheDocument();
+    expect(screen.getByText("My Title")).toBeInTheDocument();
   });
 });
 
-describe('ArtifactDescription', () => {
-  it('renders description text', () => {
+describe("ArtifactDescription", () => {
+  it("renders description text", () => {
     render(<ArtifactDescription>Description text</ArtifactDescription>);
-    expect(screen.getByText('Description text')).toBeInTheDocument();
+    expect(screen.getByText("Description text")).toBeInTheDocument();
   });
 });
 
-describe('ArtifactActions', () => {
-  it('renders action buttons', () => {
+describe("ArtifactActions", () => {
+  it("renders action buttons", () => {
     render(
       <ArtifactActions>
         <button>Action 1</button>
       </ArtifactActions>
     );
-    expect(screen.getByText('Action 1')).toBeInTheDocument();
+    expect(screen.getByText("Action 1")).toBeInTheDocument();
   });
 });
 
-describe('ArtifactAction', () => {
-  it('renders with icon', () => {
+describe("ArtifactAction", () => {
+  it("renders with icon", () => {
     render(<ArtifactAction icon={XIcon} label="Close" />);
-    expect(screen.getByText('Close')).toHaveClass('sr-only');
+    expect(screen.getByText("Close")).toHaveClass("sr-only");
   });
 
-  it('renders with tooltip', () => {
-    render(<ArtifactAction tooltip="Help" label="Action" />);
-    expect(screen.getByText('Action')).toHaveClass('sr-only');
+  it("renders with tooltip", () => {
+    render(<ArtifactAction label="Action" tooltip="Help" />);
+    expect(screen.getByText("Action")).toHaveClass("sr-only");
   });
 
-  it('renders children when no icon', () => {
+  it("renders children when no icon", () => {
     render(<ArtifactAction label="Custom">Content</ArtifactAction>);
-    expect(screen.getByText('Content')).toBeInTheDocument();
+    expect(screen.getByText("Content")).toBeInTheDocument();
   });
 });
 
-describe('ArtifactContent', () => {
-  it('renders content', () => {
+describe("ArtifactContent", () => {
+  it("renders content", () => {
     render(<ArtifactContent>Main content</ArtifactContent>);
-    expect(screen.getByText('Main content')).toBeInTheDocument();
+    expect(screen.getByText("Main content")).toBeInTheDocument();
   });
 });
