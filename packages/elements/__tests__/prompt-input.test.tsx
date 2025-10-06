@@ -17,6 +17,8 @@ import {
   PromptInputModelSelectItem,
   PromptInputModelSelectTrigger,
   PromptInputModelSelectValue,
+  PromptInputProvider,
+  PromptInputSpeechButton,
   PromptInputSubmit,
   PromptInputTextarea,
   PromptInputToolbar,
@@ -679,5 +681,540 @@ describe("PromptInputModelSelect", () => {
       </PromptInput>
     );
     expect(screen.getByText("Select model")).toBeInTheDocument();
+  });
+});
+
+describe("PromptInputProvider", () => {
+  it("provides context to children", async () => {
+    const onSubmit = vi.fn();
+    const { PromptInputProvider, usePromptInputController } = await import(
+      "../src/prompt-input"
+    );
+
+    const TestComponent = () => {
+      const controller = usePromptInputController();
+      return (
+        <div>
+          <span data-testid="input-value">{controller.textInput.value}</span>
+          <button
+            onClick={() => controller.textInput.setInput("test")}
+            type="button"
+          >
+            Set Input
+          </button>
+        </div>
+      );
+    };
+
+    render(
+      <PromptInputProvider>
+        <TestComponent />
+      </PromptInputProvider>
+    );
+
+    expect(screen.getByTestId("input-value")).toHaveTextContent("");
+  });
+
+  it("throws error when usePromptInputController used outside provider", async () => {
+    const { usePromptInputController } = await import("../src/prompt-input");
+
+    const TestComponent = () => {
+      usePromptInputController();
+      return <div>Test</div>;
+    };
+
+    // Suppress console.error for this test
+    const spy = vi.spyOn(console, "error").mockImplementation(() => {});
+
+    expect(() => render(<TestComponent />)).toThrow();
+
+    spy.mockRestore();
+  });
+
+  it("provides initial input value", async () => {
+    const { PromptInputProvider, PromptInput, PromptInputBody, PromptInputTextarea, usePromptInputController } =
+      await import("../src/prompt-input");
+    const onSubmit = vi.fn();
+
+    const TestComponent = () => {
+      const controller = usePromptInputController();
+      return <div data-testid="value">{controller.textInput.value}</div>;
+    };
+
+    render(
+      <PromptInputProvider initialInput="Hello world">
+        <TestComponent />
+        <PromptInput onSubmit={onSubmit}>
+          <PromptInputBody>
+            <PromptInputTextarea />
+          </PromptInputBody>
+        </PromptInput>
+      </PromptInputProvider>
+    );
+
+    expect(screen.getByTestId("value")).toHaveTextContent("Hello world");
+  });
+
+  it("manages attachments globally", async () => {
+    const { PromptInputProvider, useProviderAttachments } = await import(
+      "../src/prompt-input"
+    );
+
+    const file = new File(["test"], "test.txt", { type: "text/plain" });
+
+    const TestComponent = () => {
+      const attachments = useProviderAttachments();
+      return (
+        <div>
+          <button onClick={() => attachments.add([file])} type="button">
+            Add File
+          </button>
+          <div data-testid="count">{attachments.files.length}</div>
+        </div>
+      );
+    };
+
+    const user = userEvent.setup();
+    render(
+      <PromptInputProvider>
+        <TestComponent />
+      </PromptInputProvider>
+    );
+
+    expect(screen.getByTestId("count")).toHaveTextContent("0");
+
+    await user.click(screen.getByRole("button"));
+
+    expect(screen.getByTestId("count")).toHaveTextContent("1");
+  });
+});
+
+describe("File validation", () => {
+  it("enforces maxFiles limit", async () => {
+    const onSubmit = vi.fn();
+    const onError = vi.fn();
+    const user = userEvent.setup();
+
+    const file1 = new File(["test1"], "test1.txt", { type: "text/plain" });
+    const file2 = new File(["test2"], "test2.txt", { type: "text/plain" });
+    const file3 = new File(["test3"], "test3.txt", { type: "text/plain" });
+
+    const AttachmentConsumer = () => {
+      const attachments = usePromptInputAttachments();
+      return (
+        <>
+          <button
+            data-testid="add-files"
+            onClick={() => attachments.add([file1, file2, file3])}
+            type="button"
+          >
+            Add Files
+          </button>
+          <div data-testid="count">{attachments.files.length}</div>
+        </>
+      );
+    };
+
+    render(
+      <PromptInput maxFiles={2} onError={onError} onSubmit={onSubmit}>
+        <PromptInputBody>
+          <AttachmentConsumer />
+          <PromptInputTextarea />
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    await user.click(screen.getByTestId("add-files"));
+
+    // Only 2 files should be added
+    expect(screen.getByTestId("count")).toHaveTextContent("2");
+    expect(onError).toHaveBeenCalledWith({
+      code: "max_files",
+      message: expect.any(String),
+    });
+  });
+
+  it("enforces maxFileSize limit", async () => {
+    const onSubmit = vi.fn();
+    const onError = vi.fn();
+    const user = userEvent.setup();
+
+    // Create a large file (mocked with size property)
+    const largeFile = new File(["x".repeat(2000)], "large.txt", {
+      type: "text/plain",
+    });
+    Object.defineProperty(largeFile, "size", { value: 2000 });
+
+    const AttachmentConsumer = () => {
+      const attachments = usePromptInputAttachments();
+      return (
+        <>
+          <button
+            data-testid="add-file"
+            onClick={() => attachments.add([largeFile])}
+            type="button"
+          >
+            Add File
+          </button>
+          <div data-testid="count">{attachments.files.length}</div>
+        </>
+      );
+    };
+
+    render(
+      <PromptInput maxFileSize={1000} onError={onError} onSubmit={onSubmit}>
+        <PromptInputBody>
+          <AttachmentConsumer />
+          <PromptInputTextarea />
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    await user.click(screen.getByTestId("add-file"));
+
+    expect(screen.getByTestId("count")).toHaveTextContent("0");
+    expect(onError).toHaveBeenCalledWith({
+      code: "max_file_size",
+      message: expect.any(String),
+    });
+  });
+
+  it("enforces accept image filter", async () => {
+    const onSubmit = vi.fn();
+    const onError = vi.fn();
+    const user = userEvent.setup();
+
+    const textFile = new File(["test"], "test.txt", { type: "text/plain" });
+
+    const AttachmentConsumer = () => {
+      const attachments = usePromptInputAttachments();
+      return (
+        <>
+          <button
+            data-testid="add-file"
+            onClick={() => attachments.add([textFile])}
+            type="button"
+          >
+            Add File
+          </button>
+          <div data-testid="count">{attachments.files.length}</div>
+        </>
+      );
+    };
+
+    render(
+      <PromptInput accept="image/*" onError={onError} onSubmit={onSubmit}>
+        <PromptInputBody>
+          <AttachmentConsumer />
+          <PromptInputTextarea />
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    await user.click(screen.getByTestId("add-file"));
+
+    expect(screen.getByTestId("count")).toHaveTextContent("0");
+    expect(onError).toHaveBeenCalledWith({
+      code: "accept",
+      message: expect.any(String),
+    });
+  });
+
+  it("allows image files when accept is image/*", async () => {
+    const onSubmit = vi.fn();
+    const user = userEvent.setup();
+
+    const imageFile = new File(["image"], "test.png", { type: "image/png" });
+
+    const AttachmentConsumer = () => {
+      const attachments = usePromptInputAttachments();
+      return (
+        <>
+          <button
+            data-testid="add-file"
+            onClick={() => attachments.add([imageFile])}
+            type="button"
+          >
+            Add File
+          </button>
+          <div data-testid="count">{attachments.files.length}</div>
+        </>
+      );
+    };
+
+    render(
+      <PromptInput accept="image/*" onSubmit={onSubmit}>
+        <PromptInputBody>
+          <AttachmentConsumer />
+          <PromptInputTextarea />
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    await user.click(screen.getByTestId("add-file"));
+
+    expect(screen.getByTestId("count")).toHaveTextContent("1");
+  });
+});
+
+describe("Drag and drop", () => {
+  it("renders with globalDrop prop", () => {
+    const onSubmit = vi.fn();
+
+    const { container } = render(
+      <PromptInput globalDrop onSubmit={onSubmit}>
+        <PromptInputBody>
+          <PromptInputTextarea />
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    expect(container.querySelector("form")).toBeInTheDocument();
+  });
+
+  it("renders without globalDrop prop", () => {
+    const onSubmit = vi.fn();
+
+    const { container } = render(
+      <PromptInput onSubmit={onSubmit}>
+        <PromptInputBody>
+          <PromptInputTextarea />
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    expect(container.querySelector("form")).toBeInTheDocument();
+  });
+});
+
+describe("Paste functionality", () => {
+  it("adds files from clipboard", async () => {
+    const onSubmit = vi.fn();
+
+    const AttachmentConsumer = () => {
+      const attachments = usePromptInputAttachments();
+      return <div data-testid="count">{attachments.files.length}</div>;
+    };
+
+    render(
+      <PromptInput onSubmit={onSubmit}>
+        <PromptInputBody>
+          <AttachmentConsumer />
+          <PromptInputTextarea />
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    const textarea = screen.getByPlaceholderText("What would you like to know?");
+    textarea.focus();
+
+    const file = new File(["image"], "test.png", { type: "image/png" });
+
+    // Create a mock paste event
+    const pasteEvent = new Event("paste", {
+      bubbles: true,
+      cancelable: true,
+    }) as any;
+
+    // Mock clipboardData items
+    pasteEvent.clipboardData = {
+      items: [
+        {
+          kind: "file",
+          getAsFile: () => file,
+        },
+      ],
+    };
+
+    textarea.dispatchEvent(pasteEvent);
+
+    await vi.waitFor(() => {
+      expect(screen.getByTestId("count")).toHaveTextContent("1");
+    });
+  });
+
+  it("handles paste with no files", async () => {
+    const onSubmit = vi.fn();
+
+    render(
+      <PromptInput onSubmit={onSubmit}>
+        <PromptInputBody>
+          <PromptInputTextarea />
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    const textarea = screen.getByPlaceholderText("What would you like to know?");
+    textarea.focus();
+
+    const pasteEvent = new Event("paste", {
+      bubbles: true,
+      cancelable: true,
+    }) as any;
+
+    pasteEvent.clipboardData = {
+      items: [],
+    };
+
+    // Should not throw
+    expect(() => textarea.dispatchEvent(pasteEvent)).not.toThrow();
+  });
+});
+
+describe("PromptInputSpeechButton", () => {
+  it("renders button component", () => {
+    const { container } = render(<PromptInputSpeechButton />);
+    expect(container.querySelector("button")).toBeInTheDocument();
+  });
+
+  it("applies custom className", () => {
+    const { container } = render(
+      <PromptInputSpeechButton className="custom-speech-btn" />
+    );
+    const button = container.querySelector("button");
+    expect(button).toHaveClass("custom-speech-btn");
+  });
+
+  it("accepts additional props", () => {
+    render(<PromptInputSpeechButton data-testid="speech-btn" />);
+    expect(screen.getByTestId("speech-btn")).toBeInTheDocument();
+  });
+});
+
+describe("PromptInputAttachment", () => {
+  it("renders file attachment with icon", () => {
+    const onSubmit = vi.fn();
+    const file = {
+      id: "1",
+      type: "file" as const,
+      filename: "document.pdf",
+      mediaType: "application/pdf",
+      url: "blob:test",
+    };
+
+    render(
+      <PromptInput onSubmit={onSubmit}>
+        <PromptInputBody>
+          <PromptInputAttachment data={file} />
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    expect(screen.getByText("document.pdf")).toBeInTheDocument();
+  });
+
+  it("renders image attachment", () => {
+    const onSubmit = vi.fn();
+    const file = {
+      id: "1",
+      type: "file" as const,
+      filename: "image.png",
+      mediaType: "image/png",
+      url: "blob:test",
+    };
+
+    render(
+      <PromptInput onSubmit={onSubmit}>
+        <PromptInputBody>
+          <PromptInputAttachment data={file} />
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    const img = screen.getByAltText("image.png");
+    expect(img).toBeInTheDocument();
+  });
+
+  it("removes attachment when remove button clicked", async () => {
+    const onSubmit = vi.fn();
+    const user = userEvent.setup();
+
+    const file = new File(["test"], "test.txt", { type: "text/plain" });
+
+    const AttachmentConsumer = () => {
+      const attachments = usePromptInputAttachments();
+      return (
+        <>
+          <button
+            data-testid="add-file"
+            onClick={() => attachments.add([file])}
+            type="button"
+          >
+            Add
+          </button>
+          <PromptInputAttachments>
+            {(attachment) => <PromptInputAttachment data={attachment} key={attachment.id} />}
+          </PromptInputAttachments>
+        </>
+      );
+    };
+
+    render(
+      <PromptInput onSubmit={onSubmit}>
+        <PromptInputBody>
+          <AttachmentConsumer />
+          <PromptInputTextarea />
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    await user.click(screen.getByTestId("add-file"));
+    expect(screen.getByText("test.txt")).toBeInTheDocument();
+
+    const removeButton = screen.getByLabelText("Remove attachment");
+    await user.click(removeButton);
+
+    expect(screen.queryByText("test.txt")).not.toBeInTheDocument();
+  });
+});
+
+describe("PromptInputActionAddAttachments", () => {
+  it("opens file dialog when clicked", async () => {
+    const onSubmit = vi.fn();
+    const user = userEvent.setup();
+
+    render(
+      <PromptInput onSubmit={onSubmit}>
+        <PromptInputBody>
+          <PromptInputActionMenu>
+            <PromptInputActionMenuTrigger />
+            <PromptInputActionMenuContent>
+              <PromptInputActionAddAttachments />
+            </PromptInputActionMenuContent>
+          </PromptInputActionMenu>
+          <PromptInputTextarea />
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    const trigger = screen.getByRole("button");
+    await user.click(trigger);
+
+    const addButton = screen.getByText("Add photos or files");
+    expect(addButton).toBeInTheDocument();
+  });
+
+  it("accepts custom label", async () => {
+    const onSubmit = vi.fn();
+    const user = userEvent.setup();
+
+    render(
+      <PromptInput onSubmit={onSubmit}>
+        <PromptInputBody>
+          <PromptInputActionMenu>
+            <PromptInputActionMenuTrigger />
+            <PromptInputActionMenuContent>
+              <PromptInputActionAddAttachments label="Upload files" />
+            </PromptInputActionMenuContent>
+          </PromptInputActionMenu>
+          <PromptInputTextarea />
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    const trigger = screen.getByRole("button");
+    await user.click(trigger);
+
+    expect(screen.getByText("Upload files")).toBeInTheDocument();
   });
 });
