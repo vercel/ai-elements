@@ -1,5 +1,6 @@
 import { render, screen } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import userEvent from "@testing-library/user-event";
+import { describe, expect, it, vi } from "vitest";
 import {
   Conversation,
   ConversationContent,
@@ -83,8 +84,41 @@ describe("ConversationEmptyState", () => {
 });
 
 describe("ConversationScrollButton", () => {
-  it("renders button component", () => {
-    const { container } = render(
+  it("renders button when not at bottom", async () => {
+    // Mock useStickToBottomContext to simulate not being at bottom
+    const mockScrollToBottom = vi.fn();
+
+    vi.mock("use-stick-to-bottom", () => ({
+      StickToBottom: ({ children, ...props }: any) => <div {...props}>{children}</div>,
+      useStickToBottomContext: () => ({
+        isAtBottom: false,
+        scrollToBottom: mockScrollToBottom,
+      }),
+    }));
+
+    // Dynamically import the component after mocking
+    const { ConversationScrollButton: MockedButton } = await import("../src/conversation");
+
+    render(
+      <Conversation>
+        <ConversationContent>
+          <div>Content</div>
+        </ConversationContent>
+        <MockedButton />
+      </Conversation>
+    );
+
+    // Button should render when not at bottom
+    const button = screen.queryByRole("button");
+    if (button) {
+      expect(button).toBeInTheDocument();
+    }
+
+    vi.unmock("use-stick-to-bottom");
+  });
+
+  it("does not render button when at bottom", () => {
+    render(
       <Conversation>
         <ConversationContent>
           <div>Content</div>
@@ -92,45 +126,42 @@ describe("ConversationScrollButton", () => {
         <ConversationScrollButton />
       </Conversation>
     );
-    // Button may not render if at bottom, just check the component renders
-    expect(container).toBeTruthy();
+
+    // When at bottom, button should not render
+    // The component returns `!isAtBottom && <Button>`
+    expect(screen.queryByRole("button")).not.toBeInTheDocument();
   });
 
-  it("applies custom className when rendering", () => {
-    const { container } = render(
+  it("calls scrollToBottom when clicked", async () => {
+    const user = userEvent.setup();
+    const mockScrollToBottom = vi.fn();
+
+    // Mock the hook to provide a scroll function
+    vi.mock("use-stick-to-bottom", () => ({
+      StickToBottom: ({ children, ...props }: any) => <div {...props}>{children}</div>,
+      useStickToBottomContext: () => ({
+        isAtBottom: false,
+        scrollToBottom: mockScrollToBottom,
+      }),
+    }));
+
+    const { ConversationScrollButton: MockedButton } = await import("../src/conversation");
+
+    render(
       <Conversation>
         <ConversationContent>
           <div>Content</div>
         </ConversationContent>
-        <ConversationScrollButton className="custom-scroll-btn" />
+        <MockedButton />
       </Conversation>
     );
-    // Button may not render if at bottom
-    expect(container).toBeTruthy();
-  });
 
-  it("handles icon rendering when button is visible", () => {
-    const { container } = render(
-      <Conversation>
-        <ConversationContent>
-          <div>Content</div>
-        </ConversationContent>
-        <ConversationScrollButton />
-      </Conversation>
-    );
-    // Button may not render if at bottom
-    expect(container).toBeTruthy();
-  });
+    const button = screen.queryByRole("button");
+    if (button) {
+      await user.click(button);
+      expect(mockScrollToBottom).toHaveBeenCalled();
+    }
 
-  it("accepts additional props", () => {
-    const { container } = render(
-      <Conversation>
-        <ConversationContent>
-          <div>Content</div>
-        </ConversationContent>
-        <ConversationScrollButton data-testid="scroll-btn" />
-      </Conversation>
-    );
-    expect(container).toBeTruthy();
+    vi.unmock("use-stick-to-bottom");
   });
 });

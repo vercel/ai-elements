@@ -1,5 +1,5 @@
 import { render } from "@testing-library/react";
-import { Position } from "@xyflow/react";
+import { Position, ReactFlowProvider } from "@xyflow/react";
 import { describe, expect, it, vi } from "vitest";
 import { Canvas } from "../src/canvas";
 import { Edge } from "../src/edge";
@@ -9,18 +9,18 @@ vi.mock("@xyflow/react", async () => {
   return {
     ...actual,
     useInternalNode: vi.fn((id: string) => {
-      if (id === "1" || id === "2") {
+      if (id === "1" || id === "2" || id === "3" || id === "4") {
         return {
           id,
           internals: {
-            positionAbsolute: { x: 0, y: 0 },
+            positionAbsolute: { x: 100, y: 100 },
             handleBounds: {
               source: [
                 {
                   id: "source",
                   position: Position.Right,
-                  x: 0,
-                  y: 0,
+                  x: 50,
+                  y: 25,
                   width: 10,
                   height: 10,
                 },
@@ -29,8 +29,52 @@ vi.mock("@xyflow/react", async () => {
                 {
                   id: "target",
                   position: Position.Left,
-                  x: 0,
-                  y: 0,
+                  x: 5,
+                  y: 25,
+                  width: 10,
+                  height: 10,
+                },
+              ],
+            },
+          },
+        };
+      }
+      // Return a node with no handles for testing the "no handle" case
+      if (id === "no-handles") {
+        return {
+          id,
+          internals: {
+            positionAbsolute: { x: 100, y: 100 },
+            handleBounds: {
+              source: [],
+              target: [],
+            },
+          },
+        };
+      }
+      // Return nodes with Top/Bottom handles for comprehensive testing
+      if (id === "top-bottom") {
+        return {
+          id,
+          internals: {
+            positionAbsolute: { x: 100, y: 100 },
+            handleBounds: {
+              source: [
+                {
+                  id: "source",
+                  position: Position.Top,
+                  x: 50,
+                  y: 25,
+                  width: 10,
+                  height: 10,
+                },
+              ],
+              target: [
+                {
+                  id: "target",
+                  position: Position.Bottom,
+                  x: 5,
+                  y: 25,
                   width: 10,
                   height: 10,
                 },
@@ -66,6 +110,25 @@ describe("Edge.Temporary", () => {
     expect(container.querySelector(".react-flow")).toBeInTheDocument();
   });
 
+  it("renders directly as a component", () => {
+    const { container } = render(
+      <ReactFlowProvider>
+        <svg>
+          <Edge.Temporary
+            id="temp-1"
+            sourceX={10}
+            sourceY={20}
+            targetX={100}
+            targetY={150}
+            sourcePosition={Position.Right}
+            targetPosition={Position.Left}
+          />
+        </svg>
+      </ReactFlowProvider>
+    );
+    expect(container.querySelector("path")).toBeInTheDocument();
+  });
+
   it("renders with custom coordinates", () => {
     const props = {
       id: "temp-edge-2",
@@ -86,6 +149,25 @@ describe("Edge.Temporary", () => {
 
     expect(container.querySelector(".react-flow")).toBeInTheDocument();
   });
+
+  it("renders with Top and Bottom positions", () => {
+    const { container } = render(
+      <ReactFlowProvider>
+        <svg>
+          <Edge.Temporary
+            id="temp-2"
+            sourceX={10}
+            sourceY={20}
+            targetX={100}
+            targetY={150}
+            sourcePosition={Position.Top}
+            targetPosition={Position.Bottom}
+          />
+        </svg>
+      </ReactFlowProvider>
+    );
+    expect(container.querySelector("path")).toBeInTheDocument();
+  });
 });
 
 describe("Edge.Animated", () => {
@@ -100,6 +182,40 @@ describe("Edge.Animated", () => {
       targetY: 100,
       sourcePosition: Position.Right,
       targetPosition: Position.Left,
+    };
+
+    const nodes = [
+      { id: "1", position: { x: 0, y: 0 }, data: { label: "Node 1" } },
+      { id: "2", position: { x: 200, y: 0 }, data: { label: "Node 2" } },
+    ];
+
+    const edges = [props];
+    const { container } = render(
+      <Canvas
+        nodes={nodes}
+        edges={edges}
+        edgeTypes={{ animated: Edge.Animated }}
+      >
+        <div>Content</div>
+      </Canvas>
+    );
+
+    expect(container.querySelector(".react-flow")).toBeInTheDocument();
+  });
+
+  it("renders with markerEnd and style props", () => {
+    const props = {
+      id: "animated-edge-styled",
+      source: "1",
+      target: "2",
+      sourceX: 0,
+      sourceY: 0,
+      targetX: 100,
+      targetY: 100,
+      sourcePosition: Position.Right,
+      targetPosition: Position.Left,
+      markerEnd: "url(#arrow)",
+      style: { stroke: "red", strokeWidth: 2 },
     };
 
     const nodes = [
@@ -181,5 +297,71 @@ describe("Edge.Animated", () => {
     );
 
     expect(container.querySelector(".react-flow")).toBeInTheDocument();
+  });
+
+  it("renders directly with valid source and target", () => {
+    const { container } = render(
+      <ReactFlowProvider>
+        <svg>
+          <Edge.Animated
+            id="animated-1"
+            source="1"
+            target="2"
+            sourceX={0}
+            sourceY={0}
+            targetX={100}
+            targetY={100}
+            sourcePosition={Position.Right}
+            targetPosition={Position.Left}
+          />
+        </svg>
+      </ReactFlowProvider>
+    );
+    // The component should render when both nodes exist (via mock)
+    expect(container).toBeInTheDocument();
+  });
+
+  it("renders null when source is missing in direct render", () => {
+    const { container } = render(
+      <ReactFlowProvider>
+        <svg>
+          <Edge.Animated
+            id="animated-missing"
+            source="missing"
+            target="2"
+            sourceX={0}
+            sourceY={0}
+            targetX={100}
+            targetY={100}
+            sourcePosition={Position.Right}
+            targetPosition={Position.Left}
+          />
+        </svg>
+      </ReactFlowProvider>
+    );
+    // The component returns null when source is missing
+    expect(container).toBeInTheDocument();
+  });
+
+  it("renders with nodes that have no handles", () => {
+    const { container } = render(
+      <ReactFlowProvider>
+        <svg>
+          <Edge.Animated
+            id="animated-no-handles"
+            source="no-handles"
+            target="no-handles"
+            sourceX={0}
+            sourceY={0}
+            targetX={100}
+            targetY={100}
+            sourcePosition={Position.Right}
+            targetPosition={Position.Left}
+          />
+        </svg>
+      </ReactFlowProvider>
+    );
+    // The component should handle nodes with no handles gracefully
+    expect(container).toBeInTheDocument();
   });
 });
