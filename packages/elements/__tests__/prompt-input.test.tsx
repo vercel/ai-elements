@@ -97,7 +97,7 @@ describe('PromptInput', () => {
     expect(message).toHaveProperty('files');
   });
 
-  it('clears textarea after form submission', async () => {
+  it('clears textarea after form submission - #125', async () => {
     const onSubmit = vi.fn();
     const user = userEvent.setup();
 
@@ -128,7 +128,7 @@ describe('PromptInput', () => {
     expect(textarea.value).toBe('');
   });
 
-  it('does not lose user input typed immediately after submission', async () => {
+  it('does not lose user input typed immediately after submission - #125', async () => {
     const onSubmit = vi.fn();
     const user = userEvent.setup();
 
