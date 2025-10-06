@@ -17,6 +17,7 @@ import {
   PromptInputModelSelectTrigger,
   PromptInputModelSelectValue,
   PromptInputProvider,
+  PromptInputSpeechButton,
   PromptInputSubmit,
   PromptInputTextarea,
   PromptInputToolbar,
@@ -24,8 +25,8 @@ import {
   usePromptInputController,
 } from "@repo/elements/prompt-input";
 import { Button } from "@repo/shadcn-ui/components/ui/button";
-import { GlobeIcon, MicIcon } from "lucide-react";
-import { useState } from "react";
+import { GlobeIcon } from "lucide-react";
+import { useRef, useState } from "react";
 
 const models = [
   { id: "gpt-4", name: "GPT-4" },
@@ -88,6 +89,7 @@ const Example = () => {
   const [status, setStatus] = useState<
     "submitted" | "streaming" | "ready" | "error"
   >("ready");
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const handleSubmit = (message: PromptInputMessage) => {
     const hasText = Boolean(message.text);
@@ -119,7 +121,7 @@ const Example = () => {
           <PromptInputAttachments>
             {(attachment) => <PromptInputAttachment data={attachment} />}
           </PromptInputAttachments>
-          <PromptInputTextarea />
+          <PromptInputTextarea ref={textareaRef} />
         </PromptInputBody>
         <PromptInputToolbar>
           <PromptInputTools>
@@ -129,9 +131,7 @@ const Example = () => {
                 <PromptInputActionAddAttachments />
               </PromptInputActionMenuContent>
             </PromptInputActionMenu>
-            <PromptInputButton>
-              <MicIcon size={16} />
-            </PromptInputButton>
+            <PromptInputSpeechButton textareaRef={textareaRef} />
             <PromptInputButton>
               <GlobeIcon size={16} />
               <span>Search</span>
