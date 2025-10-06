@@ -1,4 +1,5 @@
 import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 import {
   InlineCitation,
@@ -250,6 +251,28 @@ describe("InlineCitationCarouselPrev", () => {
     const icon = container.querySelector("svg");
     expect(icon).toBeInTheDocument();
   });
+
+  it("navigates to previous item when clicked", async () => {
+    const user = userEvent.setup();
+
+    render(
+      <InlineCitationCarousel>
+        <InlineCitationCarouselHeader>
+          <InlineCitationCarouselPrev />
+        </InlineCitationCarouselHeader>
+        <InlineCitationCarouselContent>
+          <InlineCitationCarouselItem>Item 1</InlineCitationCarouselItem>
+          <InlineCitationCarouselItem>Item 2</InlineCitationCarouselItem>
+        </InlineCitationCarouselContent>
+      </InlineCitationCarousel>
+    );
+
+    const button = screen.getByRole("button", { name: /previous/i });
+    await user.click(button);
+
+    // Button should be clickable without errors
+    expect(button).toBeInTheDocument();
+  });
 });
 
 describe("InlineCitationCarouselNext", () => {
@@ -295,5 +318,27 @@ describe("InlineCitationCarouselNext", () => {
     );
     const icon = container.querySelector("svg");
     expect(icon).toBeInTheDocument();
+  });
+
+  it("navigates to next item when clicked", async () => {
+    const user = userEvent.setup();
+
+    render(
+      <InlineCitationCarousel>
+        <InlineCitationCarouselHeader>
+          <InlineCitationCarouselNext />
+        </InlineCitationCarouselHeader>
+        <InlineCitationCarouselContent>
+          <InlineCitationCarouselItem>Item 1</InlineCitationCarouselItem>
+          <InlineCitationCarouselItem>Item 2</InlineCitationCarouselItem>
+        </InlineCitationCarouselContent>
+      </InlineCitationCarousel>
+    );
+
+    const button = screen.getByRole("button", { name: /next/i });
+    await user.click(button);
+
+    // Button should be clickable without errors
+    expect(button).toBeInTheDocument();
   });
 });

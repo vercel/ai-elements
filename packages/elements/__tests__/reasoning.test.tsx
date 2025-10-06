@@ -13,6 +13,17 @@ describe("Reasoning", () => {
     expect(screen.getByText("Content")).toBeInTheDocument();
   });
 
+  it("throws error when components used outside Reasoning provider", () => {
+    // Suppress console.error for this test
+    const spy = vi.spyOn(console, "error").mockImplementation(() => {});
+
+    expect(() => render(<ReasoningTrigger />)).toThrow(
+      "Reasoning components must be used within Reasoning"
+    );
+
+    spy.mockRestore();
+  });
+
   it("starts open by default", () => {
     render(
       <Reasoning>
