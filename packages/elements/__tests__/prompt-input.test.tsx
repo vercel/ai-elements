@@ -226,6 +226,182 @@ describe('PromptInput', () => {
     expect(message.files[0].url).not.toMatch(/^blob:/);
     expect(message.files[0].filename).toBe('test.txt');
   });
+
+  it('does not clear attachments when onSubmit throws an error - #126', async () => {
+    const onSubmit = vi.fn(() => {
+      throw new Error('Submission failed');
+    });
+    const user = userEvent.setup();
+
+    // Create a mock file
+    const fileContent = 'test file content';
+    const blob = new Blob([fileContent], { type: 'text/plain' });
+    const file = new File([blob], 'test.txt', { type: 'text/plain' });
+
+    const AttachmentConsumer = () => {
+      const attachments = usePromptInputAttachments();
+      return (
+        <>
+          <input
+            type="button"
+            data-testid="add-file-btn"
+            onClick={() => attachments.add([file])}
+          />
+          <PromptInputAttachments>
+            {(attachment) => <div key={attachment.id}>{attachment.filename}</div>}
+          </PromptInputAttachments>
+        </>
+      );
+    };
+
+    render(
+      <PromptInput onSubmit={onSubmit}>
+        <PromptInputBody>
+          <AttachmentConsumer />
+          <PromptInputTextarea />
+          <PromptInputSubmit />
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    // Add a file
+    const addFileBtn = screen.getByTestId('add-file-btn');
+    await user.click(addFileBtn);
+
+    // Verify file was added
+    expect(screen.getByText('test.txt')).toBeInTheDocument();
+
+    // Type a message and submit
+    const textarea = screen.getByPlaceholderText('What would you like to know?') as HTMLTextAreaElement;
+    await user.type(textarea, 'test message');
+    await user.keyboard('{Enter}');
+
+    // Wait for async submission to complete
+    await vi.waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledTimes(1);
+    });
+
+    // Verify that the attachment is still there (not cleared due to error)
+    expect(screen.getByText('test.txt')).toBeInTheDocument();
+  });
+
+  it('does not clear attachments when async onSubmit rejects - #126', async () => {
+    const onSubmit = vi.fn(() => Promise.reject(new Error('Async submission failed')));
+    const user = userEvent.setup();
+
+    // Create a mock file
+    const fileContent = 'test file content';
+    const blob = new Blob([fileContent], { type: 'text/plain' });
+    const file = new File([blob], 'test.txt', { type: 'text/plain' });
+
+    const AttachmentConsumer = () => {
+      const attachments = usePromptInputAttachments();
+      return (
+        <>
+          <input
+            type="button"
+            data-testid="add-file-btn"
+            onClick={() => attachments.add([file])}
+          />
+          <PromptInputAttachments>
+            {(attachment) => <div key={attachment.id}>{attachment.filename}</div>}
+          </PromptInputAttachments>
+        </>
+      );
+    };
+
+    render(
+      <PromptInput onSubmit={onSubmit}>
+        <PromptInputBody>
+          <AttachmentConsumer />
+          <PromptInputTextarea />
+          <PromptInputSubmit />
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    // Add a file
+    const addFileBtn = screen.getByTestId('add-file-btn');
+    await user.click(addFileBtn);
+
+    // Verify file was added
+    expect(screen.getByText('test.txt')).toBeInTheDocument();
+
+    // Type a message and submit
+    const textarea = screen.getByPlaceholderText('What would you like to know?') as HTMLTextAreaElement;
+    await user.type(textarea, 'test message');
+    await user.keyboard('{Enter}');
+
+    // Wait for async submission to be attempted
+    await vi.waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledTimes(1);
+    });
+
+    // Give some time for the promise rejection to be handled
+    await new Promise(resolve => setTimeout(resolve, 100));
+
+    // Verify that the attachment is still there (not cleared due to rejection)
+    expect(screen.getByText('test.txt')).toBeInTheDocument();
+  });
+
+  it('clears attachments when async onSubmit resolves successfully - #126', async () => {
+    const onSubmit = vi.fn(() => Promise.resolve());
+    const user = userEvent.setup();
+
+    // Create a mock file
+    const fileContent = 'test file content';
+    const blob = new Blob([fileContent], { type: 'text/plain' });
+    const file = new File([blob], 'test.txt', { type: 'text/plain' });
+
+    const AttachmentConsumer = () => {
+      const attachments = usePromptInputAttachments();
+      return (
+        <>
+          <input
+            type="button"
+            data-testid="add-file-btn"
+            onClick={() => attachments.add([file])}
+          />
+          <PromptInputAttachments>
+            {(attachment) => <div key={attachment.id}>{attachment.filename}</div>}
+          </PromptInputAttachments>
+        </>
+      );
+    };
+
+    render(
+      <PromptInput onSubmit={onSubmit}>
+        <PromptInputBody>
+          <AttachmentConsumer />
+          <PromptInputTextarea />
+          <PromptInputSubmit />
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    // Add a file
+    const addFileBtn = screen.getByTestId('add-file-btn');
+    await user.click(addFileBtn);
+
+    // Verify file was added
+    expect(screen.getByText('test.txt')).toBeInTheDocument();
+
+    // Type a message and submit
+    const textarea = screen.getByPlaceholderText('What would you like to know?') as HTMLTextAreaElement;
+    await user.type(textarea, 'test message');
+    await user.keyboard('{Enter}');
+
+    // Wait for async submission to complete successfully
+    await vi.waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledTimes(1);
+    });
+
+    // Give some time for the promise resolution to be handled
+    await new Promise(resolve => setTimeout(resolve, 100));
+
+    // Verify that the attachment was cleared after successful async submission
+    expect(screen.queryByText('test.txt')).not.toBeInTheDocument();
+  });
 });
 
 describe('PromptInputBody', () => {

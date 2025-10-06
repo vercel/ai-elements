@@ -216,7 +216,7 @@ export type PromptInputProps = Omit<
   onSubmit: (
     message: PromptInputMessage,
     event: FormEvent<HTMLFormElement>
-  ) => void;
+  ) => void | Promise<void>;
 };
 
 export const PromptInput = ({
@@ -437,8 +437,25 @@ export const PromptInput = ({
         return item;
       })
     ).then((files: FileUIPart[]) => {
-      onSubmit({ text, files }, event);
-      clear();
+      try {
+        const result = onSubmit({ text, files }, event);
+
+        // Handle both sync and async onSubmit
+        if (result instanceof Promise) {
+          result
+            .then(() => {
+              clear();
+            })
+            .catch(() => {
+              // Don't clear on error - user may want to retry
+            });
+        } else {
+          // Sync function completed without throwing, clear attachments
+          clear();
+        }
+      } catch (error) {
+        // Don't clear on error - user may want to retry
+      }
     });
   };
 
