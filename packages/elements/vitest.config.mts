@@ -17,7 +17,12 @@ export default defineConfig({
     coverage: {
       provider: "v8",
       reporter: ["text", "json", "html"],
-      exclude: ["node_modules/", "__tests__/setup.ts", "*.config.{ts,js}"],
+      exclude: [
+        "node_modules/",
+        "__tests__/**",
+        "**/*.config.{ts,js,mts}",
+        "**/styleMock.js",
+      ],
     },
   },
   resolve: {
