@@ -25,6 +25,7 @@ import Task from "@/app/examples/task";
 import Tool from "@/app/examples/tool";
 import WebPreview from "@/app/examples/web-preview";
 import Workflow from "@/app/examples/workflow";
+import { DarkModeToggle } from "@/app/components/dark-mode-toggle";
 
 const components = [
   { name: "Actions", Component: Actions },
@@ -54,6 +55,7 @@ const Home = () => (
   <div className="container mx-auto space-y-8 py-16">
     <header className="flex items-center justify-between">
       <h1 className="font-bold text-2xl">AI Elements !!</h1>
+      <DarkModeToggle />
     </header>
     {components.map(({ name, Component }) => (
       <Card key={name}>
