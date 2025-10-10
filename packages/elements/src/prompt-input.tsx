@@ -795,6 +795,18 @@ export const PromptInputTextarea = ({
       e.preventDefault();
       e.currentTarget.form?.requestSubmit();
     }
+
+    // Remove last attachment when Backspace is pressed and textarea is empty
+    if (
+      e.key === "Backspace" &&
+      e.currentTarget.value === "" &&
+      attachments.files.length > 0
+    ) {
+      e.preventDefault();
+      const lastAttachment =
+        attachments.files[attachments.files.length - 1];
+      attachments.remove(lastAttachment.id);
+    }
   };
 
   const handlePaste: ClipboardEventHandler<HTMLTextAreaElement> = (event) => {

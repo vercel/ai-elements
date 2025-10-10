@@ -1280,6 +1280,115 @@ describe("PromptInputAttachment", () => {
 
     expect(screen.queryByText("test.txt")).not.toBeInTheDocument();
   });
+
+  it("removes attachment if backspace key is pressed and textarea is empty", async () => {
+    const onSubmit = vi.fn();
+    const user = userEvent.setup();
+
+    const file1 = new File(["test1"], "first.txt", { type: "text/plain" });
+    const file2 = new File(["test2"], "second.txt", { type: "text/plain" });
+    const file3 = new File(["test3"], "third.txt", { type: "text/plain" });
+
+    const AttachmentConsumer = () => {
+      const attachments = usePromptInputAttachments();
+      return (
+        <>
+          <button onClick={() => attachments.add([file1, file2, file3])} type="button">
+            Add Files
+          </button>
+          <PromptInputAttachments>
+            {(attachment) => (
+              <div key={attachment.id}>{attachment.filename}</div>
+            )}
+          </PromptInputAttachments>
+        </>
+      );
+    };
+
+    render(
+      <PromptInput onSubmit={onSubmit}>
+        <PromptInputBody>
+          <AttachmentConsumer />
+          <PromptInputTextarea />
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    const textarea = screen.getByPlaceholderText(
+      "What would you like to know?"
+    ) as HTMLTextAreaElement;
+
+    await user.click(screen.getByRole("button", { name: "Add Files" }));
+
+    expect(screen.getByText("first.txt")).toBeInTheDocument();
+    expect(screen.getByText("second.txt")).toBeInTheDocument();
+    expect(screen.getByText("third.txt")).toBeInTheDocument();
+
+    textarea.focus();
+    expect(textarea.value).toBe("");
+
+    await user.keyboard("{Backspace}");
+
+    expect(screen.getByText("first.txt")).toBeInTheDocument();
+    expect(screen.getByText("second.txt")).toBeInTheDocument();
+    expect(screen.queryByText("third.txt")).not.toBeInTheDocument();
+
+    await user.keyboard("{Backspace}");
+
+    expect(screen.getByText("first.txt")).toBeInTheDocument();
+    expect(screen.queryByText("second.txt")).not.toBeInTheDocument();
+
+    await user.keyboard("{Backspace}");
+
+    expect(screen.queryByText("first.txt")).not.toBeInTheDocument();
+  });
+
+  it("does not remove attachment when backspace key is pressed and textarea has content", async () => {
+    const onSubmit = vi.fn();
+    const user = userEvent.setup();
+
+    const file = new File(["test"], "test.txt", { type: "text/plain" });
+
+    const AttachmentConsumer = () => {
+      const attachments = usePromptInputAttachments();
+      return (
+        <>
+          <button onClick={() => attachments.add([file])} type="button">
+            Add File
+          </button>
+          <PromptInputAttachments>
+            {(attachment) => (
+              <div key={attachment.id}>{attachment.filename}</div>
+            )}
+          </PromptInputAttachments>
+        </>
+      );
+    };
+
+    render(
+      <PromptInput onSubmit={onSubmit}>
+        <PromptInputBody>
+          <AttachmentConsumer />
+          <PromptInputTextarea />
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    const textarea = screen.getByPlaceholderText(
+      "What would you like to know?"
+    ) as HTMLTextAreaElement;
+
+    await user.click(screen.getByRole("button", { name: "Add File" }));
+    expect(screen.getByText("test.txt")).toBeInTheDocument();
+
+    await user.type(textarea, "Some text");
+    expect(textarea.value).toBe("Some text");
+
+    await user.keyboard("{Backspace}");
+
+    expect(screen.getByText("test.txt")).toBeInTheDocument();
+    expect(textarea.value).toBe("Some tex");
+  });
 });
 
 describe("PromptInputActionAddAttachments", () => {
