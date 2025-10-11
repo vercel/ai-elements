@@ -2,7 +2,7 @@
 
 import { useTaskQueue, TaskQueueProvider } from "@repo/elements/useTaskQueue";
 import { TaskQueuePanel } from "@repo/elements/task-queue-panel";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import type { TaskQueueItem } from "@repo/elements/useTaskQueue";
 
 const DUMMY_TASKS: TaskQueueItem[] = [
@@ -94,8 +94,10 @@ const DUMMY_TASKS: TaskQueueItem[] = [
 
 const ExampleInner = () => {
   const { tasks, removeTask , addTask} = useTaskQueue();
+  // prevent demo data from being seeded twice due to React 18 Strict Mode
+  const seededRef = useRef(false);
 
-  // Filter tasks for queue and todo
+  // filter tasks for queue and todo
   const queueTasks = tasks.filter((task: typeof tasks[number]) => task.type === "message");
   const todoTasks = tasks.filter((task: typeof tasks[number]) => task.type === "todo");
 
@@ -116,9 +118,12 @@ const ExampleInner = () => {
     }));
   }
 
-  useEffect(() => {
-    DUMMY_TASKS.forEach(addTask);
-  }, [addTask]);
+    useEffect(() => {
+    if (!seededRef.current && tasks.length === 0) {
+      DUMMY_TASKS.forEach(addTask);
+      seededRef.current = true;
+    }
+  }, [tasks.length, addTask]);
   
 
   return (
