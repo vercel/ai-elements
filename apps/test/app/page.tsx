@@ -17,6 +17,7 @@ import Loader from "@/app/examples/loader";
 import Message from "@/app/examples/message";
 import OpenInChat from "@/app/examples/open-in-chat";
 import PromptInput from "@/app/examples/prompt-input";
+import TaskQueuePanel from "@/app/examples/task-queue-panel";
 import Reasoning from "@/app/examples/reasoning";
 import Response from "@/app/examples/response";
 import Sources from "@/app/examples/sources";
@@ -41,6 +42,7 @@ const components = [
   { name: "Message", Component: Message },
   { name: "OpenInChat", Component: OpenInChat },
   { name: "PromptInput", Component: PromptInput },
+  { name: "TaskQueuePanel", Component: TaskQueuePanel },
   { name: "Reasoning", Component: Reasoning },
   { name: "Response", Component: Response },
   { name: "Sources", Component: Sources },
