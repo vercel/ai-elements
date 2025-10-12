@@ -185,21 +185,21 @@ export const CodeBlock = ({
             )}
           </div>
           {collapsibleEnabled && hiddenCount > 0 && (
-            <div className="-translate-x-1/2 absolute bottom-2 left-1/2 z-10">
-              <Button
-                className="h-7 rounded-full border bg-background/60 px-3 text-foreground text-xs shadow-sm backdrop-blur supports-[backdrop-filter]:bg-background/50"
-                disabled={!collapsed}
-                onClick={() => setCollapsed(false)}
-                size="sm"
-                variant="secondary"
-              >
-                <ChevronDown size={14} />
-                {collapsed && (
-                  <span className="ml-2 text-muted-foreground">
-                    {hiddenCount} hidden {hiddenCount === 1 ? "line" : "lines"}
-                  </span>
-                )}
-              </Button>
+            <div className="absolute bottom-2 left-1/2 z-10 -translate-x-1/2">
+                <Button
+                  className="h-7 rounded-full border bg-background/60 px-3 text-foreground text-xs shadow-sm backdrop-blur supports-[backdrop-filter]:bg-background/50"
+                  onClick={() => setCollapsed((v) => !v)}
+                  size="sm"
+                  variant="secondary"
+                >
+                  {collapsed ? <ChevronDown size={14} /> : <ChevronUp size={14} />}
+                  {collapsed && (
+                    <span className="ml-2 text-muted-foreground">
+                      {hiddenCount} hidden{" "}
+                      {hiddenCount === 1 ? "line" : "lines"}
+                    </span>
+                  )}
+                </Button>
             </div>
           )}
         </div>
