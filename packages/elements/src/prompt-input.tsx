@@ -418,7 +418,7 @@ export type PromptInputMessage = {
 
 export type PromptInputProps = Omit<
   HTMLAttributes<HTMLFormElement>,
-  "onSubmit"
+  "onSubmit" | "onError"
 > & {
   accept?: string; // e.g., "image/*" or leave undefined for any
   multiple?: boolean;
