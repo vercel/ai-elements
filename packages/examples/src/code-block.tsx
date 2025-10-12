@@ -1,6 +1,6 @@
 "use client";
 
-import { CodeBlock, CodeBlockCopyButton } from "@repo/elements/code-block";
+import { CodeBlock, CodeBlockCopyButton, CodeBlockWrapButton, CodeBlockCollapsableButton } from "@repo/elements/code-block";
 
 const code = `function MyComponent(props) {
   return (
@@ -13,6 +13,8 @@ const code = `function MyComponent(props) {
 
 const Example = () => (
   <CodeBlock code={code} language="jsx">
+    <CodeBlockCollapsableButton linesToShow={8} />
+    <CodeBlockWrapButton onToggle={(wrapped) => console.log("Wrap toggled:", wrapped)} />
     <CodeBlockCopyButton
       onCopy={() => console.log("Copied code to clipboard")}
       onError={() => console.error("Failed to copy code to clipboard")}
