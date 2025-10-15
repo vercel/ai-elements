@@ -1,138 +1,127 @@
 "use client";
 
 import {
-  type QueueItem,
-  QueuePanel,
-  QueueProvider,
-  useQueue,
+  Queue,
+  QueueList,
+  QueueMessageItem,
+  QueueSection,
+  QueueTodoItem,
+  type QueueMessage,
+  type QueueTodo,
 } from "@repo/elements/queue";
-import { useEffect, useRef } from "react";
+import { useState } from "react";
 
-const sampleTasks: QueueItem[] = [
+const sampleMessages: QueueMessage[] = [
+  {
+    id: "msg-1",
+    parts: [{ type: "text", text: "How do I set up the project?" }],
+  },
+  {
+    id: "msg-2",
+    parts: [{ type: "text", text: "What is the roadmap for Q4?" }],
+  },
+  {
+    id: "msg-3",
+    parts: [{ type: "text", text: "Can you review my PR?" }],
+  },
+  {
+    id: "msg-4",
+    parts: [{ type: "text", text: "Please generate a changelog." }],
+  },
+  {
+    id: "msg-5",
+    parts: [{ type: "text", text: "Add dark mode support." }],
+  },
+  {
+    id: "msg-6",
+    parts: [{ type: "text", text: "Optimize database queries." }],
+  },
+  {
+    id: "msg-7",
+    parts: [{ type: "text", text: "Set up CI/CD pipeline." }],
+  },
+];
+
+const sampleTodos: QueueTodo[] = [
   {
     id: "todo-1",
-    type: "todo",
     title: "Write project documentation",
     description: "Complete the README and API docs",
     status: "completed",
   },
   {
     id: "todo-2",
-    type: "todo",
     title: "Implement authentication",
     status: "pending",
   },
   {
     id: "todo-3",
-    type: "todo",
     title: "Fix bug #42",
     description: "Resolve crash on settings page",
     status: "pending",
   },
   {
     id: "todo-4",
-    type: "todo",
     title: "Refactor queue logic",
     description: "Unify queue and todo state management",
     status: "pending",
   },
   {
     id: "todo-5",
-    type: "todo",
     title: "Add unit tests",
     description: "Increase test coverage for hooks",
     status: "pending",
   },
-  // Sample pending messages
-  {
-    id: "msg-1",
-    type: "message",
-    parts: [{ type: "text", text: "How do I set up the project?" }],
-  },
-  {
-    id: "msg-2",
-    type: "message",
-    parts: [{ type: "text", text: "What is the roadmap for Q4?" }],
-  },
-  {
-    id: "msg-3",
-    type: "message",
-    parts: [{ type: "text", text: "Can you review my PR?" }],
-  },
-  {
-    id: "msg-4",
-    type: "message",
-    parts: [{ type: "text", text: "Please generate a changelog." }],
-  },
-  {
-    id: "msg-5",
-    type: "message",
-    parts: [{ type: "text", text: "Add dark mode support." }],
-  },
-  {
-    id: "msg-6",
-    type: "message",
-    parts: [{ type: "text", text: "Optimize database queries." }],
-  },
-  {
-    id: "msg-7",
-    type: "message",
-    parts: [{ type: "text", text: "Set up CI/CD pipeline." }],
-  },
 ];
 
-const ExampleInner = () => {
-  const { tasks, removeTask, addTask } = useQueue();
-  // prevent demo data from being seeded twice due to React 18 Strict Mode
-  const seededRef = useRef(false);
+const Example = () => {
+  const [messages, setMessages] = useState(sampleMessages);
+  const [todos, setTodos] = useState(sampleTodos);
 
-  // filter tasks for queue and todo
-  const queueTasks = tasks.filter(
-    (task: (typeof tasks)[number]) => task.type === "message"
-  );
-  const todoTasks = tasks.filter(
-    (task: (typeof tasks)[number]) => task.type === "todo"
-  );
+  const handleRemoveMessage = (id: string) => {
+    setMessages((prev) => prev.filter((msg) => msg.id !== id));
+  };
 
-  const getQueueMessages = () =>
-    queueTasks.map(
-      (message: Extract<(typeof tasks)[number], { type: "message" }>) => ({
-        id: message.id,
-        parts: message.parts,
-      })
-    );
+  const handleRemoveTodo = (id: string) => {
+    setTodos((prev) => prev.filter((todo) => todo.id !== id));
+  };
 
-  const getTodoItems = () =>
-    todoTasks.map(
-      (task: Extract<(typeof tasks)[number], { type: "todo" }>) => ({
-        id: task.id,
-        title: task.title,
-        description: task.description,
-        status: task.status,
-      })
-    );
+  const handleSendNow = (id: string) => {
+    console.log("Send now:", id);
+    handleRemoveMessage(id);
+  };
 
-  useEffect(() => {
-    if (!seededRef.current && tasks.length === 0) {
-      sampleTasks.forEach(addTask);
-      seededRef.current = true;
-    }
-  }, [tasks.length, addTask]);
+  if (messages.length === 0 && todos.length === 0) {
+    return null;
+  }
 
   return (
-    <QueuePanel
-      messages={getQueueMessages()}
-      onRemoveQueue={removeTask}
-      onRemoveTodo={removeTask}
-      todos={getTodoItems()}
-    />
+    <Queue>
+      <QueueSection count={messages.length} label="Queued">
+        <QueueList>
+          {messages.map((message) => (
+            <QueueMessageItem
+              key={message.id}
+              message={message}
+              onRemove={handleRemoveMessage}
+              onSendNow={handleSendNow}
+            />
+          ))}
+        </QueueList>
+      </QueueSection>
+      <QueueSection count={todos.length} label="Todo">
+        <QueueList>
+          {todos.map((todo) => (
+            <QueueTodoItem
+              key={todo.id}
+              onRemove={handleRemoveTodo}
+              todo={todo}
+            />
+          ))}
+        </QueueList>
+      </QueueSection>
+    </Queue>
   );
 };
-
-const Example = () => (
-  <QueueProvider>
-    <ExampleInner />
-  </QueueProvider>
-);
 
 export default Example;
