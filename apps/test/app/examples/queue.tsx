@@ -8,7 +8,7 @@ import {
 } from "@repo/elements/queue";
 import { useEffect, useRef } from "react";
 
-const DUMMY_TASKS: QueueItem[] = [
+const sampleTasks: QueueItem[] = [
   {
     id: "todo-1",
     type: "todo",
@@ -116,7 +116,7 @@ const ExampleInner = () => {
 
   useEffect(() => {
     if (!seededRef.current && tasks.length === 0) {
-      DUMMY_TASKS.forEach(addTask);
+      sampleTasks.forEach(addTask);
       seededRef.current = true;
     }
   }, [tasks.length, addTask]);
