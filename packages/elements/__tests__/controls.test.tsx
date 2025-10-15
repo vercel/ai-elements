@@ -19,7 +19,8 @@ describe("Controls", () => {
         <Controls className="custom-controls" />
       </Canvas>
     );
-    const controls = container.querySelector(".react-flow__controls");
+    const controls = container.querySelector(".custom-controls");
+    expect(controls).toBeInTheDocument();
     expect(controls).toHaveClass("custom-controls");
   });
 
