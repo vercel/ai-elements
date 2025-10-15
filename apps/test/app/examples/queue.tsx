@@ -94,17 +94,16 @@ const ExampleInner = () => {
     (task: (typeof tasks)[number]) => task.type === "todo"
   );
 
-  function getQueueMessages() {
-    return queueTasks.map(
+  const getQueueMessages = () =>
+    queueTasks.map(
       (message: Extract<(typeof tasks)[number], { type: "message" }>) => ({
         id: message.id,
         parts: message.parts,
       })
     );
-  }
 
-  function getTodoItems() {
-    return todoTasks.map(
+  const getTodoItems = () =>
+    todoTasks.map(
       (task: Extract<(typeof tasks)[number], { type: "todo" }>) => ({
         id: task.id,
         title: task.title,
@@ -112,7 +111,6 @@ const ExampleInner = () => {
         status: task.status,
       })
     );
-  }
 
   useEffect(() => {
     if (!seededRef.current && tasks.length === 0) {
@@ -124,8 +122,8 @@ const ExampleInner = () => {
   return (
     <QueuePanel
       messages={getQueueMessages()}
-      onRemoveQueue={(id: string) => removeTask(id)}
-      onRemoveTodo={(id: string) => removeTask(id)}
+      onRemoveQueue={removeTask}
+      onRemoveTodo={removeTask}
       todos={getTodoItems()}
     />
   );
