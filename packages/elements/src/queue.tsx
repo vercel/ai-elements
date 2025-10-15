@@ -27,7 +27,7 @@ type MessageListProps = {
   onSendNow?: (id: string) => void;
 };
 
-type TaskQueueItem =
+export type QueueItem =
   | { id: string; type: "message"; parts: MessagePart[] }
   | {
       id: string;
@@ -37,26 +37,21 @@ type TaskQueueItem =
       status: "pending" | "completed";
     };
 
-type TaskQueueContextType = {
-  tasks: TaskQueueItem[];
-  addTask: (item: TaskQueueItem) => void;
+type QueueContextType = {
+  tasks: QueueItem[];
+  addTask: (item: QueueItem) => void;
   removeTask: (id: string) => void;
-  updateTask: (
-    id: string,
-    update: Partial<Omit<TaskQueueItem, "type">>
-  ) => void;
+  updateTask: (id: string, update: Partial<Omit<QueueItem, "type">>) => void;
 };
 
-const TaskQueueContext = createContext<TaskQueueContextType | undefined>(
-  undefined
-);
+const QueueContext = createContext<QueueContextType | undefined>(undefined);
 
-export const TaskQueueProvider: React.FC<{ children: React.ReactNode }> = ({
+export const QueueProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [tasks, setTasks] = useState<TaskQueueItem[]>([]);
+  const [tasks, setTasks] = useState<QueueItem[]>([]);
 
-  const addTask = useCallback((item: TaskQueueItem) => {
+  const addTask = useCallback((item: QueueItem) => {
     setTasks((prev) => [...prev, item]);
   }, []);
 
@@ -65,7 +60,7 @@ export const TaskQueueProvider: React.FC<{ children: React.ReactNode }> = ({
   }, []);
 
   const updateTask = useCallback(
-    (id: string, update: Partial<Omit<TaskQueueItem, "type">>) => {
+    (id: string, update: Partial<Omit<QueueItem, "type">>) => {
       setTasks((prev) =>
         prev.map((task) => (task.id === id ? { ...task, ...update } : task))
       );
@@ -74,19 +69,17 @@ export const TaskQueueProvider: React.FC<{ children: React.ReactNode }> = ({
   );
 
   return (
-    <TaskQueueContext.Provider
-      value={{ tasks, addTask, removeTask, updateTask }}
-    >
+    <QueueContext.Provider value={{ tasks, addTask, removeTask, updateTask }}>
       {children}
-    </TaskQueueContext.Provider>
+    </QueueContext.Provider>
   );
 };
 
-export function useTaskQueue() {
-  const ctx = useContext(TaskQueueContext);
+export function useQueue() {
+  const ctx = useContext(QueueContext);
 
   if (!ctx) {
-    throw new Error("useTaskQueue must be used within a TaskQueueProvider");
+    throw new Error("useQueue must be used within a QueueProvider");
   }
 
   return ctx;
@@ -234,7 +227,7 @@ const MessageList = ({
   </ScrollArea>
 );
 
-type TaskQueuePanelProps = {
+type QueuePanelProps = {
   messages: Message[];
   todos: TodoItem[];
   onRemoveQueue?: (id: string) => void;
@@ -289,13 +282,13 @@ function CollapsiblePanel({
   );
 }
 
-export const TaskQueuePanel = memo(function TaskQueuePanelComponent({
+export const QueuePanel = memo(function QueuePanelComponent({
   messages,
   todos,
   onRemoveQueue,
   onRemoveTodo,
   onSendNow,
-}: TaskQueuePanelProps) {
+}: QueuePanelProps) {
   const [queueOpen, setQueueOpen] = useState(true);
   const [todoOpen, setTodoOpen] = useState(true);
 

@@ -4,6 +4,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@repo/shadcn-ui/components/ui/card";
+import { DarkModeToggle } from "@/app/components/dark-mode-toggle";
 import Actions from "@/app/examples/actions";
 import Artifact from "@/app/examples/artifact";
 import Branch from "@/app/examples/branch";
@@ -17,7 +18,7 @@ import Loader from "@/app/examples/loader";
 import Message from "@/app/examples/message";
 import OpenInChat from "@/app/examples/open-in-chat";
 import PromptInput from "@/app/examples/prompt-input";
-import TaskQueuePanel from "@/app/examples/task-queue-panel";
+import Queue from "@/app/examples/queue";
 import Reasoning from "@/app/examples/reasoning";
 import Response from "@/app/examples/response";
 import Sources from "@/app/examples/sources";
@@ -26,7 +27,6 @@ import Task from "@/app/examples/task";
 import Tool from "@/app/examples/tool";
 import WebPreview from "@/app/examples/web-preview";
 import Workflow from "@/app/examples/workflow";
-import { DarkModeToggle } from "@/app/components/dark-mode-toggle";
 
 const components = [
   { name: "Actions", Component: Actions },
@@ -43,7 +43,7 @@ const components = [
   { name: "Message", Component: Message },
   { name: "OpenInChat", Component: OpenInChat },
   { name: "PromptInput", Component: PromptInput },
-  { name: "TaskQueuePanel", Component: TaskQueuePanel },
+  { name: "Queue", Component: Queue },
   { name: "Reasoning", Component: Reasoning },
   { name: "Response", Component: Response },
   { name: "Sources", Component: Sources },
