@@ -56,7 +56,7 @@ const components = [
 const Home = () => (
   <div className="container mx-auto space-y-8 py-16">
     <header className="flex items-center justify-between">
-      <h1 className="font-bold text-2xl">AI Elements !!</h1>
+      <h1 className="font-bold text-2xl">AI Elements</h1>
       <DarkModeToggle />
     </header>
     {components.map(({ name, Component }) => (
