@@ -4,6 +4,15 @@
 
 import { Button } from "@repo/shadcn-ui/components/ui/button";
 import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+  CommandSeparator,
+} from "@repo/shadcn-ui/components/ui/command";
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -11,7 +20,6 @@ import {
 } from "@repo/shadcn-ui/components/ui/dropdown-menu";
 import {
   HoverCard,
-  HoverCardContent,
   HoverCardContent,
   HoverCardTrigger,
 } from "@repo/shadcn-ui/components/ui/hover-card";
@@ -28,15 +36,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@repo/shadcn-ui/components/ui/select";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-  CommandSeparator,
-} from "@repo/shadcn-ui/components/ui/command";
 import {
   Tooltip,
   TooltipContent,
