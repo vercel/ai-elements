@@ -14,7 +14,7 @@
     "@repo/shadcn-ui": "workspace:*",
     "@xyflow/react": "^12.8.6",
     "ai": "5.0.72",
-    "lucide-react": "^0.545.0",
+    "lucide-react": "^0.546.0",
     "nanoid": "^5.1.6",
     "next": "15.5.5",
     "react": "19.2.0",
