@@ -10,7 +10,7 @@ import {
   WrapText,
 } from "lucide-react";
 import type { ComponentProps, HTMLAttributes, ReactNode } from "react";
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import {
   oneDark,
@@ -77,8 +77,11 @@ export const CodeBlock = ({
   const [collapsed, setCollapsed] = useState(false);
   const [linesToShow, setLinesToShow] = useState(DEFAULT_LINES_TO_SHOW);
 
-  const totalLines = code.split("\n").length;
-  const hiddenCount = Math.max(totalLines - linesToShow, 0);
+  const totalLines = useMemo(() => code.split("\n").length, [code]);
+  const hiddenCount = useMemo(
+    () => Math.max(totalLines - linesToShow, 0),
+    [totalLines, linesToShow]
+  );
   const collapsedMaxHeightRem =
     linesToShow * LINE_HEIGHT_REM + EXTRA_PADDING_REM;
 
