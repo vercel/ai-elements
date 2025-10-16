@@ -2,7 +2,7 @@
 
 import {
   CodeBlock,
-  CodeBlockCollapsableButton,
+  CodeBlockCollapsibleButton,
   CodeBlockCopyButton,
   CodeBlockWrapButton,
 } from "@repo/elements/code-block";
@@ -76,7 +76,7 @@ async function parallelCodeReview(code: string) {
 
 const Example = () => (
   <CodeBlock code={code} language="jsx">
-    <CodeBlockCollapsableButton linesToShow={8} />
+    <CodeBlockCollapsibleButton linesToShow={8} />
     <CodeBlockWrapButton
       onToggle={(wrapped) => console.log("Wrap toggled:", wrapped)}
     />

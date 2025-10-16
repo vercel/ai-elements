@@ -290,15 +290,15 @@ export const CodeBlockWrapButton = ({
   );
 };
 
-export type CodeBlockCollapsableButtonProps = {
+export type CodeBlockCollapsibleButtonProps = {
   linesToShow?: number;
   defaultCollapsed?: boolean;
 };
 
-export const CodeBlockCollapsableButton = ({
+export const CodeBlockCollapsibleButton = ({
   linesToShow = DEFAULT_LINES_TO_SHOW,
   defaultCollapsed = true,
-}: CodeBlockCollapsableButtonProps) => {
+}: CodeBlockCollapsibleButtonProps) => {
   const { setCollapsibleEnabled, setLinesToShow, setCollapsed } =
     useContext(CodeBlockContext);
 
