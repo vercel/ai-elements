@@ -1,4 +1,3 @@
-/** biome-ignore-all lint/performance/noImgElement: "ai-elements is framework agnostic" */
 /** biome-ignore-all lint/nursery/useImageSize: "size will be handled by props" */
 
 import { cn } from "@repo/shadcn-ui/lib/utils";

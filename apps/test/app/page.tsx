@@ -4,6 +4,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@repo/shadcn-ui/components/ui/card";
+import { DarkModeToggle } from "@/app/components/dark-mode-toggle";
 import Actions from "@/app/examples/actions";
 import Artifact from "@/app/examples/artifact";
 import Branch from "@/app/examples/branch";
@@ -16,17 +17,18 @@ import InlineCitation from "@/app/examples/inline-citation";
 import Loader from "@/app/examples/loader";
 import Message from "@/app/examples/message";
 import OpenInChat from "@/app/examples/open-in-chat";
+import Plan from "@/app/examples/plan";
 import PromptInput from "@/app/examples/prompt-input";
-import TaskQueuePanel from "@/app/examples/task-queue-panel";
+import Queue from "@/app/examples/queue";
 import Reasoning from "@/app/examples/reasoning";
 import Response from "@/app/examples/response";
+import Shimmer from "@/app/examples/shimmer";
 import Sources from "@/app/examples/sources";
 import Suggestion from "@/app/examples/suggestion";
 import Task from "@/app/examples/task";
 import Tool from "@/app/examples/tool";
 import WebPreview from "@/app/examples/web-preview";
 import Workflow from "@/app/examples/workflow";
-import { DarkModeToggle } from "@/app/components/dark-mode-toggle";
 
 const components = [
   { name: "Actions", Component: Actions },
@@ -42,10 +44,12 @@ const components = [
   { name: "Loader", Component: Loader },
   { name: "Message", Component: Message },
   { name: "OpenInChat", Component: OpenInChat },
+  { name: "Plan", Component: Plan },
   { name: "PromptInput", Component: PromptInput },
-  { name: "TaskQueuePanel", Component: TaskQueuePanel },
+  { name: "Queue", Component: Queue },
   { name: "Reasoning", Component: Reasoning },
   { name: "Response", Component: Response },
+  { name: "Shimmer", Component: Shimmer },
   { name: "Sources", Component: Sources },
   { name: "Suggestion", Component: Suggestion },
   { name: "Task", Component: Task },
@@ -56,7 +60,7 @@ const components = [
 const Home = () => (
   <div className="container mx-auto space-y-8 py-16">
     <header className="flex items-center justify-between">
-      <h1 className="font-bold text-2xl">AI Elements !!</h1>
+      <h1 className="font-bold text-2xl">AI Elements</h1>
       <DarkModeToggle />
     </header>
     {components.map(({ name, Component }) => (

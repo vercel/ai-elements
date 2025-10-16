@@ -102,7 +102,11 @@ describe("Edge.Temporary", () => {
 
     const edges = [props];
     const { container } = render(
-      <Canvas nodes={[]} edges={edges} edgeTypes={{ temporary: Edge.Temporary }}>
+      <Canvas
+        edges={edges}
+        edgeTypes={{ temporary: Edge.Temporary }}
+        nodes={[]}
+      >
         <div>Content</div>
       </Canvas>
     );
@@ -116,12 +120,12 @@ describe("Edge.Temporary", () => {
         <svg>
           <Edge.Temporary
             id="temp-1"
+            sourcePosition={Position.Right}
             sourceX={10}
             sourceY={20}
+            targetPosition={Position.Left}
             targetX={100}
             targetY={150}
-            sourcePosition={Position.Right}
-            targetPosition={Position.Left}
           />
         </svg>
       </ReactFlowProvider>
@@ -142,7 +146,11 @@ describe("Edge.Temporary", () => {
 
     const edges = [props];
     const { container } = render(
-      <Canvas nodes={[]} edges={edges} edgeTypes={{ temporary: Edge.Temporary }}>
+      <Canvas
+        edges={edges}
+        edgeTypes={{ temporary: Edge.Temporary }}
+        nodes={[]}
+      >
         <div>Content</div>
       </Canvas>
     );
@@ -156,12 +164,12 @@ describe("Edge.Temporary", () => {
         <svg>
           <Edge.Temporary
             id="temp-2"
+            sourcePosition={Position.Top}
             sourceX={10}
             sourceY={20}
+            targetPosition={Position.Bottom}
             targetX={100}
             targetY={150}
-            sourcePosition={Position.Top}
-            targetPosition={Position.Bottom}
           />
         </svg>
       </ReactFlowProvider>
@@ -192,9 +200,9 @@ describe("Edge.Animated", () => {
     const edges = [props];
     const { container } = render(
       <Canvas
-        nodes={nodes}
         edges={edges}
         edgeTypes={{ animated: Edge.Animated }}
+        nodes={nodes}
       >
         <div>Content</div>
       </Canvas>
@@ -226,9 +234,9 @@ describe("Edge.Animated", () => {
     const edges = [props];
     const { container } = render(
       <Canvas
-        nodes={nodes}
         edges={edges}
         edgeTypes={{ animated: Edge.Animated }}
+        nodes={nodes}
       >
         <div>Content</div>
       </Canvas>
@@ -257,9 +265,9 @@ describe("Edge.Animated", () => {
     const edges = [props];
     const { container } = render(
       <Canvas
-        nodes={nodes}
         edges={edges}
         edgeTypes={{ animated: Edge.Animated }}
+        nodes={nodes}
       >
         <div>Content</div>
       </Canvas>
@@ -288,9 +296,9 @@ describe("Edge.Animated", () => {
     const edges = [props];
     const { container } = render(
       <Canvas
-        nodes={nodes}
         edges={edges}
         edgeTypes={{ animated: Edge.Animated }}
+        nodes={nodes}
       >
         <div>Content</div>
       </Canvas>
@@ -306,13 +314,13 @@ describe("Edge.Animated", () => {
           <Edge.Animated
             id="animated-1"
             source="1"
-            target="2"
+            sourcePosition={Position.Right}
             sourceX={0}
             sourceY={0}
+            target="2"
+            targetPosition={Position.Left}
             targetX={100}
             targetY={100}
-            sourcePosition={Position.Right}
-            targetPosition={Position.Left}
           />
         </svg>
       </ReactFlowProvider>
@@ -328,13 +336,13 @@ describe("Edge.Animated", () => {
           <Edge.Animated
             id="animated-missing"
             source="missing"
-            target="2"
+            sourcePosition={Position.Right}
             sourceX={0}
             sourceY={0}
+            target="2"
+            targetPosition={Position.Left}
             targetX={100}
             targetY={100}
-            sourcePosition={Position.Right}
-            targetPosition={Position.Left}
           />
         </svg>
       </ReactFlowProvider>
@@ -350,13 +358,13 @@ describe("Edge.Animated", () => {
           <Edge.Animated
             id="animated-no-handles"
             source="no-handles"
-            target="no-handles"
+            sourcePosition={Position.Right}
             sourceX={0}
             sourceY={0}
+            target="no-handles"
+            targetPosition={Position.Left}
             targetX={100}
             targetY={100}
-            sourcePosition={Position.Right}
-            targetPosition={Position.Left}
           />
         </svg>
       </ReactFlowProvider>
@@ -372,13 +380,13 @@ describe("Edge.Animated", () => {
           <Edge.Animated
             id="animated-top-bottom"
             source="top-bottom"
-            target="top-bottom"
+            sourcePosition={Position.Top}
             sourceX={0}
             sourceY={0}
+            target="top-bottom"
+            targetPosition={Position.Bottom}
             targetX={100}
             targetY={100}
-            sourcePosition={Position.Top}
-            targetPosition={Position.Bottom}
           />
         </svg>
       </ReactFlowProvider>
