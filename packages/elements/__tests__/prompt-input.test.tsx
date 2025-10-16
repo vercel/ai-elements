@@ -21,7 +21,6 @@ import {
   PromptInputSpeechButton,
   PromptInputSubmit,
   PromptInputTextarea,
-  PromptInputToolbar,
   PromptInputTools,
   usePromptInputAttachments,
 } from "../src/prompt-input";
@@ -559,29 +558,13 @@ describe("PromptInputTextarea", () => {
   });
 });
 
-describe("PromptInputToolbar", () => {
-  it("renders toolbar", () => {
-    const onSubmit = vi.fn();
-    render(
-      <PromptInput onSubmit={onSubmit}>
-        <PromptInputBody>
-          <PromptInputToolbar>Toolbar content</PromptInputToolbar>
-        </PromptInputBody>
-      </PromptInput>
-    );
-    expect(screen.getByText("Toolbar content")).toBeInTheDocument();
-  });
-});
-
 describe("PromptInputTools", () => {
   it("renders tools", () => {
     const onSubmit = vi.fn();
     render(
       <PromptInput onSubmit={onSubmit}>
         <PromptInputBody>
-          <PromptInputToolbar>
-            <PromptInputTools>Tools</PromptInputTools>
-          </PromptInputToolbar>
+          <PromptInputTools>Tools</PromptInputTools>
         </PromptInputBody>
       </PromptInput>
     );
