@@ -8,7 +8,7 @@ import {
 } from "@repo/shadcn-ui/components/ui/collapsible";
 import { ScrollArea } from "@repo/shadcn-ui/components/ui/scroll-area";
 import { cn } from "@repo/shadcn-ui/lib/utils";
-import { ChevronRightIcon, PaperclipIcon } from "lucide-react";
+import { ChevronDownIcon, PaperclipIcon } from "lucide-react";
 import type { ComponentProps } from "react";
 
 export type QueueMessagePart = {
@@ -126,7 +126,7 @@ export const QueueItemAction = ({
 }: QueueItemActionProps) => (
   <Button
     className={cn(
-      "invisible size-auto rounded p-1 text-muted-foreground hover:bg-muted-foreground/10 hover:text-foreground group-hover:visible",
+      "size-auto rounded p-1 text-muted-foreground opacity-0 transition-opacity hover:bg-muted-foreground/10 hover:text-foreground group-hover:opacity-100",
       className
     )}
     size="icon"
@@ -202,11 +202,7 @@ export const QueueSection = ({
   defaultOpen = true,
   ...props
 }: QueueSectionProps) => (
-  <Collapsible
-    className={cn(className)}
-    defaultOpen={defaultOpen}
-    {...props}
-  />
+  <Collapsible className={cn(className)} defaultOpen={defaultOpen} {...props} />
 );
 
 // QueueSectionTrigger - section header/trigger
@@ -220,7 +216,7 @@ export const QueueSectionTrigger = ({
   <CollapsibleTrigger asChild>
     <button
       className={cn(
-        "flex w-full items-center justify-between rounded-md bg-muted/40 px-3 py-2 text-left font-medium text-muted-foreground text-sm transition-colors hover:bg-muted",
+        "group flex w-full items-center justify-between rounded-md bg-muted/40 px-3 py-2 text-left font-medium text-muted-foreground text-sm transition-colors hover:bg-muted",
         className
       )}
       type="button"
@@ -246,7 +242,7 @@ export const QueueSectionLabel = ({
   ...props
 }: QueueSectionLabelProps) => (
   <span className={cn("flex items-center gap-2", className)} {...props}>
-    <ChevronRightIcon className="size-4 transition-transform data-[state=open]:rotate-90" />
+    <ChevronDownIcon className="group-data-[state=closed]:-rotate-90 size-4 transition-transform" />
     {icon}
     <span>
       {count} {label}
@@ -255,7 +251,9 @@ export const QueueSectionLabel = ({
 );
 
 // QueueSectionContent - collapsible content area
-export type QueueSectionContentProps = ComponentProps<typeof CollapsibleContent>;
+export type QueueSectionContentProps = ComponentProps<
+  typeof CollapsibleContent
+>;
 
 export const QueueSectionContent = ({
   className,
@@ -269,7 +267,7 @@ export type QueueProps = ComponentProps<"div">;
 export const Queue = ({ className, ...props }: QueueProps) => (
   <div
     className={cn(
-      "flex flex-col gap-2 rounded-t-xl border border-border border-b-0 bg-background px-3 pt-2 pb-2 shadow-xs",
+      "flex flex-col gap-2 rounded-xl border border-border bg-background px-3 pt-2 pb-2 shadow-xs",
       className
     )}
     {...props}
