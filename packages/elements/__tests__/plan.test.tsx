@@ -117,7 +117,9 @@ describe("Plan", () => {
           <PlanHeader>Content</PlanHeader>
         </Plan>
       );
-      expect(container.querySelector('[data-slot="plan-header"]')).toBeInTheDocument();
+      expect(
+        container.querySelector('[data-slot="plan-header"]')
+      ).toBeInTheDocument();
     });
   });
 
@@ -167,12 +169,16 @@ describe("Plan", () => {
           </PlanHeader>
         </Plan>
       );
-      expect(container.querySelector('[data-slot="plan-title"]')).toBeInTheDocument();
+      expect(
+        container.querySelector('[data-slot="plan-title"]')
+      ).toBeInTheDocument();
     });
 
     it("throws error when used outside Plan context", () => {
       // Suppress console.error for this test
-      const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+      const consoleSpy = vi
+        .spyOn(console, "error")
+        .mockImplementation(() => {});
 
       expect(() => {
         render(<PlanTitle>Title</PlanTitle>);
@@ -202,7 +208,9 @@ describe("Plan", () => {
           </PlanHeader>
         </Plan>
       );
-      const description = container.querySelector('[data-slot="plan-description"]');
+      const description = container.querySelector(
+        '[data-slot="plan-description"]'
+      );
       expect(description).toHaveClass("text-balance");
     });
 
@@ -210,11 +218,15 @@ describe("Plan", () => {
       const { container } = render(
         <Plan>
           <PlanHeader>
-            <PlanDescription className="custom-desc">Description</PlanDescription>
+            <PlanDescription className="custom-desc">
+              Description
+            </PlanDescription>
           </PlanHeader>
         </Plan>
       );
-      const description = container.querySelector('[data-slot="plan-description"]');
+      const description = container.querySelector(
+        '[data-slot="plan-description"]'
+      );
       expect(description).toHaveClass("custom-desc");
     });
 
@@ -248,11 +260,15 @@ describe("Plan", () => {
           </PlanHeader>
         </Plan>
       );
-      expect(container.querySelector('[data-slot="plan-description"]')).toBeInTheDocument();
+      expect(
+        container.querySelector('[data-slot="plan-description"]')
+      ).toBeInTheDocument();
     });
 
     it("throws error when used outside Plan context", () => {
-      const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+      const consoleSpy = vi
+        .spyOn(console, "error")
+        .mockImplementation(() => {});
 
       expect(() => {
         render(<PlanDescription>Description</PlanDescription>);
@@ -273,7 +289,9 @@ describe("Plan", () => {
           </PlanHeader>
         </Plan>
       );
-      expect(screen.getByRole("button", { name: "Action" })).toBeInTheDocument();
+      expect(
+        screen.getByRole("button", { name: "Action" })
+      ).toBeInTheDocument();
     });
 
     it("has correct data-slot attribute", () => {
@@ -284,7 +302,9 @@ describe("Plan", () => {
           </PlanHeader>
         </Plan>
       );
-      expect(container.querySelector('[data-slot="plan-action"]')).toBeInTheDocument();
+      expect(
+        container.querySelector('[data-slot="plan-action"]')
+      ).toBeInTheDocument();
     });
   });
 
@@ -306,7 +326,9 @@ describe("Plan", () => {
           <PlanContent>Content</PlanContent>
         </Plan>
       );
-      expect(container.querySelector('[data-slot="plan-content"]')).toBeInTheDocument();
+      expect(
+        container.querySelector('[data-slot="plan-content"]')
+      ).toBeInTheDocument();
     });
 
     it("is collapsible", async () => {
@@ -351,7 +373,9 @@ describe("Plan", () => {
           <PlanFooter>Footer</PlanFooter>
         </Plan>
       );
-      expect(container.querySelector('[data-slot="plan-footer"]')).toBeInTheDocument();
+      expect(
+        container.querySelector('[data-slot="plan-footer"]')
+      ).toBeInTheDocument();
     });
   });
 
@@ -364,7 +388,9 @@ describe("Plan", () => {
           </PlanHeader>
         </Plan>
       );
-      expect(screen.getByRole("button", { name: "Toggle plan" })).toBeInTheDocument();
+      expect(
+        screen.getByRole("button", { name: "Toggle plan" })
+      ).toBeInTheDocument();
     });
 
     it("renders chevron icon", () => {
@@ -375,7 +401,7 @@ describe("Plan", () => {
           </PlanHeader>
         </Plan>
       );
-      const icon = container.querySelector('.size-4');
+      const icon = container.querySelector(".size-4");
       expect(icon).toBeInTheDocument();
     });
 
@@ -411,7 +437,9 @@ describe("Plan", () => {
           </PlanHeader>
         </Plan>
       );
-      expect(container.querySelector('[data-slot="plan-trigger"]')).toBeInTheDocument();
+      expect(
+        container.querySelector('[data-slot="plan-trigger"]')
+      ).toBeInTheDocument();
     });
 
     it("toggles content visibility on click", async () => {
@@ -468,15 +496,19 @@ describe("Plan", () => {
       expect(screen.getByText("My Plan")).toBeInTheDocument();
       expect(screen.getByText("Plan description")).toBeInTheDocument();
       expect(screen.getByRole("button", { name: "Edit" })).toBeInTheDocument();
-      expect(screen.getByRole("button", { name: "Toggle plan" })).toBeInTheDocument();
+      expect(
+        screen.getByRole("button", { name: "Toggle plan" })
+      ).toBeInTheDocument();
       expect(screen.getByText("Step 1")).toBeInTheDocument();
       expect(screen.getByText("Step 2")).toBeInTheDocument();
-      expect(screen.getByRole("button", { name: "Submit" })).toBeInTheDocument();
+      expect(
+        screen.getByRole("button", { name: "Submit" })
+      ).toBeInTheDocument();
     });
 
     it("handles streaming state throughout components", () => {
       const { container } = render(
-        <Plan isStreaming defaultOpen>
+        <Plan defaultOpen isStreaming>
           <PlanHeader>
             <PlanTitle>Streaming Plan</PlanTitle>
             <PlanDescription>Loading description</PlanDescription>
@@ -487,7 +519,9 @@ describe("Plan", () => {
 
       // Both title and description should have shimmer when streaming
       const title = container.querySelector('[data-slot="plan-title"]');
-      const description = container.querySelector('[data-slot="plan-description"]');
+      const description = container.querySelector(
+        '[data-slot="plan-description"]'
+      );
 
       expect(title).toBeInTheDocument();
       expect(description).toBeInTheDocument();
@@ -503,7 +537,7 @@ describe("Plan", () => {
       };
 
       const { rerender } = render(
-        <Plan open={open} onOpenChange={setOpen}>
+        <Plan onOpenChange={setOpen} open={open}>
           <PlanHeader>
             <PlanTrigger />
           </PlanHeader>
@@ -519,7 +553,7 @@ describe("Plan", () => {
       // Update the controlled state
       open = true;
       rerender(
-        <Plan open={open} onOpenChange={setOpen}>
+        <Plan onOpenChange={setOpen} open={open}>
           <PlanHeader>
             <PlanTrigger />
           </PlanHeader>

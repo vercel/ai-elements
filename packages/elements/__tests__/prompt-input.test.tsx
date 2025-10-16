@@ -17,7 +17,6 @@ import {
   PromptInputModelSelectItem,
   PromptInputModelSelectTrigger,
   PromptInputModelSelectValue,
-  PromptInputProvider,
   PromptInputSpeechButton,
   PromptInputSubmit,
   PromptInputTextarea,
@@ -715,8 +714,13 @@ describe("PromptInputProvider", () => {
   });
 
   it("provides initial input value", async () => {
-    const { PromptInputProvider, PromptInput, PromptInputBody, PromptInputTextarea, usePromptInputController } =
-      await import("../src/prompt-input");
+    const {
+      PromptInputProvider,
+      PromptInput,
+      PromptInputBody,
+      PromptInputTextarea,
+      usePromptInputController,
+    } = await import("../src/prompt-input");
     const onSubmit = vi.fn();
 
     const TestComponent = () => {
@@ -988,7 +992,9 @@ describe("Paste functionality", () => {
       </PromptInput>
     );
 
-    const textarea = screen.getByPlaceholderText("What would you like to know?");
+    const textarea = screen.getByPlaceholderText(
+      "What would you like to know?"
+    );
     textarea.focus();
 
     const file = new File(["image"], "test.png", { type: "image/png" });
@@ -1027,7 +1033,9 @@ describe("Paste functionality", () => {
       </PromptInput>
     );
 
-    const textarea = screen.getByPlaceholderText("What would you like to know?");
+    const textarea = screen.getByPlaceholderText(
+      "What would you like to know?"
+    );
     textarea.focus();
 
     const pasteEvent = new Event("paste", {
@@ -1156,14 +1164,19 @@ describe("PromptInputSpeechButton", () => {
   });
 
   it("handles speech recognition error", () => {
-    const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
+    const consoleError = vi
+      .spyOn(console, "error")
+      .mockImplementation(() => {});
 
     render(<PromptInputSpeechButton />);
 
     // Simulate error
     mockRecognition.onerror?.({ error: "network" });
 
-    expect(consoleError).toHaveBeenCalledWith("Speech recognition error:", "network");
+    expect(consoleError).toHaveBeenCalledWith(
+      "Speech recognition error:",
+      "network"
+    );
     consoleError.mockRestore();
   });
 
@@ -1240,7 +1253,9 @@ describe("PromptInputAttachment", () => {
             Add
           </button>
           <PromptInputAttachments>
-            {(attachment) => <PromptInputAttachment data={attachment} key={attachment.id} />}
+            {(attachment) => (
+              <PromptInputAttachment data={attachment} key={attachment.id} />
+            )}
           </PromptInputAttachments>
         </>
       );
@@ -1276,7 +1291,10 @@ describe("PromptInputAttachment", () => {
       const attachments = usePromptInputAttachments();
       return (
         <>
-          <button onClick={() => attachments.add([file1, file2, file3])} type="button">
+          <button
+            onClick={() => attachments.add([file1, file2, file3])}
+            type="button"
+          >
             Add Files
           </button>
           <PromptInputAttachments>
@@ -1429,7 +1447,7 @@ describe("PromptInputHeader", () => {
   it("renders header content", async () => {
     const { PromptInputHeader } = await import("../src/prompt-input");
     const onSubmit = vi.fn();
-    
+
     render(
       <PromptInput onSubmit={onSubmit}>
         <PromptInputBody>
@@ -1438,23 +1456,25 @@ describe("PromptInputHeader", () => {
         </PromptInputBody>
       </PromptInput>
     );
-    
+
     expect(screen.getByText("Header content")).toBeInTheDocument();
   });
-  
+
   it("applies custom className", async () => {
     const { PromptInputHeader } = await import("../src/prompt-input");
     const onSubmit = vi.fn();
-    
+
     const { container } = render(
       <PromptInput onSubmit={onSubmit}>
         <PromptInputBody>
-          <PromptInputHeader className="custom-header">Header</PromptInputHeader>
+          <PromptInputHeader className="custom-header">
+            Header
+          </PromptInputHeader>
           <PromptInputTextarea />
         </PromptInputBody>
       </PromptInput>
     );
-    
+
     expect(container.querySelector(".custom-header")).toBeInTheDocument();
   });
 });
@@ -1463,7 +1483,7 @@ describe("PromptInputFooter", () => {
   it("renders footer content", async () => {
     const { PromptInputFooter } = await import("../src/prompt-input");
     const onSubmit = vi.fn();
-    
+
     render(
       <PromptInput onSubmit={onSubmit}>
         <PromptInputBody>
@@ -1472,32 +1492,38 @@ describe("PromptInputFooter", () => {
         </PromptInputBody>
       </PromptInput>
     );
-    
+
     expect(screen.getByText("Footer content")).toBeInTheDocument();
   });
-  
+
   it("applies custom className", async () => {
     const { PromptInputFooter } = await import("../src/prompt-input");
     const onSubmit = vi.fn();
-    
+
     const { container } = render(
       <PromptInput onSubmit={onSubmit}>
         <PromptInputBody>
           <PromptInputTextarea />
-          <PromptInputFooter className="custom-footer">Footer</PromptInputFooter>
+          <PromptInputFooter className="custom-footer">
+            Footer
+          </PromptInputFooter>
         </PromptInputBody>
       </PromptInput>
     );
-    
+
     expect(container.querySelector(".custom-footer")).toBeInTheDocument();
   });
 });
 
 describe("PromptInputHoverCard", () => {
   it("renders hover card", async () => {
-    const { PromptInputHoverCard, PromptInputHoverCardTrigger, PromptInputHoverCardContent } = await import("../src/prompt-input");
+    const {
+      PromptInputHoverCard,
+      PromptInputHoverCardTrigger,
+      PromptInputHoverCardContent,
+    } = await import("../src/prompt-input");
     const onSubmit = vi.fn();
-    
+
     render(
       <PromptInput onSubmit={onSubmit}>
         <PromptInputBody>
@@ -1512,14 +1538,21 @@ describe("PromptInputHoverCard", () => {
         </PromptInputBody>
       </PromptInput>
     );
-    
+
     expect(screen.getByText("Hover me")).toBeInTheDocument();
   });
 });
 
 describe("PromptInputCommand", () => {
   it("renders command input", async () => {
-    const { PromptInputCommand, PromptInputCommandInput, PromptInputCommandList, PromptInputCommandEmpty, PromptInputCommandGroup, PromptInputCommandItem } = await import("../src/prompt-input");
+    const {
+      PromptInputCommand,
+      PromptInputCommandInput,
+      PromptInputCommandList,
+      PromptInputCommandEmpty,
+      PromptInputCommandGroup,
+      PromptInputCommandItem,
+    } = await import("../src/prompt-input");
     const onSubmit = vi.fn();
 
     // Mock scrollIntoView for command
@@ -1546,9 +1579,14 @@ describe("PromptInputCommand", () => {
     expect(screen.getByText("Item 1")).toBeInTheDocument();
     expect(screen.getByText("Item 2")).toBeInTheDocument();
   });
-  
+
   it("shows empty state", async () => {
-    const { PromptInputCommand, PromptInputCommandInput, PromptInputCommandList, PromptInputCommandEmpty } = await import("../src/prompt-input");
+    const {
+      PromptInputCommand,
+      PromptInputCommandInput,
+      PromptInputCommandList,
+      PromptInputCommandEmpty,
+    } = await import("../src/prompt-input");
     const onSubmit = vi.fn();
 
     // Mock scrollIntoView for command
@@ -1560,7 +1598,9 @@ describe("PromptInputCommand", () => {
           <PromptInputCommand>
             <PromptInputCommandInput />
             <PromptInputCommandList>
-              <PromptInputCommandEmpty>No results found</PromptInputCommandEmpty>
+              <PromptInputCommandEmpty>
+                No results found
+              </PromptInputCommandEmpty>
             </PromptInputCommandList>
           </PromptInputCommand>
         </PromptInputBody>
@@ -1569,9 +1609,15 @@ describe("PromptInputCommand", () => {
 
     expect(screen.getByText("No results found")).toBeInTheDocument();
   });
-  
+
   it("renders command separator", async () => {
-    const { PromptInputCommand, PromptInputCommandList, PromptInputCommandGroup, PromptInputCommandItem, PromptInputCommandSeparator } = await import("../src/prompt-input");
+    const {
+      PromptInputCommand,
+      PromptInputCommandList,
+      PromptInputCommandGroup,
+      PromptInputCommandItem,
+      PromptInputCommandSeparator,
+    } = await import("../src/prompt-input");
     const onSubmit = vi.fn();
 
     // Mock scrollIntoView for command
@@ -1601,9 +1647,11 @@ describe("PromptInputCommand", () => {
 
 describe("PromptInputTab components", () => {
   it("renders tab list", async () => {
-    const { PromptInputTabsList, PromptInputTab } = await import("../src/prompt-input");
+    const { PromptInputTabsList, PromptInputTab } = await import(
+      "../src/prompt-input"
+    );
     const onSubmit = vi.fn();
-    
+
     render(
       <PromptInput onSubmit={onSubmit}>
         <PromptInputBody>
@@ -1614,15 +1662,20 @@ describe("PromptInputTab components", () => {
         </PromptInputBody>
       </PromptInput>
     );
-    
+
     expect(screen.getByText("Tab 1")).toBeInTheDocument();
     expect(screen.getByText("Tab 2")).toBeInTheDocument();
   });
-  
+
   it("renders tab with label and body", async () => {
-    const { PromptInputTab, PromptInputTabLabel, PromptInputTabBody, PromptInputTabItem } = await import("../src/prompt-input");
+    const {
+      PromptInputTab,
+      PromptInputTabLabel,
+      PromptInputTabBody,
+      PromptInputTabItem,
+    } = await import("../src/prompt-input");
     const onSubmit = vi.fn();
-    
+
     render(
       <PromptInput onSubmit={onSubmit}>
         <PromptInputBody>
@@ -1636,7 +1689,7 @@ describe("PromptInputTab components", () => {
         </PromptInputBody>
       </PromptInput>
     );
-    
+
     expect(screen.getByText("Commands")).toBeInTheDocument();
     expect(screen.getByText("Command 1")).toBeInTheDocument();
     expect(screen.getByText("Command 2")).toBeInTheDocument();
@@ -1647,7 +1700,7 @@ describe("PromptInputModelSelect components", () => {
   it("renders model select with all subcomponents", async () => {
     const onSubmit = vi.fn();
     const user = userEvent.setup();
-    
+
     render(
       <PromptInput onSubmit={onSubmit}>
         <PromptInputBody>
@@ -1656,17 +1709,21 @@ describe("PromptInputModelSelect components", () => {
               <PromptInputModelSelectValue placeholder="Choose model" />
             </PromptInputModelSelectTrigger>
             <PromptInputModelSelectContent>
-              <PromptInputModelSelectItem value="model-1">Model 1</PromptInputModelSelectItem>
-              <PromptInputModelSelectItem value="model-2">Model 2</PromptInputModelSelectItem>
+              <PromptInputModelSelectItem value="model-1">
+                Model 1
+              </PromptInputModelSelectItem>
+              <PromptInputModelSelectItem value="model-2">
+                Model 2
+              </PromptInputModelSelectItem>
             </PromptInputModelSelectContent>
           </PromptInputModelSelect>
         </PromptInputBody>
       </PromptInput>
     );
-    
+
     expect(screen.getByText("Choose model")).toBeInTheDocument();
   });
-  
+
   it("opens model select menu", async () => {
     const onSubmit = vi.fn();
     const user = userEvent.setup();
@@ -1683,7 +1740,9 @@ describe("PromptInputModelSelect components", () => {
               <PromptInputModelSelectValue placeholder="Select" />
             </PromptInputModelSelectTrigger>
             <PromptInputModelSelectContent>
-              <PromptInputModelSelectItem value="model-1">Model 1</PromptInputModelSelectItem>
+              <PromptInputModelSelectItem value="model-1">
+                Model 1
+              </PromptInputModelSelectItem>
             </PromptInputModelSelectContent>
           </PromptInputModelSelect>
         </PromptInputBody>
@@ -1704,7 +1763,7 @@ describe("PromptInputActionMenu subcomponents", () => {
   it("renders action menu content", async () => {
     const onSubmit = vi.fn();
     const user = userEvent.setup();
-    
+
     render(
       <PromptInput onSubmit={onSubmit}>
         <PromptInputBody>
@@ -1718,52 +1777,56 @@ describe("PromptInputActionMenu subcomponents", () => {
         </PromptInputBody>
       </PromptInput>
     );
-    
+
     const trigger = screen.getByRole("button");
     await user.click(trigger);
-    
+
     await vi.waitFor(() => {
       expect(screen.getByText("Action 1")).toBeInTheDocument();
       expect(screen.getByText("Action 2")).toBeInTheDocument();
     });
   });
-  
+
   it("handles menu item click", async () => {
     const onSubmit = vi.fn();
     const onAction = vi.fn();
     const user = userEvent.setup();
-    
+
     render(
       <PromptInput onSubmit={onSubmit}>
         <PromptInputBody>
           <PromptInputActionMenu>
             <PromptInputActionMenuTrigger />
             <PromptInputActionMenuContent>
-              <PromptInputActionMenuItem onSelect={onAction}>Click me</PromptInputActionMenuItem>
+              <PromptInputActionMenuItem onSelect={onAction}>
+                Click me
+              </PromptInputActionMenuItem>
             </PromptInputActionMenuContent>
           </PromptInputActionMenu>
         </PromptInputBody>
       </PromptInput>
     );
-    
+
     const trigger = screen.getByRole("button");
     await user.click(trigger);
-    
+
     await vi.waitFor(async () => {
       const menuItem = screen.getByText("Click me");
       expect(menuItem).toBeInTheDocument();
       await user.click(menuItem);
     });
-    
+
     expect(onAction).toHaveBeenCalled();
   });
 });
 
 describe("Integration tests", () => {
   it("renders complete prompt input with all components", async () => {
-    const { PromptInputHeader, PromptInputFooter } = await import("../src/prompt-input");
+    const { PromptInputHeader, PromptInputFooter } = await import(
+      "../src/prompt-input"
+    );
     const onSubmit = vi.fn();
-    
+
     render(
       <PromptInput onSubmit={onSubmit}>
         <PromptInputBody>
@@ -1773,7 +1836,9 @@ describe("Integration tests", () => {
                 <PromptInputModelSelectValue placeholder="Model" />
               </PromptInputModelSelectTrigger>
               <PromptInputModelSelectContent>
-                <PromptInputModelSelectItem value="gpt-4">GPT-4</PromptInputModelSelectItem>
+                <PromptInputModelSelectItem value="gpt-4">
+                  GPT-4
+                </PromptInputModelSelectItem>
               </PromptInputModelSelectContent>
             </PromptInputModelSelect>
           </PromptInputHeader>
@@ -1793,8 +1858,10 @@ describe("Integration tests", () => {
         </PromptInputBody>
       </PromptInput>
     );
-    
-    expect(screen.getByPlaceholderText("What would you like to know?")).toBeInTheDocument();
+
+    expect(
+      screen.getByPlaceholderText("What would you like to know?")
+    ).toBeInTheDocument();
     expect(screen.getByText("Model")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /submit/i })).toBeInTheDocument();
   });

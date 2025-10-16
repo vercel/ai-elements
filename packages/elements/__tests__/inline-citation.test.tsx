@@ -219,7 +219,9 @@ describe("InlineCitationCarouselPrev", () => {
         </InlineCitationCarouselContent>
       </InlineCitationCarousel>
     );
-    expect(screen.getByRole("button", { name: /previous/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /previous/i })
+    ).toBeInTheDocument();
   });
 
   it("applies custom className", () => {

@@ -8,7 +8,9 @@ const mockScrollToBottom = vi.fn();
 
 vi.mock("use-stick-to-bottom", () => {
   const StickToBottomMock = ({ children, ...props }: any) => (
-    <div role="log" {...props}>{children}</div>
+    <div role="log" {...props}>
+      {children}
+    </div>
   );
 
   const StickToBottomContent = ({ children, ...props }: any) => (

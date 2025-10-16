@@ -27,7 +27,9 @@ describe("Queue", () => {
   });
 
   it("applies custom className", () => {
-    const { container } = render(<Queue className="custom-class">Content</Queue>);
+    const { container } = render(
+      <Queue className="custom-class">Content</Queue>
+    );
     expect(container.firstChild).toHaveClass("custom-class");
   });
 });
@@ -76,7 +78,9 @@ describe("QueueItemContent", () => {
   });
 
   it("applies completed styling", () => {
-    const { container } = render(<QueueItemContent completed>Done</QueueItemContent>);
+    const { container } = render(
+      <QueueItemContent completed>Done</QueueItemContent>
+    );
     expect(container.firstChild).toHaveClass("line-through");
     expect(container.firstChild).toHaveClass("text-muted-foreground/50");
   });
@@ -115,7 +119,9 @@ describe("QueueItemActions", () => {
 describe("QueueItemAction", () => {
   it("renders action button", () => {
     render(<QueueItemAction>Click me</QueueItemAction>);
-    expect(screen.getByRole("button", { name: "Click me" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Click me" })
+    ).toBeInTheDocument();
   });
 
   it("calls onClick handler", async () => {
@@ -138,7 +144,7 @@ describe("QueueItemAttachment", () => {
 
 describe("QueueItemImage", () => {
   it("renders image", () => {
-    render(<QueueItemImage src="test.jpg" alt="Test image" />);
+    render(<QueueItemImage alt="Test image" src="test.jpg" />);
     const img = screen.getByAltText("Test image");
     expect(img).toBeInTheDocument();
     expect(img).toHaveAttribute("src", "test.jpg");
@@ -215,7 +221,9 @@ describe("QueueSection", () => {
     await vi.waitFor(() => {
       const contentAfterCollapse = screen.queryByText("Content");
       // Check if it's either not in the document or has been hidden
-      expect(contentAfterCollapse === null || !contentAfterCollapse.offsetParent).toBe(true);
+      expect(
+        contentAfterCollapse === null || !contentAfterCollapse.offsetParent
+      ).toBe(true);
     });
   });
 });
@@ -228,7 +236,9 @@ describe("QueueSectionTrigger", () => {
         <QueueSectionContent>Content</QueueSectionContent>
       </QueueSection>
     );
-    expect(screen.getByRole("button", { name: "Trigger text" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Trigger text" })
+    ).toBeInTheDocument();
   });
 });
 
