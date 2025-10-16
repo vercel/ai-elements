@@ -10,6 +10,12 @@ import {
   DropdownMenuTrigger,
 } from "@repo/shadcn-ui/components/ui/dropdown-menu";
 import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@repo/shadcn-ui/components/ui/hover-card";
+import {
   InputGroup,
   InputGroupAddon,
   InputGroupButton,
@@ -861,15 +867,31 @@ export const PromptInputTextarea = ({
   );
 };
 
-export type PromptInputToolbarProps = Omit<
+export type PromptInputHeaderProps = Omit<
   ComponentProps<typeof InputGroupAddon>,
   "align"
 >;
 
-export const PromptInputToolbar = ({
+export const PromptInputHeader = ({
   className,
   ...props
-}: PromptInputToolbarProps) => (
+}: PromptInputHeaderProps) => (
+  <InputGroupAddon
+    align="block-end"
+    className={cn("order-first justify-between gap-1", className)}
+    {...props}
+  />
+);
+
+export type PromptInputFooterProps = Omit<
+  ComponentProps<typeof InputGroupAddon>,
+  "align"
+>;
+
+export const PromptInputFooter = ({
+  className,
+  ...props
+}: PromptInputFooterProps) => (
   <InputGroupAddon
     align="block-end"
     className={cn("justify-between gap-1", className)}
@@ -1195,4 +1217,26 @@ export const PromptInputModelSelectValue = ({
   ...props
 }: PromptInputModelSelectValueProps) => (
   <SelectValue className={cn(className)} {...props} />
+);
+
+export type PromptInputTabsProps = ComponentProps<typeof HoverCard>;
+
+export const PromptInputTabs = (props: PromptInputTabsProps) => (
+  <HoverCard {...props} />
+);
+
+export type PromptInputTabsTriggerProps = ComponentProps<
+  typeof HoverCardTrigger
+>;
+
+export const PromptInputTabsTrigger = (props: PromptInputTabsTriggerProps) => (
+  <HoverCardTrigger {...props} />
+);
+
+export type PromptInputTabsContentProps = ComponentProps<
+  typeof HoverCardContent
+>;
+
+export const PromptInputTabsContent = (props: PromptInputTabsContentProps) => (
+  <HoverCardContent {...props} />
 );

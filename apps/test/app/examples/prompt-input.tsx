@@ -10,6 +10,8 @@ import {
   PromptInputAttachments,
   PromptInputBody,
   PromptInputButton,
+  PromptInputFooter,
+  PromptInputHeader,
   type PromptInputMessage,
   PromptInputModelSelect,
   PromptInputModelSelectContent,
@@ -19,13 +21,15 @@ import {
   PromptInputProvider,
   PromptInputSpeechButton,
   PromptInputSubmit,
+  PromptInputTabs,
+  PromptInputTabsContent,
+  PromptInputTabsTrigger,
   PromptInputTextarea,
-  PromptInputToolbar,
   PromptInputTools,
   usePromptInputController,
 } from "@repo/elements/prompt-input";
 import { Button } from "@repo/shadcn-ui/components/ui/button";
-import { GlobeIcon } from "lucide-react";
+import { FilesIcon, GlobeIcon } from "lucide-react";
 import { useRef, useState } from "react";
 
 const models = [
@@ -42,6 +46,19 @@ const models = [
 
 const SUBMITTING_TIMEOUT = 200;
 const STREAMING_TIMEOUT = 2000;
+
+const sampleFiles = {
+  activeTabs: [{ path: "packages/elements/src/prompt-input.tsx" }],
+  recents: [
+    { path: "packages/elements/src/task-queue-panel.tsx" },
+    { path: "apps/test/app/examples/task-queue-panel.tsx" },
+    { path: "apps/test/app/page.tsx" },
+    { path: "packages/elements/src/task.tsx" },
+    { path: "apps/test/app/examples/prompt-input.tsx" },
+    { path: "packages/elements/src/queue.tsx" },
+    { path: "apps/test/app/examples/queue.tsx" },
+  ],
+};
 
 function HeaderControls() {
   const controller = usePromptInputController();
@@ -116,13 +133,67 @@ const Example = () => {
     <PromptInputProvider>
       <HeaderControls />
       <PromptInput globalDrop multiple onSubmit={handleSubmit}>
+        <PromptInputHeader>
+          <PromptInputTabs>
+            <PromptInputTabsTrigger>
+              <PromptInputButton>
+                <FilesIcon className="text-muted-foreground" size={12} />
+                <span>1 Tab</span>
+              </PromptInputButton>
+            </PromptInputTabsTrigger>
+            <PromptInputTabsContent
+              align="start"
+              className="w-[300px] space-y-4 px-0 py-3"
+            >
+              <div>
+                <h3 className="mb-2 px-3 font-medium text-muted-foreground text-xs">
+                  Active Tabs
+                </h3>
+                <div className="space-y-1">
+                  {sampleFiles.activeTabs.map((file) => (
+                    <div
+                      className="flex items-center gap-2 px-3 py-2 text-xs hover:bg-accent"
+                      key={file.path}
+                    >
+                      <GlobeIcon className="text-primary" size={16} />
+                      <span className="truncate" dir="rtl">
+                        {file.path}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <h3 className="mb-2 px-3 font-medium text-muted-foreground text-xs">
+                  Recents
+                </h3>
+                <div className="space-y-1">
+                  {sampleFiles.recents.map((file) => (
+                    <div
+                      className="flex items-center gap-2 px-3 py-2 text-xs hover:bg-accent"
+                      key={file.path}
+                    >
+                      <GlobeIcon className="text-primary" size={16} />
+                      <span className="truncate" dir="rtl">
+                        {file.path}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="border-t px-3 pt-2 text-muted-foreground text-xs">
+                Only file paths are included
+              </div>
+            </PromptInputTabsContent>
+          </PromptInputTabs>
+        </PromptInputHeader>
         <PromptInputBody>
           <PromptInputAttachments>
             {(attachment) => <PromptInputAttachment data={attachment} />}
           </PromptInputAttachments>
           <PromptInputTextarea ref={textareaRef} />
         </PromptInputBody>
-        <PromptInputToolbar>
+        <PromptInputFooter>
           <PromptInputTools>
             <PromptInputActionMenu>
               <PromptInputActionMenuTrigger />
@@ -152,7 +223,7 @@ const Example = () => {
             </PromptInputModelSelect>
           </PromptInputTools>
           <PromptInputSubmit status={status} />
-        </PromptInputToolbar>
+        </PromptInputFooter>
       </PromptInput>
     </PromptInputProvider>
   );
