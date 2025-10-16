@@ -17,6 +17,7 @@ import { Message, MessageAvatar, MessageContent } from "@repo/elements/message";
 import {
   PromptInput,
   PromptInputButton,
+  PromptInputFooter,
   type PromptInputMessage,
   PromptInputModelSelect,
   PromptInputModelSelectContent,
@@ -25,7 +26,6 @@ import {
   PromptInputModelSelectValue,
   PromptInputSubmit,
   PromptInputTextarea,
-  PromptInputToolbar,
   PromptInputTools,
 } from "@repo/elements/prompt-input";
 import {
@@ -40,6 +40,13 @@ import {
   SourcesContent,
   SourcesTrigger,
 } from "@repo/elements/sources";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@repo/shadcn-ui/components/ui/dropdown-menu";
+import { cn } from "@repo/shadcn-ui/lib/utils";
 import type { ToolUIPart } from "ai";
 import {
   ArrowUpIcon,
@@ -53,13 +60,6 @@ import {
 import { nanoid } from "nanoid";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { cn } from "@/lib/utils";
 
 type MessageType = {
   key: string;
@@ -662,7 +662,7 @@ const Example = () => {
             placeholder="Reply to Claude..."
             value={text}
           />
-          <PromptInputToolbar className="p-0">
+          <PromptInputFooter className="p-0">
             <PromptInputTools>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -724,7 +724,7 @@ const Example = () => {
                 <ArrowUpIcon size={16} />
               </PromptInputSubmit>
             </div>
-          </PromptInputToolbar>
+          </PromptInputFooter>
         </PromptInput>
       </div>
     </div>
