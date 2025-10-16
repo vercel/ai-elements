@@ -58,42 +58,40 @@ const citation = {
   ],
 };
 
-const Example = () => {
-  return (
-    <p className="text-sm leading-relaxed">
-      According to recent studies, artificial intelligence has shown remarkable
-      progress in natural language processing.{" "}
-      <InlineCitation>
-        <InlineCitationText>{citation.text}</InlineCitationText>
-        <InlineCitationCard>
-          <InlineCitationCardTrigger
-            sources={citation.sources.map((source) => source.url)}
-          />
-          <InlineCitationCardBody>
-            <InlineCitationCarousel>
-              <InlineCitationCarouselHeader>
-                <InlineCitationCarouselPrev />
-                <InlineCitationCarouselNext />
-                <InlineCitationCarouselIndex />
-              </InlineCitationCarouselHeader>
-              <InlineCitationCarouselContent>
-                {citation.sources.map((source) => (
-                  <InlineCitationCarouselItem key={source.url}>
-                    <InlineCitationSource
-                      description={source.description}
-                      title={source.title}
-                      url={source.url}
-                    />
-                  </InlineCitationCarouselItem>
-                ))}
-              </InlineCitationCarouselContent>
-            </InlineCitationCarousel>
-          </InlineCitationCardBody>
-        </InlineCitationCard>
-      </InlineCitation>
-      .
-    </p>
-  );
-};
+const Example = () => (
+  <p className="text-sm leading-relaxed">
+    According to recent studies, artificial intelligence has shown remarkable
+    progress in natural language processing.{" "}
+    <InlineCitation>
+      <InlineCitationText>{citation.text}</InlineCitationText>
+      <InlineCitationCard>
+        <InlineCitationCardTrigger
+          sources={citation.sources.map((source) => source.url)}
+        />
+        <InlineCitationCardBody>
+          <InlineCitationCarousel>
+            <InlineCitationCarouselHeader>
+              <InlineCitationCarouselPrev />
+              <InlineCitationCarouselNext />
+              <InlineCitationCarouselIndex />
+            </InlineCitationCarouselHeader>
+            <InlineCitationCarouselContent>
+              {citation.sources.map((source) => (
+                <InlineCitationCarouselItem key={source.url}>
+                  <InlineCitationSource
+                    description={source.description}
+                    title={source.title}
+                    url={source.url}
+                  />
+                </InlineCitationCarouselItem>
+              ))}
+            </InlineCitationCarouselContent>
+          </InlineCitationCarousel>
+        </InlineCitationCardBody>
+      </InlineCitationCard>
+    </InlineCitation>
+    .
+  </p>
+);
 
 export default Example;

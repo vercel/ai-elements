@@ -6,7 +6,7 @@ import { Panel } from "../src/panel";
 describe("Panel", () => {
   it("renders children within Canvas", () => {
     render(
-      <Canvas nodes={[]} edges={[]}>
+      <Canvas edges={[]} nodes={[]}>
         <Panel>Panel content</Panel>
       </Canvas>
     );
@@ -15,7 +15,7 @@ describe("Panel", () => {
 
   it("applies custom className", () => {
     const { container } = render(
-      <Canvas nodes={[]} edges={[]}>
+      <Canvas edges={[]} nodes={[]}>
         <Panel className="custom-panel">Content</Panel>
       </Canvas>
     );
@@ -26,7 +26,7 @@ describe("Panel", () => {
 
   it("renders with default styles", () => {
     const { container } = render(
-      <Canvas nodes={[]} edges={[]}>
+      <Canvas edges={[]} nodes={[]}>
         <Panel>Content</Panel>
       </Canvas>
     );
@@ -35,7 +35,7 @@ describe("Panel", () => {
 
   it("passes through additional props", () => {
     const { container } = render(
-      <Canvas nodes={[]} edges={[]}>
+      <Canvas edges={[]} nodes={[]}>
         <Panel data-testid="test-panel">Content</Panel>
       </Canvas>
     );
