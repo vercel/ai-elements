@@ -17,6 +17,7 @@ import InlineCitation from "@/app/examples/inline-citation";
 import Loader from "@/app/examples/loader";
 import Message from "@/app/examples/message";
 import OpenInChat from "@/app/examples/open-in-chat";
+import Plan from "@/app/examples/plan";
 import PromptInput from "@/app/examples/prompt-input";
 import Queue from "@/app/examples/queue";
 import Reasoning from "@/app/examples/reasoning";
@@ -43,6 +44,7 @@ const components = [
   { name: "Loader", Component: Loader },
   { name: "Message", Component: Message },
   { name: "OpenInChat", Component: OpenInChat },
+  { name: "Plan", Component: Plan },
   { name: "PromptInput", Component: PromptInput },
   { name: "Queue", Component: Queue },
   { name: "Reasoning", Component: Reasoning },
