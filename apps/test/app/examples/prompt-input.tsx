@@ -12,6 +12,9 @@ import {
   PromptInputButton,
   PromptInputFooter,
   PromptInputHeader,
+  PromptInputHoverCard,
+  PromptInputHoverCardContent,
+  PromptInputHoverCardTrigger,
   type PromptInputMessage,
   PromptInputModelSelect,
   PromptInputModelSelectContent,
@@ -25,9 +28,6 @@ import {
   PromptInputTabBody,
   PromptInputTabItem,
   PromptInputTabLabel,
-  PromptInputTabs,
-  PromptInputTabsContent,
-  PromptInputTabsTrigger,
   PromptInputTextarea,
   PromptInputTools,
   usePromptInputController,
@@ -138,14 +138,14 @@ const Example = () => {
       <HeaderControls />
       <PromptInput globalDrop multiple onSubmit={handleSubmit}>
         <PromptInputHeader>
-          <PromptInputTabs>
-            <PromptInputTabsTrigger>
+          <PromptInputHoverCard>
+            <PromptInputHoverCardTrigger>
               <PromptInputButton>
                 <FilesIcon className="text-muted-foreground" size={12} />
                 <span>1 Tab</span>
               </PromptInputButton>
-            </PromptInputTabsTrigger>
-            <PromptInputTabsContent>
+            </PromptInputHoverCardTrigger>
+            <PromptInputHoverCardContent>
               <PromptInputTab>
                 <PromptInputTabLabel>Active Tabs</PromptInputTabLabel>
                 <PromptInputTabBody>
@@ -175,8 +175,8 @@ const Example = () => {
               <div className="border-t px-3 pt-2 text-muted-foreground text-xs">
                 Only file paths are included
               </div>
-            </PromptInputTabsContent>
-          </PromptInputTabs>
+            </PromptInputHoverCardContent>
+          </PromptInputHoverCard>
         </PromptInputHeader>
         <PromptInputBody>
           <PromptInputAttachments>

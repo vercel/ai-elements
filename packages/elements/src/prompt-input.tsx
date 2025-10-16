@@ -1219,29 +1219,29 @@ export const PromptInputModelSelectValue = ({
   <SelectValue className={cn(className)} {...props} />
 );
 
-export type PromptInputTabsProps = ComponentProps<typeof HoverCard>;
+export type PromptInputHoverCardProps = ComponentProps<typeof HoverCard>;
 
-export const PromptInputTabs = (props: PromptInputTabsProps) => (
+export const PromptInputHoverCard = (props: PromptInputHoverCardProps) => (
   <HoverCard {...props} />
 );
 
-export type PromptInputTabsTriggerProps = ComponentProps<
+export type PromptInputHoverCardTriggerProps = ComponentProps<
   typeof HoverCardTrigger
 >;
 
-export const PromptInputTabsTrigger = (props: PromptInputTabsTriggerProps) => (
-  <HoverCardTrigger {...props} />
-);
+export const PromptInputHoverCardTrigger = (
+  props: PromptInputHoverCardTriggerProps
+) => <HoverCardTrigger {...props} />;
 
-export type PromptInputTabsContentProps = ComponentProps<
+export type PromptInputHoverCardContentProps = ComponentProps<
   typeof HoverCardContent
 >;
 
-export const PromptInputTabsContent = ({
+export const PromptInputHoverCardContent = ({
   className,
   align = "start",
   ...props
-}: PromptInputTabsContentProps) => (
+}: PromptInputHoverCardContentProps) => (
   <HoverCardContent
     align={align}
     className={cn("w-[300px] space-y-4 px-0 py-3", className)}
