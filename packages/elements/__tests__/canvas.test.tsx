@@ -5,7 +5,7 @@ import { Canvas } from "../src/canvas";
 describe("Canvas", () => {
   it("renders with default props", () => {
     const { container } = render(
-      <Canvas nodes={[]} edges={[]}>
+      <Canvas edges={[]} nodes={[]}>
         <div>Test content</div>
       </Canvas>
     );
@@ -14,7 +14,7 @@ describe("Canvas", () => {
 
   it("renders children", () => {
     render(
-      <Canvas nodes={[]} edges={[]}>
+      <Canvas edges={[]} nodes={[]}>
         <div>Test children</div>
       </Canvas>
     );
@@ -23,7 +23,7 @@ describe("Canvas", () => {
 
   it("applies custom props", () => {
     const { container } = render(
-      <Canvas className="custom-class" nodes={[]} edges={[]}>
+      <Canvas className="custom-class" edges={[]} nodes={[]}>
         <div>Content</div>
       </Canvas>
     );
@@ -39,7 +39,7 @@ describe("Canvas", () => {
     const edges = [{ id: "e1-2", source: "1", target: "2" }];
 
     const { container } = render(
-      <Canvas nodes={nodes} edges={edges}>
+      <Canvas edges={edges} nodes={nodes}>
         <div>Content</div>
       </Canvas>
     );

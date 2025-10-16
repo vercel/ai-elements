@@ -7,8 +7,10 @@ describe("Toolbar", () => {
   it("renders within Canvas context", () => {
     const { container } = render(
       <Canvas
-        nodes={[{ id: '1', position: { x: 0, y: 0 }, data: { label: 'Node 1' } }]}
         edges={[]}
+        nodes={[
+          { id: "1", position: { x: 0, y: 0 }, data: { label: "Node 1" } },
+        ]}
         nodeTypes={{
           custom: () => (
             <div>
@@ -26,8 +28,15 @@ describe("Toolbar", () => {
   it("renders with custom className", () => {
     const { container } = render(
       <Canvas
-        nodes={[{ id: '1', position: { x: 0, y: 0 }, type: 'custom', data: { label: 'Node 1' } }]}
         edges={[]}
+        nodes={[
+          {
+            id: "1",
+            position: { x: 0, y: 0 },
+            type: "custom",
+            data: { label: "Node 1" },
+          },
+        ]}
         nodeTypes={{
           custom: () => (
             <div>
@@ -45,8 +54,15 @@ describe("Toolbar", () => {
   it("renders with additional props", () => {
     const { container } = render(
       <Canvas
-        nodes={[{ id: '1', position: { x: 0, y: 0 }, type: 'custom', data: { label: 'Node 1' } }]}
         edges={[]}
+        nodes={[
+          {
+            id: "1",
+            position: { x: 0, y: 0 },
+            type: "custom",
+            data: { label: "Node 1" },
+          },
+        ]}
         nodeTypes={{
           custom: () => (
             <div>

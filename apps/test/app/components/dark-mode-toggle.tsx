@@ -41,17 +41,21 @@ export function DarkModeToggle() {
 
   // Prevent hydration mismatch by not rendering until mounted
   if (!mounted) {
-    return <Button variant="outline" size="icon" />;
+    return <Button size="icon" variant="outline" />;
   }
 
   return (
     <Button
-      variant="outline"
-      size="icon"
-      onClick={toggleDarkMode}
       aria-label="Toggle dark mode"
+      onClick={toggleDarkMode}
+      size="icon"
+      variant="outline"
     >
-      {isDark ? <SunIcon className="h-5 w-5" /> : <MoonIcon className="h-5 w-5" />}
+      {isDark ? (
+        <SunIcon className="h-5 w-5" />
+      ) : (
+        <MoonIcon className="h-5 w-5" />
+      )}
     </Button>
   );
 }

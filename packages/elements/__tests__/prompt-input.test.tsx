@@ -17,11 +17,9 @@ import {
   PromptInputModelSelectItem,
   PromptInputModelSelectTrigger,
   PromptInputModelSelectValue,
-  PromptInputProvider,
   PromptInputSpeechButton,
   PromptInputSubmit,
   PromptInputTextarea,
-  PromptInputToolbar,
   PromptInputTools,
   usePromptInputAttachments,
 } from "../src/prompt-input";
@@ -559,29 +557,13 @@ describe("PromptInputTextarea", () => {
   });
 });
 
-describe("PromptInputToolbar", () => {
-  it("renders toolbar", () => {
-    const onSubmit = vi.fn();
-    render(
-      <PromptInput onSubmit={onSubmit}>
-        <PromptInputBody>
-          <PromptInputToolbar>Toolbar content</PromptInputToolbar>
-        </PromptInputBody>
-      </PromptInput>
-    );
-    expect(screen.getByText("Toolbar content")).toBeInTheDocument();
-  });
-});
-
 describe("PromptInputTools", () => {
   it("renders tools", () => {
     const onSubmit = vi.fn();
     render(
       <PromptInput onSubmit={onSubmit}>
         <PromptInputBody>
-          <PromptInputToolbar>
-            <PromptInputTools>Tools</PromptInputTools>
-          </PromptInputToolbar>
+          <PromptInputTools>Tools</PromptInputTools>
         </PromptInputBody>
       </PromptInput>
     );
@@ -732,8 +714,13 @@ describe("PromptInputProvider", () => {
   });
 
   it("provides initial input value", async () => {
-    const { PromptInputProvider, PromptInput, PromptInputBody, PromptInputTextarea, usePromptInputController } =
-      await import("../src/prompt-input");
+    const {
+      PromptInputProvider,
+      PromptInput,
+      PromptInputBody,
+      PromptInputTextarea,
+      usePromptInputController,
+    } = await import("../src/prompt-input");
     const onSubmit = vi.fn();
 
     const TestComponent = () => {
@@ -1005,7 +992,9 @@ describe("Paste functionality", () => {
       </PromptInput>
     );
 
-    const textarea = screen.getByPlaceholderText("What would you like to know?");
+    const textarea = screen.getByPlaceholderText(
+      "What would you like to know?"
+    );
     textarea.focus();
 
     const file = new File(["image"], "test.png", { type: "image/png" });
@@ -1044,7 +1033,9 @@ describe("Paste functionality", () => {
       </PromptInput>
     );
 
-    const textarea = screen.getByPlaceholderText("What would you like to know?");
+    const textarea = screen.getByPlaceholderText(
+      "What would you like to know?"
+    );
     textarea.focus();
 
     const pasteEvent = new Event("paste", {
@@ -1173,14 +1164,19 @@ describe("PromptInputSpeechButton", () => {
   });
 
   it("handles speech recognition error", () => {
-    const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
+    const consoleError = vi
+      .spyOn(console, "error")
+      .mockImplementation(() => {});
 
     render(<PromptInputSpeechButton />);
 
     // Simulate error
     mockRecognition.onerror?.({ error: "network" });
 
-    expect(consoleError).toHaveBeenCalledWith("Speech recognition error:", "network");
+    expect(consoleError).toHaveBeenCalledWith(
+      "Speech recognition error:",
+      "network"
+    );
     consoleError.mockRestore();
   });
 
@@ -1257,7 +1253,9 @@ describe("PromptInputAttachment", () => {
             Add
           </button>
           <PromptInputAttachments>
-            {(attachment) => <PromptInputAttachment data={attachment} key={attachment.id} />}
+            {(attachment) => (
+              <PromptInputAttachment data={attachment} key={attachment.id} />
+            )}
           </PromptInputAttachments>
         </>
       );
@@ -1279,6 +1277,118 @@ describe("PromptInputAttachment", () => {
     await user.click(removeButton);
 
     expect(screen.queryByText("test.txt")).not.toBeInTheDocument();
+  });
+
+  it("removes attachment if backspace key is pressed and textarea is empty", async () => {
+    const onSubmit = vi.fn();
+    const user = userEvent.setup();
+
+    const file1 = new File(["test1"], "first.txt", { type: "text/plain" });
+    const file2 = new File(["test2"], "second.txt", { type: "text/plain" });
+    const file3 = new File(["test3"], "third.txt", { type: "text/plain" });
+
+    const AttachmentConsumer = () => {
+      const attachments = usePromptInputAttachments();
+      return (
+        <>
+          <button
+            onClick={() => attachments.add([file1, file2, file3])}
+            type="button"
+          >
+            Add Files
+          </button>
+          <PromptInputAttachments>
+            {(attachment) => (
+              <div key={attachment.id}>{attachment.filename}</div>
+            )}
+          </PromptInputAttachments>
+        </>
+      );
+    };
+
+    render(
+      <PromptInput onSubmit={onSubmit}>
+        <PromptInputBody>
+          <AttachmentConsumer />
+          <PromptInputTextarea />
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    const textarea = screen.getByPlaceholderText(
+      "What would you like to know?"
+    ) as HTMLTextAreaElement;
+
+    await user.click(screen.getByRole("button", { name: "Add Files" }));
+
+    expect(screen.getByText("first.txt")).toBeInTheDocument();
+    expect(screen.getByText("second.txt")).toBeInTheDocument();
+    expect(screen.getByText("third.txt")).toBeInTheDocument();
+
+    textarea.focus();
+    expect(textarea.value).toBe("");
+
+    await user.keyboard("{Backspace}");
+
+    expect(screen.getByText("first.txt")).toBeInTheDocument();
+    expect(screen.getByText("second.txt")).toBeInTheDocument();
+    expect(screen.queryByText("third.txt")).not.toBeInTheDocument();
+
+    await user.keyboard("{Backspace}");
+
+    expect(screen.getByText("first.txt")).toBeInTheDocument();
+    expect(screen.queryByText("second.txt")).not.toBeInTheDocument();
+
+    await user.keyboard("{Backspace}");
+
+    expect(screen.queryByText("first.txt")).not.toBeInTheDocument();
+  });
+
+  it("does not remove attachment when backspace key is pressed and textarea has content", async () => {
+    const onSubmit = vi.fn();
+    const user = userEvent.setup();
+
+    const file = new File(["test"], "test.txt", { type: "text/plain" });
+
+    const AttachmentConsumer = () => {
+      const attachments = usePromptInputAttachments();
+      return (
+        <>
+          <button onClick={() => attachments.add([file])} type="button">
+            Add File
+          </button>
+          <PromptInputAttachments>
+            {(attachment) => (
+              <div key={attachment.id}>{attachment.filename}</div>
+            )}
+          </PromptInputAttachments>
+        </>
+      );
+    };
+
+    render(
+      <PromptInput onSubmit={onSubmit}>
+        <PromptInputBody>
+          <AttachmentConsumer />
+          <PromptInputTextarea />
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    const textarea = screen.getByPlaceholderText(
+      "What would you like to know?"
+    ) as HTMLTextAreaElement;
+
+    await user.click(screen.getByRole("button", { name: "Add File" }));
+    expect(screen.getByText("test.txt")).toBeInTheDocument();
+
+    await user.type(textarea, "Some text");
+    expect(textarea.value).toBe("Some text");
+
+    await user.keyboard("{Backspace}");
+
+    expect(screen.getByText("test.txt")).toBeInTheDocument();
+    expect(textarea.value).toBe("Some tex");
   });
 });
 
@@ -1330,5 +1440,429 @@ describe("PromptInputActionAddAttachments", () => {
     await user.click(trigger);
 
     expect(screen.getByText("Upload files")).toBeInTheDocument();
+  });
+});
+
+describe("PromptInputHeader", () => {
+  it("renders header content", async () => {
+    const { PromptInputHeader } = await import("../src/prompt-input");
+    const onSubmit = vi.fn();
+
+    render(
+      <PromptInput onSubmit={onSubmit}>
+        <PromptInputBody>
+          <PromptInputHeader>Header content</PromptInputHeader>
+          <PromptInputTextarea />
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    expect(screen.getByText("Header content")).toBeInTheDocument();
+  });
+
+  it("applies custom className", async () => {
+    const { PromptInputHeader } = await import("../src/prompt-input");
+    const onSubmit = vi.fn();
+
+    const { container } = render(
+      <PromptInput onSubmit={onSubmit}>
+        <PromptInputBody>
+          <PromptInputHeader className="custom-header">
+            Header
+          </PromptInputHeader>
+          <PromptInputTextarea />
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    expect(container.querySelector(".custom-header")).toBeInTheDocument();
+  });
+});
+
+describe("PromptInputFooter", () => {
+  it("renders footer content", async () => {
+    const { PromptInputFooter } = await import("../src/prompt-input");
+    const onSubmit = vi.fn();
+
+    render(
+      <PromptInput onSubmit={onSubmit}>
+        <PromptInputBody>
+          <PromptInputTextarea />
+          <PromptInputFooter>Footer content</PromptInputFooter>
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    expect(screen.getByText("Footer content")).toBeInTheDocument();
+  });
+
+  it("applies custom className", async () => {
+    const { PromptInputFooter } = await import("../src/prompt-input");
+    const onSubmit = vi.fn();
+
+    const { container } = render(
+      <PromptInput onSubmit={onSubmit}>
+        <PromptInputBody>
+          <PromptInputTextarea />
+          <PromptInputFooter className="custom-footer">
+            Footer
+          </PromptInputFooter>
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    expect(container.querySelector(".custom-footer")).toBeInTheDocument();
+  });
+});
+
+describe("PromptInputHoverCard", () => {
+  it("renders hover card", async () => {
+    const {
+      PromptInputHoverCard,
+      PromptInputHoverCardTrigger,
+      PromptInputHoverCardContent,
+    } = await import("../src/prompt-input");
+    const onSubmit = vi.fn();
+
+    render(
+      <PromptInput onSubmit={onSubmit}>
+        <PromptInputBody>
+          <PromptInputHoverCard>
+            <PromptInputHoverCardTrigger>
+              <span>Hover me</span>
+            </PromptInputHoverCardTrigger>
+            <PromptInputHoverCardContent>
+              Tooltip content
+            </PromptInputHoverCardContent>
+          </PromptInputHoverCard>
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    expect(screen.getByText("Hover me")).toBeInTheDocument();
+  });
+});
+
+describe("PromptInputCommand", () => {
+  it("renders command input", async () => {
+    const {
+      PromptInputCommand,
+      PromptInputCommandInput,
+      PromptInputCommandList,
+      PromptInputCommandEmpty,
+      PromptInputCommandGroup,
+      PromptInputCommandItem,
+    } = await import("../src/prompt-input");
+    const onSubmit = vi.fn();
+
+    // Mock scrollIntoView for command
+    Element.prototype.scrollIntoView = vi.fn();
+
+    render(
+      <PromptInput onSubmit={onSubmit}>
+        <PromptInputBody>
+          <PromptInputCommand>
+            <PromptInputCommandInput placeholder="Search..." />
+            <PromptInputCommandList>
+              <PromptInputCommandEmpty>No results</PromptInputCommandEmpty>
+              <PromptInputCommandGroup heading="Suggestions">
+                <PromptInputCommandItem>Item 1</PromptInputCommandItem>
+                <PromptInputCommandItem>Item 2</PromptInputCommandItem>
+              </PromptInputCommandGroup>
+            </PromptInputCommandList>
+          </PromptInputCommand>
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    expect(screen.getByPlaceholderText("Search...")).toBeInTheDocument();
+    expect(screen.getByText("Item 1")).toBeInTheDocument();
+    expect(screen.getByText("Item 2")).toBeInTheDocument();
+  });
+
+  it("shows empty state", async () => {
+    const {
+      PromptInputCommand,
+      PromptInputCommandInput,
+      PromptInputCommandList,
+      PromptInputCommandEmpty,
+    } = await import("../src/prompt-input");
+    const onSubmit = vi.fn();
+
+    // Mock scrollIntoView for command
+    Element.prototype.scrollIntoView = vi.fn();
+
+    render(
+      <PromptInput onSubmit={onSubmit}>
+        <PromptInputBody>
+          <PromptInputCommand>
+            <PromptInputCommandInput />
+            <PromptInputCommandList>
+              <PromptInputCommandEmpty>
+                No results found
+              </PromptInputCommandEmpty>
+            </PromptInputCommandList>
+          </PromptInputCommand>
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    expect(screen.getByText("No results found")).toBeInTheDocument();
+  });
+
+  it("renders command separator", async () => {
+    const {
+      PromptInputCommand,
+      PromptInputCommandList,
+      PromptInputCommandGroup,
+      PromptInputCommandItem,
+      PromptInputCommandSeparator,
+    } = await import("../src/prompt-input");
+    const onSubmit = vi.fn();
+
+    // Mock scrollIntoView for command
+    Element.prototype.scrollIntoView = vi.fn();
+
+    const { container } = render(
+      <PromptInput onSubmit={onSubmit}>
+        <PromptInputBody>
+          <PromptInputCommand>
+            <PromptInputCommandList>
+              <PromptInputCommandGroup>
+                <PromptInputCommandItem>Item 1</PromptInputCommandItem>
+              </PromptInputCommandGroup>
+              <PromptInputCommandSeparator />
+              <PromptInputCommandGroup>
+                <PromptInputCommandItem>Item 2</PromptInputCommandItem>
+              </PromptInputCommandGroup>
+            </PromptInputCommandList>
+          </PromptInputCommand>
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    expect(container.querySelector('[role="separator"]')).toBeInTheDocument();
+  });
+});
+
+describe("PromptInputTab components", () => {
+  it("renders tab list", async () => {
+    const { PromptInputTabsList, PromptInputTab } = await import(
+      "../src/prompt-input"
+    );
+    const onSubmit = vi.fn();
+
+    render(
+      <PromptInput onSubmit={onSubmit}>
+        <PromptInputBody>
+          <PromptInputTabsList>
+            <PromptInputTab>Tab 1</PromptInputTab>
+            <PromptInputTab>Tab 2</PromptInputTab>
+          </PromptInputTabsList>
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    expect(screen.getByText("Tab 1")).toBeInTheDocument();
+    expect(screen.getByText("Tab 2")).toBeInTheDocument();
+  });
+
+  it("renders tab with label and body", async () => {
+    const {
+      PromptInputTab,
+      PromptInputTabLabel,
+      PromptInputTabBody,
+      PromptInputTabItem,
+    } = await import("../src/prompt-input");
+    const onSubmit = vi.fn();
+
+    render(
+      <PromptInput onSubmit={onSubmit}>
+        <PromptInputBody>
+          <PromptInputTab>
+            <PromptInputTabLabel>Commands</PromptInputTabLabel>
+            <PromptInputTabBody>
+              <PromptInputTabItem>Command 1</PromptInputTabItem>
+              <PromptInputTabItem>Command 2</PromptInputTabItem>
+            </PromptInputTabBody>
+          </PromptInputTab>
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    expect(screen.getByText("Commands")).toBeInTheDocument();
+    expect(screen.getByText("Command 1")).toBeInTheDocument();
+    expect(screen.getByText("Command 2")).toBeInTheDocument();
+  });
+});
+
+describe("PromptInputModelSelect components", () => {
+  it("renders model select with all subcomponents", async () => {
+    const onSubmit = vi.fn();
+    const user = userEvent.setup();
+
+    render(
+      <PromptInput onSubmit={onSubmit}>
+        <PromptInputBody>
+          <PromptInputModelSelect>
+            <PromptInputModelSelectTrigger>
+              <PromptInputModelSelectValue placeholder="Choose model" />
+            </PromptInputModelSelectTrigger>
+            <PromptInputModelSelectContent>
+              <PromptInputModelSelectItem value="model-1">
+                Model 1
+              </PromptInputModelSelectItem>
+              <PromptInputModelSelectItem value="model-2">
+                Model 2
+              </PromptInputModelSelectItem>
+            </PromptInputModelSelectContent>
+          </PromptInputModelSelect>
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    expect(screen.getByText("Choose model")).toBeInTheDocument();
+  });
+
+  it("opens model select menu", async () => {
+    const onSubmit = vi.fn();
+    const user = userEvent.setup();
+
+    // Mock hasPointerCapture and releasePointerCapture for select
+    Element.prototype.hasPointerCapture = vi.fn(() => false);
+    Element.prototype.releasePointerCapture = vi.fn();
+
+    render(
+      <PromptInput onSubmit={onSubmit}>
+        <PromptInputBody>
+          <PromptInputModelSelect>
+            <PromptInputModelSelectTrigger>
+              <PromptInputModelSelectValue placeholder="Select" />
+            </PromptInputModelSelectTrigger>
+            <PromptInputModelSelectContent>
+              <PromptInputModelSelectItem value="model-1">
+                Model 1
+              </PromptInputModelSelectItem>
+            </PromptInputModelSelectContent>
+          </PromptInputModelSelect>
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    const trigger = screen.getByRole("combobox");
+    await user.click(trigger);
+
+    await vi.waitFor(() => {
+      const listbox = screen.getByRole("listbox");
+      expect(listbox).toBeInTheDocument();
+    });
+  });
+});
+
+describe("PromptInputActionMenu subcomponents", () => {
+  it("renders action menu content", async () => {
+    const onSubmit = vi.fn();
+    const user = userEvent.setup();
+
+    render(
+      <PromptInput onSubmit={onSubmit}>
+        <PromptInputBody>
+          <PromptInputActionMenu>
+            <PromptInputActionMenuTrigger />
+            <PromptInputActionMenuContent>
+              <PromptInputActionMenuItem>Action 1</PromptInputActionMenuItem>
+              <PromptInputActionMenuItem>Action 2</PromptInputActionMenuItem>
+            </PromptInputActionMenuContent>
+          </PromptInputActionMenu>
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    const trigger = screen.getByRole("button");
+    await user.click(trigger);
+
+    await vi.waitFor(() => {
+      expect(screen.getByText("Action 1")).toBeInTheDocument();
+      expect(screen.getByText("Action 2")).toBeInTheDocument();
+    });
+  });
+
+  it("handles menu item click", async () => {
+    const onSubmit = vi.fn();
+    const onAction = vi.fn();
+    const user = userEvent.setup();
+
+    render(
+      <PromptInput onSubmit={onSubmit}>
+        <PromptInputBody>
+          <PromptInputActionMenu>
+            <PromptInputActionMenuTrigger />
+            <PromptInputActionMenuContent>
+              <PromptInputActionMenuItem onSelect={onAction}>
+                Click me
+              </PromptInputActionMenuItem>
+            </PromptInputActionMenuContent>
+          </PromptInputActionMenu>
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    const trigger = screen.getByRole("button");
+    await user.click(trigger);
+
+    await vi.waitFor(async () => {
+      const menuItem = screen.getByText("Click me");
+      expect(menuItem).toBeInTheDocument();
+      await user.click(menuItem);
+    });
+
+    expect(onAction).toHaveBeenCalled();
+  });
+});
+
+describe("Integration tests", () => {
+  it("renders complete prompt input with all components", async () => {
+    const { PromptInputHeader, PromptInputFooter } = await import(
+      "../src/prompt-input"
+    );
+    const onSubmit = vi.fn();
+
+    render(
+      <PromptInput onSubmit={onSubmit}>
+        <PromptInputBody>
+          <PromptInputHeader>
+            <PromptInputModelSelect>
+              <PromptInputModelSelectTrigger>
+                <PromptInputModelSelectValue placeholder="Model" />
+              </PromptInputModelSelectTrigger>
+              <PromptInputModelSelectContent>
+                <PromptInputModelSelectItem value="gpt-4">
+                  GPT-4
+                </PromptInputModelSelectItem>
+              </PromptInputModelSelectContent>
+            </PromptInputModelSelect>
+          </PromptInputHeader>
+          <PromptInputTextarea />
+          <PromptInputFooter>
+            <PromptInputTools>
+              <PromptInputActionMenu>
+                <PromptInputActionMenuTrigger />
+                <PromptInputActionMenuContent>
+                  <PromptInputActionMenuItem>Action</PromptInputActionMenuItem>
+                </PromptInputActionMenuContent>
+              </PromptInputActionMenu>
+              <PromptInputSpeechButton />
+            </PromptInputTools>
+            <PromptInputSubmit />
+          </PromptInputFooter>
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    expect(
+      screen.getByPlaceholderText("What would you like to know?")
+    ).toBeInTheDocument();
+    expect(screen.getByText("Model")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /submit/i })).toBeInTheDocument();
   });
 });

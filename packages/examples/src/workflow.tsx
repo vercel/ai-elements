@@ -10,7 +10,6 @@ import {
   NodeHeader,
   NodeTitle,
 } from "@repo/elements/node";
-import { Toolbar } from "@repo/elements/toolbar";
 import { nanoid } from "nanoid";
 
 const nodeIds = {
