@@ -10,6 +10,13 @@ import {
   PromptInputAttachments,
   PromptInputBody,
   PromptInputButton,
+  PromptInputCommand,
+  PromptInputCommandEmpty,
+  PromptInputCommandGroup,
+  PromptInputCommandInput,
+  PromptInputCommandItem,
+  PromptInputCommandList,
+  PromptInputCommandSeparator,
   PromptInputFooter,
   PromptInputHeader,
   PromptInputHoverCard,
@@ -33,7 +40,7 @@ import {
   usePromptInputController,
 } from "@repo/elements/prompt-input";
 import { Button } from "@repo/shadcn-ui/components/ui/button";
-import { FilesIcon, GlobeIcon, RulerIcon } from "lucide-react";
+import { AtSignIcon, FilesIcon, GlobeIcon, RulerIcon } from "lucide-react";
 import { useRef, useState } from "react";
 
 const models = [
@@ -52,9 +59,27 @@ const SUBMITTING_TIMEOUT = 200;
 const STREAMING_TIMEOUT = 2000;
 
 const sampleFiles = {
-  activeTabs: [{ path: "packages/elements/src/prompt-input.tsx" }],
+  activeTabs: [{ path: "prompt-input.tsx", location: "packages/elements/src" }],
   recents: [
-    { path: "packages/elements/src/task-queue-panel.tsx" },
+    { path: "queue.tsx", location: "apps/test/app/examples" },
+    { path: "queue.tsx", location: "packages/elements/src" },
+  ],
+  added: [
+    { path: "prompt-input.tsx", location: "packages/elements/src" },
+    { path: "queue.tsx", location: "apps/test/app/examples" },
+    { path: "queue.tsx", location: "packages/elements/src" },
+  ],
+  filesAndFolders: [
+    { path: "prompt-input.tsx", location: "packages/elements/src" },
+    { path: "queue.tsx", location: "apps/test/app/examples" },
+  ],
+  code: [{ path: "prompt-input.tsx", location: "packages/elements/src" }],
+  docs: [{ path: "README.md", location: "packages/elements" }],
+};
+
+const sampleTabs = {
+  active: [{ path: "packages/elements/src/task-queue-panel.tsx" }],
+  recents: [
     { path: "apps/test/app/examples/task-queue-panel.tsx" },
     { path: "apps/test/app/page.tsx" },
     { path: "packages/elements/src/task.tsx" },
@@ -140,6 +165,46 @@ const Example = () => {
         <PromptInputHeader>
           <PromptInputHoverCard>
             <PromptInputHoverCardTrigger>
+              <PromptInputButton size="icon-sm" variant="outline">
+                <AtSignIcon className="text-muted-foreground" size={12} />
+              </PromptInputButton>
+            </PromptInputHoverCardTrigger>
+            <PromptInputHoverCardContent className="w-[400px] p-0">
+              <PromptInputCommand>
+                <PromptInputCommandInput placeholder="Add files, folders, docs..." />
+                <PromptInputCommandList>
+                  <PromptInputCommandEmpty className="p-3 text-muted-foreground text-sm">
+                    No results found.
+                  </PromptInputCommandEmpty>
+                  <PromptInputCommandGroup heading="Added">
+                    <PromptInputCommandItem>
+                      <GlobeIcon />
+                      <span>Active Tabs</span>
+                      <span className="ml-auto text-muted-foreground">✓</span>
+                    </PromptInputCommandItem>
+                  </PromptInputCommandGroup>
+                  <PromptInputCommandSeparator />
+                  <PromptInputCommandGroup heading="Other Files">
+                    {sampleFiles.added.map((file, index) => (
+                      <PromptInputCommandItem key={`${file.path}-${index}`}>
+                        <GlobeIcon className="text-primary" />
+                        <div className="flex flex-col">
+                          <span className="font-medium text-sm">
+                            {file.path}
+                          </span>
+                          <span className="text-muted-foreground text-xs">
+                            {file.location}
+                          </span>
+                        </div>
+                      </PromptInputCommandItem>
+                    ))}
+                  </PromptInputCommandGroup>
+                </PromptInputCommandList>
+              </PromptInputCommand>
+            </PromptInputHoverCardContent>
+          </PromptInputHoverCard>
+          <PromptInputHoverCard>
+            <PromptInputHoverCardTrigger>
               <PromptInputButton size="sm" variant="outline">
                 <RulerIcon className="text-muted-foreground" size={12} />
                 <span>1</span>
@@ -171,11 +236,11 @@ const Example = () => {
               <PromptInputTab>
                 <PromptInputTabLabel>Active Tabs</PromptInputTabLabel>
                 <PromptInputTabBody>
-                  {sampleFiles.activeTabs.map((file) => (
-                    <PromptInputTabItem key={file.path}>
+                  {sampleTabs.active.map((tab) => (
+                    <PromptInputTabItem key={tab.path}>
                       <GlobeIcon className="text-primary" size={16} />
                       <span className="truncate" dir="rtl">
-                        {file.path}
+                        {tab.path}
                       </span>
                     </PromptInputTabItem>
                   ))}
@@ -184,11 +249,11 @@ const Example = () => {
               <PromptInputTab>
                 <PromptInputTabLabel>Recents</PromptInputTabLabel>
                 <PromptInputTabBody>
-                  {sampleFiles.recents.map((file) => (
-                    <PromptInputTabItem key={file.path}>
+                  {sampleTabs.recents.map((tab) => (
+                    <PromptInputTabItem key={tab.path}>
                       <GlobeIcon className="text-primary" size={16} />
                       <span className="truncate" dir="rtl">
-                        {file.path}
+                        {tab.path}
                       </span>
                     </PromptInputTabItem>
                   ))}
