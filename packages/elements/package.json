@@ -18,6 +18,7 @@
     "ai": "5.0.72",
     "class-variance-authority": "^0.7.1",
     "lucide-react": "^0.545.0",
+    "motion": "^12.23.24",
     "nanoid": "^5.1.6",
     "react": "19.2.0",
     "react-syntax-highlighter": "^15.6.6",

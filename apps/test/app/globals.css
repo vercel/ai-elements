@@ -44,6 +44,9 @@
   --sidebar-ring: oklch(0.708 0 0);
 
   --font-weight-bold: 700;
+
+  --color-shimmer: oklch(0.856 0 0);
+  --color-shimmer-foreground: oklch(0.145 0 0);
 }
 
 .dark {
@@ -80,6 +83,9 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(0.269 0 0);
   --sidebar-ring: oklch(0.439 0 0);
+
+  --color-shimmer: oklch(0.308 0 0);
+  --color-shimmer-foreground: oklch(0.985 0 0);
 }
 
 @theme inline {
@@ -121,6 +127,8 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+  --color-shimmer: var(--color-shimmer);
+  --color-shimmer-foreground: var(--color-shimmer-foreground);
   --animate-accordion-down: accordion-down 0.2s ease-out;
   --animate-accordion-up: accordion-up 0.2s ease-out;
 

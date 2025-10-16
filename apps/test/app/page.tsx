@@ -21,6 +21,7 @@ import PromptInput from "@/app/examples/prompt-input";
 import Queue from "@/app/examples/queue";
 import Reasoning from "@/app/examples/reasoning";
 import Response from "@/app/examples/response";
+import Shimmer from "@/app/examples/shimmer";
 import Sources from "@/app/examples/sources";
 import Suggestion from "@/app/examples/suggestion";
 import Task from "@/app/examples/task";
@@ -46,6 +47,7 @@ const components = [
   { name: "Queue", Component: Queue },
   { name: "Reasoning", Component: Reasoning },
   { name: "Response", Component: Response },
+  { name: "Shimmer", Component: Shimmer },
   { name: "Sources", Component: Sources },
   { name: "Suggestion", Component: Suggestion },
   { name: "Task", Component: Task },
