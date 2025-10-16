@@ -17,6 +17,7 @@ import { Message, MessageContent } from "@repo/elements/message";
 import {
   PromptInput,
   PromptInputButton,
+  PromptInputFooter,
   type PromptInputMessage,
   PromptInputModelSelect,
   PromptInputModelSelectContent,
@@ -24,7 +25,6 @@ import {
   PromptInputModelSelectTrigger,
   PromptInputModelSelectValue,
   PromptInputTextarea,
-  PromptInputToolbar,
   PromptInputTools,
 } from "@repo/elements/prompt-input";
 import {
@@ -39,6 +39,13 @@ import {
   SourcesContent,
   SourcesTrigger,
 } from "@repo/elements/sources";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@repo/shadcn-ui/components/ui/dropdown-menu";
+import { cn } from "@repo/shadcn-ui/lib/utils";
 import type { ToolUIPart } from "ai";
 import {
   AudioWaveformIcon,
@@ -54,13 +61,6 @@ import {
 import { nanoid } from "nanoid";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { cn } from "@/lib/utils";
 
 type MessageType = {
   key: string;
@@ -650,7 +650,7 @@ const Example = () => {
             placeholder="How can Grok help?"
             value={text}
           />
-          <PromptInputToolbar className="p-2.5">
+          <PromptInputFooter className="p-2.5">
             <PromptInputTools>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -737,7 +737,7 @@ const Example = () => {
                 <span className="sr-only">Voice</span>
               </PromptInputButton>
             </div>
-          </PromptInputToolbar>
+          </PromptInputFooter>
         </PromptInput>
       </div>
     </div>

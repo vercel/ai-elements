@@ -17,9 +17,9 @@ import { Message, MessageContent } from "@repo/elements/message";
 import {
   PromptInput,
   PromptInputButton,
+  PromptInputFooter,
   type PromptInputMessage,
   PromptInputTextarea,
-  PromptInputToolbar,
   PromptInputTools,
 } from "@repo/elements/prompt-input";
 import {
@@ -35,6 +35,13 @@ import {
   SourcesTrigger,
 } from "@repo/elements/sources";
 import { Suggestion, Suggestions } from "@repo/elements/suggestion";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@repo/shadcn-ui/components/ui/dropdown-menu";
+import { cn } from "@repo/shadcn-ui/lib/utils";
 import type { ToolUIPart } from "ai";
 import {
   AudioWaveformIcon,
@@ -53,13 +60,6 @@ import {
 import { nanoid } from "nanoid";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { cn } from "@/lib/utils";
 
 type MessageType = {
   key: string;
@@ -650,7 +650,7 @@ const Example = () => {
             placeholder="Ask anything"
             value={text}
           />
-          <PromptInputToolbar className="p-2.5">
+          <PromptInputFooter className="p-2.5">
             <PromptInputTools>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -706,7 +706,7 @@ const Example = () => {
               <AudioWaveformIcon size={16} />
               <span>Voice</span>
             </PromptInputButton>
-          </PromptInputToolbar>
+          </PromptInputFooter>
         </PromptInput>
         <Suggestions className="px-4">
           {suggestions.map(({ icon: Icon, text, color }) => (
