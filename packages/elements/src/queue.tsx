@@ -194,45 +194,75 @@ export const QueueList = ({
   </ScrollArea>
 );
 
-export type QueueSectionProps = ComponentProps<typeof Collapsible> & {
-  label: string;
-  count?: number;
-  icon?: React.ReactNode;
-};
+// QueueSection - collapsible section container
+export type QueueSectionProps = ComponentProps<typeof Collapsible>;
 
 export const QueueSection = ({
-  label,
-  count,
-  icon,
-  children,
   className,
   defaultOpen = true,
   ...props
-}: QueueSectionProps) => {
-  if (count === 0) {
-    return null;
-  }
+}: QueueSectionProps) => (
+  <Collapsible
+    className={cn(className)}
+    defaultOpen={defaultOpen}
+    {...props}
+  />
+);
 
-  return (
-    <Collapsible className={cn(className)} defaultOpen={defaultOpen} {...props}>
-      <CollapsibleTrigger asChild>
-        <button
-          className="flex w-full items-center justify-between rounded-md bg-muted/40 px-3 py-2 text-left font-medium text-muted-foreground text-sm transition-colors hover:bg-muted"
-          type="button"
-        >
-          <span className="flex items-center gap-2">
-            <ChevronRightIcon className="size-4 transition-transform data-[state=open]:rotate-90" />
-            {icon}
-            <span>
-              {count} {label}
-            </span>
-          </span>
-        </button>
-      </CollapsibleTrigger>
-      <CollapsibleContent>{children}</CollapsibleContent>
-    </Collapsible>
-  );
+// QueueSectionTrigger - section header/trigger
+export type QueueSectionTriggerProps = ComponentProps<"button">;
+
+export const QueueSectionTrigger = ({
+  children,
+  className,
+  ...props
+}: QueueSectionTriggerProps) => (
+  <CollapsibleTrigger asChild>
+    <button
+      className={cn(
+        "flex w-full items-center justify-between rounded-md bg-muted/40 px-3 py-2 text-left font-medium text-muted-foreground text-sm transition-colors hover:bg-muted",
+        className
+      )}
+      type="button"
+      {...props}
+    >
+      {children}
+    </button>
+  </CollapsibleTrigger>
+);
+
+// QueueSectionLabel - label content with icon and count
+export type QueueSectionLabelProps = ComponentProps<"span"> & {
+  count?: number;
+  label: string;
+  icon?: React.ReactNode;
 };
+
+export const QueueSectionLabel = ({
+  count,
+  label,
+  icon,
+  className,
+  ...props
+}: QueueSectionLabelProps) => (
+  <span className={cn("flex items-center gap-2", className)} {...props}>
+    <ChevronRightIcon className="size-4 transition-transform data-[state=open]:rotate-90" />
+    {icon}
+    <span>
+      {count} {label}
+    </span>
+  </span>
+);
+
+// QueueSectionContent - collapsible content area
+export type QueueSectionContentProps = ComponentProps<typeof CollapsibleContent>;
+
+export const QueueSectionContent = ({
+  className,
+  ...props
+}: QueueSectionContentProps) => (
+  <CollapsibleContent className={cn(className)} {...props} />
+);
 
 export type QueueProps = ComponentProps<"div">;
 
