@@ -5,7 +5,9 @@
     "build": "turbo run build",
     "dev": "turbo run dev",
     "test": "turbo run test",
-    "test:coverage": "turbo run test:coverage"
+    "test:coverage": "turbo run test:coverage",
+    "check": "npx ultracite@latest check",
+    "fix": "npx ultracite@latest fix"
   },
   "devDependencies": {
     "@biomejs/biome": "2.2.6",
