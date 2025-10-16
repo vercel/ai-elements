@@ -21,6 +21,10 @@ import {
   PromptInputProvider,
   PromptInputSpeechButton,
   PromptInputSubmit,
+  PromptInputTab,
+  PromptInputTabBody,
+  PromptInputTabItem,
+  PromptInputTabLabel,
   PromptInputTabs,
   PromptInputTabsContent,
   PromptInputTabsTrigger,
@@ -141,46 +145,33 @@ const Example = () => {
                 <span>1 Tab</span>
               </PromptInputButton>
             </PromptInputTabsTrigger>
-            <PromptInputTabsContent
-              align="start"
-              className="w-[300px] space-y-4 px-0 py-3"
-            >
-              <div>
-                <h3 className="mb-2 px-3 font-medium text-muted-foreground text-xs">
-                  Active Tabs
-                </h3>
-                <div className="space-y-1">
+            <PromptInputTabsContent>
+              <PromptInputTab>
+                <PromptInputTabLabel>Active Tabs</PromptInputTabLabel>
+                <PromptInputTabBody>
                   {sampleFiles.activeTabs.map((file) => (
-                    <div
-                      className="flex items-center gap-2 px-3 py-2 text-xs hover:bg-accent"
-                      key={file.path}
-                    >
+                    <PromptInputTabItem key={file.path}>
                       <GlobeIcon className="text-primary" size={16} />
                       <span className="truncate" dir="rtl">
                         {file.path}
                       </span>
-                    </div>
+                    </PromptInputTabItem>
                   ))}
-                </div>
-              </div>
-              <div>
-                <h3 className="mb-2 px-3 font-medium text-muted-foreground text-xs">
-                  Recents
-                </h3>
-                <div className="space-y-1">
+                </PromptInputTabBody>
+              </PromptInputTab>
+              <PromptInputTab>
+                <PromptInputTabLabel>Recents</PromptInputTabLabel>
+                <PromptInputTabBody>
                   {sampleFiles.recents.map((file) => (
-                    <div
-                      className="flex items-center gap-2 px-3 py-2 text-xs hover:bg-accent"
-                      key={file.path}
-                    >
+                    <PromptInputTabItem key={file.path}>
                       <GlobeIcon className="text-primary" size={16} />
                       <span className="truncate" dir="rtl">
                         {file.path}
                       </span>
-                    </div>
+                    </PromptInputTabItem>
                   ))}
-                </div>
-              </div>
+                </PromptInputTabBody>
+              </PromptInputTab>
               <div className="border-t px-3 pt-2 text-muted-foreground text-xs">
                 Only file paths are included
               </div>
