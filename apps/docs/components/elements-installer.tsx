@@ -13,7 +13,15 @@ export const ElementsInstaller = async ({ path }: ElementsInstallerProps) => {
   if (path) {
     try {
       const code = await readFile(
-        join(process.cwd(), "components/ai-elements", `${path}.tsx`),
+        join(
+          process.cwd(),
+          "..",
+          "..",
+          "packages",
+          "elements",
+          "src",
+          `${path}.tsx`
+        ),
         "utf-8"
       );
 

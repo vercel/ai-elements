@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@repo/examples": "workspace:*",
+    "@repo/elements": "workspace:*",
     "@repo/shadcn-ui": "workspace:*",
     "@vercel/analytics": "^1.5.0",
     "@vercel/speed-insights": "^1.2.0",
