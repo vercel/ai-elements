@@ -3,6 +3,7 @@
 import {
   PromptInput,
   PromptInputButton,
+  PromptInputFooter,
   type PromptInputMessage,
   PromptInputModelSelect,
   PromptInputModelSelectContent,
@@ -11,7 +12,6 @@ import {
   PromptInputModelSelectValue,
   PromptInputSubmit,
   PromptInputTextarea,
-  PromptInputToolbar,
   PromptInputTools,
 } from "@repo/elements/prompt-input";
 import { Suggestion, Suggestions } from "@repo/elements/suggestion";
@@ -79,7 +79,7 @@ const Example = () => {
           placeholder="Ask me about anything..."
           value={text}
         />
-        <PromptInputToolbar>
+        <PromptInputFooter>
           <PromptInputTools>
             <PromptInputButton>
               <PlusIcon size={16} />
@@ -107,7 +107,7 @@ const Example = () => {
           <PromptInputSubmit>
             <SendIcon size={16} />
           </PromptInputSubmit>
-        </PromptInputToolbar>
+        </PromptInputFooter>
       </PromptInput>
     </div>
   );

@@ -1,0 +1,80 @@
+---
+title: Shimmer
+description: An animated text shimmer component for creating eye-catching loading states and progressive reveal effects.
+path: elements/components/shimmer
+---
+
+# Shimmer
+
+The `Shimmer` component provides an animated shimmer effect that sweeps across text, perfect for indicating loading states, progressive reveals, or drawing attention to dynamic content in AI applications.
+
+<Preview path="shimmer" />
+
+## Installation
+
+<ElementsInstaller path="shimmer" />
+
+## Usage
+
+```tsx
+import { Shimmer } from '@/components/ai-elements/shimmer';
+```
+
+```tsx
+<Shimmer>Loading your response...</Shimmer>
+```
+
+## Features
+
+- Smooth animated shimmer effect using CSS gradients and Framer Motion
+- Customizable animation duration and spread
+- Polymorphic component - render as any HTML element via the `as` prop
+- Automatic spread calculation based on text length
+- Theme-aware styling using CSS custom properties
+- Infinite looping animation with linear easing
+- TypeScript support with proper type definitions
+- Memoized for optimal performance
+- Responsive and accessible design
+- Uses `text-transparent` with background-clip for crisp text rendering
+
+## Examples
+
+### Different Durations
+
+<Preview path="shimmer-duration" />
+
+### Custom Elements
+
+<Preview path="shimmer-elements" />
+
+## Props
+
+### `<Shimmer />`
+
+<TypeTable
+  type={{
+    children: {
+      description: 'The text content to apply the shimmer effect to.',
+      type: 'string',
+    },
+    as: {
+      description: 'The HTML element or React component to render.',
+      type: 'ElementType',
+      default: '"p"',
+    },
+    className: {
+      description: 'Additional CSS classes to apply to the component.',
+      type: 'string',
+    },
+    duration: {
+      description: 'The duration of the shimmer animation in seconds.',
+      type: 'number',
+      default: '2',
+    },
+    spread: {
+      description: 'The spread multiplier for the shimmer gradient, multiplied by text length.',
+      type: 'number',
+      default: '2',
+    },
+  }}
+/>
