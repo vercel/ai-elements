@@ -151,7 +151,6 @@ export const QueueItemImage = ({
   className,
   ...props
 }: QueueItemImageProps) => (
-  // biome-ignore lint/performance/noImgElement: "AI Elements is framework agnostic"
   <img
     alt=""
     className={cn("h-8 w-8 rounded border object-cover", className)}

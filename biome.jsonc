@@ -3,5 +3,12 @@
   "extends": ["ultracite"],
   "files": {
     "includes": ["**/*", "!packages/shadcn-ui/**/*"]
+  },
+  "linter": {
+    "rules": {
+      "performance": {
+        "noImgElement": "off"
+      }
+    }
   }
 }

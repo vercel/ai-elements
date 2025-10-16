@@ -1,5 +1,3 @@
-/** biome-ignore-all lint/performance/noImgElement: "AI Elements is framework agnostic" */
-
 "use client";
 
 import { Button } from "@repo/shadcn-ui/components/ui/button";
