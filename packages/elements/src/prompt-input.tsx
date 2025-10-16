@@ -878,7 +878,7 @@ export const PromptInputHeader = ({
 }: PromptInputHeaderProps) => (
   <InputGroupAddon
     align="block-end"
-    className={cn("order-first justify-between gap-1", className)}
+    className={cn("order-first gap-1", className)}
     {...props}
   />
 );
@@ -1221,8 +1221,12 @@ export const PromptInputModelSelectValue = ({
 
 export type PromptInputHoverCardProps = ComponentProps<typeof HoverCard>;
 
-export const PromptInputHoverCard = (props: PromptInputHoverCardProps) => (
-  <HoverCard {...props} />
+export const PromptInputHoverCard = ({
+  openDelay = 0,
+  closeDelay = 0,
+  ...props
+}: PromptInputHoverCardProps) => (
+  <HoverCard closeDelay={closeDelay} openDelay={openDelay} {...props} />
 );
 
 export type PromptInputHoverCardTriggerProps = ComponentProps<
@@ -1238,15 +1242,10 @@ export type PromptInputHoverCardContentProps = ComponentProps<
 >;
 
 export const PromptInputHoverCardContent = ({
-  className,
   align = "start",
   ...props
 }: PromptInputHoverCardContentProps) => (
-  <HoverCardContent
-    align={align}
-    className={cn("w-[300px] space-y-4 px-0 py-3", className)}
-    {...props}
-  />
+  <HoverCardContent align={align} {...props} />
 );
 
 export type PromptInputTabsListProps = HTMLAttributes<HTMLDivElement>;

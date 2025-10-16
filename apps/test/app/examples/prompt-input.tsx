@@ -33,7 +33,7 @@ import {
   usePromptInputController,
 } from "@repo/elements/prompt-input";
 import { Button } from "@repo/shadcn-ui/components/ui/button";
-import { FilesIcon, GlobeIcon } from "lucide-react";
+import { FilesIcon, GlobeIcon, RulerIcon } from "lucide-react";
 import { useRef, useState } from "react";
 
 const models = [
@@ -140,12 +140,34 @@ const Example = () => {
         <PromptInputHeader>
           <PromptInputHoverCard>
             <PromptInputHoverCardTrigger>
-              <PromptInputButton>
+              <PromptInputButton size="sm" variant="outline">
+                <RulerIcon className="text-muted-foreground" size={12} />
+                <span>1</span>
+              </PromptInputButton>
+            </PromptInputHoverCardTrigger>
+            <PromptInputHoverCardContent className="divide-y overflow-hidden p-0">
+              <div className="space-y-2 p-3">
+                <p className="font-medium text-muted-foreground text-sm">
+                  Attached Project Rules
+                </p>
+                <p className="ml-4 text-muted-foreground text-sm">
+                  Always Apply:
+                </p>
+                <p className="ml-8 text-sm">ultracite.mdc</p>
+              </div>
+              <p className="bg-sidebar px-4 py-3 text-muted-foreground text-sm">
+                Click to manage
+              </p>
+            </PromptInputHoverCardContent>
+          </PromptInputHoverCard>
+          <PromptInputHoverCard>
+            <PromptInputHoverCardTrigger>
+              <PromptInputButton size="sm" variant="outline">
                 <FilesIcon className="text-muted-foreground" size={12} />
                 <span>1 Tab</span>
               </PromptInputButton>
             </PromptInputHoverCardTrigger>
-            <PromptInputHoverCardContent>
+            <PromptInputHoverCardContent className="w-[300px] space-y-4 px-0 py-3">
               <PromptInputTab>
                 <PromptInputTabLabel>Active Tabs</PromptInputTabLabel>
                 <PromptInputTabBody>
