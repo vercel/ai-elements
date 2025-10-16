@@ -82,7 +82,7 @@ export type TextInputContext = {
   clear: () => void;
 };
 
-export type PromptInputController = {
+export type PromptInputControllerProps = {
   textInput: TextInputContext;
   attachments: AttachmentsContext;
   /** INTERNAL: Allows PromptInput to register its file textInput + "open" callback */
@@ -92,13 +92,15 @@ export type PromptInputController = {
   ) => void;
 };
 
-const PromptInputContext = createContext<PromptInputController | null>(null);
+const PromptInputController = createContext<PromptInputControllerProps | null>(
+  null
+);
 const ProviderAttachmentsContext = createContext<AttachmentsContext | null>(
   null
 );
 
 export const usePromptInputController = () => {
-  const ctx = useContext(PromptInputContext);
+  const ctx = useContext(PromptInputController);
   if (!ctx) {
     throw new Error(
       "Wrap your component inside <PromptInputProvider> to use usePromptInputController()."
@@ -108,9 +110,8 @@ export const usePromptInputController = () => {
 };
 
 // Optional variants (do NOT throw). Useful for dual-mode components.
-const useOptionalPromptInputController = () => {
-  return useContext(PromptInputContext);
-};
+const useOptionalPromptInputController = () =>
+  useContext(PromptInputController);
 
 export const useProviderAttachments = () => {
   const ctx = useContext(ProviderAttachmentsContext);
@@ -122,9 +123,8 @@ export const useProviderAttachments = () => {
   return ctx;
 };
 
-const useOptionalProviderAttachments = () => {
-  return useContext(ProviderAttachmentsContext);
-};
+const useOptionalProviderAttachments = () =>
+  useContext(ProviderAttachmentsContext);
 
 export type PromptInputProviderProps = PropsWithChildren<{
   initialInput?: string;
@@ -219,11 +219,11 @@ export function PromptInputProvider({
   );
 
   return (
-    <PromptInputContext.Provider value={controller}>
+    <PromptInputController.Provider value={controller}>
       <ProviderAttachmentsContext.Provider value={attachments}>
         {children}
       </ProviderAttachmentsContext.Provider>
-    </PromptInputContext.Provider>
+    </PromptInputController.Provider>
   );
 }
 
@@ -637,15 +637,16 @@ export const PromptInput = ({
     };
   }, [add, globalDrop]);
 
-  useEffect(() => {
-    return () => {
+  useEffect(
+    () => () => {
       if (!usingProvider) {
         for (const f of files) {
           if (f.url) URL.revokeObjectURL(f.url);
         }
       }
-    };
-  }, [usingProvider, files]);
+    },
+    [usingProvider, files]
+  );
 
   const handleChange: ChangeEventHandler<HTMLInputElement> = (event) => {
     if (event.currentTarget.files) {
@@ -804,8 +805,7 @@ export const PromptInputTextarea = ({
       attachments.files.length > 0
     ) {
       e.preventDefault();
-      const lastAttachment =
-        attachments.files[attachments.files.length - 1];
+      const lastAttachment = attachments.files[attachments.files.length - 1];
       attachments.remove(lastAttachment.id);
     }
   };
