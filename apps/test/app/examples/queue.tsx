@@ -2,13 +2,21 @@
 
 import {
   Queue,
+  QueueItem,
+  QueueItemAction,
+  QueueItemActions,
+  QueueItemAttachment,
+  QueueItemContent,
+  QueueItemDescription,
+  QueueItemFile,
+  QueueItemImage,
+  QueueItemIndicator,
   QueueList,
-  QueueMessageItem,
   QueueSection,
-  QueueTodoItem,
   type QueueMessage,
   type QueueTodo,
 } from "@repo/elements/queue";
+import { ArrowUp, Trash2 } from "lucide-react";
 import { useState } from "react";
 
 const sampleMessages: QueueMessage[] = [
@@ -99,25 +107,105 @@ const Example = () => {
     <Queue>
       <QueueSection count={messages.length} label="Queued">
         <QueueList>
-          {messages.map((message) => (
-            <QueueMessageItem
-              key={message.id}
-              message={message}
-              onRemove={handleRemoveMessage}
-              onSendNow={handleSendNow}
-            />
-          ))}
+          {messages.map((message) => {
+            const summary = (() => {
+              const textParts = message.parts.filter((p) => p.type === "text");
+              const text = textParts
+                .map((p) => p.text)
+                .join(" ")
+                .trim();
+              return text || "(queued message)";
+            })();
+
+            const hasFiles = message.parts.some(
+              (p) => p.type === "file" && p.url
+            );
+
+            return (
+              <QueueItem key={message.id}>
+                <div className="flex items-center gap-2">
+                  <QueueItemIndicator />
+                  <QueueItemContent>{summary}</QueueItemContent>
+                  <QueueItemActions>
+                    <QueueItemAction
+                      aria-label="Remove from queue"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        handleRemoveMessage(message.id);
+                      }}
+                      title="Remove from queue"
+                    >
+                      <Trash2 size={12} />
+                    </QueueItemAction>
+                    <QueueItemAction
+                      aria-label="Send now"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        handleSendNow(message.id);
+                      }}
+                    >
+                      <ArrowUp size={14} />
+                    </QueueItemAction>
+                  </QueueItemActions>
+                </div>
+                {hasFiles && (
+                  <QueueItemAttachment>
+                    {message.parts
+                      .filter((p) => p.type === "file" && p.url)
+                      .map((file) => {
+                        if (file.mediaType?.startsWith("image/") && file.url) {
+                          return (
+                            <QueueItemImage
+                              alt={file.filename || "attachment"}
+                              key={file.url}
+                              src={file.url}
+                            />
+                          );
+                        }
+                        return (
+                          <QueueItemFile key={file.url}>
+                            {file.filename || "file"}
+                          </QueueItemFile>
+                        );
+                      })}
+                  </QueueItemAttachment>
+                )}
+              </QueueItem>
+            );
+          })}
         </QueueList>
       </QueueSection>
       <QueueSection count={todos.length} label="Todo">
         <QueueList>
-          {todos.map((todo) => (
-            <QueueTodoItem
-              key={todo.id}
-              onRemove={handleRemoveTodo}
-              todo={todo}
-            />
-          ))}
+          {todos.map((todo) => {
+            const isCompleted = todo.status === "completed";
+
+            return (
+              <QueueItem key={todo.id}>
+                <div className="flex items-center gap-2">
+                  <QueueItemIndicator completed={isCompleted} />
+                  <QueueItemContent completed={isCompleted}>
+                    {todo.title}
+                  </QueueItemContent>
+                  <QueueItemActions>
+                    <QueueItemAction
+                      aria-label="Remove todo"
+                      onClick={() => handleRemoveTodo(todo.id)}
+                    >
+                      <Trash2 size={12} />
+                    </QueueItemAction>
+                  </QueueItemActions>
+                </div>
+                {todo.description && (
+                  <QueueItemDescription completed={isCompleted}>
+                    {todo.description}
+                  </QueueItemDescription>
+                )}
+              </QueueItem>
+            );
+          })}
         </QueueList>
       </QueueSection>
     </Queue>
