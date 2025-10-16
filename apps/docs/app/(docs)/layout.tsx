@@ -30,6 +30,7 @@ export default function Layout({ children }: LayoutProps<"/">) {
       sidebar={{
         collapsible: false,
         tabs: [],
+        className: "bg-background!",
       }}
       tree={source.pageTree}
     >

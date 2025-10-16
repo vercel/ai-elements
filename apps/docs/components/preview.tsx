@@ -59,7 +59,7 @@ export const Preview = async ({ path }: ComponentPreviewProps) => {
 
   return (
     <Tabs items={["Preview", "Code"]}>
-      <Tab className="h-[600px]">
+      <Tab className="not-prose h-[600px]">
         <Component />
       </Tab>
       <Tab className="p-0">
