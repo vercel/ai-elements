@@ -217,7 +217,7 @@ export function PromptInputProvider({
     []
   );
 
-  const controller = useMemo<PromptInputController>(
+  const controller = useMemo<PromptInputControllerProps>(
     () => ({
       textInput: {
         value: textInput,
@@ -804,8 +804,12 @@ export const PromptInputTextarea = ({
 
   const handleKeyDown: KeyboardEventHandler<HTMLTextAreaElement> = (e) => {
     if (e.key === "Enter") {
-      if (isComposing || e.nativeEvent.isComposing) return;
-      if (e.shiftKey) return;
+      if (isComposing || e.nativeEvent.isComposing) {
+        return;
+      }
+      if (e.shiftKey) {
+        return;
+      }
       e.preventDefault();
       e.currentTarget.form?.requestSubmit();
     }
@@ -817,8 +821,10 @@ export const PromptInputTextarea = ({
       attachments.files.length > 0
     ) {
       e.preventDefault();
-      const lastAttachment = attachments.files[attachments.files.length - 1];
-      attachments.remove(lastAttachment.id);
+      const lastAttachment = attachments.files.at(-1);
+      if (lastAttachment) {
+        attachments.remove(lastAttachment.id);
+      }
     }
   };
 
@@ -1110,9 +1116,11 @@ export const PromptInputSpeechButton = ({
       speechRecognition.onresult = (event) => {
         let finalTranscript = "";
 
-        for (let i = 0; i < event.results.length; i++) {
-          if (event.results[i].isFinal) {
-            finalTranscript += event.results[i][0].transcript;
+        const results = Array.from(event.results);
+
+        for (const result of results) {
+          if (result.isFinal) {
+            finalTranscript += result[0].transcript;
           }
         }
 
@@ -1145,7 +1153,9 @@ export const PromptInputSpeechButton = ({
   }, [textareaRef, onTranscriptionChange]);
 
   const toggleListening = useCallback(() => {
-    if (!recognition) return;
+    if (!recognition) {
+      return;
+    }
 
     if (isListening) {
       recognition.stop();
