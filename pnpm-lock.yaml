@@ -68,7 +68,7 @@ importers:
         version: link:../../packages/shadcn-ui
       '@xyflow/react':
         specifier: ^12.8.6
-        version: 12.8.6(@types/react@19.1.10)(immer@10.1.3)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+        version: 12.8.6(@types/react@19.2.2)(immer@10.1.3)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       ai:
         specifier: 5.0.72
         version: 5.0.72(zod@4.1.12)
@@ -105,10 +105,10 @@ importers:
         version: 24.3.1
       '@types/react':
         specifier: ^19
-        version: 19.1.10
+        version: 19.2.2
       '@types/react-dom':
         specifier: ^19
-        version: 19.1.7(@types/react@19.1.10)
+        version: 19.1.7(@types/react@19.2.2)
       tailwindcss:
         specifier: ^4
         version: 4.1.12
@@ -491,6 +491,10 @@ packages:
 
   '@babel/runtime@7.28.3':
     resolution: {integrity: sha512-9uIQ10o0WGdpP6GDhXcdOJPJuDgFtIDtN/9+ArJQ2NAfAmiuhTQdzkaTGR33v43GYS2UrSA0eX2pPPHoFVvpxA==}
+    engines: {node: '>=6.9.0'}
+
+  '@babel/runtime@7.28.4':
+    resolution: {integrity: sha512-Q/N6JNWvIvPnLDvjlE1OUBLPQHH6l3CltCEsHIujp45zQUSSh8K+gHnaEX45yAT1nyngnINhvWtzN+Nb9D8RAQ==}
     engines: {node: '>=6.9.0'}
 
   '@babel/template@7.27.2':
@@ -2266,9 +2270,6 @@ packages:
 
   '@types/react-syntax-highlighter@15.5.13':
     resolution: {integrity: sha512-uLGJ87j6Sz8UaBAooU0T6lWJ0dBmjZgN1PZTrj05TNql2/XpC6+4HhMT5syIdFUUt+FASfCeLLv4kBygNU+8qA==}
-
-  '@types/react@19.1.10':
-    resolution: {integrity: sha512-EhBeSYX0Y6ye8pNebpKrwFJq7BoQ8J5SO6NlvNwwHjSj6adXJViPQrKlsyPw7hLBLvckEMO1yxeGdR82YBBlDg==}
 
   '@types/react@19.2.2':
     resolution: {integrity: sha512-6mDvHUFSjyT2B2yeNx2nUgMxh9LtOWvkhIU3uePn2I2oyNymUAX1NIsdgviM4CH+JSrp2D2hsMvJOkxY+0wNRA==}
@@ -5385,6 +5386,8 @@ snapshots:
 
   '@babel/runtime@7.28.3': {}
 
+  '@babel/runtime@7.28.4': {}
+
   '@babel/template@7.27.2':
     dependencies:
       '@babel/code-frame': 7.27.1
@@ -6836,7 +6839,7 @@ snapshots:
   '@testing-library/dom@10.4.1':
     dependencies:
       '@babel/code-frame': 7.27.1
-      '@babel/runtime': 7.28.3
+      '@babel/runtime': 7.28.4
       '@types/aria-query': 5.0.4
       aria-query: 5.3.0
       dom-accessibility-api: 0.5.16
@@ -7078,9 +7081,9 @@ snapshots:
     dependencies:
       undici-types: 7.10.0
 
-  '@types/react-dom@19.1.7(@types/react@19.1.10)':
+  '@types/react-dom@19.1.7(@types/react@19.2.2)':
     dependencies:
-      '@types/react': 19.1.10
+      '@types/react': 19.2.2
 
   '@types/react-dom@19.2.2(@types/react@19.2.2)':
     dependencies:
@@ -7089,10 +7092,6 @@ snapshots:
   '@types/react-syntax-highlighter@15.5.13':
     dependencies:
       '@types/react': 19.2.2
-
-  '@types/react@19.1.10':
-    dependencies:
-      csstype: 3.1.3
 
   '@types/react@19.2.2':
     dependencies:
@@ -7191,17 +7190,6 @@ snapshots:
       '@vitest/pretty-format': 3.2.4
       loupe: 3.2.0
       tinyrainbow: 2.0.0
-
-  '@xyflow/react@12.8.6(@types/react@19.1.10)(immer@10.1.3)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)':
-    dependencies:
-      '@xyflow/system': 0.0.70
-      classcat: 5.0.5
-      react: 19.2.0
-      react-dom: 19.2.0(react@19.2.0)
-      zustand: 4.5.7(@types/react@19.1.10)(immer@10.1.3)(react@19.2.0)
-    transitivePeerDependencies:
-      - '@types/react'
-      - immer
 
   '@xyflow/react@12.8.6(@types/react@19.2.2)(immer@10.1.3)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)':
     dependencies:
@@ -10443,14 +10431,6 @@ snapshots:
   zod@3.25.76: {}
 
   zod@4.1.12: {}
-
-  zustand@4.5.7(@types/react@19.1.10)(immer@10.1.3)(react@19.2.0):
-    dependencies:
-      use-sync-external-store: 1.5.0(react@19.2.0)
-    optionalDependencies:
-      '@types/react': 19.1.10
-      immer: 10.1.3
-      react: 19.2.0
 
   zustand@4.5.7(@types/react@19.2.2)(immer@10.1.3)(react@19.2.0):
     dependencies:
