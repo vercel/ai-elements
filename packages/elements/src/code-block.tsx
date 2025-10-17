@@ -16,7 +16,13 @@ import type {
   ReactNode,
   SetStateAction,
 } from "react";
-import { createContext, useContext, useMemo, useState } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useMemo,
+  useState,
+} from "react";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import {
   oneDark,
@@ -74,7 +80,7 @@ export const CodeBlock = ({
   ...props
 }: CodeBlockProps) => {
   const [isWrapped, setIsWrapped] = useState(defaultWrap);
-  const toggleWrap = () => setIsWrapped((prev) => !prev);
+  const toggleWrap = useCallback(() => setIsWrapped((prev) => !prev), []);
 
   const isCollapsible = !!collapsible;
   const linesToShow = collapsible?.linesToShow ?? DEFAULT_LINES_TO_SHOW;
@@ -98,14 +104,17 @@ export const CodeBlock = ({
   );
 
   const codeCtx = useMemo(() => ({ code }), [code]);
-  const uiCtx: CodeUIContextType = {
-    isWrapped,
-    toggleWrap,
-    isCollapsible,
-    linesToShow,
-    collapsed,
-    setCollapsed,
-  };
+  const uiCtx = useMemo<CodeUIContextType>(
+    () => ({
+      isWrapped,
+      toggleWrap,
+      isCollapsible,
+      linesToShow,
+      collapsed,
+      setCollapsed,
+    }),
+    [isWrapped, toggleWrap, isCollapsible, linesToShow, collapsed]
+  );
 
   return (
     <CodeOnlyContext.Provider value={codeCtx}>
