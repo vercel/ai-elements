@@ -17,8 +17,12 @@ const code = `function MyComponent(props) {
 }`;
 
 const Example = () => (
-  <CodeBlock code={code} language="jsx">
-    <CodeBlockCollapsibleButton linesToShow={8} />
+  <CodeBlock
+    code={code}
+    collapsible={{ defaultCollapsed: true, linesToShow: 8 }}
+    language="jsx"
+  >
+    <CodeBlockCollapsibleButton />
     <CodeBlockWrapButton
       onToggle={(wrapped) => console.log("Wrap toggled:", wrapped)}
     />
