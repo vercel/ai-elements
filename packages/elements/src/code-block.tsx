@@ -11,7 +11,6 @@ import {
 } from "lucide-react";
 import type {
   ComponentProps,
-  CSSProperties,
   Dispatch,
   HTMLAttributes,
   ReactNode,
@@ -26,12 +25,6 @@ import {
 
 const DEFAULT_LINES_TO_SHOW = 8;
 const DEFAULT_LINE_HEIGHT_REM = 1.25;
-const DEFAULT_EXTRA_PADDING_REM = 2;
-
-type CSSVars = CSSProperties & {
-  "--cb-line-height"?: string;
-  "--cb-extra-padding"?: string;
-};
 
 type CodeOnlyContextType = { code: string };
 const CodeOnlyContext = createContext<CodeOnlyContextType>({ code: "" });
@@ -67,7 +60,6 @@ export type CodeBlockProps = HTMLAttributes<HTMLDivElement> & {
     defaultCollapsed?: boolean;
     linesToShow?: number;
     lineHeightRem?: number;
-    extraPaddingRem?: number;
   };
 };
 
@@ -87,8 +79,6 @@ export const CodeBlock = ({
   const isCollapsible = !!collapsible;
   const linesToShow = collapsible?.linesToShow ?? DEFAULT_LINES_TO_SHOW;
   const lineHeightRem = collapsible?.lineHeightRem ?? DEFAULT_LINE_HEIGHT_REM;
-  const extraPaddingRem =
-    collapsible?.extraPaddingRem ?? DEFAULT_EXTRA_PADDING_REM;
   const [collapsed, setCollapsed] = useState(
     collapsible?.defaultCollapsed ?? false
   );
@@ -99,6 +89,14 @@ export const CodeBlock = ({
     [totalLines, linesToShow]
   );
 
+  const displayCode = useMemo(
+    () =>
+      isCollapsible && collapsed
+        ? code.split("\n").slice(0, linesToShow).join("\n")
+        : code,
+    [code, isCollapsible, collapsed, linesToShow]
+  );
+
   const codeCtx = useMemo(() => ({ code }), [code]);
   const uiCtx: CodeUIContextType = {
     isWrapped,
@@ -107,11 +105,6 @@ export const CodeBlock = ({
     linesToShow,
     collapsed,
     setCollapsed,
-  };
-
-  const styleVars: CSSVars = {
-    "--cb-line-height": `${lineHeightRem}rem`,
-    "--cb-extra-padding": `${extraPaddingRem}rem`,
   };
 
   return (
@@ -125,26 +118,17 @@ export const CodeBlock = ({
           {...props}
         >
           <div className="relative">
-            <div
-              className="relative"
-              style={{
-                ...styleVars,
-                maxHeight:
-                  isCollapsible && collapsed
-                    ? `calc((var(--cb-line-height) * ${linesToShow}) + var(--cb-extra-padding))`
-                    : undefined,
-                overflow: isCollapsible && collapsed ? "hidden" : undefined,
-              }}
-            >
+            <div className="relative">
               <SyntaxHighlighter
                 className="overflow-hidden dark:hidden"
                 codeTagProps={{
-                  className: "font-mono text-sm leading-[1.25rem]",
+                  className: "font-mono text-sm",
                 }}
                 customStyle={{
                   margin: 0,
                   padding: "1rem",
                   fontSize: "0.875rem",
+                  lineHeight: `${lineHeightRem}rem`,
                   background: "hsl(var(--background))",
                   color: "hsl(var(--foreground))",
                 }}
@@ -154,21 +138,29 @@ export const CodeBlock = ({
                   paddingRight: "1rem",
                   minWidth: "2.5rem",
                 }}
+                lineProps={(lineNumber) => ({
+                  style:
+                    isCollapsible && collapsed && lineNumber > linesToShow
+                      ? { display: "none" }
+                      : undefined,
+                })}
                 showLineNumbers={showLineNumbers}
                 style={oneLight}
+                wrapLines
                 wrapLongLines={isWrapped}
               >
-                {code}
+                {displayCode}
               </SyntaxHighlighter>
               <SyntaxHighlighter
                 className="hidden overflow-hidden dark:block"
                 codeTagProps={{
-                  className: "font-mono text-sm leading-[1.25rem]",
+                  className: "font-mono text-sm",
                 }}
                 customStyle={{
                   margin: 0,
                   padding: "1rem",
                   fontSize: "0.875rem",
+                  lineHeight: `${lineHeightRem}rem`,
                   background: "hsl(var(--background))",
                   color: "hsl(var(--foreground))",
                 }}
@@ -178,14 +170,21 @@ export const CodeBlock = ({
                   paddingRight: "1rem",
                   minWidth: "2.5rem",
                 }}
+                lineProps={(lineNumber) => ({
+                  style:
+                    isCollapsible && collapsed && lineNumber > linesToShow
+                      ? { display: "none" }
+                      : undefined,
+                })}
                 showLineNumbers={showLineNumbers}
                 style={oneDark}
+                wrapLines
                 wrapLongLines={isWrapped}
               >
-                {code}
+                {displayCode}
               </SyntaxHighlighter>
               {isCollapsible && collapsed && hiddenCount > 0 && (
-                <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-b from-transparent to-background/95 backdrop-blur-[2px] dark:to-background/95" />
+                <div className="pointer-events-none absolute inset-x-0 bottom-0 h-6 bg-gradient-to-b from-transparent to-background/95 backdrop-blur-[2px] dark:to-background/95" />
               )}
             </div>
             <div className="absolute top-2 right-2 flex items-center gap-2">
@@ -195,7 +194,7 @@ export const CodeBlock = ({
               <div className="-translate-x-1/2 absolute bottom-2 left-1/2 z-10">
                 <Button
                   className="h-7 rounded-full border bg-background/60 px-3 text-foreground text-xs shadow-sm backdrop-blur supports-[backdrop-filter]:bg-background/50"
-                  onClick={() => setCollapsed(!collapsed)}
+                  onClick={() => setCollapsed((prev) => !prev)}
                   size="sm"
                   variant="secondary"
                 >
@@ -318,7 +317,7 @@ export const CodeBlockCollapsibleButton = ({
     <Button
       aria-pressed={collapsed}
       className={cn("shrink-0", className)}
-      onClick={() => setCollapsed(!collapsed)}
+      onClick={() => setCollapsed((prev) => !prev)}
       size="icon"
       variant="ghost"
       {...props}
