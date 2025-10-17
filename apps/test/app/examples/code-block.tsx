@@ -7,72 +7,27 @@ import {
   CodeBlockWrapButton,
 } from "@repo/elements/code-block";
 
-const code = `import { generateText, generateObject } from 'ai';
-import { z } from 'zod';
+const code = `import { Experimental_Agent as Agent, tool } from "ai";
+import { z } from "zod";
 
-// Example: Parallel code review with multiple specialized reviewers
-async function parallelCodeReview(code: string) {
-  const model = 'openai/gpt-4o';
-
-  // Run parallel reviews
-  const [securityReview, performanceReview, maintainabilityReview] =
-    await Promise.all([
-      generateObject({
-        model,
-        system:
-          'You are an expert in code security. Focus on identifying security vulnerabilities, injection risks, and authentication issues.',
-        schema: z.object({
-          vulnerabilities: z.array(z.string()),
-          riskLevel: z.enum(['low', 'medium', 'high']),
-          suggestions: z.array(z.string()),
-        }),
-        prompt: \`Review this code:
-      \${code}\`,
+const codeAgent = new Agent({
+  model: "openai/gpt-5-codex",
+  system:
+    "You are an expert in code performance optimization, specializing in Python. Your primary goal is to thoroughly analyze provided code snippets to identify and diagnose issues like performance bottlenecks, memory leaks, inefficient algorithms, redundant computations, and scalability problems.",
+  tools: {
+    runCode: tool({
+      description: "Execute Python code",
+      inputSchema: z.object({
+        code: z.string(),
       }),
-
-      generateObject({
-        model,
-        system:
-          'You are an expert in code performance. Focus on identifying performance bottlenecks, memory leaks, and optimization opportunities.',
-        schema: z.object({
-          issues: z.array(z.string()),
-          impact: z.enum(['low', 'medium', 'high']),
-          optimizations: z.array(z.string()),
-        }),
-        prompt: \`Review this code:
-      \${code}\`,
-      }),
-
-      generateObject({
-        model,
-        system:
-          'You are an expert in code quality. Focus on code structure, readability, and adherence to best practices.',
-        schema: z.object({
-          concerns: z.array(z.string()),
-          qualityScore: z.number().min(1).max(10),
-          recommendations: z.array(z.string()),
-        }),
-        prompt: \`Review this code:
-      \${code}\`,
-      }),
-    ]);
-
-  const reviews = [
-    { ...securityReview.object, type: 'security' },
-    { ...performanceReview.object, type: 'performance' },
-    { ...maintainabilityReview.object, type: 'maintainability' },
-  ];
-
-  // Aggregate results using another model instance
-  const { text: summary } = await generateText({
-    model,
-    system: 'You are a technical lead summarizing multiple code reviews.',
-    prompt: \`Synthesize these code review results into a concise summary with key actions:
-    \${JSON.stringify(reviews, null, 2)}\`,
-  });
-
-  return { reviews, summary };
-}`;
+      execute: async ({ code }) => {
+        // Execute code and return result
+        return { output: "Code executed successfully" };
+      },
+    }),
+  },
+});
+`;
 
 const Example = () => (
   <CodeBlock
