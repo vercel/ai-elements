@@ -9,8 +9,15 @@ import {
   CopyIcon,
   WrapText,
 } from "lucide-react";
-import type { ComponentProps, HTMLAttributes, ReactNode } from "react";
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import type {
+  ComponentProps,
+  CSSProperties,
+  Dispatch,
+  HTMLAttributes,
+  ReactNode,
+  SetStateAction,
+} from "react";
+import { createContext, useContext, useMemo, useState } from "react";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import {
   oneDark,
@@ -18,39 +25,36 @@ import {
 } from "react-syntax-highlighter/dist/esm/styles/prism";
 
 const DEFAULT_LINES_TO_SHOW = 8;
-const LINE_HEIGHT_REM = 1.25;
-const EXTRA_PADDING_REM = 2;
+const DEFAULT_LINE_HEIGHT_REM = 1.25;
+const DEFAULT_EXTRA_PADDING_REM = 2;
 
-type CodeBlockContextType = {
-  code: string;
-  isWrapped: boolean;
-  toggleWrap: () => void;
-  collapsibleEnabled: boolean;
-  setCollapsibleEnabled: (enabled: boolean) => void;
-  collapsed: boolean;
-  setCollapsed: (v: boolean) => void;
-  linesToShow: number;
-  setLinesToShow: (n: number) => void;
+type CSSVars = CSSProperties & {
+  "--cb-line-height"?: string;
+  "--cb-extra-padding"?: string;
 };
 
-const CodeBlockContext = createContext<CodeBlockContextType>({
-  code: "",
+type CodeOnlyContextType = { code: string };
+const CodeOnlyContext = createContext<CodeOnlyContextType>({ code: "" });
+
+type CodeUIContextType = {
+  isWrapped: boolean;
+  toggleWrap: () => void;
+  isCollapsible: boolean;
+  linesToShow: number;
+  collapsed: boolean;
+  setCollapsed: Dispatch<SetStateAction<boolean>>;
+};
+const CodeUIContext = createContext<CodeUIContextType>({
   isWrapped: false,
   toggleWrap: () => {
-    /* noop */
+    /** supressing biome lint issue */
   },
-  collapsibleEnabled: false,
-  setCollapsibleEnabled: () => {
-    /* noop */
-  },
-  collapsed: false,
-  setCollapsed: () => {
-    /* noop */
-  },
+  isCollapsible: false,
   linesToShow: DEFAULT_LINES_TO_SHOW,
-  setLinesToShow: () => {
-    /* noop */
-  },
+  collapsed: false,
+  setCollapsed: (() => {
+    /** suppressing biome lint issue */
+  }) as Dispatch<SetStateAction<boolean>>,
 });
 
 export type CodeBlockProps = HTMLAttributes<HTMLDivElement> & {
@@ -59,6 +63,12 @@ export type CodeBlockProps = HTMLAttributes<HTMLDivElement> & {
   showLineNumbers?: boolean;
   defaultWrap?: boolean;
   children?: ReactNode;
+  collapsible?: {
+    defaultCollapsed?: boolean;
+    linesToShow?: number;
+    lineHeightRem?: number;
+    extraPaddingRem?: number;
+  };
 };
 
 export const CodeBlock = ({
@@ -68,149 +78,145 @@ export const CodeBlock = ({
   className,
   children,
   defaultWrap = false,
+  collapsible,
   ...props
 }: CodeBlockProps) => {
   const [isWrapped, setIsWrapped] = useState(defaultWrap);
   const toggleWrap = () => setIsWrapped((prev) => !prev);
 
-  const [collapsibleEnabled, setCollapsibleEnabled] = useState(false);
-  const [collapsed, setCollapsed] = useState(false);
-  const [linesToShow, setLinesToShow] = useState(DEFAULT_LINES_TO_SHOW);
+  const isCollapsible = !!collapsible;
+  const linesToShow = collapsible?.linesToShow ?? DEFAULT_LINES_TO_SHOW;
+  const lineHeightRem = collapsible?.lineHeightRem ?? DEFAULT_LINE_HEIGHT_REM;
+  const extraPaddingRem =
+    collapsible?.extraPaddingRem ?? DEFAULT_EXTRA_PADDING_REM;
+  const [collapsed, setCollapsed] = useState(
+    collapsible?.defaultCollapsed ?? false
+  );
 
   const totalLines = useMemo(() => code.split("\n").length, [code]);
   const hiddenCount = useMemo(
     () => Math.max(totalLines - linesToShow, 0),
     [totalLines, linesToShow]
   );
-  const collapsedMaxHeightRem =
-    linesToShow * LINE_HEIGHT_REM + EXTRA_PADDING_REM;
+
+  const codeCtx = useMemo(() => ({ code }), [code]);
+  const uiCtx: CodeUIContextType = {
+    isWrapped,
+    toggleWrap,
+    isCollapsible,
+    linesToShow,
+    collapsed,
+    setCollapsed,
+  };
+
+  const styleVars: CSSVars = {
+    "--cb-line-height": `${lineHeightRem}rem`,
+    "--cb-extra-padding": `${extraPaddingRem}rem`,
+  };
 
   return (
-    <CodeBlockContext.Provider
-      value={{
-        code,
-        isWrapped,
-        toggleWrap,
-        collapsibleEnabled,
-        setCollapsibleEnabled,
-        collapsed,
-        setCollapsed,
-        linesToShow,
-        setLinesToShow,
-      }}
-    >
-      <div
-        className={cn(
-          "relative w-full overflow-hidden rounded-md border bg-background text-foreground",
-          className
-        )}
-        {...props}
-      >
-        <div className="relative">
-          <div
-            className="relative"
-            style={{
-              maxHeight:
-                collapsibleEnabled && collapsed
-                  ? `${collapsedMaxHeightRem}rem`
-                  : undefined,
-              overflow: collapsibleEnabled && collapsed ? "hidden" : undefined,
-            }}
-          >
-            <SyntaxHighlighter
-              className="overflow-hidden dark:hidden"
-              codeTagProps={{
-                className: "font-mono text-sm",
-              }}
-              customStyle={{
-                margin: 0,
-                padding: "1rem",
-                fontSize: "0.875rem",
-                background: "hsl(var(--background))",
-                color: "hsl(var(--foreground))",
-              }}
-              language={language}
-              lineNumberStyle={{
-                color: "hsl(var(--muted-foreground))",
-                paddingRight: "1rem",
-                minWidth: "2.5rem",
-              }}
-              showLineNumbers={showLineNumbers}
-              style={oneLight}
-              wrapLongLines={isWrapped}
-            >
-              {code}
-            </SyntaxHighlighter>
-            <SyntaxHighlighter
-              className="hidden overflow-hidden dark:block"
-              codeTagProps={{
-                className: "font-mono text-sm",
-              }}
-              customStyle={{
-                margin: 0,
-                padding: "1rem",
-                fontSize: "0.875rem",
-                background: "hsl(var(--background))",
-                color: "hsl(var(--foreground))",
-              }}
-              language={language}
-              lineNumberStyle={{
-                color: "hsl(var(--muted-foreground))",
-                paddingRight: "1rem",
-                minWidth: "2.5rem",
-              }}
-              showLineNumbers={showLineNumbers}
-              style={oneDark}
-              wrapLongLines={isWrapped}
-            >
-              {code}
-            </SyntaxHighlighter>
-            {collapsibleEnabled && collapsed && hiddenCount > 0 && (
-              <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-b from-transparent to-background/95 backdrop-blur-[2px] dark:to-background/95" />
-            )}
-          </div>
-          <div className="absolute top-2 right-2 flex items-center gap-2">
-            {children}
-            {collapsibleEnabled && hiddenCount > 0 && (
-              <Button
-                aria-pressed={collapsed}
-                className="shrink-0"
-                onClick={() => setCollapsed((v) => !v)}
-                size="icon"
-                variant="ghost"
-              >
-                {collapsed ? (
-                  <ChevronDown size={14} />
-                ) : (
-                  <ChevronUp size={14} />
-                )}
-              </Button>
-            )}
-          </div>
-          {collapsibleEnabled && hiddenCount > 0 && (
-            <div className="-translate-x-1/2 absolute bottom-2 left-1/2 z-10">
-              <Button
-                className="h-7 rounded-full border bg-background/60 px-3 text-foreground text-xs shadow-sm backdrop-blur supports-[backdrop-filter]:bg-background/50"
-                onClick={() => setCollapsed((v) => !v)}
-                size="sm"
-                variant="secondary"
-              >
-                {collapsed ? (
-                  <ChevronDown size={14} />
-                ) : (
-                  <ChevronUp size={14} />
-                )}
-                {collapsed && (
-                  <span className="ml-2 text-muted-foreground">
-                    {hiddenCount} hidden {hiddenCount === 1 ? "line" : "lines"}
-                  </span>
-                )}
-              </Button>
-            </div>
+    <CodeOnlyContext.Provider value={codeCtx}>
+      <CodeUIContext.Provider value={uiCtx}>
+        <div
+          className={cn(
+            "relative w-full overflow-hidden rounded-md border bg-background text-foreground",
+            className
           )}
+          {...props}
+        >
+          <div className="relative">
+            <div
+              className="relative"
+              style={{
+                ...styleVars,
+                maxHeight:
+                  isCollapsible && collapsed
+                    ? `calc((var(--cb-line-height) * ${linesToShow}) + var(--cb-extra-padding))`
+                    : undefined,
+                overflow: isCollapsible && collapsed ? "hidden" : undefined,
+              }}
+            >
+              <SyntaxHighlighter
+                className="overflow-hidden dark:hidden"
+                codeTagProps={{
+                  className: "font-mono text-sm leading-[1.25rem]",
+                }}
+                customStyle={{
+                  margin: 0,
+                  padding: "1rem",
+                  fontSize: "0.875rem",
+                  background: "hsl(var(--background))",
+                  color: "hsl(var(--foreground))",
+                }}
+                language={language}
+                lineNumberStyle={{
+                  color: "hsl(var(--muted-foreground))",
+                  paddingRight: "1rem",
+                  minWidth: "2.5rem",
+                }}
+                showLineNumbers={showLineNumbers}
+                style={oneLight}
+                wrapLongLines={isWrapped}
+              >
+                {code}
+              </SyntaxHighlighter>
+              <SyntaxHighlighter
+                className="hidden overflow-hidden dark:block"
+                codeTagProps={{
+                  className: "font-mono text-sm leading-[1.25rem]",
+                }}
+                customStyle={{
+                  margin: 0,
+                  padding: "1rem",
+                  fontSize: "0.875rem",
+                  background: "hsl(var(--background))",
+                  color: "hsl(var(--foreground))",
+                }}
+                language={language}
+                lineNumberStyle={{
+                  color: "hsl(var(--muted-foreground))",
+                  paddingRight: "1rem",
+                  minWidth: "2.5rem",
+                }}
+                showLineNumbers={showLineNumbers}
+                style={oneDark}
+                wrapLongLines={isWrapped}
+              >
+                {code}
+              </SyntaxHighlighter>
+              {isCollapsible && collapsed && hiddenCount > 0 && (
+                <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-b from-transparent to-background/95 backdrop-blur-[2px] dark:to-background/95" />
+              )}
+            </div>
+            <div className="absolute top-2 right-2 flex items-center gap-2">
+              {children}
+            </div>
+            {isCollapsible && hiddenCount > 0 && (
+              <div className="-translate-x-1/2 absolute bottom-2 left-1/2 z-10">
+                <Button
+                  className="h-7 rounded-full border bg-background/60 px-3 text-foreground text-xs shadow-sm backdrop-blur supports-[backdrop-filter]:bg-background/50"
+                  onClick={() => setCollapsed(!collapsed)}
+                  size="sm"
+                  variant="secondary"
+                >
+                  {collapsed ? (
+                    <ChevronDown size={14} />
+                  ) : (
+                    <ChevronUp size={14} />
+                  )}
+                  {collapsed && (
+                    <span className="ml-2 text-muted-foreground">
+                      {hiddenCount} hidden{" "}
+                      {hiddenCount === 1 ? "line" : "lines"}
+                    </span>
+                  )}
+                </Button>
+              </div>
+            )}
+          </div>
         </div>
-      </div>
-    </CodeBlockContext.Provider>
+      </CodeUIContext.Provider>
+    </CodeOnlyContext.Provider>
   );
 };
 
@@ -229,7 +235,7 @@ export const CodeBlockCopyButton = ({
   ...props
 }: CodeBlockCopyButtonProps) => {
   const [isCopied, setIsCopied] = useState(false);
-  const { code } = useContext(CodeBlockContext);
+  const { code } = useContext(CodeOnlyContext);
 
   const copyToClipboard = async () => {
     if (typeof window === "undefined" || !navigator.clipboard.writeText) {
@@ -272,7 +278,7 @@ export const CodeBlockWrapButton = ({
   className,
   ...props
 }: CodeBlockWrapButtonProps) => {
-  const { isWrapped, toggleWrap } = useContext(CodeBlockContext);
+  const { isWrapped, toggleWrap } = useContext(CodeUIContext);
 
   const handleClick = () => {
     toggleWrap();
@@ -293,29 +299,32 @@ export const CodeBlockWrapButton = ({
   );
 };
 
-export type CodeBlockCollapsibleButtonProps = {
-  linesToShow?: number;
-  defaultCollapsed?: boolean;
+export type CodeBlockCollapsibleButtonProps = ComponentProps<typeof Button> & {
+  children?: ReactNode;
 };
 
 export const CodeBlockCollapsibleButton = ({
-  linesToShow = DEFAULT_LINES_TO_SHOW,
-  defaultCollapsed = true,
+  children,
+  className,
+  ...props
 }: CodeBlockCollapsibleButtonProps) => {
-  const { setCollapsibleEnabled, setLinesToShow, setCollapsed } =
-    useContext(CodeBlockContext);
+  const { isCollapsible, collapsed, setCollapsed } = useContext(CodeUIContext);
 
-  useEffect(() => {
-    setCollapsibleEnabled(true);
-    setLinesToShow(linesToShow);
-    setCollapsed(defaultCollapsed);
-  }, [
-    setCollapsibleEnabled,
-    setLinesToShow,
-    setCollapsed,
-    linesToShow,
-    defaultCollapsed,
-  ]);
+  if (!isCollapsible) {
+    return null;
+  }
 
-  return null;
+  return (
+    <Button
+      aria-pressed={collapsed}
+      className={cn("shrink-0", className)}
+      onClick={() => setCollapsed(!collapsed)}
+      size="icon"
+      variant="ghost"
+      {...props}
+    >
+      {children ??
+        (collapsed ? <ChevronDown size={14} /> : <ChevronUp size={14} />)}
+    </Button>
+  );
 };
