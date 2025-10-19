@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import { CodeBlock, CodeBlockCopyButton } from "../src/code-block";
@@ -11,14 +11,16 @@ Object.assign(navigator, {
 });
 
 describe("CodeBlock", () => {
-  it("renders code content", () => {
+  it("renders code content", async () => {
     const { container } = render(
       <CodeBlock code="const foo = 'bar';" language="javascript" />
     );
-    expect(container.textContent).toContain("const foo");
+    await waitFor(() => {
+      expect(container.textContent).toContain("const foo");
+    });
   });
 
-  it("renders with line numbers", () => {
+  it("renders with line numbers", async () => {
     const { container } = render(
       <CodeBlock
         code="line1\nline2"
@@ -26,7 +28,9 @@ describe("CodeBlock", () => {
         showLineNumbers={true}
       />
     );
-    expect(container.textContent).toContain("line1");
+    await waitFor(() => {
+      expect(container.textContent).toContain("line1");
+    });
   });
 
   it("renders children actions", () => {
@@ -43,6 +47,8 @@ describe("CodeBlock", () => {
       <CodeBlock className="custom-class" code="code" language="javascript" />
     );
     expect(container.firstChild).toHaveClass("custom-class");
+    expect(container.firstChild).toHaveClass("group");
+    expect(container.firstChild).toHaveClass("relative");
   });
 });
 
