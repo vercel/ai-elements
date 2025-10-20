@@ -10,8 +10,12 @@ on:
 
 jobs:
   test:
-    name: Run Tests
+    name: Run Tests (Node.js ${{ matrix.node-version }})
     runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18, 20, 22]
 
     steps:
       - name: Checkout Repo
@@ -20,13 +24,16 @@ jobs:
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
 
-      - name: Setup Node.js 22
+      - name: Setup Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: ${{ matrix.node-version }}
 
       - name: Install Dependencies
         run: pnpm i
+
+      - name: Run Check
+        run: pnpm check
 
       - name: Run Tests
         run: pnpm test
