@@ -1,8 +1,8 @@
 "use client"
 
 import * as React from "react"
-import { Slot as SlotPrimitive } from "radix-ui";
-import { cva, VariantProps } from "class-variance-authority"
+import { Slot as SlotPrimitive } from "radix-ui"
+import { cva, type VariantProps } from "class-variance-authority"
 import { PanelLeftIcon } from "lucide-react"
 
 import { useIsMobile } from "@repo/shadcn-ui/hooks/use-mobile"
