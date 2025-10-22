@@ -20,7 +20,7 @@ import {
   PromptInputSpeechButton,
   PromptInputSubmit,
   PromptInputTextarea,
-  PromptInputToolbar,
+  PromptInputFooter,
   PromptInputTools,
   usePromptInputController,
 } from "@repo/elements/prompt-input";
@@ -123,7 +123,7 @@ const Example = () => {
           </PromptInputAttachments>
           <PromptInputTextarea ref={textareaRef} />
         </PromptInputBody>
-        <PromptInputToolbar>
+        <PromptInputFooter>
           <PromptInputTools>
             <PromptInputActionMenu>
               <PromptInputActionMenuTrigger />
@@ -153,7 +153,7 @@ const Example = () => {
             </PromptInputModelSelect>
           </PromptInputTools>
           <PromptInputSubmit status={status} />
-        </PromptInputToolbar>
+        </PromptInputFooter>
       </PromptInput>
     </PromptInputProvider>
   );
