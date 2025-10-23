@@ -7,7 +7,17 @@ import {
   ToolInput,
   ToolOutput,
 } from "@repo/elements/tool";
+import {
+  ToolApproval,
+  ToolApprovalAccepted,
+  ToolApprovalAction,
+  ToolApprovalActions,
+  ToolApprovalContent,
+  ToolApprovalRejected,
+  ToolApprovalRequest,
+} from "@repo/elements/tool-approval";
 import type { ToolUIPart } from "ai";
+import { CheckIcon, XIcon } from "lucide-react";
 import { nanoid } from "nanoid";
 
 const toolCall: ToolUIPart = {
@@ -30,14 +40,188 @@ const toolCall: ToolUIPart = {
 };
 
 const Example = () => (
-  <div style={{ height: "500px" }}>
+  <div className="space-y-4">
+    {/* 1. input-streaming: Pending */}
+    <Tool defaultOpen>
+      <ToolHeader
+        state="input-streaming"
+        title="Database Query"
+        type="tool-database_query"
+      />
+      <ToolContent>
+        <ToolInput input={{}} />
+      </ToolContent>
+    </Tool>
+
+    {/* 2. approval-requested: Awaiting Approval */}
+    <Tool>
+      <ToolHeader
+        state={"approval-requested" as ToolUIPart["state"]}
+        title="Database Query"
+        type="tool-database_query"
+      />
+      <ToolContent>
+        <ToolInput input={toolCall.input} />
+        <ToolApproval approval={{ id: nanoid() }} state="approval-requested">
+          <ToolApprovalContent>
+            <ToolApprovalRequest>
+              This tool will execute a query on the production database. Do you
+              want to proceed?
+            </ToolApprovalRequest>
+            <ToolApprovalAccepted>
+              <CheckIcon className="size-4 text-green-600 dark:text-green-400" />
+              <span>Accepted</span>
+            </ToolApprovalAccepted>
+            <ToolApprovalRejected>
+              <XIcon className="size-4 text-destructive" />
+              <span>Rejected</span>
+            </ToolApprovalRejected>
+          </ToolApprovalContent>
+          <ToolApprovalActions>
+            <ToolApprovalAction
+              onClick={() => {
+                // In production, call addToolApprovalResponse
+              }}
+              variant="outline"
+            >
+              Reject
+            </ToolApprovalAction>
+            <ToolApprovalAction
+              onClick={() => {
+                // In production, call addToolApprovalResponse
+              }}
+              variant="default"
+            >
+              Accept
+            </ToolApprovalAction>
+          </ToolApprovalActions>
+        </ToolApproval>
+      </ToolContent>
+    </Tool>
+
+    {/* 3. approval-responded: Responded */}
+    <Tool>
+      <ToolHeader
+        state={"approval-responded" as ToolUIPart["state"]}
+        title="Database Query"
+        type="tool-database_query"
+      />
+      <ToolContent>
+        <ToolInput input={toolCall.input} />
+        <ToolApproval
+          approval={{ id: nanoid(), approved: true }}
+          state="approval-responded"
+        >
+          <ToolApprovalContent>
+            <ToolApprovalRequest>
+              This tool will execute a query on the production database.
+            </ToolApprovalRequest>
+            <ToolApprovalAccepted>
+              <CheckIcon className="size-4 text-green-600 dark:text-green-400" />
+              <span>Accepted</span>
+            </ToolApprovalAccepted>
+            <ToolApprovalRejected>
+              <XIcon className="size-4 text-destructive" />
+              <span>Rejected</span>
+            </ToolApprovalRejected>
+          </ToolApprovalContent>
+        </ToolApproval>
+      </ToolContent>
+    </Tool>
+
+    {/* 4. input-available: Running */}
+    <Tool>
+      <ToolHeader
+        state="input-available"
+        title="Database Query"
+        type="tool-database_query"
+      />
+      <ToolContent>
+        <ToolInput input={toolCall.input} />
+      </ToolContent>
+    </Tool>
+
+    {/* 5. output-available: Completed */}
     <Tool>
       <ToolHeader state={toolCall.state} type={toolCall.type} />
       <ToolContent>
         <ToolInput input={toolCall.input} />
+        <ToolApproval
+          approval={{ id: nanoid(), approved: true }}
+          state="output-available"
+        >
+          <ToolApprovalContent>
+            <ToolApprovalRequest>
+              This tool will execute a query on the production database.
+            </ToolApprovalRequest>
+            <ToolApprovalAccepted>
+              <CheckIcon className="size-4 text-green-600 dark:text-green-400" />
+              <span>Accepted</span>
+            </ToolApprovalAccepted>
+            <ToolApprovalRejected>
+              <XIcon className="size-4 text-destructive" />
+              <span>Rejected</span>
+            </ToolApprovalRejected>
+          </ToolApprovalContent>
+        </ToolApproval>
         {toolCall.state === "output-available" && (
           <ToolOutput errorText={toolCall.errorText} output={toolCall.output} />
         )}
+      </ToolContent>
+    </Tool>
+
+    {/* 6. output-error: Error */}
+    <Tool>
+      <ToolHeader
+        state="output-error"
+        title="Database Query"
+        type="tool-database_query"
+      />
+      <ToolContent>
+        <ToolInput input={toolCall.input} />
+        <ToolOutput
+          errorText="Connection timeout: Unable to reach database server"
+          output={undefined}
+        />
+      </ToolContent>
+    </Tool>
+
+    {/* 7. output-denied: Denied */}
+    <Tool>
+      <ToolHeader
+        state={"output-denied" as ToolUIPart["state"]}
+        title="Database Query"
+        type="tool-database_query"
+      />
+      <ToolContent>
+        <ToolInput input={toolCall.input} />
+        <ToolApproval
+          approval={{
+            id: nanoid(),
+            approved: false,
+            reason: "Query could impact production performance",
+          }}
+          state="output-denied"
+        >
+          <ToolApprovalContent>
+            <ToolApprovalRequest>
+              This tool will execute a query on the production database.
+            </ToolApprovalRequest>
+            <ToolApprovalAccepted>
+              <CheckIcon className="size-4 text-green-600 dark:text-green-400" />
+              <span>Accepted</span>
+            </ToolApprovalAccepted>
+            <ToolApprovalRejected>
+              <XIcon className="size-4 text-destructive" />
+              <span>
+                Rejected
+                <span className="text-muted-foreground">
+                  : Query could impact production performance
+                </span>
+              </span>
+            </ToolApprovalRejected>
+          </ToolApprovalContent>
+        </ToolApproval>
       </ToolContent>
     </Tool>
   </div>

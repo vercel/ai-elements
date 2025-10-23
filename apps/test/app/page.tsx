@@ -27,6 +27,7 @@ import Sources from "@/app/examples/sources";
 import Suggestion from "@/app/examples/suggestion";
 import Task from "@/app/examples/task";
 import Tool from "@/app/examples/tool";
+import ToolApproval from "@/app/examples/tool-approval";
 import WebPreview from "@/app/examples/web-preview";
 import Workflow from "@/app/examples/workflow";
 
@@ -54,6 +55,7 @@ const components = [
   { name: "Suggestion", Component: Suggestion },
   { name: "Task", Component: Task },
   { name: "Tool", Component: Tool },
+  { name: "Tool Approval", Component: ToolApproval },
   { name: "WebPreview", Component: WebPreview },
 ] as const;
 

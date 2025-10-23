@@ -13,7 +13,7 @@
     "@repo/elements": "workspace:*",
     "@repo/shadcn-ui": "workspace:*",
     "@xyflow/react": "^12.8.6",
-    "ai": "5.0.72",
+    "ai": "5.1.0-beta.22",
     "lucide-react": "^0.545.0",
     "nanoid": "^5.1.6",
     "next": "15.5.5",
