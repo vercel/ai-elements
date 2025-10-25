@@ -62,7 +62,7 @@ export async function generateMetadata(
     notFound();
   }
 
-  const title = `${page.data.title} | components.build`;
+  const title = `${page.data.title} | ▲ AI Elements`;
   const description = page.data.description;
   const protocol = process.env.NODE_ENV === "production" ? "https" : "http";
   const baseUrl = `${protocol}://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`;

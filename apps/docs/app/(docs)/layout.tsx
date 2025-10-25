@@ -4,7 +4,7 @@ import { source } from "@/lib/source";
 export default function Layout({ children }: LayoutProps<"/">) {
   return (
     <DocsLayout
-      githubUrl="https://github.com/vercel/components.build"
+      githubUrl="https://github.com/vercel/ai-elements"
       links={[]}
       nav={{
         title: (
