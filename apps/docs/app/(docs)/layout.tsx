@@ -14,7 +14,7 @@ const Layout = ({ children }: LayoutProps<"/">) => (
     sidebar={{
       collapsible: false,
       tabs: [],
-      className: "bg-background!",
+      className: "bg-background! transition-none!",
     }}
     tree={source.pageTree}
   >
