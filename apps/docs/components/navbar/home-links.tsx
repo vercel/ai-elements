@@ -78,7 +78,7 @@ export const HomeLinks = () => (
     </div>
 
     <div className="flex flex-row items-center gap-4">
-      <Link className="flex flex-row items-center gap-2" href="/">
+      <a className="flex flex-row items-center gap-2" href="/">
         <div className="flex flex-row items-center gap-2">
           <div className="text-zinc-800 dark:text-zinc-100">
             <SparklesIcon />
@@ -87,7 +87,7 @@ export const HomeLinks = () => (
             AI <span className="hidden min-[385px]:inline">SDK</span>
           </div>
         </div>
-      </Link>
+      </a>
     </div>
 
     <style jsx>{`

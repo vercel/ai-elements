@@ -67,9 +67,8 @@ export const ClientNavbar = ({ pages }: { pages: NavPageItem[] }) => (
               {page.render ? (
                 <page.render />
               ) : (
-                <Link
+                <a
                   href={page.href}
-                  scroll={page.href !== "/docs"}
                   target={page.external ? "_blank" : undefined}
                 >
                   <span className="flex items-center gap-1">
@@ -89,7 +88,7 @@ export const ClientNavbar = ({ pages }: { pages: NavPageItem[] }) => (
                       <ExternalLinkIcon aria-hidden="true" className="size-3" />
                     )}
                   </span>
-                </Link>
+                </a>
               )}
             </Button>
           ))}
