@@ -8,6 +8,7 @@
       }
     },
     "ai-elements-docs": {
+      "packageName": "docs",
       "routing": [
         {
           "group": "elements",
