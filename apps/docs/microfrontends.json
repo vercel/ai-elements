@@ -10,7 +10,8 @@
     "ai-elements-docs": {
       "routing": [
         {
-          "paths": ["/elements"]
+          "group": "elements",
+          "paths": ["/elements", "/elements/:path*"]
         }
       ]
     }
