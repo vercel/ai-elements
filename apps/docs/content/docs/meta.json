@@ -5,8 +5,8 @@
   "pages": [
     "---Docs---",
     "index",
-    "overview/usage",
-    "overview/troubleshooting",
+    "usage",
+    "troubleshooting",
     "---Examples---",
     "examples/chatbot",
     "examples/v0",
