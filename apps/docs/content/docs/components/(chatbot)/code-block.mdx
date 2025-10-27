@@ -34,7 +34,7 @@ Build a simple code generation tool using the [`experimental_useObject`](https:/
 
 Add the following component to your frontend:
 
-```tsx filename="app/page.tsx"
+```tsx title="app/page.tsx"
 'use client';
 
 import { experimental_useObject as useObject } from '@ai-sdk/react';
@@ -103,7 +103,7 @@ export default function Page() {
 
 Add the following route to your backend:
 
-```tsx filename="api/codegen/route.ts"
+```tsx title="api/codegen/route.ts"
 import { streamObject } from 'ai';
 import { z } from 'zod';
 

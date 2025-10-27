@@ -41,7 +41,7 @@ Build a mock async programming agent using [`experimental_generateObject`](/docs
 
 Add the following component to your frontend:
 
-```tsx filename="app/page.tsx"
+```tsx title="app/page.tsx"
 'use client';
 
 import { experimental_useObject as useObject } from '@ai-sdk/react';
@@ -147,7 +147,7 @@ export default TaskDemo;
 
 Add the following route to your backend:
 
-```ts filename="app/api/agent.ts"
+```ts title="app/api/agent.ts"
 import { streamObject } from 'ai';
 import { z } from 'zod';
 

@@ -40,7 +40,7 @@ Build a simple stateful weather app that renders the last message in a tool usin
 
 Add the following component to your frontend:
 
-```tsx filename="app/page.tsx"
+```tsx title="app/page.tsx"
 'use client';
 
 import { useChat } from '@ai-sdk/react';
@@ -138,7 +138,7 @@ export default Example;
 
 Add the following route to your backend:
 
-```ts filename="app/api/weather/route.tsx"
+```ts title="app/api/weather/route.tsx"
 import { streamText, UIMessage, convertToModelMessages } from 'ai';
 import { z } from 'zod';
 

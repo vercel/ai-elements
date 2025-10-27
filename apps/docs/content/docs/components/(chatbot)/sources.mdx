@@ -38,7 +38,7 @@ Build a simple web search agent with Perplexity Sonar.
 
 Add the following component to your frontend:
 
-```tsx filename="app/page.tsx"
+```tsx title="app/page.tsx"
 'use client';
 
 import { useChat } from '@ai-sdk/react';
@@ -161,7 +161,7 @@ export default SourceDemo;
 
 Add the following route to your backend:
 
-```tsx filename="api/chat/route.ts"
+```tsx title="api/chat/route.ts"
 import { convertToModelMessages, streamText, UIMessage } from 'ai';
 import { perplexity } from '@ai-sdk/perplexity';
 

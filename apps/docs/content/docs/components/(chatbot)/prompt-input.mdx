@@ -89,7 +89,7 @@ Built a fully functional chat app using `PromptInput`, [`Conversation`](/element
 
 Add the following component to your frontend:
 
-```tsx filename="app/page.tsx"
+```tsx title="app/page.tsx"
 'use client';
 
 import {
@@ -249,7 +249,7 @@ export default InputDemo;
 
 Add the following route to your backend:
 
-```ts filename="app/api/chat/route.ts"
+```ts title="app/api/chat/route.ts"
 import { streamText, UIMessage, convertToModelMessages } from 'ai';
 
 // Allow streaming responses up to 30 seconds

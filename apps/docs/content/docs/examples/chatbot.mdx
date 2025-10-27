@@ -15,13 +15,13 @@ Let's walk through how to build a chatbot using AI Elements and AI SDK. Our exam
 
 First, set up a new Next.js repo and cd into it by running the following command (make sure you choose to use Tailwind the project setup):
 
-```bash filename="Terminal"
+```bash title="Terminal"
 npx create-next-app@latest ai-chatbot && cd ai-chatbot
 ```
 
 Run the following command to install AI Elements. This will also set up shadcn/ui if you haven't already configured it:
 
-```bash filename="Terminal"
+```bash title="Terminal"
 npx ai-elements@latest
 ```
 
@@ -43,7 +43,7 @@ Here, we use the `PromptInput` component with its compound components to build a
 
 The whole chat lives in a `Conversation`. We switch on `message.parts` and render the respective part within `Message`, `Reasoning`, and `Sources`. We also use `status` from `useChat` to stream reasoning tokens, as well as render `Loader`.
 
-```tsx filanem="app/page.tsx"
+```tsx title="app/page.tsx"
 'use client';
 
 import {
@@ -270,7 +270,7 @@ export default ChatBotDemo;
 
 Create a new route handler `app/api/chat/route.ts` and paste in the following code. We're using `perplexity/sonar` for web search because by default the model returns search results. We also pass `sendSources` and `sendReasoning` to `toUIMessageStreamResponse` in order to receive as parts on the frontend. The handler now also accepts file attachments from the client.
 
-```ts filename="app/api/chat/route.ts"
+```ts title="app/api/chat/route.ts"
 import { streamText, UIMessage, convertToModelMessages } from 'ai';
 
 // Allow streaming responses up to 30 seconds

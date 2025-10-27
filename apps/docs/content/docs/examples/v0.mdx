@@ -13,13 +13,13 @@ Let's walk through how to build a v0 clone using AI Elements and the [v0 Platfor
 
 First, set up a new Next.js repo and cd into it by running the following command (make sure you choose to use Tailwind the project setup):
 
-```bash filename="Terminal"
+```bash title="Terminal"
 npx create-next-app@latest v0-clone && cd v0-clone
 ```
 
 Run the following command to install shadcn/ui and AI Elements.
 
-```bash filename="Terminal"
+```bash title="Terminal"
 npx shadcn@latest init && npx ai-elements@latest
 ```
 
@@ -39,7 +39,7 @@ In your `app/page.tsx`, replace the code with the file below.
 
 Here, we use `Conversation` to wrap the conversation code, and the `WebPreview` component to render the URL returned from the v0 API.
 
-```tsx filename="app/page.tsx"
+```tsx title="app/page.tsx"
 'use client';
 
 import { useState } from 'react';
@@ -234,7 +234,7 @@ export default function Home() {
 
 In this case, we'll also edit the base component `components/ai-elements/web-preview.tsx` in order to best match with our theme.
 
-```tsx filename="components/ai-elements/web-preview.tsx" highlight="5,24"
+```tsx title="components/ai-elements/web-preview.tsx" highlight="5,24"
   return (
     <WebPreviewContext.Provider value={contextValue}>
       <div
@@ -270,7 +270,7 @@ export const WebPreviewNavigation = ({
 
 Create a new route handler `app/api/chat/route.ts` and paste in the following code. We use the v0 SDK to manage chats.
 
-```ts filename="app/api/chat/route.ts"
+```ts title="app/api/chat/route.ts"
 import { NextRequest, NextResponse } from 'next/server';
 import { v0 } from 'v0-sdk';
 

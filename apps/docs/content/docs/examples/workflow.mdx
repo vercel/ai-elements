@@ -15,13 +15,13 @@ Let's walk through how to build a workflow visualization using AI Elements. Our 
 
 First, set up a new Next.js repo and cd into it by running the following command (make sure you choose to use Tailwind in the project setup):
 
-```bash filename="Terminal"
+```bash title="Terminal"
 npx create-next-app@latest ai-workflow && cd ai-workflow
 ```
 
 Run the following command to install AI Elements. This will also set up shadcn/ui if you haven't already configured it:
 
-```bash filename="Terminal"
+```bash title="Terminal"
 npx ai-elements@latest
 ```
 
@@ -41,7 +41,7 @@ Let's build the workflow visualization step by step. We'll create the component 
 
 First, import the necessary AI Elements components in your `app/page.tsx`:
 
-```tsx filename="app/page.tsx"
+```tsx title="app/page.tsx"
 'use client';
 
 import { Canvas } from '@/components/ai-elements/canvas';
@@ -65,7 +65,7 @@ import { Button } from '@/components/ui/button';
 
 Create a constant object to manage node identifiers. This makes it easier to reference nodes when creating edges:
 
-```tsx filename="app/page.tsx"
+```tsx title="app/page.tsx"
 const nodeIds = {
   start: 'start',
   process1: 'process1',
@@ -80,7 +80,7 @@ const nodeIds = {
 
 Define the nodes array with position, type, and data for each node in your workflow:
 
-```tsx filename="app/page.tsx"
+```tsx title="app/page.tsx"
 const nodes = [
   {
     id: nodeIds.start,
@@ -161,7 +161,7 @@ const nodes = [
 
 Define the connections between nodes. Use `animated` for active paths and `temporary` for conditional or error paths:
 
-```tsx filename="app/page.tsx"
+```tsx title="app/page.tsx"
 const edges = [
   {
     id: 'edge1',
@@ -206,7 +206,7 @@ const edges = [
 
 Define custom node rendering using the compound Node components:
 
-```tsx filename="app/page.tsx"
+```tsx title="app/page.tsx"
 const nodeTypes = {
   workflow: ({
     data,
@@ -247,7 +247,7 @@ const nodeTypes = {
 
 Map the edge type names to the Edge components:
 
-```tsx filename="app/page.tsx"
+```tsx title="app/page.tsx"
 const edgeTypes = {
   animated: Edge.Animated,
   temporary: Edge.Temporary,
@@ -258,7 +258,7 @@ const edgeTypes = {
 
 Finally, create the main component that renders the Canvas with all nodes, edges, controls, and custom UI panels:
 
-```tsx filename="app/page.tsx"
+```tsx title="app/page.tsx"
 const App = () => (
   <Canvas
     edges={edges}

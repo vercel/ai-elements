@@ -40,7 +40,7 @@ npm i @ai-sdk/openai
 
 Add the following component to your frontend:
 
-```tsx filename="app/page.tsx"
+```tsx title="app/page.tsx"
 'use client';
 
 import { Image } from '@/components/ai-elements/image';
@@ -121,7 +121,7 @@ export default ImageDemo;
 
 Add the following route to your backend:
 
-```ts filename="app/api/image/route.ts"
+```ts title="app/api/image/route.ts"
 import { openai } from '@ai-sdk/openai';
 import { experimental_generateImage } from 'ai';
 

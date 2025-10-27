@@ -33,7 +33,7 @@ Build a simple chat UI where the user can copy or regenerate the most recent mes
 
 Add the following component to your frontend:
 
-```tsx filename="app/page.tsx"
+```tsx title="app/page.tsx"
 'use client';
 
 import { useState } from 'react';
@@ -142,7 +142,7 @@ export default ActionsDemo;
 
 Add the following route to your backend:
 
-```tsx filename="api/chat/route.ts"
+```tsx title="api/chat/route.ts"
 import { streamText, UIMessage, convertToModelMessages } from 'ai';
 
 // Allow streaming responses up to 30 seconds
