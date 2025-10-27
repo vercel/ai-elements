@@ -8,6 +8,9 @@ const Layout = ({ children }: LayoutProps<"/">) => (
     nav={{
       component: <AiSdkNav />,
     }}
+    searchToggle={{
+      enabled: false,
+    }}
     sidebar={{
       collapsible: false,
       tabs: [],

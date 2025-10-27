@@ -174,3 +174,7 @@
   --fd-nav-height: 57px;
   --fd-page-width: 100%;
 }
+
+#nd-sidebar > div:first-child {
+  @apply hidden;
+}
