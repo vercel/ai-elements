@@ -144,7 +144,7 @@
     text-rendering: optimizelegibility;
   }
   body {
-    @apply min-h-[100dvh];
+    @apply min-h-dvh;
   }
   input::placeholder,
   textarea::placeholder {
@@ -168,4 +168,9 @@
 .prose h5,
 .prose h6 {
   @apply font-semibold tracking-tight;
+}
+
+:root {
+  --fd-nav-height: 57px;
+  --fd-page-width: 100%;
 }

@@ -18,17 +18,6 @@ const config = {
     ],
   },
 
-  // biome-ignore lint/suspicious/useAwait: "redirects is async"
-  async redirects() {
-    return [
-      {
-        source: "/elements",
-        destination: "/elements/overview",
-        permanent: true,
-      },
-    ];
-  },
-
   // biome-ignore lint/suspicious/useAwait: "rewrites is async"
   async rewrites() {
     return [
