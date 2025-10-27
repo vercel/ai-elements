@@ -9,10 +9,11 @@
     "postinstall": "fumadocs-mdx"
   },
   "dependencies": {
-    "@repo/examples": "workspace:*",
     "@repo/elements": "workspace:*",
+    "@repo/examples": "workspace:*",
     "@repo/shadcn-ui": "workspace:*",
     "@vercel/analytics": "^1.5.0",
+    "@vercel/microfrontends": "^2.1.0",
     "@vercel/speed-insights": "^1.2.0",
     "class-variance-authority": "^0.7.1",
     "fumadocs-core": "16.0.1",
