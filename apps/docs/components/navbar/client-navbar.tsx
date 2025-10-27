@@ -64,7 +64,7 @@ export const ClientNavbar = ({ pages }: { pages: NavPageItem[] }) => {
   const pathname = usePathname();
 
   return (
-    <div className="sticky top-0 z-40 flex h-[57px] items-center justify-between border-b bg-background">
+    <div className="fixed top-0 right-0 left-0 z-40 flex items-center justify-between border-b bg-background py-2.5">
       <div className="flex select-none flex-row items-center">
         <div className="flex shrink-0 flex-row items-center gap-2">
           <HomeLinks />

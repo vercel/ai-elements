@@ -23,6 +23,9 @@ export default async function Page(props: PageProps<"/[[...slug]]">) {
 
   return (
     <DocsPage
+      container={{
+        className: "max-w-[75rem]",
+      }}
       full={page.data.full}
       tableOfContent={{
         style: "clerk",
