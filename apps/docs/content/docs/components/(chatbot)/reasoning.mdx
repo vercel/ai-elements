@@ -1,0 +1,212 @@
+---
+title: Reasoning
+description: A collapsible component that displays AI reasoning content, automatically opening during streaming and closing when finished.
+path: elements/components/reasoning
+---
+
+The `Reasoning` component displays AI reasoning content, automatically opening during streaming and closing when finished.
+
+<Preview path="reasoning" />
+
+## Installation
+
+<ElementsInstaller path="reasoning" />
+
+## Usage
+
+```tsx
+import {
+  Reasoning,
+  ReasoningContent,
+  ReasoningTrigger,
+} from '@/components/ai-elements/reasoning';
+```
+
+```tsx
+<Reasoning className="w-full" isStreaming={false}>
+  <ReasoningTrigger />
+  <ReasoningContent>I need to computer the square of 2.</ReasoningContent>
+</Reasoning>
+```
+
+## Usage with AI SDK
+
+Build a chatbot with reasoning using Deepseek R1.
+
+Add the following component to your frontend:
+
+```tsx filename="app/page.tsx"
+'use client';
+
+import {
+  Reasoning,
+  ReasoningContent,
+  ReasoningTrigger,
+} from '@/components/ai-elements/reasoning';
+import {
+  Conversation,
+  ConversationContent,
+  ConversationScrollButton,
+} from '@/components/ai-elements/conversation';
+import {
+  PromptInput,
+  PromptInputTextarea,
+  PromptInputSubmit,
+} from '@/components/ai-elements/prompt-input';
+import { Loader } from '@/components/ai-elements/loader';
+import { Message, MessageContent } from '@/components/ai-elements/message';
+import { useState } from 'react';
+import { useChat } from '@ai-sdk/react';
+import { Response } from @/components/ai-elements/response';
+
+const ReasoningDemo = () => {
+  const [input, setInput] = useState('');
+
+  const { messages, sendMessage, status } = useChat();
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    sendMessage({ text: input });
+    setInput('');
+  };
+
+  return (
+    <div className="max-w-4xl mx-auto p-6 relative size-full rounded-lg border h-[600px]">
+      <div className="flex flex-col h-full">
+        <Conversation>
+          <ConversationContent>
+            {messages.map((message) => (
+              <Message from={message.role} key={message.id}>
+                <MessageContent>
+                  {message.parts.map((part, i) => {
+                    switch (part.type) {
+                      case 'text':
+                        return (
+                          <Response key={`${message.id}-${i}`}>
+                            {part.text}
+                          </Response>
+                        );
+                      case 'reasoning':
+                        return (
+                          <Reasoning
+                            key={`${message.id}-${i}`}
+                            className="w-full"
+                            isStreaming={status === 'streaming' && i === message.parts.length - 1 && message.id === messages.at(-1)?.id}
+                          >
+                            <ReasoningTrigger />
+                            <ReasoningContent>{part.text}</ReasoningContent>
+                          </Reasoning>
+                        );
+                    }
+                  })}
+                </MessageContent>
+              </Message>
+            ))}
+            {status === 'submitted' && <Loader />}
+          </ConversationContent>
+          <ConversationScrollButton />
+        </Conversation>
+
+        <PromptInput
+          onSubmit={handleSubmit}
+          className="mt-4 w-full max-w-2xl mx-auto relative"
+        >
+          <PromptInputTextarea
+            value={input}
+            placeholder="Say something..."
+            onChange={(e) => setInput(e.currentTarget.value)}
+            className="pr-12"
+          />
+          <PromptInputSubmit
+            status={status === 'streaming' ? 'streaming' : 'ready'}
+            disabled={!input.trim()}
+            className="absolute bottom-1 right-1"
+          />
+        </PromptInput>
+      </div>
+    </div>
+  );
+};
+
+export default ReasoningDemo;
+```
+
+Add the following route to your backend:
+
+```ts filename="app/api/chat/route.ts"
+import { streamText, UIMessage, convertToModelMessages } from 'ai';
+
+// Allow streaming responses up to 30 seconds
+export const maxDuration = 30;
+
+export async function POST(req: Request) {
+  const { model, messages }: { messages: UIMessage[]; model: string } =
+    await req.json();
+
+  const result = streamText({
+    model: 'deepseek/deepseek-r1',
+    messages: convertToModelMessages(messages),
+  });
+
+  return result.toUIMessageStreamResponse({
+    sendReasoning: true,
+  });
+}
+```
+
+## Features
+
+- Automatically opens when streaming content and closes when finished
+- Manual toggle control for user interaction
+- Smooth animations and transitions powered by Radix UI
+- Visual streaming indicator with pulsing animation
+- Composable architecture with separate trigger and content components
+- Built with accessibility in mind including keyboard navigation
+- Responsive design that works across different screen sizes
+- Seamlessly integrates with both light and dark themes
+- Built on top of shadcn/ui Collapsible primitives
+- TypeScript support with proper type definitions
+
+## Props
+
+### `<Reasoning />`
+
+<TypeTable
+  type={{
+    isStreaming: {
+      description: 'Whether the reasoning is currently streaming (auto-opens and closes the panel).',
+      type: 'boolean',
+    },
+    '...props': {
+      description: 'Any other props are spread to the underlying Collapsible component.',
+      type: 'React.ComponentProps<typeof Collapsible>',
+    },
+  }}
+/>
+
+### `<ReasoningTrigger />`
+
+<TypeTable
+  type={{
+    title: {
+      description: 'Optional title to display in the trigger.',
+      type: 'string',
+      default: '"Reasoning"',
+    },
+    '...props': {
+      description: 'Any other props are spread to the underlying CollapsibleTrigger component.',
+      type: 'React.ComponentProps<typeof CollapsibleTrigger>',
+    },
+  }}
+/>
+
+### `<ReasoningContent />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any other props are spread to the underlying CollapsibleContent component.',
+      type: 'React.ComponentProps<typeof CollapsibleContent>',
+    },
+  }}
+/>

@@ -1,0 +1,20 @@
+{
+  "title": "Docs",
+  "description": "Documentation for AI Elements",
+  "root": true,
+  "pages": [
+    "---Docs---",
+    "index",
+    "overview/usage",
+    "overview/troubleshooting",
+    "---Examples---",
+    "examples/chatbot",
+    "examples/v0",
+    "examples/workflow",
+    "---Components---",
+    "components/index",
+    "components/(chatbot)",
+    "components/(workflow)",
+    "components/(vibe-coding)"
+  ]
+}
