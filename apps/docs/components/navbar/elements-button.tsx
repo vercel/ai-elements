@@ -3,7 +3,7 @@ import Link from "next/link";
 export const ElementsButton = () => (
   <Link
     className="group/elements relative flex size-full h-full items-center justify-center whitespace-nowrap rounded-full text-sm"
-    href="/elements"
+    href="/"
   >
     <div className="relative flex items-center justify-center gap-1.5 rounded-full">
       <span className="relative z-10 text-foreground transition-colors duration-300">
