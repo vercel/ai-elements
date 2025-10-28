@@ -122,14 +122,14 @@ export const ClientNavbar = ({ pages }: { pages: NavPageItem[] }) => (
         <LargeSearchToggle />
         <Button aria-label="Feedback" asChild size="sm" variant="outline">
           <Link
-            href="https://github.com/vercel/ai-feedback/issues"
+            href="https://github.com/vercel/ai-elements/issues"
             target="_noblank"
           >
             Feedback
           </Link>
         </Button>
         <Button aria-label="GitHub" asChild size="icon-sm" variant="outline">
-          <Link href="https://github.com/vercel/ai-feedback" target="_noblank">
+          <Link href="https://github.com/vercel/ai-elements" target="_noblank">
             <LogoGithub />
           </Link>
         </Button>
