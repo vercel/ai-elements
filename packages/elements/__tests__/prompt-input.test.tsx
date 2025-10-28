@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, act } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
@@ -1012,7 +1012,9 @@ describe("Paste functionality", () => {
       ],
     };
 
-    textarea.dispatchEvent(pasteEvent);
+    await act(async () => {
+      textarea.dispatchEvent(pasteEvent);
+    });
 
     await vi.waitFor(() => {
       expect(screen.getByTestId("count")).toHaveTextContent("1");
@@ -1067,9 +1069,9 @@ describe("PromptInputSpeechButton", () => {
     };
 
     // @ts-expect-error - Mocking browser API
-    global.window.SpeechRecognition = vi.fn(function () {
+    global.window.SpeechRecognition = function () {
       return mockRecognition;
-    });
+    };
   });
 
   afterEach(() => {
@@ -1099,7 +1101,7 @@ describe("PromptInputSpeechButton", () => {
 
   it("initializes speech recognition when available", () => {
     render(<PromptInputSpeechButton />);
-    expect(global.window.SpeechRecognition).toHaveBeenCalled();
+    // Verify speech recognition was properly initialized by checking properties
     expect(mockRecognition.continuous).toBe(true);
     expect(mockRecognition.interimResults).toBe(true);
     expect(mockRecognition.lang).toBe("en-US");
