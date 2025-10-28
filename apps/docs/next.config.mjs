@@ -34,10 +34,12 @@ const config = {
       {
         source: "/elements/overview",
         destination: "/elements",
+        permanent: true,
       },
       {
         source: "/overview",
         destination: "/",
+        permanent: true,
       },
     ];
   },
