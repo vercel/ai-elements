@@ -131,14 +131,14 @@ importers:
         version: 19.2.0(react@19.2.0)
       shadcn:
         specifier: ^3.4.2
-        version: 3.4.2(@types/node@24.3.1)(typescript@5.9.3)
+        version: 3.4.2(@types/node@24.9.1)(typescript@5.9.3)
       ts-morph:
         specifier: ^27.0.2
         version: 27.0.2
     devDependencies:
       '@types/node':
         specifier: ^24
-        version: 24.3.1
+        version: 24.9.1
       '@types/react':
         specifier: 19.2.2
         version: 19.2.2
@@ -517,6 +517,10 @@ packages:
 
   '@babel/runtime@7.28.3':
     resolution: {integrity: sha512-9uIQ10o0WGdpP6GDhXcdOJPJuDgFtIDtN/9+ArJQ2NAfAmiuhTQdzkaTGR33v43GYS2UrSA0eX2pPPHoFVvpxA==}
+    engines: {node: '>=6.9.0'}
+
+  '@babel/runtime@7.28.4':
+    resolution: {integrity: sha512-Q/N6JNWvIvPnLDvjlE1OUBLPQHH6l3CltCEsHIujp45zQUSSh8K+gHnaEX45yAT1nyngnINhvWtzN+Nb9D8RAQ==}
     engines: {node: '>=6.9.0'}
 
   '@babel/template@7.27.2':
@@ -2535,9 +2539,6 @@ packages:
 
   '@types/node@12.20.55':
     resolution: {integrity: sha512-J8xLz7q2OFulZ2cyGTLE1TbbZcjpno7FaN6zdJNrgAdrJ+DZzh/uFR6YrTb4C+nXakvud8Q4+rbhoIWlYQbUFQ==}
-
-  '@types/node@24.3.1':
-    resolution: {integrity: sha512-3vXmQDXy+woz+gnrTvuvNrPzekOi+Ds0ReMxw0LzBiK3a+1k0kQn9f2NWk+lgD4rJehFUmYy2gMhJ2ZI+7YP9g==}
 
   '@types/node@24.9.1':
     resolution: {integrity: sha512-QoiaXANRkSXK6p0Duvt56W208du4P9Uye9hWLWgGMDTEoKPhuenzNcC4vGUmrNkiOKTlIrBoyNQYNpSwfEZXSg==}
@@ -5567,9 +5568,6 @@ packages:
     resolution: {integrity: sha512-Ejgh8uYhqgV1QzKAE1vwRHHu24mTCg43DLOJG+gXi7hHSAPAWdDEs9fgBiuYZxH2bsQiWSsEF6hMv5aLJuM6/w==}
     hasBin: true
 
-  undici-types@7.10.0:
-    resolution: {integrity: sha512-t5Fy/nfn+14LuOc2KNYg75vZqClpAiqscVvMygNnlsHBFpSXdJaYtXMcdNLpl/Qvc3P2cB3s6lOV51nqsFq4ag==}
-
   undici-types@7.16.0:
     resolution: {integrity: sha512-Zz+aZWSj8LE6zoxD+xrjh4VfkIG8Ya6LvYkZqtUQGJPZjYl53ypCaUwWqo7eI0x66KBGeRo+mlBEkMSeSZ38Nw==}
 
@@ -6150,6 +6148,8 @@ snapshots:
 
   '@babel/runtime@7.28.3': {}
 
+  '@babel/runtime@7.28.4': {}
+
   '@babel/template@7.27.2':
     dependencies:
       '@babel/code-frame': 7.27.1
@@ -6729,33 +6729,12 @@ snapshots:
   '@img/sharp-win32-x64@0.34.4':
     optional: true
 
-  '@inquirer/confirm@5.1.16(@types/node@24.3.1)':
-    dependencies:
-      '@inquirer/core': 10.2.0(@types/node@24.3.1)
-      '@inquirer/type': 3.0.8(@types/node@24.3.1)
-    optionalDependencies:
-      '@types/node': 24.3.1
-
   '@inquirer/confirm@5.1.16(@types/node@24.9.1)':
     dependencies:
       '@inquirer/core': 10.2.0(@types/node@24.9.1)
       '@inquirer/type': 3.0.8(@types/node@24.9.1)
     optionalDependencies:
       '@types/node': 24.9.1
-    optional: true
-
-  '@inquirer/core@10.2.0(@types/node@24.3.1)':
-    dependencies:
-      '@inquirer/figures': 1.0.13
-      '@inquirer/type': 3.0.8(@types/node@24.3.1)
-      ansi-escapes: 4.3.2
-      cli-width: 4.1.0
-      mute-stream: 2.0.0
-      signal-exit: 4.1.0
-      wrap-ansi: 6.2.0
-      yoctocolors-cjs: 2.1.3
-    optionalDependencies:
-      '@types/node': 24.3.1
 
   '@inquirer/core@10.2.0(@types/node@24.9.1)':
     dependencies:
@@ -6769,7 +6748,6 @@ snapshots:
       yoctocolors-cjs: 2.1.3
     optionalDependencies:
       '@types/node': 24.9.1
-    optional: true
 
   '@inquirer/external-editor@1.0.2(@types/node@24.9.1)':
     dependencies:
@@ -6780,14 +6758,9 @@ snapshots:
 
   '@inquirer/figures@1.0.13': {}
 
-  '@inquirer/type@3.0.8(@types/node@24.3.1)':
-    optionalDependencies:
-      '@types/node': 24.3.1
-
   '@inquirer/type@3.0.8(@types/node@24.9.1)':
     optionalDependencies:
       '@types/node': 24.9.1
-    optional: true
 
   '@isaacs/balanced-match@4.0.1': {}
 
@@ -7934,7 +7907,7 @@ snapshots:
   '@testing-library/dom@10.4.1':
     dependencies:
       '@babel/code-frame': 7.27.1
-      '@babel/runtime': 7.28.3
+      '@babel/runtime': 7.28.4
       '@types/aria-query': 5.0.4
       aria-query: 5.3.0
       dom-accessibility-api: 0.5.16
@@ -8177,10 +8150,6 @@ snapshots:
   '@types/ms@2.1.0': {}
 
   '@types/node@12.20.55': {}
-
-  '@types/node@24.3.1':
-    dependencies:
-      undici-types: 7.10.0
 
   '@types/node@24.9.1':
     dependencies:
@@ -10614,31 +10583,6 @@ snapshots:
 
   ms@2.1.3: {}
 
-  msw@2.11.1(@types/node@24.3.1)(typescript@5.9.3):
-    dependencies:
-      '@bundled-es-modules/cookie': 2.0.1
-      '@bundled-es-modules/statuses': 1.0.1
-      '@inquirer/confirm': 5.1.16(@types/node@24.3.1)
-      '@mswjs/interceptors': 0.39.6
-      '@open-draft/deferred-promise': 2.2.0
-      '@open-draft/until': 2.1.0
-      '@types/cookie': 0.6.0
-      '@types/statuses': 2.0.6
-      graphql: 16.11.0
-      headers-polyfill: 4.0.3
-      is-node-process: 1.2.0
-      outvariant: 1.4.3
-      path-to-regexp: 6.3.0
-      picocolors: 1.1.1
-      strict-event-emitter: 0.5.1
-      tough-cookie: 6.0.0
-      type-fest: 4.41.0
-      yargs: 17.7.2
-    optionalDependencies:
-      typescript: 5.9.3
-    transitivePeerDependencies:
-      - '@types/node'
-
   msw@2.11.1(@types/node@24.9.1)(typescript@5.9.3):
     dependencies:
       '@bundled-es-modules/cookie': 2.0.1
@@ -10663,7 +10607,6 @@ snapshots:
       typescript: 5.9.3
     transitivePeerDependencies:
       - '@types/node'
-    optional: true
 
   mute-stream@2.0.0: {}
 
@@ -11449,7 +11392,7 @@ snapshots:
 
   setprototypeof@1.2.0: {}
 
-  shadcn@3.4.2(@types/node@24.3.1)(typescript@5.9.3):
+  shadcn@3.4.2(@types/node@24.9.1)(typescript@5.9.3):
     dependencies:
       '@antfu/ni': 25.0.0
       '@babel/core': 7.28.4
@@ -11470,7 +11413,7 @@ snapshots:
       fuzzysort: 3.1.0
       https-proxy-agent: 7.0.6
       kleur: 4.1.5
-      msw: 2.11.1(@types/node@24.3.1)(typescript@5.9.3)
+      msw: 2.11.1(@types/node@24.9.1)(typescript@5.9.3)
       node-fetch: 3.3.2
       ora: 8.2.0
       postcss: 8.5.6
@@ -11844,8 +11787,6 @@ snapshots:
       - effect
       - typescript
       - valibot
-
-  undici-types@7.10.0: {}
 
   undici-types@7.16.0: {}
 
