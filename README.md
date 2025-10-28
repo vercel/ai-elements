@@ -104,7 +104,7 @@ AI Elements includes the following components:
 | `suggestion`       | Quick action suggestions                                |
 | `task`             | Task completion tracking                                |
 | `tool`             | Tool usage visualization                                |
-| `tool-approval`    | Tool approval UI for AI tool execution                  |
+| `confirmation`     | Tool execution approval workflows                       |
 | **Vibe-Coding**    |                                                         |
 | `artifact`         | Display a code or document                              |
 | `web-preview`      | Embedded web page previews                              |
