@@ -38,6 +38,7 @@ npx ai-elements@latest
 ```
 
 This command will:
+
 - Set up shadcn/ui if not already configured
 - Install all AI Elements components to your configured components directory
 - Add necessary dependencies to your project
@@ -51,6 +52,7 @@ npx ai-elements@latest add <component-name>
 ```
 
 Examples:
+
 ```bash
 # Install the message component
 npx ai-elements@latest add message
@@ -78,28 +80,42 @@ npx shadcn@latest add https://registry.ai-sdk.dev/message.json
 
 AI Elements includes the following components:
 
-| Component                  | Description                                             |
-| -------------------------- | ------------------------------------------------------- |
-| `actions`                  | Interactive action buttons for AI responses             |
-| `artifact`                 | Display a code or document                              |
-| `branch`                   | Branch visualization for conversation flows             |
-| `chain-of-thought`         | Display AI reasoning and thought processes              |
-| `code-block`               | Syntax-highlighted code display with copy functionality |
-| `context`                  | Display Context consumption                             |
-| `conversation`             | Container for chat conversations                        |
-| `image`                    | AI-generated image display component                    |
-| `inline-citation`          | Inline source citations                                 |
-| `loader`                   | Loading states for AI operations                        |
-| `message`                  | Individual chat messages with avatars                   |
-| `open-in-chat`             | Open in chat button for a message                       |
-| `prompt-input`             | Advanced input component with model selection           |
-| `reasoning`                | Display AI reasoning and thought processes              |
-| `response`                 | Formatted AI response display                           |
-| `sources`                  | Source attribution component                            |
-| `suggestion`               | Quick action suggestions                                |
-| `task`                     | Task completion tracking                                |
-| `tool`                     | Tool usage visualization                                |
-| `web-preview`              | Embedded web page previews                              |
+| Component          | Description                                             |
+| ------------------ | ------------------------------------------------------- |
+| **Chatbot**        |                                                         |
+| `actions`          | Interactive action buttons for AI responses             |
+| `branch`           | Branch visualization for conversation flows             |
+| `chain-of-thought` | Display AI reasoning and thought processes              |
+| `code-block`       | Syntax-highlighted code display with copy functionality |
+| `context`          | Display Context consumption                             |
+| `conversation`     | Container for chat conversations                        |
+| `image`            | AI-generated image display component                    |
+| `inline-citation`  | Inline source citations                                 |
+| `loader`           | Loading states for AI operations                        |
+| `message`          | Individual chat messages with avatars                   |
+| `open-in-chat`     | Open in chat button for a message                       |
+| `plan`             | Plan and task planning display component                |
+| `prompt-input`     | Advanced input component with model selection           |
+| `queue`            | Message and todo queue with attachments                 |
+| `reasoning`        | Display AI reasoning and thought processes              |
+| `response`         | Formatted AI response display                           |
+| `shimmer`          | Text shimmer animation effect                           |
+| `sources`          | Source attribution component                            |
+| `suggestion`       | Quick action suggestions                                |
+| `task`             | Task completion tracking                                |
+| `tool`             | Tool usage visualization                                |
+| `tool-approval`    | Tool approval UI for AI tool execution                  |
+| **Vibe-Coding**    |                                                         |
+| `artifact`         | Display a code or document                              |
+| `web-preview`      | Embedded web page previews                              |
+| **Workflow**       |                                                         |
+| `canvas`           | ReactFlow canvas for workflow visualizations            |
+| `connection`       | Connection line component for workflow edges            |
+| `controls`         | Flow controls for canvas (zoom, fit view, etc.)         |
+| `edge`             | Edge component for connections between workflow nodes   |
+| `node`             | Node component for workflow graphs                      |
+| `panel`            | Panel component for canvas overlays                     |
+| `toolbar`          | Node toolbar for workflow elements                      |
 
 ## Quick Start Example
 
