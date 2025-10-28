@@ -1,0 +1,253 @@
+---
+title: Conversation
+description: Wraps messages and automatically scrolls to the bottom. Also includes a scroll button that appears when not at the bottom.
+path: elements/components/conversation
+---
+
+The `Conversation` component wraps messages and automatically scrolls to the bottom. Also includes a scroll button that appears when not at the bottom.
+
+<Preview path="conversation" className="p-0" />
+
+## Installation
+
+<ElementsInstaller path="conversation" />
+
+## Usage
+
+```tsx
+import {
+  Conversation,
+  ConversationContent,
+  ConversationEmptyState,
+  ConversationScrollButton,
+} from '@/components/ai-elements/conversation';
+```
+
+```tsx
+<Conversation className="relative w-full" style={{ height: '500px' }}>
+  <ConversationContent>
+    {messages.length === 0 ? (
+      <ConversationEmptyState
+        icon={<MessageSquare className="size-12" />}
+        title="No messages yet"
+        description="Start a conversation to see messages here"
+      />
+    ) : (
+      messages.map((message) => (
+        <Message from={message.from} key={message.id}>
+          <MessageContent>{message.content}</MessageContent>
+        </Message>
+      ))
+    )}
+  </ConversationContent>
+  <ConversationScrollButton />
+</Conversation>
+```
+
+## Usage with AI SDK
+
+Build a simple conversational UI with `Conversation` and [`PromptInput`](/elements/components/prompt-input):
+
+Add the following component to your frontend:
+
+```tsx title="app/page.tsx"
+'use client';
+
+import {
+  Conversation,
+  ConversationContent,
+  ConversationEmptyState,
+  ConversationScrollButton,
+} from '@/components/ai-elements/conversation';
+import { Message, MessageContent } from '@/components/ai-elements/message';
+import {
+  Input,
+  PromptInputTextarea,
+  PromptInputSubmit,
+} from '@/components/ai-elements/prompt-input';
+import { MessageSquare } from 'lucide-react';
+import { useState } from 'react';
+import { useChat } from '@ai-sdk/react';
+import { Response } from '@/components/ai-elements/response';
+
+const ConversationDemo = () => {
+  const [input, setInput] = useState('');
+  const { messages, sendMessage, status } = useChat();
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (input.trim()) {
+      sendMessage({ text: input });
+      setInput('');
+    }
+  };
+
+  return (
+    <div className="max-w-4xl mx-auto p-6 relative size-full rounded-lg border h-[600px]">
+      <div className="flex flex-col h-full">
+        <Conversation>
+          <ConversationContent>
+            {messages.length === 0 ? (
+              <ConversationEmptyState
+                icon={<MessageSquare className="size-12" />}
+                title="Start a conversation"
+                description="Type a message below to begin chatting"
+              />
+            ) : (
+              messages.map((message) => (
+                <Message from={message.role} key={message.id}>
+                  <MessageContent>
+                    {message.parts.map((part, i) => {
+                      switch (part.type) {
+                        case 'text': // we don't use any reasoning or tool calls in this example
+                          return (
+                            <Response key={`${message.id}-${i}`}>
+                              {part.text}
+                            </Response>
+                          );
+                        default:
+                          return null;
+                      }
+                    })}
+                  </MessageContent>
+                </Message>
+              ))
+            )}
+          </ConversationContent>
+          <ConversationScrollButton />
+        </Conversation>
+
+        <Input
+          onSubmit={handleSubmit}
+          className="mt-4 w-full max-w-2xl mx-auto relative"
+        >
+          <PromptInputTextarea
+            value={input}
+            placeholder="Say something..."
+            onChange={(e) => setInput(e.currentTarget.value)}
+            className="pr-12"
+          />
+          <PromptInputSubmit
+            status={status === 'streaming' ? 'streaming' : 'ready'}
+            disabled={!input.trim()}
+            className="absolute bottom-1 right-1"
+          />
+        </Input>
+      </div>
+    </div>
+  );
+};
+
+export default ConversationDemo;
+```
+
+Add the following route to your backend:
+
+```tsx title="api/chat/route.ts"
+import { streamText, UIMessage, convertToModelMessages } from 'ai';
+
+// Allow streaming responses up to 30 seconds
+export const maxDuration = 30;
+
+export async function POST(req: Request) {
+  const { messages }: { messages: UIMessage[] } = await req.json();
+
+  const result = streamText({
+    model: 'openai/gpt-4o',
+    messages: convertToModelMessages(messages),
+  });
+
+  return result.toUIMessageStreamResponse();
+}
+```
+
+## Features
+
+- Automatic scrolling to the bottom when new messages are added
+- Smooth scrolling behavior with configurable animation
+- Scroll button that appears when not at the bottom
+- Responsive design with customizable padding and spacing
+- Flexible content layout with consistent message spacing
+- Accessible with proper ARIA roles for screen readers
+- Customizable styling through className prop
+- Support for any number of child message components
+
+## Props
+
+### `<Conversation />`
+
+<TypeTable
+  type={{
+    contextRef: {
+      description: 'Optional ref to access the StickToBottom context object.',
+      type: 'React.Ref<StickToBottomContext>',
+    },
+    instance: {
+      description: 'Optional instance for controlling the StickToBottom component.',
+      type: 'StickToBottomInstance',
+    },
+    children: {
+      description: 'Render prop or ReactNode for custom rendering with context.',
+      type: '((context: StickToBottomContext) => ReactNode) | ReactNode',
+    },
+    '...props': {
+      description: 'Any other props are spread to the root div.',
+      type: 'Omit<React.HTMLAttributes<HTMLDivElement>, "children">',
+    },
+  }}
+/>
+
+### `<ConversationContent />`
+
+<TypeTable
+  type={{
+    children: {
+      description: 'Render prop or ReactNode for custom rendering with context.',
+      type: '((context: StickToBottomContext) => ReactNode) | ReactNode',
+    },
+    '...props': {
+      description: 'Any other props are spread to the root div.',
+      type: 'Omit<React.HTMLAttributes<HTMLDivElement>, "children">',
+    },
+  }}
+/>
+
+### `<ConversationEmptyState />`
+
+<TypeTable
+  type={{
+    title: {
+      description: 'The title text to display.',
+      type: 'string',
+      default: '"No messages yet"',
+    },
+    description: {
+      description: 'The description text to display.',
+      type: 'string',
+      default: '"Start a conversation to see messages here"',
+    },
+    icon: {
+      description: 'Optional icon to display above the text.',
+      type: 'React.ReactNode',
+    },
+    children: {
+      description: 'Optional additional content to render below the text.',
+      type: 'React.ReactNode',
+    },
+    '...props': {
+      description: 'Any other props are spread to the root div.',
+      type: 'ComponentProps<"div">',
+    },
+  }}
+/>
+
+### `<ConversationScrollButton />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any other props are spread to the underlying shadcn/ui Button component.',
+      type: 'ComponentProps<typeof Button>',
+    },
+  }}
+/>
