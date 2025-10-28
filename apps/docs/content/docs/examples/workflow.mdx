@@ -1,0 +1,296 @@
+---
+title: Workflow
+description: An example of how to use the AI Elements to build a workflow visualization.
+---
+
+An example of how to use the AI Elements to build a workflow visualization with interactive nodes and animated connections, built with [React Flow](https://reactflow.dev/).
+
+<Preview path="workflow" type="block" className="p-0" />
+
+## Tutorial
+
+Let's walk through how to build a workflow visualization using AI Elements. Our example will include custom nodes with headers, content, and footers, along with animated and temporary edge types.
+
+### Setup
+
+First, set up a new Next.js repo and cd into it by running the following command (make sure you choose to use Tailwind in the project setup):
+
+```bash title="Terminal"
+npx create-next-app@latest ai-workflow && cd ai-workflow
+```
+
+Run the following command to install AI Elements. This will also set up shadcn/ui if you haven't already configured it:
+
+```bash title="Terminal"
+npx ai-elements@latest
+```
+
+Now, install the required dependencies:
+
+```package-install
+npm i @xyflow/react
+```
+
+We're now ready to start building our workflow!
+
+### Client
+
+Let's build the workflow visualization step by step. We'll create the component structure, define our nodes and edges, and configure the canvas.
+
+#### Import the components
+
+First, import the necessary AI Elements components in your `app/page.tsx`:
+
+```tsx title="app/page.tsx"
+'use client';
+
+import { Canvas } from '@/components/ai-elements/canvas';
+import { Connection } from '@/components/ai-elements/connection';
+import { Controls } from '@/components/ai-elements/controls';
+import { Edge } from '@/components/ai-elements/edge';
+import {
+  Node,
+  NodeContent,
+  NodeDescription,
+  NodeFooter,
+  NodeHeader,
+  NodeTitle,
+} from '@/components/ai-elements/node';
+import { Panel } from '@/components/ai-elements/panel';
+import { Toolbar } from '@/components/ai-elements/toolbar';
+import { Button } from '@/components/ui/button';
+```
+
+#### Define node IDs
+
+Create a constant object to manage node identifiers. This makes it easier to reference nodes when creating edges:
+
+```tsx title="app/page.tsx"
+const nodeIds = {
+  start: 'start',
+  process1: 'process1',
+  process2: 'process2',
+  decision: 'decision',
+  output1: 'output1',
+  output2: 'output2',
+};
+```
+
+#### Create mock nodes
+
+Define the nodes array with position, type, and data for each node in your workflow:
+
+```tsx title="app/page.tsx"
+const nodes = [
+  {
+    id: nodeIds.start,
+    type: 'workflow',
+    position: { x: 0, y: 0 },
+    data: {
+      label: 'Start',
+      description: 'Initialize workflow',
+      handles: { target: false, source: true },
+      content: 'Triggered by user action at 09:30 AM',
+      footer: 'Status: Ready',
+    },
+  },
+  {
+    id: nodeIds.process1,
+    type: 'workflow',
+    position: { x: 500, y: 0 },
+    data: {
+      label: 'Process Data',
+      description: 'Transform input',
+      handles: { target: true, source: true },
+      content: 'Validating 1,234 records and applying business rules',
+      footer: 'Duration: ~2.5s',
+    },
+  },
+  {
+    id: nodeIds.decision,
+    type: 'workflow',
+    position: { x: 1000, y: 0 },
+    data: {
+      label: 'Decision Point',
+      description: 'Route based on conditions',
+      handles: { target: true, source: true },
+      content: "Evaluating: data.status === 'valid' && data.score > 0.8",
+      footer: 'Confidence: 94%',
+    },
+  },
+  {
+    id: nodeIds.output1,
+    type: 'workflow',
+    position: { x: 1500, y: -300 },
+    data: {
+      label: 'Success Path',
+      description: 'Handle success case',
+      handles: { target: true, source: true },
+      content: '1,156 records passed validation (93.7%)',
+      footer: 'Next: Send to production',
+    },
+  },
+  {
+    id: nodeIds.output2,
+    type: 'workflow',
+    position: { x: 1500, y: 300 },
+    data: {
+      label: 'Error Path',
+      description: 'Handle error case',
+      handles: { target: true, source: true },
+      content: '78 records failed validation (6.3%)',
+      footer: 'Next: Queue for review',
+    },
+  },
+  {
+    id: nodeIds.process2,
+    type: 'workflow',
+    position: { x: 2000, y: 0 },
+    data: {
+      label: 'Complete',
+      description: 'Finalize workflow',
+      handles: { target: true, source: false },
+      content: 'All records processed and routed successfully',
+      footer: 'Total time: 4.2s',
+    },
+  },
+];
+```
+
+#### Create mock edges
+
+Define the connections between nodes. Use `animated` for active paths and `temporary` for conditional or error paths:
+
+```tsx title="app/page.tsx"
+const edges = [
+  {
+    id: 'edge1',
+    source: nodeIds.start,
+    target: nodeIds.process1,
+    type: 'animated',
+  },
+  {
+    id: 'edge2',
+    source: nodeIds.process1,
+    target: nodeIds.decision,
+    type: 'animated',
+  },
+  {
+    id: 'edge3',
+    source: nodeIds.decision,
+    target: nodeIds.output1,
+    type: 'animated',
+  },
+  {
+    id: 'edge4',
+    source: nodeIds.decision,
+    target: nodeIds.output2,
+    type: 'temporary',
+  },
+  {
+    id: 'edge5',
+    source: nodeIds.output1,
+    target: nodeIds.process2,
+    type: 'animated',
+  },
+  {
+    id: 'edge6',
+    source: nodeIds.output2,
+    target: nodeIds.process2,
+    type: 'temporary',
+  },
+];
+```
+
+#### Create the node types
+
+Define custom node rendering using the compound Node components:
+
+```tsx title="app/page.tsx"
+const nodeTypes = {
+  workflow: ({
+    data,
+  }: {
+    data: {
+      label: string;
+      description: string;
+      handles: { target: boolean; source: boolean };
+      content: string;
+      footer: string;
+    };
+  }) => (
+    <Node handles={data.handles}>
+      <NodeHeader>
+        <NodeTitle>{data.label}</NodeTitle>
+        <NodeDescription>{data.description}</NodeDescription>
+      </NodeHeader>
+      <NodeContent>
+        <p className="text-sm">{data.content}</p>
+      </NodeContent>
+      <NodeFooter>
+        <p className="text-muted-foreground text-xs">{data.footer}</p>
+      </NodeFooter>
+      <Toolbar>
+        <Button size="sm" variant="ghost">
+          Edit
+        </Button>
+        <Button size="sm" variant="ghost">
+          Delete
+        </Button>
+      </Toolbar>
+    </Node>
+  ),
+};
+```
+
+#### Create the edge types
+
+Map the edge type names to the Edge components:
+
+```tsx title="app/page.tsx"
+const edgeTypes = {
+  animated: Edge.Animated,
+  temporary: Edge.Temporary,
+};
+```
+
+#### Build the main component
+
+Finally, create the main component that renders the Canvas with all nodes, edges, controls, and custom UI panels:
+
+```tsx title="app/page.tsx"
+const App = () => (
+  <Canvas
+    edges={edges}
+    edgeTypes={edgeTypes}
+    fitView
+    nodes={nodes}
+    nodeTypes={nodeTypes}
+    connectionLineComponent={Connection}
+  >
+    <Controls />
+    <Panel position="top-left">
+      <Button size="sm" variant="secondary">
+        Export
+      </Button>
+    </Panel>
+  </Canvas>
+);
+
+export default App;
+```
+
+### Key Features
+
+The workflow visualization demonstrates several powerful features:
+
+- **Custom Node Components**: Each node uses the compound components (`NodeHeader`, `NodeTitle`, `NodeDescription`, `NodeContent`, `NodeFooter`) for consistent, structured layouts.
+- **Node Toolbars**: The `Toolbar` component attaches contextual actions (like Edit and Delete buttons) to individual nodes, appearing when hovering or selecting them.
+- **Handle Configuration**: Nodes can have source and/or target handles, controlling which connections are possible.
+- **Multiple Edge Types**: The `animated` type shows active data flow, while `temporary` indicates conditional or error paths.
+- **Custom Connection Lines**: The `Connection` component provides styled bezier curves when dragging new connections between nodes.
+- **Interactive Controls**: The `Controls` component adds zoom in/out and fit view buttons with a modern, themed design.
+- **Custom UI Panels**: The `Panel` component allows you to position custom UI elements (like buttons, filters, or legends) anywhere on the canvas.
+- **Automatic Layout**: The `Canvas` component auto-fits the view and provides pan/zoom controls out of the box.
+
+You now have a working workflow visualization! Feel free to explore dynamic workflows by connecting this to AI-generated process flows, or extend it with interactive editing capabilities using React Flow's built-in features.
