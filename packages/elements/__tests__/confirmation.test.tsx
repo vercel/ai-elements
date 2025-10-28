@@ -7,7 +7,6 @@ import {
   ConfirmationAccepted,
   ConfirmationAction,
   ConfirmationActions,
-  ConfirmationContent,
   ConfirmationRejected,
   ConfirmationRequest,
 } from "../src/confirmation";
@@ -63,15 +62,13 @@ describe("Confirmation", () => {
   });
 });
 
-describe("ConfirmationContent", () => {
+describe("ConfirmationRequest, ConfirmationAccepted, ConfirmationRejected", () => {
   it("renders ConfirmationRequest when state is approval-requested", () => {
     render(
       <Confirmation approval={{ id: "test-id" }} state="approval-requested">
-        <ConfirmationContent>
-          <ConfirmationRequest>Custom approval message</ConfirmationRequest>
-          <ConfirmationAccepted>Accepted</ConfirmationAccepted>
-          <ConfirmationRejected>Rejected</ConfirmationRejected>
-        </ConfirmationContent>
+        <ConfirmationRequest>Custom approval message</ConfirmationRequest>
+        <ConfirmationAccepted>Accepted</ConfirmationAccepted>
+        <ConfirmationRejected>Rejected</ConfirmationRejected>
       </Confirmation>
     );
     expect(screen.getByText("Custom approval message")).toBeInTheDocument();
@@ -85,17 +82,15 @@ describe("ConfirmationContent", () => {
         approval={{ id: "test-id", approved: true }}
         state="approval-responded"
       >
-        <ConfirmationContent>
-          <ConfirmationRequest>Custom approval message</ConfirmationRequest>
-          <ConfirmationAccepted>
-            <CheckIcon />
-            <span>Accepted</span>
-          </ConfirmationAccepted>
-          <ConfirmationRejected>
-            <XIcon />
-            <span>Rejected</span>
-          </ConfirmationRejected>
-        </ConfirmationContent>
+        <ConfirmationRequest>Custom approval message</ConfirmationRequest>
+        <ConfirmationAccepted>
+          <CheckIcon />
+          <span>Accepted</span>
+        </ConfirmationAccepted>
+        <ConfirmationRejected>
+          <XIcon />
+          <span>Rejected</span>
+        </ConfirmationRejected>
       </Confirmation>
     );
     expect(screen.getByText("Accepted")).toBeInTheDocument();
@@ -111,17 +106,15 @@ describe("ConfirmationContent", () => {
         approval={{ id: "test-id", approved: false }}
         state="output-denied"
       >
-        <ConfirmationContent>
-          <ConfirmationRequest>Custom approval message</ConfirmationRequest>
-          <ConfirmationAccepted>
-            <CheckIcon />
-            <span>Accepted</span>
-          </ConfirmationAccepted>
-          <ConfirmationRejected>
-            <XIcon />
-            <span>Rejected</span>
-          </ConfirmationRejected>
-        </ConfirmationContent>
+        <ConfirmationRequest>Custom approval message</ConfirmationRequest>
+        <ConfirmationAccepted>
+          <CheckIcon />
+          <span>Accepted</span>
+        </ConfirmationAccepted>
+        <ConfirmationRejected>
+          <XIcon />
+          <span>Rejected</span>
+        </ConfirmationRejected>
       </Confirmation>
     );
     expect(screen.getByText("Rejected")).toBeInTheDocument();
@@ -129,21 +122,6 @@ describe("ConfirmationContent", () => {
       screen.queryByText("Custom approval message")
     ).not.toBeInTheDocument();
     expect(screen.queryByText("Accepted")).not.toBeInTheDocument();
-  });
-
-  it("applies custom className", () => {
-    const { container } = render(
-      <Confirmation approval={{ id: "test-id" }} state="approval-requested">
-        <ConfirmationContent className="custom-class">
-          <ConfirmationRequest>Custom approval message</ConfirmationRequest>
-          <ConfirmationAccepted>Accepted</ConfirmationAccepted>
-          <ConfirmationRejected>Rejected</ConfirmationRejected>
-        </ConfirmationContent>
-      </Confirmation>
-    );
-    const content = container.querySelector(".custom-class");
-    expect(content).toBeInTheDocument();
-    expect(content).toHaveTextContent("Custom approval message");
   });
 });
 
@@ -261,14 +239,12 @@ describe("ConfirmationAccepted", () => {
         approval={{ id: "test-id", approved: true }}
         state="approval-responded"
       >
-        <ConfirmationContent>
-          <ConfirmationRequest>Request</ConfirmationRequest>
-          <ConfirmationAccepted>
-            <CheckIcon className="size-4" />
-            <span>Accepted</span>
-          </ConfirmationAccepted>
-          <ConfirmationRejected>Rejected</ConfirmationRejected>
-        </ConfirmationContent>
+        <ConfirmationRequest>Request</ConfirmationRequest>
+        <ConfirmationAccepted>
+          <CheckIcon className="size-4" />
+          <span>Accepted</span>
+        </ConfirmationAccepted>
+        <ConfirmationRejected>Rejected</ConfirmationRejected>
       </Confirmation>
     );
     expect(screen.getByText("Accepted")).toBeInTheDocument();
@@ -282,14 +258,12 @@ describe("ConfirmationRejected", () => {
         approval={{ id: "test-id", approved: false }}
         state="output-denied"
       >
-        <ConfirmationContent>
-          <ConfirmationRequest>Request</ConfirmationRequest>
-          <ConfirmationAccepted>Accepted</ConfirmationAccepted>
-          <ConfirmationRejected>
-            <XIcon className="size-4" />
-            <span>Rejected</span>
-          </ConfirmationRejected>
-        </ConfirmationContent>
+        <ConfirmationRequest>Request</ConfirmationRequest>
+        <ConfirmationAccepted>Accepted</ConfirmationAccepted>
+        <ConfirmationRejected>
+          <XIcon className="size-4" />
+          <span>Rejected</span>
+        </ConfirmationRejected>
       </Confirmation>
     );
     expect(screen.getByText("Rejected")).toBeInTheDocument();
