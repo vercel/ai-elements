@@ -14,6 +14,7 @@ node_modules
 
 # Testing
 coverage
+**/__screenshots__
 
 # Turbo
 .turbo

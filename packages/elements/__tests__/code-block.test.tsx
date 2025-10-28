@@ -3,13 +3,6 @@ import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import { CodeBlock, CodeBlockCopyButton } from "../src/code-block";
 
-// Mock clipboard API
-Object.assign(navigator, {
-  clipboard: {
-    writeText: vi.fn(() => Promise.resolve()),
-  },
-});
-
 describe("CodeBlock", () => {
   it("renders code content", async () => {
     const { container } = render(
