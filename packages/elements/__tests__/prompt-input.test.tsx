@@ -26,13 +26,13 @@ import {
 
 // Mock URL.createObjectURL and URL.revokeObjectURL for tests
 beforeEach(() => {
-  global.URL.createObjectURL = vi.fn(
+  window.URL.createObjectURL = vi.fn(
     (blob) => `blob:mock-url-${Math.random()}`
   );
-  global.URL.revokeObjectURL = vi.fn();
+  window.URL.revokeObjectURL = vi.fn();
 
   // Mock fetch for blob URL conversion
-  global.fetch = vi.fn((url: string) => {
+  window.fetch = vi.fn((url: string) => {
     if (url.startsWith("blob:")) {
       const blob = new Blob(["test content"], { type: "text/plain" });
       return Promise.resolve({
@@ -43,7 +43,7 @@ beforeEach(() => {
   });
 
   // Mock FileReader
-  global.FileReader = vi.fn(function (this: FileReader) {
+  window.FileReader = vi.fn(function (this: FileReader) {
     this.readAsDataURL = vi.fn(function (this: FileReader, blob: Blob) {
       // Simulate async file reading
       setTimeout(() => {
@@ -1069,16 +1069,16 @@ describe("PromptInputSpeechButton", () => {
     };
 
     // @ts-expect-error - Mocking browser API
-    global.window.SpeechRecognition = function () {
+    window.SpeechRecognition = function () {
       return mockRecognition;
     };
   });
 
   afterEach(() => {
     // @ts-expect-error - Cleaning up mock
-    delete global.window.SpeechRecognition;
+    delete window.SpeechRecognition;
     // @ts-expect-error - Cleaning up mock
-    delete global.window.webkitSpeechRecognition;
+    delete window.webkitSpeechRecognition;
   });
 
   it("renders button component", () => {
@@ -1185,9 +1185,9 @@ describe("PromptInputSpeechButton", () => {
 
   it("is disabled when speech recognition not available", () => {
     // @ts-expect-error - Removing mock
-    delete global.window.SpeechRecognition;
+    delete window.SpeechRecognition;
 
-    const { container } = render(<PromptInputSpeechButton />);
+    const { container} = render(<PromptInputSpeechButton />);
     const button = container.querySelector("button");
 
     expect(button).toBeDisabled();
