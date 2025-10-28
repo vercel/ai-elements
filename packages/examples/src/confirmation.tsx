@@ -5,9 +5,9 @@ import {
   ConfirmationAccepted,
   ConfirmationAction,
   ConfirmationActions,
-  ConfirmationContent,
   ConfirmationRejected,
   ConfirmationRequest,
+  ConfirmationTitle,
 } from "@repo/elements/confirmation";
 import { CheckIcon, XIcon } from "lucide-react";
 import { nanoid } from "nanoid";
@@ -15,10 +15,10 @@ import { nanoid } from "nanoid";
 const Example = () => (
   <div className="w-full max-w-2xl">
     <Confirmation approval={{ id: nanoid() }} state="approval-requested">
-      <ConfirmationContent>
+      <ConfirmationTitle>
         <ConfirmationRequest>
           This tool wants to delete the file{" "}
-          <code className="rounded bg-muted px-1.5 py-0.5 text-sm">
+          <code className="inline rounded bg-muted px-1.5 py-0.5 text-sm">
             /tmp/example.txt
           </code>
           . Do you approve this action?
@@ -31,7 +31,7 @@ const Example = () => (
           <XIcon className="size-4 text-destructive" />
           <span>You rejected this tool execution</span>
         </ConfirmationRejected>
-      </ConfirmationContent>
+      </ConfirmationTitle>
       <ConfirmationActions>
         <ConfirmationAction
           onClick={() => {

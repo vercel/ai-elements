@@ -3,9 +3,9 @@
 import {
   Confirmation,
   ConfirmationAccepted,
-  ConfirmationContent,
   ConfirmationRejected,
   ConfirmationRequest,
+  ConfirmationTitle,
 } from "@repo/elements/confirmation";
 import { CheckIcon, XIcon } from "lucide-react";
 import { nanoid } from "nanoid";
@@ -16,7 +16,7 @@ const Example = () => (
       approval={{ id: nanoid(), approved: true }}
       state="approval-responded"
     >
-      <ConfirmationContent>
+      <ConfirmationTitle>
         <ConfirmationRequest>
           This tool wants to delete the file{" "}
           <code className="rounded bg-muted px-1.5 py-0.5 text-sm">
@@ -32,7 +32,7 @@ const Example = () => (
           <XIcon className="size-4 text-destructive" />
           <span>You rejected this tool execution</span>
         </ConfirmationRejected>
-      </ConfirmationContent>
+      </ConfirmationTitle>
     </Confirmation>
   </div>
 );

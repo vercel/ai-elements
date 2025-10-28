@@ -56,16 +56,13 @@ export const Confirmation = ({
   );
 };
 
-export type ConfirmationContentProps = ComponentProps<typeof AlertDescription>;
+export type ConfirmationTitleProps = ComponentProps<typeof AlertDescription>;
 
-export const ConfirmationContent = ({
+export const ConfirmationTitle = ({
   className,
   ...props
-}: ConfirmationContentProps) => (
-  <AlertDescription
-    className={cn("flex items-center gap-2", className)}
-    {...props}
-  />
+}: ConfirmationTitleProps) => (
+  <AlertDescription className={className} {...props} />
 );
 
 export type ConfirmationRequestProps = {

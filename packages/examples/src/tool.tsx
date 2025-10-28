@@ -12,9 +12,9 @@ import {
   ConfirmationAccepted,
   ConfirmationAction,
   ConfirmationActions,
-  ConfirmationContent,
   ConfirmationRejected,
   ConfirmationRequest,
+  ConfirmationTitle,
 } from "@repo/elements/confirmation";
 import type { ToolUIPart } from "ai";
 import { CheckIcon, XIcon } from "lucide-react";
@@ -63,7 +63,7 @@ const Example = () => (
       <ToolContent>
         <ToolInput input={toolCall.input} />
         <Confirmation approval={{ id: nanoid() }} state="approval-requested">
-          <ConfirmationContent>
+          <ConfirmationTitle>
             <ConfirmationRequest>
               This tool will execute a query on the production database.
             </ConfirmationRequest>
@@ -75,7 +75,7 @@ const Example = () => (
               <XIcon className="size-4 text-destructive" />
               <span>Rejected</span>
             </ConfirmationRejected>
-          </ConfirmationContent>
+          </ConfirmationTitle>
           <ConfirmationActions>
             <ConfirmationAction
               onClick={() => {
@@ -111,7 +111,7 @@ const Example = () => (
           approval={{ id: nanoid(), approved: true }}
           state="approval-responded"
         >
-          <ConfirmationContent>
+          <ConfirmationTitle>
             <ConfirmationRequest>
               This tool will execute a query on the production database.
             </ConfirmationRequest>
@@ -123,7 +123,7 @@ const Example = () => (
               <XIcon className="size-4 text-destructive" />
               <span>Rejected</span>
             </ConfirmationRejected>
-          </ConfirmationContent>
+          </ConfirmationTitle>
         </Confirmation>
       </ToolContent>
     </Tool>
@@ -149,7 +149,7 @@ const Example = () => (
           approval={{ id: nanoid(), approved: true }}
           state="output-available"
         >
-          <ConfirmationContent>
+          <ConfirmationTitle>
             <ConfirmationRequest>
               This tool will execute a query on the production database.
             </ConfirmationRequest>
@@ -161,7 +161,7 @@ const Example = () => (
               <XIcon className="size-4 text-destructive" />
               <span>Rejected</span>
             </ConfirmationRejected>
-          </ConfirmationContent>
+          </ConfirmationTitle>
         </Confirmation>
         {toolCall.state === "output-available" && (
           <ToolOutput errorText={toolCall.errorText} output={toolCall.output} />
@@ -202,7 +202,7 @@ const Example = () => (
           }}
           state="output-denied"
         >
-          <ConfirmationContent>
+          <ConfirmationTitle>
             <ConfirmationRequest>
               This tool will execute a query on the production database.
             </ConfirmationRequest>
@@ -212,14 +212,9 @@ const Example = () => (
             </ConfirmationAccepted>
             <ConfirmationRejected>
               <XIcon className="size-4 text-destructive" />
-              <span>
-                Rejected
-                <span className="text-muted-foreground">
-                  : Query could impact production performance
-                </span>
-              </span>
+              <span>Rejected: Query could impact production performance</span>
             </ConfirmationRejected>
-          </ConfirmationContent>
+          </ConfirmationTitle>
         </Confirmation>
       </ToolContent>
     </Tool>
