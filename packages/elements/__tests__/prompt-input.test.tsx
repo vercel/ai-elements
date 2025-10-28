@@ -1,4 +1,4 @@
-import { render, screen, act } from "@testing-library/react";
+import { act, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
@@ -1069,9 +1069,7 @@ describe("PromptInputSpeechButton", () => {
     };
 
     // @ts-expect-error - Mocking browser API
-    window.SpeechRecognition = function () {
-      return mockRecognition;
-    };
+    window.SpeechRecognition = () => mockRecognition;
   });
 
   afterEach(() => {
@@ -1187,7 +1185,7 @@ describe("PromptInputSpeechButton", () => {
     // @ts-expect-error - Removing mock
     delete window.SpeechRecognition;
 
-    const { container} = render(<PromptInputSpeechButton />);
+    const { container } = render(<PromptInputSpeechButton />);
     const button = container.querySelector("button");
 
     expect(button).toBeDisabled();

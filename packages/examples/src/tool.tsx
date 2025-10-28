@@ -1,13 +1,6 @@
 "use client";
 
 import {
-  Tool,
-  ToolContent,
-  ToolHeader,
-  ToolInput,
-  ToolOutput,
-} from "@repo/elements/tool";
-import {
   Confirmation,
   ConfirmationAccepted,
   ConfirmationAction,
@@ -16,6 +9,13 @@ import {
   ConfirmationRequest,
   ConfirmationTitle,
 } from "@repo/elements/confirmation";
+import {
+  Tool,
+  ToolContent,
+  ToolHeader,
+  ToolInput,
+  ToolOutput,
+} from "@repo/elements/tool";
 import type { ToolUIPart } from "ai";
 import { CheckIcon, XIcon } from "lucide-react";
 import { nanoid } from "nanoid";

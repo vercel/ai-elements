@@ -22,11 +22,11 @@ const ConfirmationContext = createContext<ConfirmationContextValue | null>(
 
 const useConfirmation = () => {
   const context = useContext(ConfirmationContext);
-  
+
   if (!context) {
     throw new Error("Confirmation components must be used within Confirmation");
   }
-  
+
   return context;
 };
 
@@ -41,11 +41,7 @@ export const Confirmation = ({
   state,
   ...props
 }: ConfirmationProps) => {
-  if (
-    !approval ||
-    state === "input-streaming" ||
-    state === "input-available"
-  ) {
+  if (!approval || state === "input-streaming" || state === "input-available") {
     return null;
   }
 
@@ -62,16 +58,14 @@ export const ConfirmationTitle = ({
   className,
   ...props
 }: ConfirmationTitleProps) => (
-  <AlertDescription className={className} {...props} />
+  <AlertDescription className={cn("inline", className)} {...props} />
 );
 
 export type ConfirmationRequestProps = {
   children?: ReactNode;
 };
 
-export const ConfirmationRequest = ({
-  children,
-}: ConfirmationRequestProps) => {
+export const ConfirmationRequest = ({ children }: ConfirmationRequestProps) => {
   const { state } = useConfirmation();
 
   // Only show when approval is requested
@@ -141,10 +135,7 @@ export const ConfirmationActions = ({
 
   return (
     <div
-      className={cn(
-        "flex items-center justify-end gap-2 self-end",
-        className
-      )}
+      className={cn("flex items-center justify-end gap-2 self-end", className)}
       {...props}
     />
   );
