@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { act, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
@@ -501,7 +501,7 @@ describe("PromptInputTextarea", () => {
     expect(onSubmit).not.toHaveBeenCalled();
   });
 
-  it("does not submit on Enter during IME composition - #21", async () => {
+  it("does not submit on Enter during IME composition - #21", () => {
     const onSubmit = vi.fn();
 
     render(
@@ -1012,14 +1012,16 @@ describe("Paste functionality", () => {
       ],
     };
 
-    textarea.dispatchEvent(pasteEvent);
+    act(() => {
+      textarea.dispatchEvent(pasteEvent);
+    });
 
     await vi.waitFor(() => {
       expect(screen.getByTestId("count")).toHaveTextContent("1");
     });
   });
 
-  it("handles paste with no files", async () => {
+  it("handles paste with no files", () => {
     const onSubmit = vi.fn();
 
     render(
@@ -1124,7 +1126,9 @@ describe("PromptInputSpeechButton", () => {
     if (button) {
       // Start listening
       await user.click(button);
-      mockRecognition.onstart?.();
+      act(() => {
+        mockRecognition.onstart?.();
+      });
 
       // Stop listening
       await user.click(button);
@@ -1696,9 +1700,8 @@ describe("PromptInputTab components", () => {
 });
 
 describe("PromptInputModelSelect components", () => {
-  it("renders model select with all subcomponents", async () => {
+  it("renders model select with all subcomponents", () => {
     const onSubmit = vi.fn();
-    const user = userEvent.setup();
 
     render(
       <PromptInput onSubmit={onSubmit}>

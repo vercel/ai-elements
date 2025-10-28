@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { act, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import {
@@ -85,7 +85,9 @@ describe("Reasoning", () => {
     expect(screen.getByText("Reasoning content")).toBeVisible();
 
     // Advance time past AUTO_CLOSE_DELAY (3000ms)
-    vi.advanceTimersByTime(3100);
+    act(() => {
+      vi.advanceTimersByTime(3100);
+    });
 
     // Should auto-close
     await vi.waitFor(() => {
