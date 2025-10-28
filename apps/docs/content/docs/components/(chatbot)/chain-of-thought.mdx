@@ -1,0 +1,180 @@
+---
+title: Chain of Thought
+description: A collapsible component that visualizes AI reasoning steps with support for search results, images, and step-by-step progress indicators.
+path: elements/components/chain-of-thought
+---
+
+The `ChainOfThought` component provides a visual representation of an AI's reasoning process, showing step-by-step thinking with support for search results, images, and progress indicators. It helps users understand how AI arrives at conclusions.
+
+<Preview path="chain-of-thought" />
+
+## Installation
+
+<ElementsInstaller path="chain-of-thought" />
+
+## Usage
+
+```tsx
+import {
+  ChainOfThought,
+  ChainOfThoughtContent,
+  ChainOfThoughtHeader,
+  ChainOfThoughtImage,
+  ChainOfThoughtSearchResult,
+  ChainOfThoughtSearchResults,
+  ChainOfThoughtStep,
+} from '@/components/ai-elements/chain-of-thought';
+```
+
+```tsx
+<ChainOfThought defaultOpen>
+  <ChainOfThoughtHeader />
+  <ChainOfThoughtContent>
+    <ChainOfThoughtStep
+      icon={SearchIcon}
+      label="Searching for information"
+      status="complete"
+    >
+      <ChainOfThoughtSearchResults>
+        <ChainOfThoughtSearchResult>
+          Result 1
+        </ChainOfThoughtSearchResult>
+      </ChainOfThoughtSearchResults>
+    </ChainOfThoughtStep>
+  </ChainOfThoughtContent>
+</ChainOfThought>
+```
+
+## Features
+
+- Collapsible interface with smooth animations powered by Radix UI
+- Step-by-step visualization of AI reasoning process
+- Support for different step statuses (complete, active, pending)
+- Built-in search results display with badge styling
+- Image support with captions for visual content
+- Custom icons for different step types
+- Context-aware components using React Context API
+- Fully typed with TypeScript
+- Accessible with keyboard navigation support
+- Responsive design that adapts to different screen sizes
+- Smooth fade and slide animations for content transitions
+- Composable architecture for flexible customization
+
+## Props
+
+### `<ChainOfThought />`
+
+<TypeTable
+  type={{
+    open: {
+      description: 'Controlled open state of the collapsible.',
+      type: 'boolean',
+    },
+    defaultOpen: {
+      description: 'Default open state when uncontrolled.',
+      type: 'boolean',
+      default: 'false',
+    },
+    onOpenChange: {
+      description: 'Callback when the open state changes.',
+      type: '(open: boolean) => void',
+    },
+    '...props': {
+      description: 'Any other props are spread to the root div element.',
+      type: 'React.ComponentProps<"div">',
+    },
+  }}
+/>
+
+### `<ChainOfThoughtHeader />`
+
+<TypeTable
+  type={{
+    children: {
+      description: 'Custom header text.',
+      type: 'React.ReactNode',
+      default: '"Chain of Thought"',
+    },
+    '...props': {
+      description: 'Any other props are spread to the CollapsibleTrigger component.',
+      type: 'React.ComponentProps<typeof CollapsibleTrigger>',
+    },
+  }}
+/>
+
+### `<ChainOfThoughtStep />`
+
+<TypeTable
+  type={{
+    icon: {
+      description: 'Icon to display for the step.',
+      type: 'LucideIcon',
+      default: 'DotIcon',
+    },
+    label: {
+      description: 'The main text label for the step.',
+      type: 'string',
+    },
+    description: {
+      description: 'Optional description text shown below the label.',
+      type: 'string',
+    },
+    status: {
+      description: 'Visual status of the step.',
+      type: '"complete" | "active" | "pending"',
+      default: '"complete"',
+    },
+    '...props': {
+      description: 'Any other props are spread to the root div element.',
+      type: 'React.ComponentProps<"div">',
+    },
+  }}
+/>
+
+### `<ChainOfThoughtSearchResults />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any props are spread to the container div element.',
+      type: 'React.ComponentProps<"div">',
+    },
+  }}
+/>
+
+### `<ChainOfThoughtSearchResult />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any props are spread to the Badge component.',
+      type: 'React.ComponentProps<typeof Badge>',
+    },
+  }}
+/>
+
+### `<ChainOfThoughtContent />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any props are spread to the CollapsibleContent component.',
+      type: 'React.ComponentProps<typeof CollapsibleContent>',
+    },
+  }}
+/>
+
+### `<ChainOfThoughtImage />`
+
+<TypeTable
+  type={{
+    caption: {
+      description: 'Optional caption text displayed below the image.',
+      type: 'string',
+    },
+    '...props': {
+      description: 'Any other props are spread to the container div element.',
+      type: 'React.ComponentProps<"div">',
+    },
+  }}
+/>

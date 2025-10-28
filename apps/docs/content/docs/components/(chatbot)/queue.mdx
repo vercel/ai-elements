@@ -1,0 +1,266 @@
+---
+title: Queue
+description: A comprehensive queue component system for displaying message lists, todos, and collapsible task sections in AI applications.
+path: elements/components/queue
+---
+
+The `Queue` component provides a flexible system for displaying lists of messages, todos, attachments, and collapsible sections. Perfect for showing AI workflow progress, pending tasks, message history, or any structured list of items in your application.
+
+<Preview path="queue" />
+
+## Installation
+
+<ElementsInstaller path="queue" />
+
+## Usage
+
+```tsx
+import {
+  Queue,
+  QueueSection,
+  QueueSectionTrigger,
+  QueueSectionLabel,
+  QueueSectionContent,
+  QueueList,
+  QueueItem,
+  QueueItemIndicator,
+  QueueItemContent,
+} from '@/components/ai-elements/queue';
+```
+
+```tsx
+<Queue>
+  <QueueSection>
+    <QueueSectionTrigger>
+      <QueueSectionLabel count={3} label="Tasks" />
+    </QueueSectionTrigger>
+    <QueueSectionContent>
+      <QueueList>
+        <QueueItem>
+          <QueueItemIndicator />
+          <QueueItemContent>Analyze user requirements</QueueItemContent>
+        </QueueItem>
+      </QueueList>
+    </QueueSectionContent>
+  </QueueSection>
+</Queue>
+```
+
+## Features
+
+- Flexible component system with composable parts
+- Collapsible sections with smooth animations
+- Support for completed/pending state indicators
+- Built-in scroll area for long lists
+- Attachment display with images and file indicators
+- Hover-revealed action buttons for queue items
+- TypeScript support with comprehensive type definitions
+- Customizable styling with Tailwind CSS
+- Responsive design with mobile-friendly interactions
+- Keyboard navigation and accessibility support
+- Theme-aware with automatic dark mode support
+
+## Examples
+
+### With PromptInput
+
+<Preview path="queue-prompt-input" />
+
+## Props
+
+### `<Queue />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any other props are spread to the root div.',
+      type: 'React.ComponentProps<"div">',
+    },
+  }}
+/>
+
+### `<QueueSection />`
+
+<TypeTable
+  type={{
+    defaultOpen: {
+      description: 'Whether the section is open by default.',
+      type: 'boolean',
+      default: 'true',
+    },
+    '...props': {
+      description: 'Any other props are spread to the Collapsible component.',
+      type: 'React.ComponentProps<typeof Collapsible>',
+    },
+  }}
+/>
+
+### `<QueueSectionTrigger />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any other props are spread to the button element.',
+      type: 'React.ComponentProps<"button">',
+    },
+  }}
+/>
+
+### `<QueueSectionLabel />`
+
+<TypeTable
+  type={{
+    label: {
+      description: 'The label text to display.',
+      type: 'string',
+    },
+    count: {
+      description: 'The count to display before the label.',
+      type: 'number',
+    },
+    icon: {
+      description: 'An optional icon to display before the count.',
+      type: 'React.ReactNode',
+    },
+    '...props': {
+      description: 'Any other props are spread to the span element.',
+      type: 'React.ComponentProps<"span">',
+    },
+  }}
+/>
+
+### `<QueueSectionContent />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any other props are spread to the CollapsibleContent component.',
+      type: 'React.ComponentProps<typeof CollapsibleContent>',
+    },
+  }}
+/>
+
+### `<QueueList />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any other props are spread to the ScrollArea component.',
+      type: 'React.ComponentProps<typeof ScrollArea>',
+    },
+  }}
+/>
+
+### `<QueueItem />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any other props are spread to the li element.',
+      type: 'React.ComponentProps<"li">',
+    },
+  }}
+/>
+
+### `<QueueItemIndicator />`
+
+<TypeTable
+  type={{
+    completed: {
+      description: 'Whether the item is completed. Affects the indicator styling.',
+      type: 'boolean',
+      default: 'false',
+    },
+    '...props': {
+      description: 'Any other props are spread to the span element.',
+      type: 'React.ComponentProps<"span">',
+    },
+  }}
+/>
+
+### `<QueueItemContent />`
+
+<TypeTable
+  type={{
+    completed: {
+      description: 'Whether the item is completed. Affects text styling with strikethrough and opacity.',
+      type: 'boolean',
+      default: 'false',
+    },
+    '...props': {
+      description: 'Any other props are spread to the span element.',
+      type: 'React.ComponentProps<"span">',
+    },
+  }}
+/>
+
+### `<QueueItemDescription />`
+
+<TypeTable
+  type={{
+    completed: {
+      description: 'Whether the item is completed. Affects text styling.',
+      type: 'boolean',
+      default: 'false',
+    },
+    '...props': {
+      description: 'Any other props are spread to the div element.',
+      type: 'React.ComponentProps<"div">',
+    },
+  }}
+/>
+
+### `<QueueItemActions />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any other props are spread to the div element.',
+      type: 'React.ComponentProps<"div">',
+    },
+  }}
+/>
+
+### `<QueueItemAction />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any other props (except variant and size) are spread to the Button component.',
+      type: 'Omit<React.ComponentProps<typeof Button>, "variant" | "size">',
+    },
+  }}
+/>
+
+### `<QueueItemAttachment />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any other props are spread to the div element.',
+      type: 'React.ComponentProps<"div">',
+    },
+  }}
+/>
+
+### `<QueueItemImage />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any other props are spread to the img element.',
+      type: 'React.ComponentProps<"img">',
+    },
+  }}
+/>
+
+### `<QueueItemFile />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any other props are spread to the span element.',
+      type: 'React.ComponentProps<"span">',
+    },
+  }}
+/>
