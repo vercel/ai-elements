@@ -357,14 +357,21 @@ export type PromptInputAttachmentsProps = Omit<
 
 export function PromptInputAttachments({
   children,
+  className,
 }: PromptInputAttachmentsProps) {
   const attachments = usePromptInputAttachments();
 
-  return attachments?.files.length > 0
-    ? attachments?.files.map((file) => (
+  if (!attachments.files.length) {
+    return null;
+  }
+
+  return (
+    <div className={cn("flex flex-wrap gap-1 p-2.5", className)}>
+      {attachments.files.map((file) => (
         <Fragment key={file.id}>{children(file)}</Fragment>
-      ))
-    : null;
+      ))}
+    </div>
+  );
 }
 
 export type PromptInputActionAddAttachmentsProps = ComponentProps<
