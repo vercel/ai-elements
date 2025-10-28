@@ -40,12 +40,14 @@ import {
 import { GlobeIcon } from 'lucide-react';
 
 <PromptInput onSubmit={() => {}} className="mt-4 relative">
-  <PromptInputBody>
+  <PromptInputHeader>
     <PromptInputAttachments>
       {(attachment) => (
         <PromptInputAttachment data={attachment} />
       )}
     </PromptInputAttachments>
+  </PromptInputHeader>
+  <PromptInputBody>
     <PromptInputTextarea onChange={(e) => {}} value={''} />
   </PromptInputBody>
   <PromptInputFooter>
@@ -189,10 +191,13 @@ const InputDemo = () => {
         </Conversation>
 
         <PromptInput onSubmit={handleSubmit} className="mt-4" globalDrop multiple>
-          <PromptInputBody>
+          <PromptInputHeader>
             <PromptInputAttachments>
               {(attachment) => <PromptInputAttachment data={attachment} />}
             </PromptInputAttachments>
+          </PromptInputHeader>
+          <PromptInputBody>
+     
             <PromptInputTextarea
               onChange={(e) => setText(e.target.value)}
               ref={textareaRef}

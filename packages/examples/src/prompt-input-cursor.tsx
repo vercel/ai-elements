@@ -230,11 +230,11 @@ const Example = () => {
                 </div>
               </PromptInputHoverCardContent>
             </PromptInputHoverCard>
-          </PromptInputHeader>
-          <PromptInputBody>
             <PromptInputAttachments>
               {(attachment) => <PromptInputAttachment data={attachment} />}
             </PromptInputAttachments>
+          </PromptInputHeader>
+          <PromptInputBody>
             <PromptInputTextarea
               placeholder="Plan, search, build anything"
               ref={textareaRef}

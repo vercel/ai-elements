@@ -11,6 +11,7 @@ import {
   PromptInputBody,
   PromptInputButton,
   PromptInputFooter,
+  PromptInputHeader,
   type PromptInputMessage,
   PromptInputModelSelect,
   PromptInputModelSelectContent,
@@ -117,10 +118,12 @@ const Example = () => {
     <PromptInputProvider>
       <HeaderControls />
       <PromptInput globalDrop multiple onSubmit={handleSubmit}>
-        <PromptInputBody>
+        <PromptInputHeader>
           <PromptInputAttachments>
             {(attachment) => <PromptInputAttachment data={attachment} />}
           </PromptInputAttachments>
+        </PromptInputHeader>
+        <PromptInputBody>
           <PromptInputTextarea ref={textareaRef} />
         </PromptInputBody>
         <PromptInputFooter>

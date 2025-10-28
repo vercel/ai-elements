@@ -213,10 +213,12 @@ const ChatBotDemo = () => {
         </Conversation>
 
         <PromptInput onSubmit={handleSubmit} className="mt-4" globalDrop multiple>
-          <PromptInputBody>
+          <PromptInputHeader>
             <PromptInputAttachments>
               {(attachment) => <PromptInputAttachment data={attachment} />}
             </PromptInputAttachments>
+          </PromptInputHeader>
+          <PromptInputBody>
             <PromptInputTextarea
               onChange={(e) => setInput(e.target.value)}
               value={input}
