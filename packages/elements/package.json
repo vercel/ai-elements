@@ -15,7 +15,7 @@
     "@radix-ui/react-use-controllable-state": "^1.2.2",
     "@repo/shadcn-ui": "workspace:*",
     "@xyflow/react": "^12.9.0",
-    "ai": "5.0.81",
+    "ai": "5.1.0-beta.22",
     "class-variance-authority": "^0.7.1",
     "lucide-react": "^0.546.0",
     "motion": "^12.23.24",

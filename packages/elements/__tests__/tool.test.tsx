@@ -75,6 +75,45 @@ describe("ToolHeader", () => {
     expect(screen.getByText("Error")).toBeInTheDocument();
   });
 
+  it("shows awaiting approval status", () => {
+    render(
+      <Tool>
+        <ToolHeader
+          state={"approval-requested" as any}
+          title="test"
+          type="tool-test"
+        />
+      </Tool>
+    );
+    expect(screen.getByText("Awaiting Approval")).toBeInTheDocument();
+  });
+
+  it("shows responded status", () => {
+    render(
+      <Tool>
+        <ToolHeader
+          state={"approval-responded" as any}
+          title="test"
+          type="tool-test"
+        />
+      </Tool>
+    );
+    expect(screen.getByText("Responded")).toBeInTheDocument();
+  });
+
+  it("shows denied status", () => {
+    render(
+      <Tool>
+        <ToolHeader
+          state={"output-denied" as any}
+          title="test"
+          type="tool-test"
+        />
+      </Tool>
+    );
+    expect(screen.getByText("Denied")).toBeInTheDocument();
+  });
+
   it("has wrench icon", () => {
     const { container } = render(
       <Tool>
