@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import {
   Tool,
@@ -137,7 +137,7 @@ describe("ToolContent", () => {
 });
 
 describe("ToolInput", () => {
-  it("renders input parameters", () => {
+  it("renders input parameters", async () => {
     const input = { query: "test search" };
     render(
       <Tool defaultOpen>
@@ -148,7 +148,9 @@ describe("ToolInput", () => {
       </Tool>
     );
     expect(screen.getByText("Parameters")).toBeInTheDocument();
-    expect(screen.getAllByText(/"query"/)[0]).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getAllByText(/"query"/)[0]).toBeInTheDocument();
+    });
   });
 
   it("renders JSON formatted input", () => {
