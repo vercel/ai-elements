@@ -8,16 +8,16 @@
     "test:coverage": "turbo run test:coverage",
     "check": "npx ultracite@latest check",
     "fix": "npx ultracite@latest fix",
-    "bump-deps": "npx npm-check-updates --deep -u -x recharts,react-syntax-highlighter,@types/react-syntax-highlighter && pnpm install",
+    "bump-deps": "npx npm-check-updates --deep -u -x recharts && pnpm install",
     "bump-ui": "npx shadcn@latest add --all --overwrite -c packages/shadcn-ui && npx shadcn@latest migrate radix -c packages/shadcn-ui",
     "changeset": "changeset"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.2.7",
+    "@biomejs/biome": "2.3.1",
     "@changesets/cli": "^2.29.7",
     "turbo": "^2.5.8",
     "typescript": "5.9.3",
-    "ultracite": "5.6.4"
+    "ultracite": "6.0.4"
   },
   "packageManager": "pnpm@10.19.0",
   "engines": {
