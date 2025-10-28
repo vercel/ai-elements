@@ -36,7 +36,7 @@ describe("CodeBlock", () => {
   it("renders children actions", () => {
     render(
       <CodeBlock code="code" language="javascript">
-        <button>Action</button>
+        <button type="button">Action</button>
       </CodeBlock>
     );
     expect(screen.getByText("Action")).toBeInTheDocument();

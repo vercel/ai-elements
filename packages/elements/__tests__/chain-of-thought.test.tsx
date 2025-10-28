@@ -186,7 +186,7 @@ describe("ChainOfThoughtImage", () => {
     render(
       <ChainOfThought>
         <ChainOfThoughtImage>
-          <img alt="test" src="test.jpg" />
+          <img alt="test" height={100} src="test.jpg" width={100} />
         </ChainOfThoughtImage>
       </ChainOfThought>
     );
@@ -198,7 +198,7 @@ describe("ChainOfThoughtImage", () => {
     render(
       <ChainOfThought>
         <ChainOfThoughtImage caption="Image caption">
-          <img alt="test" src="test.jpg" />
+          <img alt="test" height={100} src="test.jpg" width={100} />
         </ChainOfThoughtImage>
       </ChainOfThought>
     );

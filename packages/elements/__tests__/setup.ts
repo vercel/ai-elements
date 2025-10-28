@@ -1,6 +1,7 @@
 import "@testing-library/jest-dom/vitest";
 import { cleanup } from "@testing-library/react";
 import { afterEach, vi } from "vitest";
+import failOnConsole from "vitest-fail-on-console";
 
 // Mock CSS imports
 vi.mock("*.css", () => ({}));
@@ -39,6 +40,45 @@ Object.defineProperty(window, "matchMedia", {
     removeEventListener: vi.fn(),
     dispatchEvent: vi.fn(),
   })),
+});
+
+// Patch createElement to handle SVG elements properly in jsdom
+const SVG_TAGS = new Set([
+  "svg",
+  "path",
+  "circle",
+  "g",
+  "rect",
+  "line",
+  "polyline",
+  "polygon",
+  "ellipse",
+  "text",
+  "tspan",
+  "defs",
+  "clipPath",
+]);
+
+const originalCreateElement = document.createElement.bind(document);
+// @ts-expect-error - Overriding createElement signature for test environment
+document.createElement = (
+  tagName: string,
+  options?: ElementCreationOptions
+) => {
+  if (SVG_TAGS.has(tagName.toLowerCase())) {
+    return document.createElementNS("http://www.w3.org/2000/svg", tagName);
+  }
+  return originalCreateElement(tagName, options);
+};
+
+// Fail the test if there are any console logs during test execution
+failOnConsole({
+  shouldFailOnAssert: true,
+  shouldFailOnDebug: true,
+  shouldFailOnInfo: true,
+  shouldFailOnWarn: true,
+  shouldFailOnError: true,
+  shouldFailOnLog: true,
 });
 
 // Cleanup after each test

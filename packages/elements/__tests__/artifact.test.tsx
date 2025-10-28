@@ -66,7 +66,7 @@ describe("ArtifactActions", () => {
   it("renders action buttons", () => {
     render(
       <ArtifactActions>
-        <button>Action 1</button>
+        <button type="button">Action 1</button>
       </ArtifactActions>
     );
     expect(screen.getByText("Action 1")).toBeInTheDocument();
