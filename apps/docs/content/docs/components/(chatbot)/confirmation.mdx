@@ -1,55 +1,55 @@
 ---
-title: Tool Approval
+title: Confirmation
 description: An alert-based component for managing tool execution approval workflows with request, accept, and reject states.
-path: elements/components/tool-approval
+path: elements/components/confirmation
 ---
 
-The `ToolApproval` component provides a flexible system for displaying tool approval requests and their outcomes. Perfect for showing users when AI tools require approval before execution, and displaying the approval status afterward.
+The `Confirmation` component provides a flexible system for displaying tool approval requests and their outcomes. Perfect for showing users when AI tools require approval before execution, and displaying the approval status afterward.
 
-<Preview path="tool-approval" />
+<Preview path="confirmation" />
 
 ## Installation
 
-<ElementsInstaller path="tool-approval" />
+<ElementsInstaller path="confirmation" />
 
 ## Usage
 
 ```tsx
 import {
-  ToolApproval,
-  ToolApprovalContent,
-  ToolApprovalRequest,
-  ToolApprovalAccepted,
-  ToolApprovalRejected,
-  ToolApprovalActions,
-  ToolApprovalAction,
-} from '@/components/ai-elements/tool-approval';
+  Confirmation,
+  ConfirmationContent,
+  ConfirmationRequest,
+  ConfirmationAccepted,
+  ConfirmationRejected,
+  ConfirmationActions,
+  ConfirmationAction,
+} from '@/components/ai-elements/confirmation';
 ```
 
 ```tsx
-<ToolApproval approval={{ id: 'tool-1' }} state="approval-requested">
-  <ToolApprovalContent>
-    <ToolApprovalRequest>
+<Confirmation approval={{ id: 'tool-1' }} state="approval-requested">
+  <ConfirmationContent>
+    <ConfirmationRequest>
       This tool wants to access your file system. Do you approve?
-    </ToolApprovalRequest>
-    <ToolApprovalAccepted>
+    </ConfirmationRequest>
+    <ConfirmationAccepted>
       <CheckIcon className="size-4" />
       <span>Approved</span>
-    </ToolApprovalAccepted>
-    <ToolApprovalRejected>
+    </ConfirmationAccepted>
+    <ConfirmationRejected>
       <XIcon className="size-4" />
       <span>Rejected</span>
-    </ToolApprovalRejected>
-  </ToolApprovalContent>
-  <ToolApprovalActions>
-    <ToolApprovalAction variant="outline" onClick={handleReject}>
+    </ConfirmationRejected>
+  </ConfirmationContent>
+  <ConfirmationActions>
+    <ConfirmationAction variant="outline" onClick={handleReject}>
       Reject
-    </ToolApprovalAction>
-    <ToolApprovalAction variant="default" onClick={handleApprove}>
+    </ConfirmationAction>
+    <ConfirmationAction variant="default" onClick={handleApprove}>
       Approve
-    </ToolApprovalAction>
-  </ToolApprovalActions>
-</ToolApproval>
+    </ConfirmationAction>
+  </ConfirmationActions>
+</Confirmation>
 ```
 
 ## Usage with AI SDK
@@ -67,14 +67,14 @@ import { useState } from 'react';
 import { CheckIcon, XIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
-  ToolApproval,
-  ToolApprovalContent,
-  ToolApprovalRequest,
-  ToolApprovalAccepted,
-  ToolApprovalRejected,
-  ToolApprovalActions,
-  ToolApprovalAction,
-} from '@/components/ai-elements/tool-approval';
+  Confirmation,
+  ConfirmationContent,
+  ConfirmationRequest,
+  ConfirmationAccepted,
+  ConfirmationRejected,
+  ConfirmationActions,
+  ConfirmationAction,
+} from '@/components/ai-elements/confirmation';
 import { Response } from '@/components/ai-elements/response';
 
 type DeleteFileInput = {
@@ -90,7 +90,7 @@ type DeleteFileToolUIPart = ToolUIPart<{
 }>;
 
 const Example = () => {
-  const { messages, sendMessage, status, respondToToolApprovalRequest } = useChat({
+  const { messages, sendMessage, status, respondToConfirmationRequest } = useChat({
     transport: new DefaultChatTransport({
       api: '/api/chat',
     }),
@@ -113,47 +113,47 @@ const Example = () => {
         </Button>
 
         {deleteTool?.approval && (
-          <ToolApproval approval={deleteTool.approval} state={deleteTool.state}>
-            <ToolApprovalContent>
-              <ToolApprovalRequest>
+          <Confirmation approval={deleteTool.approval} state={deleteTool.state}>
+            <ConfirmationContent>
+              <ConfirmationRequest>
                 This tool wants to delete: <code>{deleteTool.input?.filePath}</code>
                 <br />
                 Do you approve this action?
-              </ToolApprovalRequest>
-              <ToolApprovalAccepted>
+              </ConfirmationRequest>
+              <ConfirmationAccepted>
                 <CheckIcon className="size-4" />
                 <span>You approved this tool execution</span>
-              </ToolApprovalAccepted>
-              <ToolApprovalRejected>
+              </ConfirmationAccepted>
+              <ConfirmationRejected>
                 <XIcon className="size-4" />
                 <span>You rejected this tool execution</span>
-              </ToolApprovalRejected>
-            </ToolApprovalContent>
-            <ToolApprovalActions>
-              <ToolApprovalAction
+              </ConfirmationRejected>
+            </ConfirmationContent>
+            <ConfirmationActions>
+              <ConfirmationAction
                 variant="outline"
                 onClick={() =>
-                  respondToToolApprovalRequest({
+                  respondToConfirmationRequest({
                     approvalId: deleteTool.approval!.id,
                     approved: false,
                   })
                 }
               >
                 Reject
-              </ToolApprovalAction>
-              <ToolApprovalAction
+              </ConfirmationAction>
+              <ConfirmationAction
                 variant="default"
                 onClick={() =>
-                  respondToToolApprovalRequest({
+                  respondToConfirmationRequest({
                     approvalId: deleteTool.approval!.id,
                     approved: true,
                   })
                 }
               >
                 Approve
-              </ToolApprovalAction>
-            </ToolApprovalActions>
-          </ToolApproval>
+              </ConfirmationAction>
+            </ConfirmationActions>
+          </Confirmation>
         )}
 
         {deleteTool?.output && (
@@ -238,23 +238,23 @@ export async function POST(req: Request) {
 
 Shows the approval request with action buttons when state is `approval-requested`.
 
-<Preview path="tool-approval-request" />
+<Preview path="confirmation-request" />
 
 ### Approved State
 
 Shows the accepted status when user approves and state is `approval-responded` or `output-available`.
 
-<Preview path="tool-approval-accepted" />
+<Preview path="confirmation-accepted" />
 
 ### Rejected State
 
 Shows the rejected status when user rejects and state is `output-denied`.
 
-<Preview path="tool-approval-rejected" />
+<Preview path="confirmation-rejected" />
 
 ## Props
 
-### `<ToolApproval />`
+### `<Confirmation />`
 
 <TypeTable
   type={{
@@ -277,7 +277,7 @@ Shows the rejected status when user rejects and state is `output-denied`.
   }}
 />
 
-### `<ToolApprovalContent />`
+### `<ConfirmationContent />`
 
 <TypeTable
   type={{
@@ -292,7 +292,7 @@ Shows the rejected status when user rejects and state is `output-denied`.
   }}
 />
 
-### `<ToolApprovalRequest />`
+### `<ConfirmationRequest />`
 
 <TypeTable
   type={{
@@ -303,7 +303,7 @@ Shows the rejected status when user rejects and state is `output-denied`.
   }}
 />
 
-### `<ToolApprovalAccepted />`
+### `<ConfirmationAccepted />`
 
 <TypeTable
   type={{
@@ -314,7 +314,7 @@ Shows the rejected status when user rejects and state is `output-denied`.
   }}
 />
 
-### `<ToolApprovalRejected />`
+### `<ConfirmationRejected />`
 
 <TypeTable
   type={{
@@ -325,7 +325,7 @@ Shows the rejected status when user rejects and state is `output-denied`.
   }}
 />
 
-### `<ToolApprovalActions />`
+### `<ConfirmationActions />`
 
 <TypeTable
   type={{
@@ -340,7 +340,7 @@ Shows the rejected status when user rejects and state is `output-denied`.
   }}
 />
 
-### `<ToolApprovalAction />`
+### `<ConfirmationAction />`
 
 <TypeTable
   type={{

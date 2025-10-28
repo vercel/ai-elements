@@ -8,14 +8,14 @@ import {
   ToolOutput,
 } from "@repo/elements/tool";
 import {
-  ToolApproval,
-  ToolApprovalAccepted,
-  ToolApprovalAction,
-  ToolApprovalActions,
-  ToolApprovalContent,
-  ToolApprovalRejected,
-  ToolApprovalRequest,
-} from "@repo/elements/tool-approval";
+  Confirmation,
+  ConfirmationAccepted,
+  ConfirmationAction,
+  ConfirmationActions,
+  ConfirmationContent,
+  ConfirmationRejected,
+  ConfirmationRequest,
+} from "@repo/elements/confirmation";
 import type { ToolUIPart } from "ai";
 import { CheckIcon, XIcon } from "lucide-react";
 import { nanoid } from "nanoid";
@@ -62,39 +62,39 @@ const Example = () => (
       />
       <ToolContent>
         <ToolInput input={toolCall.input} />
-        <ToolApproval approval={{ id: nanoid() }} state="approval-requested">
-          <ToolApprovalContent>
-            <ToolApprovalRequest>
+        <Confirmation approval={{ id: nanoid() }} state="approval-requested">
+          <ConfirmationContent>
+            <ConfirmationRequest>
               This tool will execute a query on the production database.
-            </ToolApprovalRequest>
-            <ToolApprovalAccepted>
+            </ConfirmationRequest>
+            <ConfirmationAccepted>
               <CheckIcon className="size-4 text-green-600 dark:text-green-400" />
               <span>Accepted</span>
-            </ToolApprovalAccepted>
-            <ToolApprovalRejected>
+            </ConfirmationAccepted>
+            <ConfirmationRejected>
               <XIcon className="size-4 text-destructive" />
               <span>Rejected</span>
-            </ToolApprovalRejected>
-          </ToolApprovalContent>
-          <ToolApprovalActions>
-            <ToolApprovalAction
+            </ConfirmationRejected>
+          </ConfirmationContent>
+          <ConfirmationActions>
+            <ConfirmationAction
               onClick={() => {
-                // In production, call addToolApprovalResponse
+                // In production, call addConfirmationResponse
               }}
               variant="outline"
             >
               Reject
-            </ToolApprovalAction>
-            <ToolApprovalAction
+            </ConfirmationAction>
+            <ConfirmationAction
               onClick={() => {
-                // In production, call addToolApprovalResponse
+                // In production, call addConfirmationResponse
               }}
               variant="default"
             >
               Accept
-            </ToolApprovalAction>
-          </ToolApprovalActions>
-        </ToolApproval>
+            </ConfirmationAction>
+          </ConfirmationActions>
+        </Confirmation>
       </ToolContent>
     </Tool>
 
@@ -107,24 +107,24 @@ const Example = () => (
       />
       <ToolContent>
         <ToolInput input={toolCall.input} />
-        <ToolApproval
+        <Confirmation
           approval={{ id: nanoid(), approved: true }}
           state="approval-responded"
         >
-          <ToolApprovalContent>
-            <ToolApprovalRequest>
+          <ConfirmationContent>
+            <ConfirmationRequest>
               This tool will execute a query on the production database.
-            </ToolApprovalRequest>
-            <ToolApprovalAccepted>
+            </ConfirmationRequest>
+            <ConfirmationAccepted>
               <CheckIcon className="size-4 text-green-600 dark:text-green-400" />
               <span>Accepted</span>
-            </ToolApprovalAccepted>
-            <ToolApprovalRejected>
+            </ConfirmationAccepted>
+            <ConfirmationRejected>
               <XIcon className="size-4 text-destructive" />
               <span>Rejected</span>
-            </ToolApprovalRejected>
-          </ToolApprovalContent>
-        </ToolApproval>
+            </ConfirmationRejected>
+          </ConfirmationContent>
+        </Confirmation>
       </ToolContent>
     </Tool>
 
@@ -145,24 +145,24 @@ const Example = () => (
       <ToolHeader state={toolCall.state} type={toolCall.type} />
       <ToolContent>
         <ToolInput input={toolCall.input} />
-        <ToolApproval
+        <Confirmation
           approval={{ id: nanoid(), approved: true }}
           state="output-available"
         >
-          <ToolApprovalContent>
-            <ToolApprovalRequest>
+          <ConfirmationContent>
+            <ConfirmationRequest>
               This tool will execute a query on the production database.
-            </ToolApprovalRequest>
-            <ToolApprovalAccepted>
+            </ConfirmationRequest>
+            <ConfirmationAccepted>
               <CheckIcon className="size-4 text-green-600 dark:text-green-400" />
               <span>Accepted</span>
-            </ToolApprovalAccepted>
-            <ToolApprovalRejected>
+            </ConfirmationAccepted>
+            <ConfirmationRejected>
               <XIcon className="size-4 text-destructive" />
               <span>Rejected</span>
-            </ToolApprovalRejected>
-          </ToolApprovalContent>
-        </ToolApproval>
+            </ConfirmationRejected>
+          </ConfirmationContent>
+        </Confirmation>
         {toolCall.state === "output-available" && (
           <ToolOutput errorText={toolCall.errorText} output={toolCall.output} />
         )}
@@ -194,7 +194,7 @@ const Example = () => (
       />
       <ToolContent>
         <ToolInput input={toolCall.input} />
-        <ToolApproval
+        <Confirmation
           approval={{
             id: nanoid(),
             approved: false,
@@ -202,15 +202,15 @@ const Example = () => (
           }}
           state="output-denied"
         >
-          <ToolApprovalContent>
-            <ToolApprovalRequest>
+          <ConfirmationContent>
+            <ConfirmationRequest>
               This tool will execute a query on the production database.
-            </ToolApprovalRequest>
-            <ToolApprovalAccepted>
+            </ConfirmationRequest>
+            <ConfirmationAccepted>
               <CheckIcon className="size-4 text-green-600 dark:text-green-400" />
               <span>Accepted</span>
-            </ToolApprovalAccepted>
-            <ToolApprovalRejected>
+            </ConfirmationAccepted>
+            <ConfirmationRejected>
               <XIcon className="size-4 text-destructive" />
               <span>
                 Rejected
@@ -218,9 +218,9 @@ const Example = () => (
                   : Query could impact production performance
                 </span>
               </span>
-            </ToolApprovalRejected>
-          </ToolApprovalContent>
-        </ToolApproval>
+            </ConfirmationRejected>
+          </ConfirmationContent>
+        </Confirmation>
       </ToolContent>
     </Tool>
   </div>
