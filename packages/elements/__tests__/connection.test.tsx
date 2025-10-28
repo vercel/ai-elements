@@ -1,9 +1,12 @@
 import { render } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { Connection } from "../src/connection";
 
 describe("Connection", () => {
   it("renders with basic props", () => {
+    // Mock console.error to suppress React SVG warnings from @xyflow/react
+    const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
+
     const props = {
       fromX: 0,
       fromY: 0,
@@ -20,6 +23,8 @@ describe("Connection", () => {
 
     expect(path).toBeInTheDocument();
     expect(circle).toBeInTheDocument();
+
+    consoleError.mockRestore();
   });
 
   it("renders path with correct coordinates", () => {
