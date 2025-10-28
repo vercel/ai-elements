@@ -406,7 +406,7 @@ describe("Plan", () => {
     });
 
     it("applies custom className", () => {
-      const { container } = render(
+      render(
         <Plan>
           <PlanHeader>
             <PlanTrigger className="custom-trigger" />

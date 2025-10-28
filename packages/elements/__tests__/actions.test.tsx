@@ -6,7 +6,7 @@ describe("Actions", () => {
   it("renders children", () => {
     render(
       <Actions>
-        <button>Test Action</button>
+        <button type="button">Test Action</button>
       </Actions>
     );
     expect(screen.getByText("Test Action")).toBeInTheDocument();
@@ -15,7 +15,7 @@ describe("Actions", () => {
   it("applies custom className", () => {
     const { container } = render(
       <Actions className="custom-class">
-        <button>Test</button>
+        <button type="button">Test</button>
       </Actions>
     );
     expect(container.firstChild).toHaveClass("custom-class");
