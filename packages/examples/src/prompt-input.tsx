@@ -10,6 +10,7 @@ import {
   PromptInputAttachments,
   PromptInputBody,
   PromptInputButton,
+  PromptInputFooter,
   type PromptInputMessage,
   PromptInputModelSelect,
   PromptInputModelSelectContent,

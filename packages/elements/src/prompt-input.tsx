@@ -1120,7 +1120,7 @@ export const PromptInputSpeechButton = ({
 
         for (const result of results) {
           if (result.isFinal) {
-            finalTranscript += result[0].transcript;
+            finalTranscript += result[0]?.transcript ?? "";
           }
         }
 

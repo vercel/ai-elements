@@ -7,18 +7,24 @@ vi.mock("*.css", () => ({}));
 vi.mock("katex/dist/katex.min.css", () => ({}));
 
 // Mock ResizeObserver
-global.ResizeObserver = vi.fn().mockImplementation(() => ({
-  observe: vi.fn(),
-  unobserve: vi.fn(),
-  disconnect: vi.fn(),
-}));
+global.ResizeObserver = vi.fn(function (this: ResizeObserver) {
+  this.observe = vi.fn();
+  this.unobserve = vi.fn();
+  this.disconnect = vi.fn();
+  return this;
+}) as unknown as typeof ResizeObserver;
 
 // Mock IntersectionObserver
-global.IntersectionObserver = vi.fn().mockImplementation(() => ({
-  observe: vi.fn(),
-  unobserve: vi.fn(),
-  disconnect: vi.fn(),
-}));
+global.IntersectionObserver = vi.fn(function (this: IntersectionObserver) {
+  this.observe = vi.fn();
+  this.unobserve = vi.fn();
+  this.disconnect = vi.fn();
+  this.root = null;
+  this.rootMargin = "";
+  this.thresholds = [];
+  this.takeRecords = vi.fn(() => []);
+  return this;
+}) as unknown as typeof IntersectionObserver;
 
 // Mock matchMedia
 Object.defineProperty(window, "matchMedia", {

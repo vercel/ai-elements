@@ -43,22 +43,19 @@ beforeEach(() => {
   });
 
   // Mock FileReader
-  const mockFileReader = {
-    readAsDataURL: vi.fn(function (this: FileReader, blob: Blob) {
+  global.FileReader = vi.fn(function (this: FileReader) {
+    this.readAsDataURL = vi.fn(function (this: FileReader, blob: Blob) {
       // Simulate async file reading
       setTimeout(() => {
         this.result = "data:text/plain;base64,dGVzdCBjb250ZW50";
         this.onloadend?.(new ProgressEvent("loadend"));
       }, 0);
-    }),
-    result: null,
-    onloadend: null,
-    onerror: null,
-  } as unknown as FileReader;
-
-  global.FileReader = vi.fn(
-    () => mockFileReader
-  ) as unknown as typeof FileReader;
+    });
+    this.result = null;
+    this.onloadend = null;
+    this.onerror = null;
+    return this;
+  }) as unknown as typeof FileReader;
 });
 
 describe("PromptInput", () => {
@@ -1070,7 +1067,9 @@ describe("PromptInputSpeechButton", () => {
     };
 
     // @ts-expect-error - Mocking browser API
-    global.window.SpeechRecognition = vi.fn(() => mockRecognition);
+    global.window.SpeechRecognition = vi.fn(function () {
+      return mockRecognition;
+    });
   });
 
   afterEach(() => {
