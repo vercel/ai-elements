@@ -360,11 +360,13 @@ export function PromptInputAttachments({
 }: PromptInputAttachmentsProps) {
   const attachments = usePromptInputAttachments();
 
-  return attachments?.files.length > 0
-    ? attachments?.files.map((file) => (
-        <Fragment key={file.id}>{children(file)}</Fragment>
-      ))
-    : null;
+  if (!attachments.files.length) {
+    return null;
+  }
+
+  return attachments.files.map((file) => (
+    <Fragment key={file.id}>{children(file)}</Fragment>
+  ));
 }
 
 export type PromptInputActionAddAttachmentsProps = ComponentProps<
