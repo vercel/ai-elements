@@ -27,6 +27,20 @@ const config = {
       },
     ];
   },
+
+  // biome-ignore lint/suspicious/useAwait: "redirects is async"
+  async redirects() {
+    return [
+      {
+        source: "/elements/overview",
+        destination: "/elements",
+      },
+      {
+        source: "/overview",
+        destination: "/",
+      },
+    ];
+  },
 };
 
 export default withMDX(withMicrofrontends(config));
