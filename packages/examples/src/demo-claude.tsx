@@ -653,16 +653,16 @@ const Example = () => {
       </Conversation>
       <div className="grid shrink-0 gap-4 p-4">
         <PromptInput
-          className="divide-y-0 rounded-2xl p-3"
+          className="divide-y-0 bg-card overflow-hidden rounded-md"
           onSubmit={handleSubmit}
         >
           <PromptInputTextarea
-            className="p-0 md:text-base"
+            className="md:text-base"
             onChange={(event) => setText(event.target.value)}
             placeholder="Reply to Claude..."
             value={text}
           />
-          <PromptInputFooter className="p-0">
+          <PromptInputFooter>
             <PromptInputTools>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
