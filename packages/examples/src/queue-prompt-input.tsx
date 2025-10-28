@@ -11,6 +11,7 @@ import {
   PromptInputBody,
   PromptInputButton,
   PromptInputFooter,
+  PromptInputHeader,
   type PromptInputMessage,
   PromptInputModelSelect,
   PromptInputModelSelectContent,
@@ -179,10 +180,12 @@ const Example = () => {
         )}
       </Queue>
       <PromptInput globalDrop multiple onSubmit={handleSubmit}>
-        <PromptInputBody>
+        <PromptInputHeader>
           <PromptInputAttachments>
             {(attachment) => <PromptInputAttachment data={attachment} />}
           </PromptInputAttachments>
+        </PromptInputHeader>
+        <PromptInputBody>
           <PromptInputTextarea
             onChange={(e) => setText(e.target.value)}
             ref={textareaRef}
