@@ -133,6 +133,25 @@ export const ClientNavbar = ({ pages }: { pages: NavPageItem[] }) => (
             <LogoGithub />
           </Link>
         </Button>
+        <Button asChild className="bg-black text-white" size="sm">
+          <a href="/">
+            <svg
+              aria-label="Vercel Logo"
+              className="fill-black dark:fill-white"
+              fill="none"
+              height="12"
+              viewBox="0 0 235 203"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <title>Vercel Logo</title>
+              <path
+                d="M117.082 0L234.164 202.794H0L117.082 0Z"
+                fill="currentColor"
+              />
+            </svg>
+            Sign in with Vercel
+          </a>
+        </Button>
       </div>
     </div>
   </div>
