@@ -1,13 +1,15 @@
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
+import { cn } from "@repo/shadcn-ui/lib/utils";
 import { DynamicCodeBlock } from "fumadocs-ui/components/dynamic-codeblock";
 import { Tab, Tabs } from "fumadocs-ui/components/tabs";
 
 type ComponentPreviewProps = {
   path: string;
+  className?: string;
 };
 
-export const Preview = async ({ path }: ComponentPreviewProps) => {
+export const Preview = async ({ path, className }: ComponentPreviewProps) => {
   const code = await readFile(
     join(
       process.cwd(),
@@ -59,7 +61,7 @@ export const Preview = async ({ path }: ComponentPreviewProps) => {
 
   return (
     <Tabs items={["Preview", "Code"]}>
-      <Tab className="not-prose h-[600px] p-0">
+      <Tab className={cn("not-prose h-[600px]", className)}>
         <Component />
       </Tab>
       <Tab className="p-0">
