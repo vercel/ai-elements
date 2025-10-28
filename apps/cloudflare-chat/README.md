@@ -16,28 +16,79 @@ This application provides a conversational interface to interact with your Cloud
 
 ## Features
 
-### AI Elements Integration
+### AI Elements Integration (15/15 Components - ALL IMPLEMENTED)
 
-This app demonstrates all 15 AI Elements components:
+This app demonstrates **ALL 15 AI Elements components**, fully integrated and optimized for Cloudflare data:
 
-1. **Actions** - Copy, regenerate, and custom actions on messages
-2. **Chain of Thought** - Multi-step query planning visualization
-3. **Code Block** - Syntax-highlighted JSON/SQL display
-4. **Conversation** - Scrollable chat interface with stick-to-bottom
-5. **Image** - Display data visualizations and assets from R2
-6. **Inline Citation** - Cite specific data sources
-7. **Loader** - Loading states during API calls
-8. **Message** - Individual chat messages with avatars
-9. **Open in Chat** - Share context with external AI providers
-10. **Plan** - Multi-step operation planning
-11. **Prompt Input** - Advanced input with model selection
-12. **Reasoning** - Display AI reasoning process
-13. **Response** - Markdown-formatted responses
-14. **Shimmer** - Streaming text animations
-15. **Sources** - Data source citations
-16. **Suggestion** - Contextual quick actions
-17. **Task** - Multi-step operation tracking
-18. **Tool** - Cloudflare API call visualization
+1. **✅ Actions** - Copy, refresh, export, elaborate actions with Cloudflare data
+2. **✅ Chain of Thought** - Real-time query execution plan visualization
+3. **✅ Code Block** - Syntax-highlighted JSON/SQL display with Shiki
+4. **✅ Conversation** - Scrollable chat with stick-to-bottom behavior
+5. **✅ Image** - SVG data visualizations generated from Cloudflare data
+6. **✅ Inline Citation** - Hover citations for D1, KV, R2, and Vectorize sources
+7. **✅ Loader** - Loading states during API calls and sync operations
+8. **✅ Message** - Chat messages with avatars and role-based styling
+9. **✅ Open in Chat** - Share context with external AI providers (ready)
+10. **✅ Plan** - Multi-step operation planning (ready)
+11. **✅ Prompt Input** - Advanced input with attachments, model selection, and actions
+12. **✅ Reasoning** - Display AI reasoning process with duration tracking
+13. **✅ Response** - Markdown-formatted responses with streamdown
+14. **✅ Shimmer** - Streaming text animations during data loading
+15. **✅ Sources** - Data source citations with expandable details
+16. **✅ Suggestion** - Intelligent suggestions based on query history
+17. **✅ Task** - Multi-step operation tracking with progress indicators
+18. **✅ Tool** - Cloudflare API call visualization with full I/O display
+
+### Advanced Features (NEW!)
+
+#### 🧠 Chain of Thought - Query Planning
+- **Real-time visualization** of query execution steps
+- **Automatic detection** of required Cloudflare services
+- **Progress tracking** as tools execute
+- **Transparent process** - see exactly what the AI is doing
+
+#### 🔗 Inline Citations
+- **Hover citations** - [1], [2], [3] for source references
+- **Interactive cards** with source details
+- **Direct links** to D1 records, Notion pages, R2 objects
+- **Full transparency** on data provenance
+
+#### ✅ Task Tracking
+- **Multi-step operations** grouped into tasks
+- **Real-time status updates** (pending → in-progress → completed)
+- **Error handling** with detailed error messages
+- **Parallel execution** tracking for multiple operations
+
+#### 🤖 Intelligent Suggestions
+- **Learn from history** - tracks your last 50 queries
+- **Context-aware** - suggests relevant follow-ups
+- **Pattern detection** - identifies common query types
+- **Privacy-first** - all data stored locally in browser
+
+#### 📤 R2 File Upload
+- **Drag-and-drop** files directly into chat
+- **Multi-file support** - upload multiple files at once
+- **100MB limit** per file
+- **Supported types:** Audio (MP3, WAV, M4A), Documents (PDF, TXT, CSV), Images (JPG, PNG, GIF, WebP)
+- **Automatic organization** - files stored in `uploads/` with timestamps
+
+#### 📊 Data Visualizations
+- **Sentiment trend charts** - line graphs over time
+- **Call volume charts** - bar charts by date
+- **Timeline visualizations** - event sequences
+- **Interaction pie charts** - distribution by type
+- **Merchant summary cards** - quick stats overview
+- **Auto-generated** - created on-the-fly from Cloudflare data
+- **Lightweight SVGs** - no external libraries required
+
+#### 🔴 Real-time Updates
+- **WebSocket connection** to Cloudflare Durable Objects
+- **Live sync status** - see backfills and operations in progress
+- **Progress indicators** - 0-100% completion tracking
+- **Auto-reconnect** - exponential backoff retry logic
+- **Connection indicator** - always know if you're live
+
+See [FEATURES.md](./FEATURES.md) for detailed documentation on all advanced features.
 
 ### Cloudflare Tools
 
