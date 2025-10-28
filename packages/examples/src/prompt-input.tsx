@@ -21,6 +21,7 @@ import {
   PromptInputSpeechButton,
   PromptInputSubmit,
   PromptInputTextarea,
+  PromptInputFooter,
   PromptInputTools,
   usePromptInputController,
 } from "@repo/elements/prompt-input";
