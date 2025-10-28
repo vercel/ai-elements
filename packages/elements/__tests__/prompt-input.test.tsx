@@ -1067,9 +1067,7 @@ describe("PromptInputSpeechButton", () => {
     };
 
     // @ts-expect-error - Mocking browser API
-    global.window.SpeechRecognition = vi.fn(function () {
-      return mockRecognition;
-    });
+    global.window.SpeechRecognition = vi.fn(() => mockRecognition);
   });
 
   afterEach(() => {
