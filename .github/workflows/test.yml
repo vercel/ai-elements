@@ -33,7 +33,7 @@ jobs:
         run: pnpm i
 
       - name: Install Playwright Browsers
-        run: pnpm exec playwright install --with-deps chromium
+        run: pnpm --filter @repo/elements exec playwright install --with-deps chromium
 
       - name: Run Tests
         run: pnpm test
