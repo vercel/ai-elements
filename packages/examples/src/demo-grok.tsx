@@ -701,7 +701,7 @@ const Example = () => {
                 <div className="h-full w-px bg-border" />
                 <PromptInputButton
                   className="rounded-r-full"
-                  size="icon"
+                  size="icon-sm"
                   variant="ghost"
                 >
                   <ChevronDownIcon size={16} />
