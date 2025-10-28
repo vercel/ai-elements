@@ -14,10 +14,10 @@
   "dependencies": {
     "@radix-ui/react-use-controllable-state": "^1.2.2",
     "@repo/shadcn-ui": "workspace:*",
-    "@xyflow/react": "^12.8.6",
-    "ai": "5.0.72",
+    "@xyflow/react": "^12.9.0",
+    "ai": "5.0.81",
     "class-variance-authority": "^0.7.1",
-    "lucide-react": "^0.545.0",
+    "lucide-react": "^0.546.0",
     "motion": "^12.23.24",
     "nanoid": "^5.1.6",
     "react": "19.2.0",
@@ -34,9 +34,9 @@
     "@types/hast": "^3.0.4",
     "@types/react": "19.2.2",
     "@vitejs/plugin-react": "^5.0.4",
-    "@vitest/coverage-v8": "^3.2.4",
-    "jsdom": "^27.0.0",
+    "@vitest/coverage-v8": "^4.0.1",
+    "jsdom": "^27.0.1",
     "typescript": "^5.9.3",
-    "vitest": "^3.2.4"
+    "vitest": "^4.0.1"
   }
 }

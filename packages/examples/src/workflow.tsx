@@ -154,15 +154,13 @@ const edgeTypes = {
 };
 
 const Example = () => (
-  <div style={{ height: "400px", width: "100%" }}>
-    <Canvas
-      edges={edges}
-      edgeTypes={edgeTypes}
-      fitView
-      nodes={nodes}
-      nodeTypes={nodeTypes}
-    />
-  </div>
+  <Canvas
+    edges={edges}
+    edgeTypes={edgeTypes}
+    fitView
+    nodes={nodes}
+    nodeTypes={nodeTypes}
+  />
 );
 
 export default Example;

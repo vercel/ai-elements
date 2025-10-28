@@ -51,7 +51,7 @@ const getHandleCoordsByPosition = (
   );
 
   if (!handle) {
-    return [0, 0];
+    return [0, 0] as const;
   }
 
   let offsetX = handle.width / 2;
@@ -80,7 +80,7 @@ const getHandleCoordsByPosition = (
   const x = node.internals.positionAbsolute.x + handle.x + offsetX;
   const y = node.internals.positionAbsolute.y + handle.y + offsetY;
 
-  return [x, y];
+  return [x, y] as const;
 };
 
 const getEdgeParams = (

@@ -24,6 +24,7 @@ import {
   PromptInputAttachments,
   PromptInputBody,
   PromptInputButton,
+  PromptInputHeader,
   type PromptInputMessage,
   PromptInputModelSelect,
   PromptInputModelSelectContent,
@@ -32,7 +33,6 @@ import {
   PromptInputModelSelectValue,
   PromptInputSubmit,
   PromptInputTextarea,
-  PromptInputToolbar,
   PromptInputTools,
 } from "@repo/elements/prompt-input";
 import {
@@ -162,14 +162,14 @@ React hooks are a powerful feature that let you use state and other React featur
 \`\`\`jsx
 function ProfilePage({ userId }) {
   const [user, setUser] = useState(null);
-  
+
   useEffect(() => {
     // This runs after render and when userId changes
     fetchUser(userId).then(userData => {
       setUser(userData);
     });
   }, [userId]);
-  
+
   return user ? <Profile user={user} /> : <Loading />;
 }
 \`\`\`
@@ -208,7 +208,7 @@ Would you like me to explain any specific hook in more detail?`,
     from: "assistant",
     reasoning: {
       content: `The user is asking for a detailed explanation of useCallback and useMemo. I should provide a clear and concise explanation of each hook's purpose and how they differ.
-      
+
 The useCallback hook is used to memoize functions to prevent unnecessary re-renders of child components that receive functions as props.
 
 The useMemo hook is used to memoize values to avoid expensive recalculations on every render.
@@ -485,16 +485,18 @@ const Example = () => {
         </Suggestions>
         <div className="w-full px-4 pb-4">
           <PromptInput globalDrop multiple onSubmit={handleSubmit}>
-            <PromptInputBody>
+            <PromptInputHeader>
               <PromptInputAttachments>
                 {(attachment) => <PromptInputAttachment data={attachment} />}
               </PromptInputAttachments>
+            </PromptInputHeader>
+            <PromptInputBody>
               <PromptInputTextarea
                 onChange={(event) => setText(event.target.value)}
                 value={text}
               />
             </PromptInputBody>
-            <PromptInputToolbar>
+            <PromptInputFooter>
               <PromptInputTools>
                 <PromptInputActionMenu>
                   <PromptInputActionMenuTrigger />
@@ -536,7 +538,7 @@ const Example = () => {
                 disabled={!(text.trim() || status) || status === "streaming"}
                 status={status}
               />
-            </PromptInputToolbar>
+            </PromptInputFooter>
           </PromptInput>
         </div>
       </div>

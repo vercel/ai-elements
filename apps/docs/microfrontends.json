@@ -1,0 +1,20 @@
+{
+  "$schema": "https://openapi.vercel.sh/microfrontends.json",
+  "applications": {
+    "ai-studio": {
+      "packageName": "studio",
+      "development": {
+        "fallback": "ai-playground.vercel.sh"
+      }
+    },
+    "ai-elements-docs": {
+      "packageName": "docs",
+      "routing": [
+        {
+          "group": "elements",
+          "paths": ["/elements", "/elements/:path*"]
+        }
+      ]
+    }
+  }
+}
