@@ -25,6 +25,7 @@ import {
   PromptInputBody,
   PromptInputButton,
   PromptInputHeader,
+  PromptInputFooter,
   type PromptInputMessage,
   PromptInputModelSelect,
   PromptInputModelSelectContent,
