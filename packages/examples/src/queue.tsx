@@ -33,7 +33,14 @@ const sampleMessages: QueueMessage[] = [
   },
   {
     id: "msg-3",
-    parts: [{ type: "text", text: "Can you review my PR?" }],
+    parts: [{ type: "text", text: "Update the default logo to this png." },
+      {
+      type: "file",
+      url: "https://github.com/haydenbleasel.png",
+      filename: "setup-guide.png",
+      mediaType: "image/png",
+    }
+    ],
   },
   {
     id: "msg-4",
