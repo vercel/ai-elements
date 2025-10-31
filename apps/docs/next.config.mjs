@@ -41,6 +41,11 @@ const config = {
         destination: "/",
         permanent: true,
       },
+      {
+        source: "/elements/components/chatbot",
+        destination: "/elements/examples/chatbot",
+        permanent: true,
+      },
     ];
   },
 };
