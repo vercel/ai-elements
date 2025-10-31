@@ -61,7 +61,7 @@ export const Preview = async ({ path, className }: ComponentPreviewProps) => {
 
   return (
     <Tabs items={["Preview", "Code"]}>
-      <Tab className={cn("not-prose h-[600px]", className)}>
+      <Tab className={cn("not-prose h-[600px] overflow-auto", className)}>
         <Component />
       </Tab>
       <Tab className="p-0">
