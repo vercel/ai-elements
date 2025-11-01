@@ -13,7 +13,7 @@
     "changeset": "changeset"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.3.1",
+    "@biomejs/biome": "2.3.2",
     "@changesets/cli": "^2.29.7",
     "@vitest/browser-playwright": "^4.0.4",
     "@vitest/browser-preview": "^4.0.4",
