@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { VersionSwitch } from "./version-switch";
 
 const VercelIcon = ({ size = 18 }) => (
   <svg
@@ -89,9 +88,6 @@ export const HomeLinks = () => (
           </div>
         </div>
       </a>
-      <div>
-        <VersionSwitch />
-      </div>
     </div>
 
     <style jsx>{`
