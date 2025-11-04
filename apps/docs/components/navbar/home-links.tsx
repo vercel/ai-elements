@@ -84,7 +84,8 @@ export const HomeLinks = () => (
             <SparklesIcon />
           </div>
           <div className="font-bold text-lg text-zinc-800 dark:text-zinc-100">
-            AI <span className="hidden min-[385px]:inline">SDK</span>
+            <span className="tracking-[0.35px]">AI</span>{" "}
+            <span className="hidden min-[385px]:inline">SDK</span>
           </div>
         </div>
       </a>

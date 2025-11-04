@@ -9,9 +9,9 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@repo/shadcn-ui/components/ui/sheet";
-import { LargeSearchToggle } from "fumadocs-ui/components/layout/search-toggle";
 import { ExternalLinkIcon, MenuIcon } from "lucide-react";
 import Link from "next/link";
+import { CustomSearch } from "./custom-search";
 import { HomeLinks } from "./home-links";
 
 type NavPageItem = {
@@ -60,7 +60,7 @@ export const ClientNavbar = ({ pages }: { pages: NavPageItem[] }) => (
           {pages.map((page) => (
             <Button
               asChild
-              className="p-0 font-normal text-muted-foreground hover:text-foreground hover:no-underline"
+              className="p-0 font-normal text-muted-foreground tracking-[0.13px] hover:text-foreground hover:no-underline"
               key={page.href}
               variant="link"
             >
@@ -119,8 +119,14 @@ export const ClientNavbar = ({ pages }: { pages: NavPageItem[] }) => (
 
     <div className="hidden lg:flex">
       <div className="hidden flex-row items-center justify-end gap-2 px-6 md:px-4 lg:col-span-1 lg:col-start-2 xl:flex">
-        <LargeSearchToggle />
-        <Button aria-label="Feedback" asChild size="sm" variant="outline">
+        <CustomSearch />
+        <Button
+          aria-label="Feedback"
+          asChild
+          className="rounded-sm border-none px-[12.48px] shadow-none ring-1 ring-border"
+          size="sm"
+          variant="outline"
+        >
           <Link
             href="https://github.com/vercel/ai-elements/issues"
             target="_noblank"
@@ -128,27 +134,39 @@ export const ClientNavbar = ({ pages }: { pages: NavPageItem[] }) => (
             Feedback
           </Link>
         </Button>
-        <Button aria-label="GitHub" asChild size="icon-sm" variant="outline">
+        <Button
+          aria-label="GitHub"
+          asChild
+          className="rounded-sm border-none shadow-none ring-1 ring-border has-[>svg]:px-3"
+          size="sm"
+          variant="outline"
+        >
           <Link href="https://github.com/vercel/ai-elements" target="_noblank">
             <LogoGithub />
           </Link>
         </Button>
-        <Button asChild className="bg-black text-white" size="sm">
+        <Button
+          asChild
+          className="rounded-sm bg-black pr-[12.31px] pl-[8.31px] text-white"
+          size="sm"
+        >
           <a href="/">
-            <svg
-              aria-label="Vercel Logo"
-              className="fill-black dark:fill-white"
-              fill="none"
-              height="12"
-              viewBox="0 0 235 203"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <title>Vercel Logo</title>
-              <path
-                d="M117.082 0L234.164 202.794H0L117.082 0Z"
-                fill="currentColor"
-              />
-            </svg>
+            <span className="h-[12px] w-[20px]">
+              <svg
+                aria-label="Vercel Logo"
+                className="h-3! fill-black dark:fill-white"
+                fill="none"
+                height={12}
+                viewBox="0 0 235 203"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <title>Vercel Logo</title>
+                <path
+                  d="M117.082 0L234.164 202.794H0L117.082 0Z"
+                  fill="currentColor"
+                />
+              </svg>
+            </span>
             Sign in with Vercel
           </a>
         </Button>
