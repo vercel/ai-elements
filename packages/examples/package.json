@@ -9,10 +9,10 @@
   "dependencies": {
     "@ai-sdk/react": "^2.0.87",
     "@icons-pack/react-simple-icons": "^13.8.0",
-    "@loremllm/transport": "^0.4.3",
+    "@loremllm/transport": "^0.4.5",
     "@repo/elements": "workspace:*",
     "@xyflow/react": "^12.9.0",
-    "ai": "5.1.0-beta.22",
+    "ai": "5.0.87",
     "lucide-react": "^0.548.0",
     "nanoid": "^5.1.6",
     "react": "19.2.0",

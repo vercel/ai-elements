@@ -99,7 +99,6 @@ const Example = () => {
         };
       },
     }),
-    initialMessages: [],
     onFinish: ({ messages }) => {
       // When finishing a message, send the next message in the list if it exists
       const lastUserMessageText = getLastUserMessageText(messages);

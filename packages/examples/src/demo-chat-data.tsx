@@ -30,7 +30,7 @@ export const mockMessages = new Map<string, UIMessage["parts"]>([
       {
         type: "tool-mcp",
         toolCallId: nanoid(),
-        state: "output-available" as const,
+        state: "output-available",
         input: {
           query: "React hooks best practices",
           source: "react.dev",
