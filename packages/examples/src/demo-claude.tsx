@@ -653,7 +653,7 @@ const Example = () => {
       </Conversation>
       <div className="grid shrink-0 gap-4 p-4">
         <PromptInput
-          className="divide-y-0 bg-card overflow-hidden rounded-md"
+          className="divide-y-0 overflow-hidden rounded-md bg-card"
           onSubmit={handleSubmit}
         >
           <PromptInputTextarea
