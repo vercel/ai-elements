@@ -101,10 +101,12 @@ const Example = () => {
     }),
     initialMessages: [],
     onFinish: ({ messages }) => {
-      // When the last message is the first demo message, send the last demo message
+      // When finishing a message, send the next message in the list if it exists
       const lastUserMessageText = getLastUserMessageText(messages);
-      if (lastUserMessageText === userMessageTexts[0]) {
-        sendMessage({ text: userMessageTexts[userMessageTexts.length - 1] });
+      const lastUserMessageTextIndex = userMessageTexts.indexOf(lastUserMessageText);
+      const nextMessageTextIndex = lastUserMessageTextIndex !== -1 ? lastUserMessageTextIndex + 1 : null;
+      if (nextMessageTextIndex !== null && userMessageTexts[nextMessageTextIndex]) {
+        sendMessage({ text: userMessageTexts[nextMessageTextIndex] });
       }
     },
   });
