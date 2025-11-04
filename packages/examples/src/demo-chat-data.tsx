@@ -27,35 +27,35 @@ export const mockMessages = new Map<string, UIMessage["parts"]>([
         url: "https://react.dev/reference/react-dom",
         title: "React DOM Documentation",
       },
-      //       {
-      //         type: "tool-mcp",
-      //         toolCallId: nanoid(),
-      //         state: "output-available" as const,
-      //         input: {
-      //           query: "React hooks best practices",
-      //           source: "react.dev",
-      //         },
-      //         output: `{
-      //   "query": "React hooks best practices",
-      //   "results": [
-      //     {
-      //       "title": "Rules of Hooks",
-      //       "url": "https://react.dev/warnings/invalid-hook-call-warning",
-      //       "snippet": "Hooks must be called at the top level of your React function components or custom hooks. Don't call hooks inside loops, conditions, or nested functions."
-      //     },
-      //     {
-      //       "title": "useState Hook",
-      //       "url": "https://react.dev/reference/react/useState",
-      //       "snippet": "useState is a React Hook that lets you add state to your function components. It returns an array with two values: the current state and a function to update it."
-      //     },
-      //     {
-      //       "title": "useEffect Hook",
-      //       "url": "https://react.dev/reference/react/useEffect",
-      //       "snippet": "useEffect lets you synchronize a component with external systems. It runs after render and can be used to perform side effects like data fetching."
-      //     }
-      //   ]
-      // }`,
-      //       },
+      {
+        type: "tool-mcp",
+        toolCallId: nanoid(),
+        state: "output-available" as const,
+        input: {
+          query: "React hooks best practices",
+          source: "react.dev",
+        },
+        output: `{
+        "query": "React hooks best practices",
+        "results": [
+          {
+            "title": "Rules of Hooks",
+            "url": "https://react.dev/warnings/invalid-hook-call-warning",
+            "snippet": "Hooks must be called at the top level of your React function components or custom hooks. Don't call hooks inside loops, conditions, or nested functions."
+          },
+          {
+            "title": "useState Hook",
+            "url": "https://react.dev/reference/react/useState",
+            "snippet": "useState is a React Hook that lets you add state to your function components. It returns an array with two values: the current state and a function to update it."
+          },
+          {
+            "title": "useEffect Hook",
+            "url": "https://react.dev/reference/react/useEffect",
+            "snippet": "useEffect lets you synchronize a component with external systems. It runs after render and can be used to perform side effects like data fetching."
+          }
+        ]
+      }`,
+      },
       {
         type: "text",
         text: `# React Hooks Best Practices

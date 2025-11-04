@@ -68,7 +68,7 @@ const Example = () => {
   const [useWebSearch, setUseWebSearch] = useState<boolean>(false);
   const [useMicrophone, setUseMicrophone] = useState<boolean>(false);
 
-  const { messages, sendMessage, status } = useChat({
+  const { messages, sendMessage } = useChat({
     id: "demo-chatgpt",
     transport: new StaticChatTransport({
       chunkDelayMs: [20, 50],
@@ -195,17 +195,15 @@ const Example = () => {
                     }
                     return null;
                   })}
-                  {reasoningParts.map((reasoningPart, i) => 
-                  <Reasoning
-                          isStreaming={reasoningPart.state === "streaming"}
-                          key={`${message.id}-reasoning-${i}`}
-                        >
-                          <ReasoningTrigger />
-                          <ReasoningContent>
-                            {reasoningPart.text}
-                          </ReasoningContent>
-                        </Reasoning>
-                  )}
+                  {reasoningParts.map((reasoningPart, i) => (
+                    <Reasoning
+                      isStreaming={reasoningPart.state === "streaming"}
+                      key={`${message.id}-reasoning-${i}`}
+                    >
+                      <ReasoningTrigger />
+                      <ReasoningContent>{reasoningPart.text}</ReasoningContent>
+                    </Reasoning>
+                  ))}
                   {textParts.map((textPart, i) => (
                     <MessageContent
                       className={cn(
