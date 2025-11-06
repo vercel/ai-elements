@@ -9,7 +9,7 @@
   "dependencies": {
     "@icons-pack/react-simple-icons": "^13.8.0",
     "@repo/elements": "workspace:*",
-    "@xyflow/react": "^12.9.0",
+    "@xyflow/react": "^12.9.2",
     "ai": "5.1.0-beta.22",
     "lucide-react": "^0.548.0",
     "nanoid": "^5.1.6",
