@@ -12,38 +12,6 @@ The `Conversation` component wraps messages and automatically scrolls to the bot
 
 <ElementsInstaller path="conversation" />
 
-## Usage
-
-```tsx
-import {
-  Conversation,
-  ConversationContent,
-  ConversationEmptyState,
-  ConversationScrollButton,
-} from '@/components/ai-elements/conversation';
-```
-
-```tsx
-<Conversation className="relative w-full" style={{ height: '500px' }}>
-  <ConversationContent>
-    {messages.length === 0 ? (
-      <ConversationEmptyState
-        icon={<MessageSquare className="size-12" />}
-        title="No messages yet"
-        description="Start a conversation to see messages here"
-      />
-    ) : (
-      messages.map((message) => (
-        <Message from={message.from} key={message.id}>
-          <MessageContent>{message.content}</MessageContent>
-        </Message>
-      ))
-    )}
-  </ConversationContent>
-  <ConversationScrollButton />
-</Conversation>
-```
-
 ## Usage with AI SDK
 
 Build a simple conversational UI with `Conversation` and [`PromptInput`](/components/prompt-input):

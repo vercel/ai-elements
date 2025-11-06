@@ -12,29 +12,6 @@ The `Task` component provides a structured way to display task lists or workflow
 
 <ElementsInstaller path="task" />
 
-## Usage
-
-```tsx
-import {
-  Task,
-  TaskContent,
-  TaskItem,
-  TaskItemFile,
-  TaskTrigger,
-} from '@/components/ai-elements/task';
-```
-
-```tsx
-<Task className="w-full">
-  <TaskTrigger title="Found project files" />
-  <TaskContent>
-    <TaskItem>
-      Read <TaskItemFile>index.md</TaskItemFile>
-    </TaskItem>
-  </TaskContent>
-</Task>
-```
-
 ## Usage with AI SDK
 
 Build a mock async programming agent using [`experimental_generateObject`](/docs/reference/ai-sdk-ui/use-object).

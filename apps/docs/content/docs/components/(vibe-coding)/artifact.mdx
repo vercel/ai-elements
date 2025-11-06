@@ -12,37 +12,6 @@ The `Artifact` component provides a structured container for displaying generate
 
 <ElementsInstaller path="artifact" />
 
-## Usage
-
-```tsx
-import {
-  Artifact,
-  ArtifactAction,
-  ArtifactActions,
-  ArtifactContent,
-  ArtifactDescription,
-  ArtifactHeader,
-  ArtifactTitle,
-} from '@/components/ai-elements/artifact';
-```
-
-```tsx
-<Artifact>
-  <ArtifactHeader>
-    <div>
-      <ArtifactTitle>Dijkstra's Algorithm Implementation</ArtifactTitle>
-      <ArtifactDescription>Updated 1 minute ago</ArtifactDescription>
-    </div>
-    <ArtifactActions>
-      <ArtifactAction icon={CopyIcon} label="Copy" tooltip="Copy to clipboard" />
-    </ArtifactActions>
-  </ArtifactHeader>
-  <ArtifactContent>
-    {/* Your content here */}
-  </ArtifactContent>
-</Artifact>
-```
-
 ## Features
 
 - Structured container with header and content areas

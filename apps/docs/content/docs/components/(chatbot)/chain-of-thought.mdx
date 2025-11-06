@@ -12,39 +12,6 @@ The `ChainOfThought` component provides a visual representation of an AI's reaso
 
 <ElementsInstaller path="chain-of-thought" />
 
-## Usage
-
-```tsx
-import {
-  ChainOfThought,
-  ChainOfThoughtContent,
-  ChainOfThoughtHeader,
-  ChainOfThoughtImage,
-  ChainOfThoughtSearchResult,
-  ChainOfThoughtSearchResults,
-  ChainOfThoughtStep,
-} from '@/components/ai-elements/chain-of-thought';
-```
-
-```tsx
-<ChainOfThought defaultOpen>
-  <ChainOfThoughtHeader />
-  <ChainOfThoughtContent>
-    <ChainOfThoughtStep
-      icon={SearchIcon}
-      label="Searching for information"
-      status="complete"
-    >
-      <ChainOfThoughtSearchResults>
-        <ChainOfThoughtSearchResult>
-          Result 1
-        </ChainOfThoughtSearchResult>
-      </ChainOfThoughtSearchResults>
-    </ChainOfThoughtStep>
-  </ChainOfThoughtContent>
-</ChainOfThought>
-```
-
 ## Features
 
 - Collapsible interface with smooth animations powered by Radix UI

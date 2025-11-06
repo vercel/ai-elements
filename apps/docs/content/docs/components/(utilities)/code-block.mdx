@@ -12,21 +12,6 @@ The `CodeBlock` component provides syntax highlighting, line numbers, and copy t
 
 <ElementsInstaller path="code-block" />
 
-## Usage
-
-```tsx
-import { CodeBlock, CodeBlockCopyButton } from '@/components/ai-elements/code-block';
-```
-
-```tsx
-<CodeBlock data={"console.log('hello world')"} language="jsx">
-  <CodeBlockCopyButton
-    onCopy={() => console.log('Copied code to clipboard')}
-    onError={() => console.error('Failed to copy code to clipboard')}
-  />
-</CodeBlock>
-```
-
 ## Usage with AI SDK
 
 Build a simple code generation tool using the [`experimental_useObject`](https://ai-sdk.dev/docs/reference/ai-sdk-ui/use-object) hook.

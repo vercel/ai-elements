@@ -12,37 +12,6 @@ The `Branch` component manages multiple versions of AI messages, allowing users 
 
 <ElementsInstaller path="branch" />
 
-## Usage
-
-```tsx
-import {
-  Branch,
-  BranchMessages,
-  BranchNext,
-  BranchPage,
-  BranchPrevious,
-  BranchSelector,
-} from '@/components/ai-elements/branch';
-```
-
-```tsx
-<Branch defaultBranch={0}>
-  <BranchMessages>
-    <Message from="user">
-      <MessageContent>Hello</MessageContent>
-    </Message>
-    <Message from="user">
-      <MessageContent>Hi!</MessageContent>
-    </Message>
-  </BranchMessages>
-  <BranchSelector from="user">
-    <BranchPrevious />
-    <BranchPage />
-    <BranchNext />
-  </BranchSelector>
-</Branch>
-```
-
 ## Usage with AI SDK
 
 <Callout>

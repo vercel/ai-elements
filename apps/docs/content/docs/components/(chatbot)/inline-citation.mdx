@@ -12,51 +12,6 @@ The `InlineCitation` component provides a way to display citations inline with t
 
 <ElementsInstaller path="inline-citation" />
 
-## Usage
-
-```tsx
-import {
-  InlineCitation,
-  InlineCitationCard,
-  InlineCitationCardBody,
-  InlineCitationCardTrigger,
-  InlineCitationCarousel,
-  InlineCitationCarouselContent,
-  InlineCitationCarouselItem,
-  InlineCitationCarouselHeader,
-  InlineCitationCarouselIndex,
-  InlineCitationSource,
-  InlineCitationText,
-} from '@/components/ai-elements/inline-citation';
-```
-
-```tsx
-<InlineCitation>
-  <InlineCitationText>{citation.text}</InlineCitationText>
-  <InlineCitationCard>
-    <InlineCitationCardTrigger
-      sources={citation.sources.map((source) => source.url)}
-    />
-    <InlineCitationCardBody>
-      <InlineCitationCarousel>
-        <InlineCitationCarouselHeader>
-          <InlineCitationCarouselIndex />
-        </InlineCitationCarouselHeader>
-        <InlineCitationCarouselContent>
-          <InlineCitationCarouselItem>
-            <InlineCitationSource
-              title="AI SDK"
-              url="https://ai-sdk.dev"
-              description="The AI Toolkit for TypeScript"
-            />
-          </InlineCitationCarouselItem>
-        </InlineCitationCarouselContent>
-      </InlineCitationCarousel>
-    </InlineCitationCardBody>
-  </InlineCitationCard>
-</InlineCitation>
-```
-
 ## Usage with AI SDK
 
 Build citations for AI-generated content using [`experimental_generateObject`](/docs/reference/ai-sdk-ui/use-object).

@@ -14,38 +14,6 @@ The `Node` component provides a composable, Card-based node for React Flow canva
 
 <ElementsInstaller path="node" />
 
-## Usage
-
-```tsx
-import {
-  Node,
-  NodeHeader,
-  NodeTitle,
-  NodeDescription,
-  NodeAction,
-  NodeContent,
-  NodeFooter,
-} from '@/components/ai-elements/node';
-```
-
-```tsx
-<Node handles={{ target: true, source: true }}>
-  <NodeHeader>
-    <NodeTitle>Node Title</NodeTitle>
-    <NodeDescription>Optional description</NodeDescription>
-    <NodeAction>
-      <Button>Action</Button>
-    </NodeAction>
-  </NodeHeader>
-  <NodeContent>
-    Main content goes here
-  </NodeContent>
-  <NodeFooter>
-    Footer content
-  </NodeFooter>
-</Node>
-```
-
 ## Features
 
 - Built on shadcn/ui Card components for consistent styling

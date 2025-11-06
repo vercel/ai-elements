@@ -12,24 +12,6 @@ The `Message` component displays a chat interface message from either a user or 
 
 <ElementsInstaller path="message" />
 
-## Usage
-
-```tsx
-import { Message, MessageContent } from '@/components/ai-elements/message';
-```
-
-```tsx
-// Default contained variant
-<Message from="user">
-  <MessageContent>Hi there!</MessageContent>
-</Message>
-
-// Flat variant for a minimalist look
-<Message from="assistant">
-  <MessageContent variant="flat">Hello! How can I help you today?</MessageContent>
-</Message>
-```
-
 ## Usage with AI SDK
 
 Render messages in a list with `useChat`.

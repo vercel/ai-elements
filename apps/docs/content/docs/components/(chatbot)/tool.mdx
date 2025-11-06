@@ -12,28 +12,6 @@ The `Tool` component displays a collapsible interface for showing/hiding tool de
 
 <ElementsInstaller path="tool" />
 
-## Usage
-
-```tsx
-import {
-  Tool,
-  ToolContent,
-  ToolHeader,
-  ToolOutput,
-  ToolInput,
-} from '@/components/ai-elements/tool';
-```
-
-```tsx
-<Tool>
-  <ToolHeader type="tool-call" state={'output-available' as const} />
-  <ToolContent>
-    <ToolInput input="Input to tool call" />
-    <ToolOutput errorText="Error" output="Output from tool call" />
-  </ToolContent>
-</Tool>
-```
-
 ## Usage in AI SDK
 
 Build a simple stateful weather app that renders the last message in a tool using [`useChat`](/docs/reference/ai-sdk-ui/use-chat).

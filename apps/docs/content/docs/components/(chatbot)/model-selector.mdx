@@ -12,44 +12,6 @@ The `ModelSelector` component provides a searchable command palette interface fo
 
 <ElementsInstaller path="model-selector" />
 
-## Usage
-
-```tsx
-import {
-  ModelSelector,
-  ModelSelectorDialog,
-  ModelSelectorEmpty,
-  ModelSelectorGroup,
-  ModelSelectorInput,
-  ModelSelectorItem,
-  ModelSelectorList,
-  ModelSelectorSeparator,
-  ModelSelectorShortcut,
-} from '@/components/ai-elements/model-selector';
-```
-
-```tsx
-<ModelSelector>
-  <ModelSelectorInput placeholder="Search models..." />
-  <ModelSelectorList>
-    <ModelSelectorEmpty>No models found.</ModelSelectorEmpty>
-    <ModelSelectorGroup heading="OpenAI">
-      <ModelSelectorItem value="gpt-4o">GPT-4o</ModelSelectorItem>
-      <ModelSelectorItem value="gpt-4o-mini">GPT-4o Mini</ModelSelectorItem>
-    </ModelSelectorGroup>
-    <ModelSelectorSeparator />
-    <ModelSelectorGroup heading="Anthropic">
-      <ModelSelectorItem value="claude-opus-4-20250514">
-        Claude 4 Opus
-      </ModelSelectorItem>
-      <ModelSelectorItem value="claude-sonnet-4-20250514">
-        Claude 4 Sonnet
-      </ModelSelectorItem>
-    </ModelSelectorGroup>
-  </ModelSelectorList>
-</ModelSelector>
-```
-
 ## Features
 
 - Searchable interface with keyboard navigation
