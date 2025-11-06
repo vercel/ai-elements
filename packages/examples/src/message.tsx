@@ -74,70 +74,72 @@ const Example = () => {
             <MessageBranch defaultBranch={0} key={message.key}>
               <MessageBranchContent>
                 {message.versions.map((version) => (
-                  <div className="flex flex-col gap-2" key={version.id}>
-                    <Message from={message.from}>
-                      <MessageContent>
-                        <MessageResponse>{version.content}</MessageResponse>
-                      </MessageContent>
-                    </Message>
-                    {message.from === "assistant" && (
-                      <MessageActions className="self-start">
-                        <MessageAction
-                          label="Retry"
-                          onClick={handleRetry}
-                          tooltip="Regenerate response"
-                        >
-                          <RefreshCcwIcon className="size-4" />
-                        </MessageAction>
-                        <MessageAction
-                          label="Like"
-                          onClick={() =>
-                            setLiked((prev) => ({
-                              ...prev,
-                              [version.id]: !prev[version.id],
-                            }))
-                          }
-                          tooltip="Like this response"
-                        >
-                          <ThumbsUpIcon
-                            className="size-4"
-                            fill={liked[version.id] ? "currentColor" : "none"}
-                          />
-                        </MessageAction>
-                        <MessageAction
-                          label="Dislike"
-                          onClick={() =>
-                            setDisliked((prev) => ({
-                              ...prev,
-                              [version.id]: !prev[version.id],
-                            }))
-                          }
-                          tooltip="Dislike this response"
-                        >
-                          <ThumbsDownIcon
-                            className="size-4"
-                            fill={
-                              disliked[version.id] ? "currentColor" : "none"
-                            }
-                          />
-                        </MessageAction>
-                        <MessageAction
-                          label="Copy"
-                          onClick={() => handleCopy(version.content)}
-                          tooltip="Copy to clipboard"
-                        >
-                          <CopyIcon className="size-4" />
-                        </MessageAction>
-                      </MessageActions>
-                    )}
-                  </div>
+                  <Message from={message.from} key={version.id}>
+                    <MessageContent>
+                      <MessageResponse>{version.content}</MessageResponse>
+                    </MessageContent>
+                  </Message>
                 ))}
               </MessageBranchContent>
-              <MessageBranchSelector from={message.from}>
-                <MessageBranchPrevious />
-                <MessageBranchPage />
-                <MessageBranchNext />
-              </MessageBranchSelector>
+              {message.from === "assistant" && (
+                <div className="flex items-center gap-4">
+                  <MessageBranchSelector from={message.from}>
+                    <MessageBranchPrevious />
+                    <MessageBranchPage />
+                    <MessageBranchNext />
+                  </MessageBranchSelector>
+                  <MessageActions>
+                    <MessageAction
+                      label="Retry"
+                      onClick={handleRetry}
+                      tooltip="Regenerate response"
+                    >
+                      <RefreshCcwIcon className="size-4" />
+                    </MessageAction>
+                    <MessageAction
+                      label="Like"
+                      onClick={() =>
+                        setLiked((prev) => ({
+                          ...prev,
+                          [message.key]: !prev[message.key],
+                        }))
+                      }
+                      tooltip="Like this response"
+                    >
+                      <ThumbsUpIcon
+                        className="size-4"
+                        fill={liked[message.key] ? "currentColor" : "none"}
+                      />
+                    </MessageAction>
+                    <MessageAction
+                      label="Dislike"
+                      onClick={() =>
+                        setDisliked((prev) => ({
+                          ...prev,
+                          [message.key]: !prev[message.key],
+                        }))
+                      }
+                      tooltip="Dislike this response"
+                    >
+                      <ThumbsDownIcon
+                        className="size-4"
+                        fill={disliked[message.key] ? "currentColor" : "none"}
+                      />
+                    </MessageAction>
+                    <MessageAction
+                      label="Copy"
+                      onClick={() =>
+                        handleCopy(
+                          message.versions?.find((v) => v.id)?.content || ""
+                        )
+                      }
+                      tooltip="Copy to clipboard"
+                    >
+                      <CopyIcon className="size-4" />
+                    </MessageAction>
+                  </MessageActions>
+                </div>
+              )}
             </MessageBranch>
           );
         }
@@ -147,7 +149,7 @@ const Example = () => {
         const content = singleVersion?.content || message.content || "";
 
         return (
-          <div className="flex flex-col gap-2" key={message.key}>
+          <div key={message.key}>
             <Message from={message.from}>
               <MessageContent>
                 {message.from === "assistant" ? (
@@ -158,7 +160,7 @@ const Example = () => {
               </MessageContent>
             </Message>
             {message.from === "assistant" && message.versions && (
-              <MessageActions className="self-start">
+              <MessageActions>
                 <MessageAction
                   label="Retry"
                   onClick={handleRetry}

@@ -70,22 +70,12 @@ export const MessageAction = ({
   tooltip,
   children,
   label,
-  className,
   variant = "ghost",
-  size = "sm",
+  size = "icon-sm",
   ...props
 }: MessageActionProps) => {
   const button = (
-    <Button
-      className={cn(
-        "relative size-9 p-1.5 text-muted-foreground hover:text-foreground",
-        className
-      )}
-      size={size}
-      type="button"
-      variant={variant}
-      {...props}
-    >
+    <Button size={size} type="button" variant={variant} {...props}>
       {children}
       <span className="sr-only">{label || tooltip}</span>
     </Button>
@@ -231,7 +221,7 @@ export const MessageBranchSelector = ({
   return (
     <div
       className={cn(
-        "flex items-center gap-2 self-end px-10",
+        "flex items-center gap-2",
         from === "assistant" ? "justify-start" : "justify-end",
         className
       )}
@@ -243,7 +233,6 @@ export const MessageBranchSelector = ({
 export type MessageBranchPreviousProps = ComponentProps<typeof Button>;
 
 export const MessageBranchPrevious = ({
-  className,
   children,
   ...props
 }: MessageBranchPreviousProps) => {
@@ -252,15 +241,9 @@ export const MessageBranchPrevious = ({
   return (
     <Button
       aria-label="Previous branch"
-      className={cn(
-        "size-7 shrink-0 rounded-full text-muted-foreground transition-colors",
-        "hover:bg-accent hover:text-foreground",
-        "disabled:pointer-events-none disabled:opacity-50",
-        className
-      )}
       disabled={totalBranches <= 1}
       onClick={goToPrevious}
-      size="icon"
+      size="icon-sm"
       type="button"
       variant="ghost"
       {...props}
@@ -273,7 +256,6 @@ export const MessageBranchPrevious = ({
 export type MessageBranchNextProps = ComponentProps<typeof Button>;
 
 export const MessageBranchNext = ({
-  className,
   children,
   ...props
 }: MessageBranchNextProps) => {
@@ -282,15 +264,9 @@ export const MessageBranchNext = ({
   return (
     <Button
       aria-label="Next branch"
-      className={cn(
-        "size-7 shrink-0 rounded-full text-muted-foreground transition-colors",
-        "hover:bg-accent hover:text-foreground",
-        "disabled:pointer-events-none disabled:opacity-50",
-        className
-      )}
       disabled={totalBranches <= 1}
       onClick={goToNext}
-      size="icon"
+      size="icon-sm"
       type="button"
       variant="ghost"
       {...props}
@@ -311,7 +287,7 @@ export const MessageBranchPage = ({
   return (
     <span
       className={cn(
-        "font-medium text-muted-foreground text-xs tabular-nums",
+        "font-medium text-muted-foreground text-sm tabular-nums",
         className
       )}
       {...props}
