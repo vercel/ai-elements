@@ -28,16 +28,17 @@ const commandPrefix = getCommandPrefix();
 // Parse command line arguments
 const args = process.argv.slice(2);
 
-// Set the path as 'all' if no component is provided
-const component = args.length >= 2 ? args[1] : "all";
+// Get all components or default to 'all' if no component is provided
+const components = args.length >= 2 ? args.slice(1) : ["all"];
 
-// Get the target URL
-const targetUrl = new URL(
-  `/${component}.json`,
-  "https://registry.ai-sdk.dev"
-).toString();
+// Get the target URLs for all components
+const targetUrls = components
+  .map((component) =>
+    new URL(`/${component}.json`, "https://registry.ai-sdk.dev").toString()
+  )
+  .join(" ");
 
-const fullCommand = `${commandPrefix} shadcn@latest add ${targetUrl}`;
+const fullCommand = `${commandPrefix} shadcn@latest add ${targetUrls}`;
 const result = spawnSync(fullCommand, {
   stdio: "inherit",
   shell: true,
