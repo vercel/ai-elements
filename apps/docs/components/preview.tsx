@@ -29,7 +29,7 @@ export const Preview = async ({ path, className }: ComponentPreviewProps) => {
 
   const parsedCode = code
     .replace(/@repo\/shadcn-ui\//g, "@/")
-    .replace(/@repo\//g, "@/components/ai-elements/");
+    .replace(/@repo\/elements\//g, "@/components/ai-elements/");
 
   const sourceComponentNames =
     parsedCode
