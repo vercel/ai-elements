@@ -8,7 +8,7 @@
     "test:coverage": "turbo run test:coverage",
     "check": "npx ultracite@latest check",
     "fix": "npx ultracite@latest fix",
-    "bump-deps": "npx npm-check-updates --deep -u -x recharts && pnpm install",
+    "bump-deps": "npx npm-check-updates --deep -u -x recharts,turbo && pnpm install",
     "bump-ui": "npx shadcn@latest add --all --overwrite -c packages/shadcn-ui && npx shadcn@latest migrate radix -c packages/shadcn-ui",
     "changeset": "changeset"
   },
@@ -19,7 +19,7 @@
     "@vitest/browser-preview": "^4.0.7",
     "turbo": "2.5.8",
     "typescript": "5.9.3",
-    "ultracite": "6.3.0",
+    "ultracite": "6.3.2",
     "vitest": "^4.0.7"
   },
   "packageManager": "pnpm@10.20.0",
