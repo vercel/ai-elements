@@ -8,69 +8,6 @@ The `Message` component suite provides a complete set of tools for building chat
 
 <Preview path="message" />
 
-## Installation
-
-<ElementsInstaller path="message" />
-
-## Core Message Components
-
-### Basic Message Display
-
-The core `Message` component displays a chat interface message from either a user or an AI. It includes support for avatars and flexible content rendering.
-
-```tsx
-import { Message, MessageContent, MessageAvatar } from '@/components/ai-elements/message';
-
-<Message from="user">
-  <MessageContent>Hello, how are you?</MessageContent>
-  <MessageAvatar src="https://github.com/user.png" name="User" />
-</Message>
-```
-
-### Features
-
-- Displays messages from both the user and AI assistant with distinct styling
-- Two visual variants: **contained** (default) and **flat** for different design preferences
-- Includes avatar images for message senders with fallback initials
-- Shows the sender's name through avatar fallbacks
-- Automatically aligns user and assistant messages on opposite sides
-- Uses different background colors for user and assistant messages
-- Accepts any React node as message content
-
-### Variants
-
-#### Contained (default)
-The **contained** variant provides distinct visual separation with colored backgrounds:
-- User messages appear with primary background color and are right-aligned
-- Assistant messages have secondary background color and are left-aligned
-- Both message types have padding and rounded corners
-
-#### Flat
-The **flat** variant offers a minimalist design that matches modern AI interfaces like ChatGPT and Gemini:
-- User messages use softer secondary colors with subtle borders
-- Assistant messages display full-width without background or padding
-- Creates a cleaner, more streamlined conversation appearance
-
-### Examples
-
-#### Render Markdown
-
-We can use the `MessageResponse` component to render markdown content.
-
-<Preview path="message-markdown" />
-
-#### Flat Variant
-
-The flat variant provides a minimalist design that matches modern AI interfaces.
-
-<Preview path="message-flat" />
-
-## Message Response
-
-The `MessageResponse` component renders markdown content from a large language model. It uses [Streamdown](https://streamdown.ai/) under the hood to render the markdown.
-
-<Preview path="message-response" />
-
 <Callout label={false} type="warning">
   **Important:** After adding the component, you'll need to add the following to your `globals.css` file:
 
@@ -81,40 +18,46 @@ The `MessageResponse` component renders markdown content from a large language m
   This is **required** for the MessageResponse component to work properly. Without this import, the Streamdown styles will not be applied to your project. See [Streamdown's documentation](https://streamdown.ai/) for more details.
 </Callout>
 
-### Response Features
+## Installation
 
-- Renders markdown content with support for paragraphs, links, and code blocks
-- Supports GFM features like tables, task lists, and strikethrough text via remark-gfm
-- Supports rendering Math Equations via rehype-katex
-- **Smart streaming support** - automatically completes incomplete formatting during real-time text streaming
-- Code blocks are rendered with syntax highlighting for various programming languages
-- Code blocks include a button to easily copy code to clipboard
-- Adapts to different screen sizes while maintaining readability
-- Seamlessly integrates with both light and dark themes
-- Customizable appearance through className props and Tailwind CSS utilities
-- Built with accessibility in mind for all users
+<ElementsInstaller path="message" />
 
-## Message Actions
+## Features
 
-The `MessageActions` and `MessageAction` components provide a flexible row of action buttons for AI responses with common actions like retry, like, dislike, copy, and share.
-
-<Preview path="message-actions" />
-
-### Actions Features
-
-- Row of composable action buttons with consistent styling
-- Support for custom actions with tooltips
-- State management for toggle actions (like, dislike, favorite)
+- Displays messages from both user and AI assistant with distinct styling and automatic alignment
+- Two visual variants: **contained** (default with colored backgrounds) and **flat** (minimalist design)
+- Avatar support with fallback initials and sender names
+- **Response branching** with navigation controls to switch between multiple AI response versions
+- **Markdown rendering** with GFM support (tables, task lists, strikethrough), math equations, and smart streaming
+- **Action buttons** for common operations (retry, like, dislike, copy, share) with tooltips and state management
+- Code blocks with syntax highlighting and copy-to-clipboard functionality
 - Keyboard accessible with proper ARIA labels
-- Clipboard and Web Share API integration
-- TypeScript support with proper type definitions
-- Consistent with design system styling
+- Responsive design that adapts to different screen sizes
+- Seamless light/dark theme integration
 
-### Actions Examples
+<Callout>
+  Branching is an advanced use case you can implement to suit your needs. While the AI SDK does not provide built-in branching support, you have full flexibility to design and manage multiple response paths.
+</Callout>
 
-<Preview path="message-actions-hover" />
+## Variants
 
-### Usage with AI SDK
+#### Contained (default)
+
+The **contained** variant provides distinct visual separation with colored backgrounds:
+- User messages appear with primary background color and are right-aligned
+- Assistant messages have secondary background color and are left-aligned
+- Both message types have padding and rounded corners
+
+#### Flat
+
+The **flat** variant offers a minimalist design that matches modern AI interfaces like ChatGPT and Gemini:
+- User messages use softer secondary colors with subtle borders
+- Assistant messages display full-width without background or padding
+- Creates a cleaner, more streamlined conversation appearance
+
+<Preview path="message-flat" />
+
+## Usage with AI SDK
 
 Build a simple chat UI where the user can copy or regenerate the most recent message.
 
@@ -226,32 +169,6 @@ const ActionsDemo = () => {
 
 export default ActionsDemo;
 ```
-
-## Message Branching
-
-The `MessageBranch` components manage multiple versions of AI messages, allowing users to navigate between different response branches. They provide a clean, modern interface with customizable themes and keyboard-accessible navigation buttons.
-
-<Preview path="message-branch" />
-
-<Callout>
-  Branching is an advanced use case that you can implement yourself to suit your
-  application's needs. While the AI SDK does not provide built-in support for
-  branching, you have full flexibility to design and manage multiple response
-  paths as required.
-</Callout>
-
-### Branching Features
-
-- Context-based state management for multiple message branches
-- Navigation controls for moving between branches (previous/next)
-- Uses CSS to prevent re-rendering of branches when switching
-- Branch counter showing current position (e.g., "1 of 3")
-- Automatic branch tracking and synchronization
-- Callbacks for branch change and navigation using `onBranchChange`
-- Support for custom branch change callbacks
-- Responsive design with mobile-friendly controls
-- Clean, modern styling with customizable themes
-- Keyboard-accessible navigation buttons
 
 ## Props
 
