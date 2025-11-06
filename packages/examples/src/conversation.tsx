@@ -137,7 +137,7 @@ const Example = () => {
             from: currentMessage.from,
           },
         ]);
-        currentIndex++;
+        currentIndex += 1;
       } else {
         clearInterval(interval);
       }
@@ -147,7 +147,7 @@ const Example = () => {
   }, []);
 
   return (
-    <Conversation className="relative size-full" style={{ height: "498px" }}>
+    <Conversation className="relative size-full">
       <ConversationContent>
         {visibleMessages.length === 0 ? (
           <ConversationEmptyState

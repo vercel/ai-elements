@@ -32,7 +32,7 @@ const messages: {
   {
     key: nanoid(),
     from: "user",
-    content: "Can you help me with React hooks?",
+    content: "How do React hooks work and when should I use them?",
   },
   {
     key: nanoid(),
@@ -40,15 +40,100 @@ const messages: {
     versions: [
       {
         id: nanoid(),
-        content: `React hooks are functions that let you use state and other React features in functional components e.g.
+        content: `# React Hooks Guide
+
+React hooks are functions that let you "hook into" React state and lifecycle features from function components. Here's what you need to know:
+
+## Core Hooks
+
+### useState
+Adds state to functional components:
 
 \`\`\`jsx
 const [count, setCount] = useState(0);
-\`\`\``,
+
+return (
+  <button onClick={() => setCount(count + 1)}>
+    Count: {count}
+  </button>
+);
+\`\`\`
+
+### useEffect
+Handles side effects (data fetching, subscriptions, DOM updates):
+
+\`\`\`jsx
+useEffect(() => {
+  document.title = \`You clicked \${count} times\`;
+
+  // Cleanup function (optional)
+  return () => {
+    document.title = 'React App';
+  };
+}, [count]); // Dependency array
+\`\`\`
+
+## When to Use Hooks
+
+- ✅ **Function components** - Hooks only work in function components
+- ✅ **Replacing class components** - Modern React favors hooks over classes
+- ✅ **Sharing stateful logic** - Create custom hooks to reuse logic
+- ❌ **Class components** - Use lifecycle methods instead
+
+## Rules of Hooks
+
+1. Only call hooks at the **top level** (not inside loops, conditions, or nested functions)
+2. Only call hooks from **React functions** (components or custom hooks)
+
+Would you like to explore more advanced hooks like \`useCallback\` or \`useMemo\`?`,
       },
       {
         id: nanoid(),
-        content: "Yes, which hooks would you like to know more about?",
+        content: `React hooks are special functions that let you use React features in function components. The most common ones are:
+
+- **useState** - for managing component state
+- **useEffect** - for side effects like data fetching
+- **useContext** - for consuming context values
+- **useRef** - for accessing DOM elements
+
+Here's a simple example:
+
+\`\`\`jsx
+function Counter() {
+  const [count, setCount] = useState(0);
+
+  return (
+    <button onClick={() => setCount(count + 1)}>
+      Clicked {count} times
+    </button>
+  );
+}
+\`\`\`
+
+Which specific hook would you like to learn more about?`,
+      },
+      {
+        id: nanoid(),
+        content: `Absolutely! React hooks are a powerful feature introduced in React 16.8. They solve several problems:
+
+## Key Benefits
+
+1. **Simpler code** - No need for class components
+2. **Reusable logic** - Extract stateful logic into custom hooks
+3. **Better organization** - Group related code together
+
+## Most Popular Hooks
+
+| Hook | Purpose |
+|------|---------|
+| useState | Add state to components |
+| useEffect | Handle side effects |
+| useContext | Access context values |
+| useReducer | Complex state logic |
+| useCallback | Memoize functions |
+| useMemo | Memoize values |
+
+The beauty of hooks is that they let you reuse stateful logic without changing your component hierarchy. Want to dive into a specific hook?`,
       },
     ],
   },
