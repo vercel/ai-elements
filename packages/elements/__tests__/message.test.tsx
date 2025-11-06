@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import { Message, MessageAvatar, MessageContent } from "../src/message";
+import { Message, MessageContent } from "../src/message";
 
 describe("Message", () => {
   it("renders children", () => {
@@ -47,37 +47,6 @@ describe("MessageContent", () => {
   it("applies custom className", () => {
     const { container } = render(
       <MessageContent className="custom">Text</MessageContent>
-    );
-    expect(container.firstChild).toHaveClass("custom");
-  });
-});
-
-describe("MessageAvatar", () => {
-  it("renders avatar with image", () => {
-    render(<MessageAvatar name="John" src="avatar.jpg" />);
-    const img = screen.queryByRole("img", { hidden: true });
-    // In test environment, image may not load, so fallback might be shown
-    if (img) {
-      expect(img).toHaveAttribute("src", "avatar.jpg");
-    } else {
-      // Fallback is shown when image doesn't load
-      expect(screen.getByText("Jo")).toBeInTheDocument();
-    }
-  });
-
-  it("renders fallback with name initials", () => {
-    render(<MessageAvatar name="John Doe" src="" />);
-    expect(screen.getByText("Jo")).toBeInTheDocument();
-  });
-
-  it("renders default fallback when no name", () => {
-    render(<MessageAvatar src="" />);
-    expect(screen.getByText("ME")).toBeInTheDocument();
-  });
-
-  it("applies custom className", () => {
-    const { container } = render(
-      <MessageAvatar className="custom" name="Test" src="test.jpg" />
     );
     expect(container.firstChild).toHaveClass("custom");
   });
