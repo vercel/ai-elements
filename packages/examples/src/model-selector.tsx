@@ -62,7 +62,7 @@ const Example = () => {
   const selectedModelData = models.find((model) => model.id === selectedModel);
 
   return (
-    <div className="flex items-center justify-center p-8">
+    <div className="flex size-full items-center justify-center p-8">
       <ModelSelector onOpenChange={setOpen} open={open}>
         <ModelSelectorTrigger asChild>
           <Button className="w-[200px] justify-between" variant="outline">

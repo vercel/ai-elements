@@ -5,11 +5,11 @@ import {
   PromptInputButton,
   PromptInputFooter,
   type PromptInputMessage,
-  PromptInputModelSelect,
-  PromptInputModelSelectContent,
-  PromptInputModelSelectItem,
-  PromptInputModelSelectTrigger,
-  PromptInputModelSelectValue,
+  PromptInputSelect,
+  PromptInputSelectContent,
+  PromptInputSelectItem,
+  PromptInputSelectTrigger,
+  PromptInputSelectValue,
   PromptInputSubmit,
   PromptInputTextarea,
   PromptInputTools,
@@ -91,18 +91,18 @@ const Example = () => {
               <GlobeIcon size={16} />
               <span>Search</span>
             </PromptInputButton>
-            <PromptInputModelSelect onValueChange={setModel} value={model}>
-              <PromptInputModelSelectTrigger>
-                <PromptInputModelSelectValue />
-              </PromptInputModelSelectTrigger>
-              <PromptInputModelSelectContent>
+            <PromptInputSelect onValueChange={setModel} value={model}>
+              <PromptInputSelectTrigger>
+                <PromptInputSelectValue />
+              </PromptInputSelectTrigger>
+              <PromptInputSelectContent>
                 {models.map((model) => (
-                  <PromptInputModelSelectItem key={model.id} value={model.id}>
+                  <PromptInputSelectItem key={model.id} value={model.id}>
                     {model.name}
-                  </PromptInputModelSelectItem>
+                  </PromptInputSelectItem>
                 ))}
-              </PromptInputModelSelectContent>
-            </PromptInputModelSelect>
+              </PromptInputSelectContent>
+            </PromptInputSelect>
           </PromptInputTools>
           <PromptInputSubmit>
             <SendIcon size={16} />
