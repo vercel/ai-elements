@@ -35,7 +35,7 @@ const nodes = [
   {
     id: nodeIds.process1,
     type: "workflow",
-    position: { x: 250, y: 0 },
+    position: { x: 500, y: 0 },
     data: {
       label: "Process Data",
       description: "Transform input",
@@ -45,7 +45,7 @@ const nodes = [
   {
     id: nodeIds.decision,
     type: "workflow",
-    position: { x: 500, y: 0 },
+    position: { x: 1000, y: 0 },
     data: {
       label: "Decision Point",
       description: "Route based on conditions",
@@ -55,7 +55,7 @@ const nodes = [
   {
     id: nodeIds.output1,
     type: "workflow",
-    position: { x: 750, y: -100 },
+    position: { x: 1500, y: -100 },
     data: {
       label: "Success Path",
       description: "Handle success case",
@@ -65,7 +65,7 @@ const nodes = [
   {
     id: nodeIds.output2,
     type: "workflow",
-    position: { x: 750, y: 100 },
+    position: { x: 1500, y: 100 },
     data: {
       label: "Error Path",
       description: "Handle error case",
@@ -75,7 +75,7 @@ const nodes = [
   {
     id: nodeIds.process2,
     type: "workflow",
-    position: { x: 1000, y: 0 },
+    position: { x: 2000, y: 0 },
     data: {
       label: "Complete",
       description: "Finalize workflow",
