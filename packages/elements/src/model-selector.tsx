@@ -165,17 +165,16 @@ export const ModelSelectorLogo = ({
   className,
   ...props
 }: ModelSelectorLogoProps) => (
-  <img
-    {...props}
-    alt={`${provider} logo`}
-    className={cn(
-      "size-4 shrink-0 rounded-full border bg-secondary",
-      className
-    )}
-    height={16}
-    src={`https://models.dev/logos/${provider}.svg`}
-    width={16}
-  />
+  <div className="flex size-4 shrink-0 items-center justify-center rounded-full border bg-background">
+    <img
+      {...props}
+      alt={`${provider} logo`}
+      className={cn("size-3", className)}
+      height={12}
+      src={`https://models.dev/logos/${provider}.svg`}
+      width={12}
+    />
+  </div>
 );
 
 export type ModelSelectorLogoGroupProps = ComponentProps<"div">;
