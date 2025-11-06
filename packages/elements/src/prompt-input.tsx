@@ -1195,9 +1195,7 @@ export const PromptInputSelectItem = ({
   <SelectItem className={cn(className)} {...props} />
 );
 
-export type PromptInputSelectValueProps = ComponentProps<
-  typeof SelectValue
->;
+export type PromptInputSelectValueProps = ComponentProps<typeof SelectValue>;
 
 export const PromptInputSelectValue = ({
   className,
