@@ -25,8 +25,7 @@ The `Message` component suite provides a complete set of tools for building chat
 ## Features
 
 - Displays messages from both user and AI assistant with distinct styling and automatic alignment
-- Two visual variants: **contained** (default with colored backgrounds) and **flat** (minimalist design)
-- Avatar support with fallback initials and sender names
+- Minimalist flat design with user messages in secondary background and assistant messages full-width
 - **Response branching** with navigation controls to switch between multiple AI response versions
 - **Markdown rendering** with GFM support (tables, task lists, strikethrough), math equations, and smart streaming
 - **Action buttons** for common operations (retry, like, dislike, copy, share) with tooltips and state management
@@ -39,23 +38,6 @@ The `Message` component suite provides a complete set of tools for building chat
   Branching is an advanced use case you can implement to suit your needs. While the AI SDK does not provide built-in branching support, you have full flexibility to design and manage multiple response paths.
 </Callout>
 
-## Variants
-
-#### Contained (default)
-
-The **contained** variant provides distinct visual separation with colored backgrounds:
-- User messages appear with primary background color and are right-aligned
-- Assistant messages have secondary background color and are left-aligned
-- Both message types have padding and rounded corners
-
-#### Flat
-
-The **flat** variant offers a minimalist design that matches modern AI interfaces like ChatGPT and Gemini:
-- User messages use softer secondary colors with subtle borders
-- Assistant messages display full-width without background or padding
-- Creates a cleaner, more streamlined conversation appearance
-
-<Preview path="message-flat" />
 
 ## Usage with AI SDK
 
@@ -192,35 +174,9 @@ export default ActionsDemo;
 
 <TypeTable
   type={{
-    variant: {
-      description: 'Visual style variant. "contained" (default) shows colored backgrounds, "flat" provides a minimalist design.',
-      type: '"contained" | "flat"',
-      default: '"contained"',
-    },
     '...props': {
       description: 'Any other props are spread to the content div.',
       type: 'React.HTMLAttributes<HTMLDivElement>',
-    },
-  }}
-/>
-
-### `<MessageAvatar />`
-
-<TypeTable
-  type={{
-    src: {
-      description: 'The URL of the avatar image.',
-      type: 'string',
-    },
-    name: {
-      description:
-        'The name to use for the avatar fallback (first 2 letters shown if image is missing).',
-      type: 'string',
-    },
-    '...props': {
-      description:
-        'Any other props are spread to the underlying Avatar component.',
-      type: 'React.ComponentProps<typeof Avatar>',
     },
   }}
 />

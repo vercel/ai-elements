@@ -91,8 +91,6 @@ type MessageType = {
     result: string | undefined;
     error: string | undefined;
   }[];
-  avatar: string;
-  name: string;
   isReasoningComplete?: boolean;
   isContentComplete?: boolean;
   isReasoningStreaming?: boolean;
@@ -117,7 +115,6 @@ const models = [
 
 const mockMessages: MessageType[] = [
   {
-    avatar: "",
     key: nanoid(),
     from: "user",
     versions: [
@@ -126,10 +123,8 @@ const mockMessages: MessageType[] = [
         content: "Can you explain how to use React hooks effectively?",
       },
     ],
-    name: "Hayden Bleasel",
   },
   {
-    avatar: "",
     key: nanoid(),
     from: "assistant",
     sources: [
@@ -215,10 +210,8 @@ function ProfilePage({ userId }) {
 Would you like me to explain any specific hook in more detail?`,
       },
     ],
-    name: "OpenAI",
   },
   {
-    avatar: "",
     key: nanoid(),
     from: "user",
     versions: [
@@ -238,10 +231,8 @@ Would you like me to explain any specific hook in more detail?`,
           "Thanks for the overview! Could you dive deeper into the specific use cases where useCallback and useMemo make the biggest difference in React applications?",
       },
     ],
-    name: "Hayden Bleasel",
   },
   {
-    avatar: "",
     key: nanoid(),
     from: "assistant",
     reasoning: {
@@ -310,7 +301,6 @@ Remember that these ~~outdated approaches~~ should be avoided:
 - ~~Manual event listener cleanup~~ - Let \`useEffect\` handle it`,
       },
     ],
-    name: "OpenAI",
   },
 ];
 
@@ -496,8 +486,6 @@ const Example = () => {
             content,
           },
         ],
-        avatar: "",
-        name: "User",
       };
 
       setMessages((prev) => [...prev, userMessage]);
@@ -527,8 +515,6 @@ const Example = () => {
               content: "",
             },
           ],
-          name: "Assistant",
-          avatar: "",
           reasoning: reasoning ? { ...reasoning, content: "" } : undefined,
           isReasoningComplete: false,
           isContentComplete: false,

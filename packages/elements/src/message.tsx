@@ -1,10 +1,5 @@
 "use client";
 
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@repo/shadcn-ui/components/ui/avatar";
 import { Button } from "@repo/shadcn-ui/components/ui/button";
 import {
   Tooltip,
@@ -14,7 +9,6 @@ import {
 } from "@repo/shadcn-ui/components/ui/tooltip";
 import { cn } from "@repo/shadcn-ui/lib/utils";
 import type { UIMessage } from "ai";
-import { cva, type VariantProps } from "class-variance-authority";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import type { ComponentProps, HTMLAttributes, ReactElement } from "react";
 import { createContext, memo, useContext, useEffect, useState } from "react";
@@ -35,60 +29,24 @@ export const Message = ({ className, from, ...props }: MessageProps) => (
   />
 );
 
-const messageContentVariants = cva(
-  "is-user:dark flex flex-col gap-2 overflow-hidden rounded-lg text-sm",
-  {
-    variants: {
-      variant: {
-        contained: [
-          "max-w-[80%] px-4 py-3",
-          "group-[.is-user]:bg-primary group-[.is-user]:text-primary-foreground",
-          "group-[.is-assistant]:bg-secondary group-[.is-assistant]:text-foreground",
-        ],
-        flat: [
-          "group-[.is-user]:max-w-[80%] group-[.is-user]:bg-secondary group-[.is-user]:px-4 group-[.is-user]:py-3 group-[.is-user]:text-foreground",
-          "group-[.is-assistant]:text-foreground",
-        ],
-      },
-    },
-    defaultVariants: {
-      variant: "contained",
-    },
-  }
-);
-
-export type MessageContentProps = HTMLAttributes<HTMLDivElement> &
-  VariantProps<typeof messageContentVariants>;
+export type MessageContentProps = HTMLAttributes<HTMLDivElement>;
 
 export const MessageContent = ({
   children,
   className,
-  variant,
   ...props
 }: MessageContentProps) => (
   <div
-    className={cn(messageContentVariants({ variant, className }))}
+    className={cn(
+      "is-user:dark flex flex-col gap-2 overflow-hidden rounded-lg text-sm",
+      "group-[.is-user]:max-w-[80%] group-[.is-user]:bg-secondary group-[.is-user]:px-4 group-[.is-user]:py-3 group-[.is-user]:text-foreground",
+      "group-[.is-assistant]:text-foreground",
+      className
+    )}
     {...props}
   >
     {children}
   </div>
-);
-
-export type MessageAvatarProps = ComponentProps<typeof Avatar> & {
-  src: string;
-  name?: string;
-};
-
-export const MessageAvatar = ({
-  src,
-  name,
-  className,
-  ...props
-}: MessageAvatarProps) => (
-  <Avatar className={cn("size-8 ring-1 ring-border", className)} {...props}>
-    <AvatarImage alt="" className="mt-0 mb-0" src={src} />
-    <AvatarFallback>{name?.slice(0, 2) || "ME"}</AvatarFallback>
-  </Avatar>
 );
 
 export type MessageActionsProps = ComponentProps<"div">;
@@ -379,3 +337,18 @@ export const MessageResponse = memo(
 );
 
 MessageResponse.displayName = "MessageResponse";
+
+export type MessageToolbarProps = ComponentProps<"div">;
+
+export const MessageToolbar = ({
+  className,
+  children,
+  ...props
+}: MessageToolbarProps) => (
+  <div
+    className={cn("flex items-center justify-between gap-2", className)}
+    {...props}
+  >
+    {children}
+  </div>
+);

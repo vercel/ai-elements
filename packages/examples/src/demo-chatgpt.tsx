@@ -81,8 +81,6 @@ type MessageType = {
     result: string | undefined;
     error: string | undefined;
   }[];
-  avatar: string;
-  name: string;
   isReasoningComplete?: boolean;
   isContentComplete?: boolean;
   isReasoningStreaming?: boolean;
@@ -90,7 +88,6 @@ type MessageType = {
 
 const mockMessages: MessageType[] = [
   {
-    avatar: "",
     key: nanoid(),
     from: "user",
     versions: [
@@ -99,10 +96,8 @@ const mockMessages: MessageType[] = [
         content: "Can you explain how to use React hooks effectively?",
       },
     ],
-    name: "Hayden Bleasel",
   },
   {
-    avatar: "",
     key: nanoid(),
     from: "assistant",
     sources: [
@@ -188,10 +183,8 @@ function ProfilePage({ userId }) {
 Would you like me to explain any specific hook in more detail?`,
       },
     ],
-    name: "OpenAI",
   },
   {
-    avatar: "",
     key: nanoid(),
     from: "user",
     versions: [
@@ -211,10 +204,8 @@ Would you like me to explain any specific hook in more detail?`,
           "Thanks for the overview! Could you dive deeper into the specific use cases where useCallback and useMemo make the biggest difference in React applications?",
       },
     ],
-    name: "Hayden Bleasel",
   },
   {
-    avatar: "",
     key: nanoid(),
     from: "assistant",
     reasoning: {
@@ -281,7 +272,6 @@ Don't overuse these hooks! They come with their own overhead. Only use them when
 Note that ~~class-based lifecycle methods~~ like \`componentDidMount\` are now replaced by the \`useEffect\` hook in modern React development.`,
       },
     ],
-    name: "OpenAI",
   },
 ];
 
@@ -472,8 +462,6 @@ const Example = () => {
             content,
           },
         ],
-        name: "User",
-        avatar: "",
       };
 
       setMessages((prev) => [...prev, userMessage]);
@@ -503,8 +491,6 @@ const Example = () => {
               content: "",
             },
           ],
-          name: "Assistant",
-          avatar: "",
           reasoning: reasoning ? { ...reasoning, content: "" } : undefined,
           isReasoningComplete: false,
           isContentComplete: false,

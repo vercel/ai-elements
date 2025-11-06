@@ -13,7 +13,7 @@ import {
   ConversationContent,
   ConversationScrollButton,
 } from "@repo/elements/conversation";
-import { Message, MessageAvatar, MessageContent } from "@repo/elements/message";
+import { Message, MessageContent } from "@repo/elements/message";
 import {
   PromptInput,
   PromptInputActionAddAttachments,
@@ -83,8 +83,6 @@ type MessageType = {
     result: string | undefined;
     error: string | undefined;
   }[];
-  avatar: string;
-  name: string;
 };
 
 const initialMessages: MessageType[] = [
@@ -97,8 +95,6 @@ const initialMessages: MessageType[] = [
         content: "Can you explain how to use React hooks effectively?",
       },
     ],
-    avatar: "https://github.com/haydenbleasel.png",
-    name: "Hayden Bleasel",
   },
   {
     key: nanoid(),
@@ -186,8 +182,6 @@ function ProfilePage({ userId }) {
 Would you like me to explain any specific hook in more detail?`,
       },
     ],
-    avatar: "https://github.com/openai.png",
-    name: "OpenAI",
   },
   {
     key: nanoid(),
@@ -209,8 +203,6 @@ Would you like me to explain any specific hook in more detail?`,
           "Thanks for the overview! Could you dive deeper into the specific use cases where useCallback and useMemo make the biggest difference in React applications?",
       },
     ],
-    avatar: "https://github.com/haydenbleasel.png",
-    name: "Hayden Bleasel",
   },
   {
     key: nanoid(),
@@ -275,8 +267,6 @@ const sortedList = useMemo(() => expensiveSort(items), [items]);
 Don't overuse these hooks! They come with their own overhead. Only use them when you have identified a genuine performance issue.`,
       },
     ],
-    avatar: "https://github.com/openai.png",
-    name: "OpenAI",
   },
 ];
 
@@ -400,8 +390,6 @@ const Example = () => {
             content,
           },
         ],
-        avatar: "https://github.com/haydenbleasel.png",
-        name: "User",
       };
 
       setMessages((prev) => [...prev, userMessage]);
@@ -420,8 +408,6 @@ const Example = () => {
               content: "",
             },
           ],
-          avatar: "https://github.com/openai.png",
-          name: "Assistant",
         };
 
         setMessages((prev) => [...prev, assistantMessage]);
@@ -495,7 +481,6 @@ const Example = () => {
                         <MessageResponse>{version.content}</MessageResponse>
                       </MessageContent>
                     </div>
-                    <MessageAvatar name={message.name} src={message.avatar} />
                   </Message>
                 ))}
               </MessageBranchContent>

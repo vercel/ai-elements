@@ -4,7 +4,6 @@ import {
   Message,
   MessageAction,
   MessageActions,
-  MessageAvatar,
   MessageBranch,
   MessageBranchContent,
   MessageBranchNext,
@@ -28,15 +27,11 @@ const messages: {
   from: "user" | "assistant";
   versions?: { id: string; content: string }[];
   content?: string;
-  avatar: string;
-  name: string;
 }[] = [
   {
     key: nanoid(),
     from: "user",
     content: "Can you help me with React hooks?",
-    avatar: "https://github.com/haydenbleasel.png",
-    name: "Hayden Bleasel",
   },
   {
     key: nanoid(),
@@ -55,8 +50,6 @@ const [count, setCount] = useState(0);
         content: "Yes, which hooks would you like to know more about?",
       },
     ],
-    avatar: "https://github.com/openai.png",
-    name: "Assistant",
   },
 ];
 
@@ -86,7 +79,6 @@ const Example = () => {
                       <MessageContent>
                         <MessageResponse>{version.content}</MessageResponse>
                       </MessageContent>
-                      <MessageAvatar name={message.name} src={message.avatar} />
                     </Message>
                     {message.from === "assistant" && (
                       <MessageActions className="self-start">
@@ -164,7 +156,6 @@ const Example = () => {
                   content
                 )}
               </MessageContent>
-              <MessageAvatar name={message.name} src={message.avatar} />
             </Message>
             {message.from === "assistant" && message.versions && (
               <MessageActions className="self-start">

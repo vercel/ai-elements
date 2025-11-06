@@ -13,7 +13,7 @@ import {
   ConversationContent,
   ConversationScrollButton,
 } from "@repo/elements/conversation";
-import { Message, MessageAvatar, MessageContent } from "@repo/elements/message";
+import { Message, MessageContent } from "@repo/elements/message";
 import {
   PromptInput,
   PromptInputButton,
@@ -90,8 +90,6 @@ type MessageType = {
     result: string | undefined;
     error: string | undefined;
   }[];
-  avatar: string;
-  name: string;
   isReasoningComplete?: boolean;
   isContentComplete?: boolean;
   isReasoningStreaming?: boolean;
@@ -107,8 +105,6 @@ const mockMessages: MessageType[] = [
         content: "Can you explain how to use React hooks effectively?",
       },
     ],
-    avatar: "https://github.com/haydenbleasel.png",
-    name: "Hayden Bleasel",
   },
   {
     key: nanoid(),
@@ -196,8 +192,6 @@ function ProfilePage({ userId }) {
 Would you like me to explain any specific hook in more detail?`,
       },
     ],
-    avatar: "https://github.com/openai.png",
-    name: "OpenAI",
   },
   {
     key: nanoid(),
@@ -219,8 +213,6 @@ Would you like me to explain any specific hook in more detail?`,
           "Thanks for the overview! Could you dive deeper into the specific use cases where useCallback and useMemo make the biggest difference in React applications?",
       },
     ],
-    avatar: "https://github.com/haydenbleasel.png",
-    name: "Hayden Bleasel",
   },
   {
     key: nanoid(),
@@ -291,8 +283,6 @@ Avoid these ~~anti-patterns~~ when using hooks:
 - Using \`useEffect\` without proper dependency arrays`,
       },
     ],
-    avatar: "https://github.com/openai.png",
-    name: "OpenAI",
   },
 ];
 
@@ -502,8 +492,6 @@ const Example = () => {
             content,
           },
         ],
-        avatar: "https://github.com/haydenbleasel.png",
-        name: "User",
       };
 
       setMessages((prev) => [...prev, userMessage]);
@@ -533,8 +521,6 @@ const Example = () => {
               content: "",
             },
           ],
-          avatar: "https://github.com/openai.png",
-          name: "Assistant",
           reasoning: reasoning ? { ...reasoning, content: "" } : undefined,
           isReasoningComplete: false,
           isContentComplete: false,
@@ -651,18 +637,7 @@ const Example = () => {
                             "group-[.is-assistant]:bg-transparent group-[.is-assistant]:p-0 group-[.is-assistant]:font-serif group-[.is-assistant]:text-foreground"
                           )}
                         >
-                          <div className="flex gap-2">
-                            {message.from === "user" && (
-                              <MessageAvatar
-                                className="size-7"
-                                name={message.name}
-                                src={message.avatar}
-                              />
-                            )}
-                            <div className="mt-1 w-full">
-                              <MessageResponse>{version.content}</MessageResponse>
-                            </div>
-                          </div>
+                          <MessageResponse>{version.content}</MessageResponse>
                         </MessageContent>
                       )}
                     </div>
