@@ -8,9 +8,6 @@
     "rules": {
       "performance": {
         "noImgElement": "off"
-      },
-      "suspicious": {
-        "noConsole": "off"
       }
     }
   }
