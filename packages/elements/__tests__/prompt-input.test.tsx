@@ -12,11 +12,11 @@ import {
   PromptInputAttachments,
   PromptInputBody,
   PromptInputButton,
-  PromptInputModelSelect,
-  PromptInputModelSelectContent,
-  PromptInputModelSelectItem,
-  PromptInputModelSelectTrigger,
-  PromptInputModelSelectValue,
+  PromptInputSelect,
+  PromptInputSelectContent,
+  PromptInputSelectItem,
+  PromptInputSelectTrigger,
+  PromptInputSelectValue,
   PromptInputSpeechButton,
   PromptInputSubmit,
   PromptInputTextarea,
@@ -640,22 +640,22 @@ describe("PromptInputActionMenu", () => {
   });
 });
 
-describe("PromptInputModelSelect", () => {
+describe("PromptInputSelect", () => {
   it("renders model select", () => {
     const onSubmit = vi.fn();
     render(
       <PromptInput onSubmit={onSubmit}>
         <PromptInputBody>
-          <PromptInputModelSelect>
-            <PromptInputModelSelectTrigger>
-              <PromptInputModelSelectValue placeholder="Select model" />
-            </PromptInputModelSelectTrigger>
-            <PromptInputModelSelectContent>
-              <PromptInputModelSelectItem value="gpt-4">
+          <PromptInputSelect>
+            <PromptInputSelectTrigger>
+              <PromptInputSelectValue placeholder="Select model" />
+            </PromptInputSelectTrigger>
+            <PromptInputSelectContent>
+              <PromptInputSelectItem value="gpt-4">
                 GPT-4
-              </PromptInputModelSelectItem>
-            </PromptInputModelSelectContent>
-          </PromptInputModelSelect>
+              </PromptInputSelectItem>
+            </PromptInputSelectContent>
+          </PromptInputSelect>
         </PromptInputBody>
       </PromptInput>
     );
@@ -1697,26 +1697,26 @@ describe("PromptInputTab components", () => {
   });
 });
 
-describe("PromptInputModelSelect components", () => {
+describe("PromptInputSelect components", () => {
   it("renders model select with all subcomponents", () => {
     const onSubmit = vi.fn();
 
     render(
       <PromptInput onSubmit={onSubmit}>
         <PromptInputBody>
-          <PromptInputModelSelect>
-            <PromptInputModelSelectTrigger>
-              <PromptInputModelSelectValue placeholder="Choose model" />
-            </PromptInputModelSelectTrigger>
-            <PromptInputModelSelectContent>
-              <PromptInputModelSelectItem value="model-1">
+          <PromptInputSelect>
+            <PromptInputSelectTrigger>
+              <PromptInputSelectValue placeholder="Choose model" />
+            </PromptInputSelectTrigger>
+            <PromptInputSelectContent>
+              <PromptInputSelectItem value="model-1">
                 Model 1
-              </PromptInputModelSelectItem>
-              <PromptInputModelSelectItem value="model-2">
+              </PromptInputSelectItem>
+              <PromptInputSelectItem value="model-2">
                 Model 2
-              </PromptInputModelSelectItem>
-            </PromptInputModelSelectContent>
-          </PromptInputModelSelect>
+              </PromptInputSelectItem>
+            </PromptInputSelectContent>
+          </PromptInputSelect>
         </PromptInputBody>
       </PromptInput>
     );
@@ -1735,16 +1735,16 @@ describe("PromptInputModelSelect components", () => {
     render(
       <PromptInput onSubmit={onSubmit}>
         <PromptInputBody>
-          <PromptInputModelSelect>
-            <PromptInputModelSelectTrigger>
-              <PromptInputModelSelectValue placeholder="Select" />
-            </PromptInputModelSelectTrigger>
-            <PromptInputModelSelectContent>
-              <PromptInputModelSelectItem value="model-1">
+          <PromptInputSelect>
+            <PromptInputSelectTrigger>
+              <PromptInputSelectValue placeholder="Select" />
+            </PromptInputSelectTrigger>
+            <PromptInputSelectContent>
+              <PromptInputSelectItem value="model-1">
                 Model 1
-              </PromptInputModelSelectItem>
-            </PromptInputModelSelectContent>
-          </PromptInputModelSelect>
+              </PromptInputSelectItem>
+            </PromptInputSelectContent>
+          </PromptInputSelect>
         </PromptInputBody>
       </PromptInput>
     );
@@ -1831,16 +1831,16 @@ describe("Integration tests", () => {
       <PromptInput onSubmit={onSubmit}>
         <PromptInputBody>
           <PromptInputHeader>
-            <PromptInputModelSelect>
-              <PromptInputModelSelectTrigger>
-                <PromptInputModelSelectValue placeholder="Model" />
-              </PromptInputModelSelectTrigger>
-              <PromptInputModelSelectContent>
-                <PromptInputModelSelectItem value="gpt-4">
+            <PromptInputSelect>
+              <PromptInputSelectTrigger>
+                <PromptInputSelectValue placeholder="Model" />
+              </PromptInputSelectTrigger>
+              <PromptInputSelectContent>
+                <PromptInputSelectItem value="gpt-4">
                   GPT-4
-                </PromptInputModelSelectItem>
-              </PromptInputModelSelectContent>
-            </PromptInputModelSelect>
+                </PromptInputSelectItem>
+              </PromptInputSelectContent>
+            </PromptInputSelect>
           </PromptInputHeader>
           <PromptInputTextarea />
           <PromptInputFooter>

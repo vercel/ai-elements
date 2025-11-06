@@ -63,19 +63,19 @@ import { GlobeIcon } from 'lucide-react';
         <GlobeIcon size={16} />
         <span>Search</span>
       </PromptInputButton>
-      <PromptInputModelSelect onValueChange={(value) => {}} value="gpt-4o">
-        <PromptInputModelSelectTrigger>
-          <PromptInputModelSelectValue />
-        </PromptInputModelSelectTrigger>
-        <PromptInputModelSelectContent>
-          <PromptInputModelSelectItem value="gpt-4o">
+      <PromptInputSelect onValueChange={(value) => {}} value="gpt-4o">
+        <PromptInputSelectTrigger>
+          <PromptInputSelectValue />
+        </PromptInputSelectTrigger>
+        <PromptInputSelectContent>
+          <PromptInputSelectItem value="gpt-4o">
             GPT-4o
-          </PromptInputModelSelectItem>
-          <PromptInputModelSelectItem value="claude-opus-4-20250514">
+          </PromptInputSelectItem>
+          <PromptInputSelectItem value="claude-opus-4-20250514">
             Claude 4 Opus
-          </PromptInputModelSelectItem>
-        </PromptInputModelSelectContent>
-      </PromptInputModelSelect>
+          </PromptInputSelectItem>
+        </PromptInputSelectContent>
+      </PromptInputSelect>
     </PromptInputTools>
     <PromptInputSubmit
       disabled={false}
@@ -105,11 +105,11 @@ import {
   PromptInputBody,
   PromptInputButton,
   type PromptInputMessage,
-  PromptInputModelSelect,
-  PromptInputModelSelectContent,
-  PromptInputModelSelectItem,
-  PromptInputModelSelectTrigger,
-  PromptInputModelSelectValue,
+  PromptInputSelect,
+  PromptInputSelectContent,
+  PromptInputSelectItem,
+  PromptInputSelectTrigger,
+  PromptInputSelectValue,
   PromptInputSpeechButton,
   PromptInputSubmit,
   PromptInputTextarea,
@@ -223,23 +223,23 @@ const InputDemo = () => {
                 <GlobeIcon size={16} />
                 <span>Search</span>
               </PromptInputButton>
-              <PromptInputModelSelect
+              <PromptInputSelect
                 onValueChange={(value) => {
                   setModel(value);
                 }}
                 value={model}
               >
-                <PromptInputModelSelectTrigger>
-                  <PromptInputModelSelectValue />
-                </PromptInputModelSelectTrigger>
-                <PromptInputModelSelectContent>
+                <PromptInputSelectTrigger>
+                  <PromptInputSelectValue />
+                </PromptInputSelectTrigger>
+                <PromptInputSelectContent>
                   {models.map((model) => (
-                    <PromptInputModelSelectItem key={model.id} value={model.id}>
+                    <PromptInputSelectItem key={model.id} value={model.id}>
                       {model.name}
-                    </PromptInputModelSelectItem>
+                    </PromptInputSelectItem>
                   ))}
-                </PromptInputModelSelectContent>
-              </PromptInputModelSelect>
+                </PromptInputSelectContent>
+              </PromptInputSelect>
             </PromptInputTools>
             <PromptInputSubmit disabled={!text && !status} status={status} />
           </PromptInputFooter>
@@ -410,7 +410,7 @@ export async function POST(req: Request) {
   }}
 />
 
-### `<PromptInputModelSelect />`
+### `<PromptInputSelect />`
 
 <TypeTable
   type={{
@@ -421,7 +421,7 @@ export async function POST(req: Request) {
   }}
 />
 
-### `<PromptInputModelSelectTrigger />`
+### `<PromptInputSelectTrigger />`
 
 <TypeTable
   type={{
@@ -432,7 +432,7 @@ export async function POST(req: Request) {
   }}
 />
 
-### `<PromptInputModelSelectContent />`
+### `<PromptInputSelectContent />`
 
 <TypeTable
   type={{
@@ -443,7 +443,7 @@ export async function POST(req: Request) {
   }}
 />
 
-### `<PromptInputModelSelectItem />`
+### `<PromptInputSelectItem />`
 
 <TypeTable
   type={{
@@ -454,7 +454,7 @@ export async function POST(req: Request) {
   }}
 />
 
-### `<PromptInputModelSelectValue />`
+### `<PromptInputSelectValue />`
 
 <TypeTable
   type={{

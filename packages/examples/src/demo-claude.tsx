@@ -19,15 +19,23 @@ import {
   PromptInputButton,
   PromptInputFooter,
   type PromptInputMessage,
-  PromptInputModelSelect,
-  PromptInputModelSelectContent,
-  PromptInputModelSelectItem,
-  PromptInputModelSelectTrigger,
-  PromptInputModelSelectValue,
   PromptInputSubmit,
   PromptInputTextarea,
   PromptInputTools,
 } from "@repo/elements/prompt-input";
+import {
+  ModelSelector,
+  ModelSelectorContent,
+  ModelSelectorEmpty,
+  ModelSelectorGroup,
+  ModelSelectorInput,
+  ModelSelectorItem,
+  ModelSelectorList,
+  ModelSelectorLogo,
+  ModelSelectorLogoGroup,
+  ModelSelectorName,
+  ModelSelectorTrigger,
+} from "@repo/elements/model-selector";
 import {
   Reasoning,
   ReasoningContent,
@@ -48,6 +56,7 @@ import {
 } from "@repo/shadcn-ui/components/ui/dropdown-menu";
 import { cn } from "@repo/shadcn-ui/lib/utils";
 import type { ToolUIPart } from "ai";
+import { CheckIcon } from "lucide-react";
 import {
   ArrowUpIcon,
   CameraIcon,
@@ -288,9 +297,27 @@ Avoid these ~~anti-patterns~~ when using hooks:
 ];
 
 const models = [
-  { id: "claude-3-opus", name: "Claude 3 Opus" },
-  { id: "claude-3-sonnet", name: "Claude 3 Sonnet" },
-  { id: "claude-3-haiku", name: "Claude 3 Haiku" },
+  {
+    id: "claude-opus-4-20250514",
+    name: "Claude 4 Opus",
+    chef: "Anthropic",
+    chefSlug: "anthropic",
+    providers: ["anthropic", "azure", "google", "amazon-bedrock"],
+  },
+  {
+    id: "claude-sonnet-4-20250514",
+    name: "Claude 4 Sonnet",
+    chef: "Anthropic",
+    chefSlug: "anthropic",
+    providers: ["anthropic", "azure", "google", "amazon-bedrock"],
+  },
+  {
+    id: "claude-3-haiku",
+    name: "Claude 3 Haiku",
+    chef: "Anthropic",
+    chefSlug: "anthropic",
+    providers: ["anthropic", "azure", "google", "amazon-bedrock"],
+  },
 ];
 
 const mockResponses = [
@@ -303,6 +330,7 @@ const mockResponses = [
 
 const Example = () => {
   const [model, setModel] = useState<string>(models[0].id);
+  const [modelSelectorOpen, setModelSelectorOpen] = useState(false);
   const [text, setText] = useState<string>("");
   const [useWebSearch, setUseWebSearch] = useState<boolean>(false);
   const [useMicrophone, setUseMicrophone] = useState<boolean>(false);
@@ -313,6 +341,8 @@ const Example = () => {
   const [streamingMessageId, setStreamingMessageId] = useState<string | null>(
     null
   );
+
+  const selectedModelData = models.find((m) => m.id === model);
 
   const streamReasoning = async (
     messageKey: string,
@@ -704,18 +734,57 @@ const Example = () => {
               </PromptInputButton>
             </PromptInputTools>
             <div className="flex items-center gap-2">
-              <PromptInputModelSelect onValueChange={setModel} value={model}>
-                <PromptInputModelSelectTrigger className="font-serif">
-                  <PromptInputModelSelectValue />
-                </PromptInputModelSelectTrigger>
-                <PromptInputModelSelectContent className="font-serif">
-                  {models.map((model) => (
-                    <PromptInputModelSelectItem key={model.id} value={model.id}>
-                      {model.name}
-                    </PromptInputModelSelectItem>
-                  ))}
-                </PromptInputModelSelectContent>
-              </PromptInputModelSelect>
+              <ModelSelector
+                onOpenChange={setModelSelectorOpen}
+                open={modelSelectorOpen}
+              >
+                <ModelSelectorTrigger asChild>
+                  <PromptInputButton className="font-serif">
+                    {selectedModelData?.chefSlug && (
+                      <ModelSelectorLogo provider={selectedModelData.chefSlug} />
+                    )}
+                    {selectedModelData?.name && (
+                      <ModelSelectorName>
+                        {selectedModelData.name}
+                      </ModelSelectorName>
+                    )}
+                  </PromptInputButton>
+                </ModelSelectorTrigger>
+                <ModelSelectorContent className="font-serif">
+                  <ModelSelectorInput placeholder="Search models..." />
+                  <ModelSelectorList>
+                    <ModelSelectorEmpty>No models found.</ModelSelectorEmpty>
+                    <ModelSelectorGroup heading="Anthropic">
+                      {models.map((m) => (
+                        <ModelSelectorItem
+                          key={m.id}
+                          onSelect={() => {
+                            setModel(m.id);
+                            setModelSelectorOpen(false);
+                          }}
+                          value={m.id}
+                        >
+                          <ModelSelectorLogo provider={m.chefSlug} />
+                          <ModelSelectorName>{m.name}</ModelSelectorName>
+                          <ModelSelectorLogoGroup>
+                            {m.providers.map((provider) => (
+                              <ModelSelectorLogo
+                                key={provider}
+                                provider={provider}
+                              />
+                            ))}
+                          </ModelSelectorLogoGroup>
+                          {model === m.id ? (
+                            <CheckIcon className="ml-auto size-4" />
+                          ) : (
+                            <div className="ml-auto size-4" />
+                          )}
+                        </ModelSelectorItem>
+                      ))}
+                    </ModelSelectorGroup>
+                  </ModelSelectorList>
+                </ModelSelectorContent>
+              </ModelSelector>
               <PromptInputSubmit
                 className="bg-[#c96442]"
                 disabled={!text.trim() || status === "streaming"}
