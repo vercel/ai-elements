@@ -1,6 +1,19 @@
 "use client";
 
 import {
+  ModelSelector,
+  ModelSelectorContent,
+  ModelSelectorEmpty,
+  ModelSelectorGroup,
+  ModelSelectorInput,
+  ModelSelectorItem,
+  ModelSelectorList,
+  ModelSelectorLogo,
+  ModelSelectorLogoGroup,
+  ModelSelectorName,
+  ModelSelectorTrigger,
+} from "@repo/elements/model-selector";
+import {
   PromptInput,
   PromptInputActionAddAttachments,
   PromptInputActionMenu,
@@ -20,20 +33,8 @@ import {
   PromptInputTools,
   usePromptInputController,
 } from "@repo/elements/prompt-input";
-import {
-  ModelSelector,
-  ModelSelectorContent,
-  ModelSelectorEmpty,
-  ModelSelectorGroup,
-  ModelSelectorInput,
-  ModelSelectorItem,
-  ModelSelectorList,
-  ModelSelectorLogo,
-  ModelSelectorLogoGroup,
-  ModelSelectorName,
-  ModelSelectorTrigger,
-} from "@repo/elements/model-selector";
 import { Button } from "@repo/shadcn-ui/components/ui/button";
+import { ButtonGroup } from "@repo/shadcn-ui/components/ui/button-group";
 import { CheckIcon, GlobeIcon } from "lucide-react";
 import { useRef, useState } from "react";
 
@@ -78,46 +79,53 @@ const models = [
 const SUBMITTING_TIMEOUT = 200;
 const STREAMING_TIMEOUT = 2000;
 
-function HeaderControls() {
+const HeaderControls = () => {
   const controller = usePromptInputController();
+
   return (
-    <header className="mb-10">
-      <h4 className="mb-4 text-sm">
+    <header className="mt-8 flex items-center justify-between">
+      <p className="text-sm">
         Header Controls via{" "}
-        <code className="rounded-md bg-gray-100 p-1 font-bold">
+        <code className="rounded-md bg-muted p-1 font-bold">
           PromptInputProvider
         </code>
-      </h4>
-      <div className="mb-10 flex gap-2 rounded-md bg-gray-100 p-2">
+      </p>
+      <ButtonGroup>
         <Button
           onClick={() => {
             controller.textInput.clear();
           }}
+          size="sm"
           type="button"
+          variant="outline"
         >
-          clear input
+          Clear input
         </Button>
         <Button
           onClick={() => {
             controller.textInput.setInput("Inserted via PromptInputProvider");
           }}
+          size="sm"
           type="button"
+          variant="outline"
         >
-          set input
+          Set input
         </Button>
 
         <Button
           onClick={() => {
             controller.attachments.clear();
           }}
+          size="sm"
           type="button"
+          variant="outline"
         >
-          clear attachments
+          Clear attachments
         </Button>
-      </div>
+      </ButtonGroup>
     </header>
   );
-}
+};
 
 const Example = () => {
   const [model, setModel] = useState<string>(models[0].id);
@@ -152,90 +160,95 @@ const Example = () => {
   };
 
   return (
-    <PromptInputProvider>
-      <HeaderControls />
-      <PromptInput globalDrop multiple onSubmit={handleSubmit}>
-        <PromptInputHeader>
-          <PromptInputAttachments>
-            {(attachment) => <PromptInputAttachment data={attachment} />}
-          </PromptInputAttachments>
-        </PromptInputHeader>
-        <PromptInputBody>
-          <PromptInputTextarea ref={textareaRef} />
-        </PromptInputBody>
-        <PromptInputFooter>
-          <PromptInputTools>
-            <PromptInputActionMenu>
-              <PromptInputActionMenuTrigger />
-              <PromptInputActionMenuContent>
-                <PromptInputActionAddAttachments />
-              </PromptInputActionMenuContent>
-            </PromptInputActionMenu>
-            <PromptInputSpeechButton textareaRef={textareaRef} />
-            <PromptInputButton>
-              <GlobeIcon size={16} />
-              <span>Search</span>
-            </PromptInputButton>
-            <ModelSelector
-              onOpenChange={setModelSelectorOpen}
-              open={modelSelectorOpen}
-            >
-              <ModelSelectorTrigger asChild>
-                <PromptInputButton>
-                  {selectedModelData?.chefSlug && (
-                    <ModelSelectorLogo provider={selectedModelData.chefSlug} />
-                  )}
-                  {selectedModelData?.name && (
-                    <ModelSelectorName>
-                      {selectedModelData.name}
-                    </ModelSelectorName>
-                  )}
-                </PromptInputButton>
-              </ModelSelectorTrigger>
-              <ModelSelectorContent>
-                <ModelSelectorInput placeholder="Search models..." />
-                <ModelSelectorList>
-                  <ModelSelectorEmpty>No models found.</ModelSelectorEmpty>
-                  {["OpenAI", "Anthropic", "Google"].map((chef) => (
-                    <ModelSelectorGroup key={chef} heading={chef}>
-                      {models
-                        .filter((m) => m.chef === chef)
-                        .map((m) => (
-                          <ModelSelectorItem
-                            key={m.id}
-                            onSelect={() => {
-                              setModel(m.id);
-                              setModelSelectorOpen(false);
-                            }}
-                            value={m.id}
-                          >
-                            <ModelSelectorLogo provider={m.chefSlug} />
-                            <ModelSelectorName>{m.name}</ModelSelectorName>
-                            <ModelSelectorLogoGroup>
-                              {m.providers.map((provider) => (
-                                <ModelSelectorLogo
-                                  key={provider}
-                                  provider={provider}
-                                />
-                              ))}
-                            </ModelSelectorLogoGroup>
-                            {model === m.id ? (
-                              <CheckIcon className="ml-auto size-4" />
-                            ) : (
-                              <div className="ml-auto size-4" />
-                            )}
-                          </ModelSelectorItem>
-                        ))}
-                    </ModelSelectorGroup>
-                  ))}
-                </ModelSelectorList>
-              </ModelSelectorContent>
-            </ModelSelector>
-          </PromptInputTools>
-          <PromptInputSubmit status={status} />
-        </PromptInputFooter>
-      </PromptInput>
-    </PromptInputProvider>
+    <div className="size-full">
+      <PromptInputProvider>
+        <PromptInput globalDrop multiple onSubmit={handleSubmit}>
+          <PromptInputHeader>
+            <PromptInputAttachments>
+              {(attachment) => <PromptInputAttachment data={attachment} />}
+            </PromptInputAttachments>
+          </PromptInputHeader>
+          <PromptInputBody>
+            <PromptInputTextarea ref={textareaRef} />
+          </PromptInputBody>
+          <PromptInputFooter>
+            <PromptInputTools>
+              <PromptInputActionMenu>
+                <PromptInputActionMenuTrigger />
+                <PromptInputActionMenuContent>
+                  <PromptInputActionAddAttachments />
+                </PromptInputActionMenuContent>
+              </PromptInputActionMenu>
+              <PromptInputSpeechButton textareaRef={textareaRef} />
+              <PromptInputButton>
+                <GlobeIcon size={16} />
+                <span>Search</span>
+              </PromptInputButton>
+              <ModelSelector
+                onOpenChange={setModelSelectorOpen}
+                open={modelSelectorOpen}
+              >
+                <ModelSelectorTrigger asChild>
+                  <PromptInputButton>
+                    {selectedModelData?.chefSlug && (
+                      <ModelSelectorLogo
+                        provider={selectedModelData.chefSlug}
+                      />
+                    )}
+                    {selectedModelData?.name && (
+                      <ModelSelectorName>
+                        {selectedModelData.name}
+                      </ModelSelectorName>
+                    )}
+                  </PromptInputButton>
+                </ModelSelectorTrigger>
+                <ModelSelectorContent>
+                  <ModelSelectorInput placeholder="Search models..." />
+                  <ModelSelectorList>
+                    <ModelSelectorEmpty>No models found.</ModelSelectorEmpty>
+                    {["OpenAI", "Anthropic", "Google"].map((chef) => (
+                      <ModelSelectorGroup heading={chef} key={chef}>
+                        {models
+                          .filter((m) => m.chef === chef)
+                          .map((m) => (
+                            <ModelSelectorItem
+                              key={m.id}
+                              onSelect={() => {
+                                setModel(m.id);
+                                setModelSelectorOpen(false);
+                              }}
+                              value={m.id}
+                            >
+                              <ModelSelectorLogo provider={m.chefSlug} />
+                              <ModelSelectorName>{m.name}</ModelSelectorName>
+                              <ModelSelectorLogoGroup>
+                                {m.providers.map((provider) => (
+                                  <ModelSelectorLogo
+                                    key={provider}
+                                    provider={provider}
+                                  />
+                                ))}
+                              </ModelSelectorLogoGroup>
+                              {model === m.id ? (
+                                <CheckIcon className="ml-auto size-4" />
+                              ) : (
+                                <div className="ml-auto size-4" />
+                              )}
+                            </ModelSelectorItem>
+                          ))}
+                      </ModelSelectorGroup>
+                    ))}
+                  </ModelSelectorList>
+                </ModelSelectorContent>
+              </ModelSelector>
+            </PromptInputTools>
+            <PromptInputSubmit status={status} />
+          </PromptInputFooter>
+        </PromptInput>
+
+        <HeaderControls />
+      </PromptInputProvider>
+    </div>
   );
 };
 
