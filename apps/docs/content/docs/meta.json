@@ -17,6 +17,7 @@
     "components/(chatbot)",
     "components/(workflow)",
     "components/(vibe-coding)",
+    "components/(documentation)",
     "components/(utilities)"
   ]
 }
