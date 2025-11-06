@@ -12,6 +12,7 @@ import {
   MessageBranchSelector,
   MessageContent,
   MessageResponse,
+  MessageToolbar,
 } from "@repo/elements/message";
 import {
   CopyIcon,
@@ -67,22 +68,19 @@ const Example = () => {
 
   return (
     <div className="flex flex-col gap-4">
-      {messages.map((message) => {
-        // Message with branches
-        if (message.versions && message.versions.length > 1) {
-          return (
+      {messages.map((message) => (
+        <Message from={message.from} key={message.key}>
+          {message.versions?.length && message.versions.length > 1 ? (
             <MessageBranch defaultBranch={0} key={message.key}>
               <MessageBranchContent>
-                {message.versions.map((version) => (
-                  <Message from={message.from} key={version.id}>
-                    <MessageContent>
-                      <MessageResponse>{version.content}</MessageResponse>
-                    </MessageContent>
-                  </Message>
+                {message.versions?.map((version) => (
+                  <MessageContent key={version.id}>
+                    <MessageResponse>{version.content}</MessageResponse>
+                  </MessageContent>
                 ))}
               </MessageBranchContent>
               {message.from === "assistant" && (
-                <div className="flex items-center gap-4">
+                <MessageToolbar>
                   <MessageBranchSelector from={message.from}>
                     <MessageBranchPrevious />
                     <MessageBranchPage />
@@ -138,78 +136,70 @@ const Example = () => {
                       <CopyIcon className="size-4" />
                     </MessageAction>
                   </MessageActions>
-                </div>
+                </MessageToolbar>
               )}
             </MessageBranch>
-          );
-        }
-
-        // Message with single version
-        const singleVersion = message.versions?.[0];
-        const content = singleVersion?.content || message.content || "";
-
-        return (
-          <div key={message.key}>
-            <Message from={message.from}>
+          ) : (
+            <div key={message.key}>
               <MessageContent>
                 {message.from === "assistant" ? (
-                  <MessageResponse>{content}</MessageResponse>
+                  <MessageResponse>{message.content}</MessageResponse>
                 ) : (
-                  content
+                  message.content
                 )}
               </MessageContent>
-            </Message>
-            {message.from === "assistant" && message.versions && (
-              <MessageActions>
-                <MessageAction
-                  label="Retry"
-                  onClick={handleRetry}
-                  tooltip="Regenerate response"
-                >
-                  <RefreshCcwIcon className="size-4" />
-                </MessageAction>
-                <MessageAction
-                  label="Like"
-                  onClick={() =>
-                    setLiked((prev) => ({
-                      ...prev,
-                      [message.key]: !prev[message.key],
-                    }))
-                  }
-                  tooltip="Like this response"
-                >
-                  <ThumbsUpIcon
-                    className="size-4"
-                    fill={liked[message.key] ? "currentColor" : "none"}
-                  />
-                </MessageAction>
-                <MessageAction
-                  label="Dislike"
-                  onClick={() =>
-                    setDisliked((prev) => ({
-                      ...prev,
-                      [message.key]: !prev[message.key],
-                    }))
-                  }
-                  tooltip="Dislike this response"
-                >
-                  <ThumbsDownIcon
-                    className="size-4"
-                    fill={disliked[message.key] ? "currentColor" : "none"}
-                  />
-                </MessageAction>
-                <MessageAction
-                  label="Copy"
-                  onClick={() => handleCopy(content)}
-                  tooltip="Copy to clipboard"
-                >
-                  <CopyIcon className="size-4" />
-                </MessageAction>
-              </MessageActions>
-            )}
-          </div>
-        );
-      })}
+              {message.from === "assistant" && message.versions && (
+                <MessageActions>
+                  <MessageAction
+                    label="Retry"
+                    onClick={handleRetry}
+                    tooltip="Regenerate response"
+                  >
+                    <RefreshCcwIcon className="size-4" />
+                  </MessageAction>
+                  <MessageAction
+                    label="Like"
+                    onClick={() =>
+                      setLiked((prev) => ({
+                        ...prev,
+                        [message.key]: !prev[message.key],
+                      }))
+                    }
+                    tooltip="Like this response"
+                  >
+                    <ThumbsUpIcon
+                      className="size-4"
+                      fill={liked[message.key] ? "currentColor" : "none"}
+                    />
+                  </MessageAction>
+                  <MessageAction
+                    label="Dislike"
+                    onClick={() =>
+                      setDisliked((prev) => ({
+                        ...prev,
+                        [message.key]: !prev[message.key],
+                      }))
+                    }
+                    tooltip="Dislike this response"
+                  >
+                    <ThumbsDownIcon
+                      className="size-4"
+                      fill={disliked[message.key] ? "currentColor" : "none"}
+                    />
+                  </MessageAction>
+                  <MessageAction
+                    label="Copy"
+                    onClick={() => handleCopy(message.content || "")}
+                    tooltip="Copy to clipboard"
+                  >
+                    <CopyIcon className="size-4" />
+                  </MessageAction>
+                </MessageActions>
+              )}
+            </div>
+          )}
+        </Message>
+      ))}
     </div>
   );
 };

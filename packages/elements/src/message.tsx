@@ -2,6 +2,10 @@
 
 import { Button } from "@repo/shadcn-ui/components/ui/button";
 import {
+  ButtonGroup,
+  ButtonGroupText,
+} from "@repo/shadcn-ui/components/ui/button-group";
+import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
@@ -21,8 +25,8 @@ export type MessageProps = HTMLAttributes<HTMLDivElement> & {
 export const Message = ({ className, from, ...props }: MessageProps) => (
   <div
     className={cn(
-      "group flex w-full items-end justify-end gap-2 py-4",
-      from === "user" ? "is-user" : "is-assistant flex-row-reverse justify-end",
+      "group flex w-full max-w-[80%] gap-2",
+      from === "user" ? "is-user ml-auto justify-end" : "is-assistant",
       className
     )}
     {...props}
@@ -39,7 +43,7 @@ export const MessageContent = ({
   <div
     className={cn(
       "is-user:dark flex flex-col gap-2 overflow-hidden rounded-lg text-sm",
-      "group-[.is-user]:max-w-[80%] group-[.is-user]:bg-secondary group-[.is-user]:px-4 group-[.is-user]:py-3 group-[.is-user]:text-foreground",
+      "group-[.is-user]:bg-secondary group-[.is-user]:px-4 group-[.is-user]:py-3 group-[.is-user]:text-foreground",
       "group-[.is-assistant]:text-foreground",
       className
     )}
@@ -219,12 +223,9 @@ export const MessageBranchSelector = ({
   }
 
   return (
-    <div
-      className={cn(
-        "flex items-center gap-2",
-        from === "assistant" ? "justify-start" : "justify-end",
-        className
-      )}
+    <ButtonGroup
+      className="[&>*:not(:first-child)]:rounded-l-md [&>*:not(:last-child)]:rounded-r-md"
+      orientation="horizontal"
       {...props}
     />
   );
@@ -257,6 +258,7 @@ export type MessageBranchNextProps = ComponentProps<typeof Button>;
 
 export const MessageBranchNext = ({
   children,
+  className,
   ...props
 }: MessageBranchNextProps) => {
   const { goToNext, totalBranches } = useMessageBranch();
@@ -285,15 +287,15 @@ export const MessageBranchPage = ({
   const { currentBranch, totalBranches } = useMessageBranch();
 
   return (
-    <span
+    <ButtonGroupText
       className={cn(
-        "font-medium text-muted-foreground text-sm tabular-nums",
+        "border-none bg-transparent text-muted-foreground shadow-none",
         className
       )}
       {...props}
     >
       {currentBranch + 1} of {totalBranches}
-    </span>
+    </ButtonGroupText>
   );
 };
 
@@ -322,7 +324,7 @@ export const MessageToolbar = ({
   ...props
 }: MessageToolbarProps) => (
   <div
-    className={cn("flex items-center justify-between gap-2", className)}
+    className={cn("flex w-full items-center justify-between gap-4", className)}
     {...props}
   >
     {children}
