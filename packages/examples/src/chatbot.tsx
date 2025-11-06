@@ -1,19 +1,19 @@
 "use client";
 
 import {
-  Branch,
-  BranchMessages,
-  BranchNext,
-  BranchPage,
-  BranchPrevious,
-  BranchSelector,
-} from "@repo/elements/branch";
+  MessageBranch,
+  MessageBranchContent,
+  MessageBranchNext,
+  MessageBranchPage,
+  MessageBranchPrevious,
+  MessageBranchSelector,
+} from "@repo/elements/message";
 import {
   Conversation,
   ConversationContent,
   ConversationScrollButton,
 } from "@repo/elements/conversation";
-import { Message, MessageAvatar, MessageContent } from "@repo/elements/message";
+import { Message, MessageContent } from "@repo/elements/message";
 import {
   PromptInput,
   PromptInputActionAddAttachments,
@@ -49,7 +49,7 @@ import {
   ReasoningContent,
   ReasoningTrigger,
 } from "@repo/elements/reasoning";
-import { Response } from "@repo/elements/response";
+import { MessageResponse } from "@repo/elements/message";
 import {
   Source,
   Sources,
@@ -83,8 +83,6 @@ type MessageType = {
     result: string | undefined;
     error: string | undefined;
   }[];
-  avatar: string;
-  name: string;
 };
 
 const initialMessages: MessageType[] = [
@@ -97,8 +95,6 @@ const initialMessages: MessageType[] = [
         content: "Can you explain how to use React hooks effectively?",
       },
     ],
-    avatar: "https://github.com/haydenbleasel.png",
-    name: "Hayden Bleasel",
   },
   {
     key: nanoid(),
@@ -186,8 +182,6 @@ function ProfilePage({ userId }) {
 Would you like me to explain any specific hook in more detail?`,
       },
     ],
-    avatar: "https://github.com/openai.png",
-    name: "OpenAI",
   },
   {
     key: nanoid(),
@@ -209,8 +203,6 @@ Would you like me to explain any specific hook in more detail?`,
           "Thanks for the overview! Could you dive deeper into the specific use cases where useCallback and useMemo make the biggest difference in React applications?",
       },
     ],
-    avatar: "https://github.com/haydenbleasel.png",
-    name: "Hayden Bleasel",
   },
   {
     key: nanoid(),
@@ -275,8 +267,6 @@ const sortedList = useMemo(() => expensiveSort(items), [items]);
 Don't overuse these hooks! They come with their own overhead. Only use them when you have identified a genuine performance issue.`,
       },
     ],
-    avatar: "https://github.com/openai.png",
-    name: "OpenAI",
   },
 ];
 
@@ -400,8 +390,6 @@ const Example = () => {
             content,
           },
         ],
-        avatar: "https://github.com/haydenbleasel.png",
-        name: "User",
       };
 
       setMessages((prev) => [...prev, userMessage]);
@@ -420,8 +408,6 @@ const Example = () => {
               content: "",
             },
           ],
-          avatar: "https://github.com/openai.png",
-          name: "Assistant",
         };
 
         setMessages((prev) => [...prev, assistantMessage]);
@@ -461,8 +447,8 @@ const Example = () => {
       <Conversation>
         <ConversationContent>
           {messages.map(({ versions, ...message }) => (
-            <Branch defaultBranch={0} key={message.key}>
-              <BranchMessages>
+            <MessageBranch defaultBranch={0} key={message.key}>
+              <MessageBranchContent>
                 {versions.map((version) => (
                   <Message
                     from={message.from}
@@ -492,21 +478,20 @@ const Example = () => {
                         </Reasoning>
                       )}
                       <MessageContent>
-                        <Response>{version.content}</Response>
+                        <MessageResponse>{version.content}</MessageResponse>
                       </MessageContent>
                     </div>
-                    <MessageAvatar name={message.name} src={message.avatar} />
                   </Message>
                 ))}
-              </BranchMessages>
+              </MessageBranchContent>
               {versions.length > 1 && (
-                <BranchSelector from={message.from}>
-                  <BranchPrevious />
-                  <BranchPage />
-                  <BranchNext />
-                </BranchSelector>
+                <MessageBranchSelector from={message.from}>
+                  <MessageBranchPrevious />
+                  <MessageBranchPage />
+                  <MessageBranchNext />
+                </MessageBranchSelector>
               )}
-            </Branch>
+            </MessageBranch>
           ))}
         </ConversationContent>
         <ConversationScrollButton />

@@ -1,13 +1,13 @@
 "use client";
 
 import {
-  Branch,
-  BranchMessages,
-  BranchNext,
-  BranchPage,
-  BranchPrevious,
-  BranchSelector,
-} from "@repo/elements/branch";
+  MessageBranch,
+  MessageBranchContent,
+  MessageBranchNext,
+  MessageBranchPage,
+  MessageBranchPrevious,
+  MessageBranchSelector,
+} from "@repo/elements/message";
 import {
   Conversation,
   ConversationContent,
@@ -27,7 +27,7 @@ import {
   ReasoningContent,
   ReasoningTrigger,
 } from "@repo/elements/reasoning";
-import { Response } from "@repo/elements/response";
+import { MessageResponse } from "@repo/elements/message";
 import {
   Source,
   Sources,
@@ -81,8 +81,6 @@ type MessageType = {
     result: string | undefined;
     error: string | undefined;
   }[];
-  avatar: string;
-  name: string;
   isReasoningComplete?: boolean;
   isContentComplete?: boolean;
   isReasoningStreaming?: boolean;
@@ -90,7 +88,6 @@ type MessageType = {
 
 const mockMessages: MessageType[] = [
   {
-    avatar: "",
     key: nanoid(),
     from: "user",
     versions: [
@@ -99,10 +96,8 @@ const mockMessages: MessageType[] = [
         content: "Can you explain how to use React hooks effectively?",
       },
     ],
-    name: "Hayden Bleasel",
   },
   {
-    avatar: "",
     key: nanoid(),
     from: "assistant",
     sources: [
@@ -188,10 +183,8 @@ function ProfilePage({ userId }) {
 Would you like me to explain any specific hook in more detail?`,
       },
     ],
-    name: "OpenAI",
   },
   {
-    avatar: "",
     key: nanoid(),
     from: "user",
     versions: [
@@ -211,10 +204,8 @@ Would you like me to explain any specific hook in more detail?`,
           "Thanks for the overview! Could you dive deeper into the specific use cases where useCallback and useMemo make the biggest difference in React applications?",
       },
     ],
-    name: "Hayden Bleasel",
   },
   {
-    avatar: "",
     key: nanoid(),
     from: "assistant",
     reasoning: {
@@ -281,7 +272,6 @@ Don't overuse these hooks! They come with their own overhead. Only use them when
 Note that ~~class-based lifecycle methods~~ like \`componentDidMount\` are now replaced by the \`useEffect\` hook in modern React development.`,
       },
     ],
-    name: "OpenAI",
   },
 ];
 
@@ -294,7 +284,7 @@ const suggestions = [
   { icon: null, text: "More" },
 ];
 
-const mockResponses = [
+const mockMessageResponses = [
   "That's a great question! Let me help you understand this concept better. The key thing to remember is that proper implementation requires careful consideration of the underlying principles and best practices in the field.",
   "I'd be happy to explain this topic in detail. From my understanding, there are several important factors to consider when approaching this problem. Let me break it down step by step for you.",
   "This is an interesting topic that comes up frequently. The solution typically involves understanding the core concepts and applying them in the right context. Here's what I recommend...",
@@ -400,7 +390,7 @@ const Example = () => {
     );
   };
 
-  const streamResponse = useCallback(
+  const streamMessageResponse = useCallback(
     async (
       messageKey: string,
       versionId: string,
@@ -451,14 +441,14 @@ const Example = () => {
       if (!firstVersion) return;
 
       // Stream the response
-      await streamResponse(
+      await streamMessageResponse(
         newMessage.key,
         firstVersion.id,
         firstVersion.content,
         message.reasoning
       );
     },
-    [streamResponse]
+    [streamMessageResponse]
   );
 
   const addUserMessage = useCallback(
@@ -472,8 +462,6 @@ const Example = () => {
             content,
           },
         ],
-        name: "User",
-        avatar: "",
       };
 
       setMessages((prev) => [...prev, userMessage]);
@@ -481,8 +469,8 @@ const Example = () => {
       setTimeout(() => {
         const assistantMessageKey = `assistant-${Date.now()}`;
         const assistantMessageId = `version-${Date.now()}`;
-        const randomResponse =
-          mockResponses[Math.floor(Math.random() * mockResponses.length)];
+        const randomMessageResponse =
+          mockMessageResponses[Math.floor(Math.random() * mockMessageResponses.length)];
 
         // Create reasoning for some responses
         const shouldHaveReasoning = Math.random() > 0.5;
@@ -503,8 +491,6 @@ const Example = () => {
               content: "",
             },
           ],
-          name: "Assistant",
-          avatar: "",
           reasoning: reasoning ? { ...reasoning, content: "" } : undefined,
           isReasoningComplete: false,
           isContentComplete: false,
@@ -512,15 +498,15 @@ const Example = () => {
         };
 
         setMessages((prev) => [...prev, assistantMessage]);
-        streamResponse(
+        streamMessageResponse(
           assistantMessageKey,
           assistantMessageId,
-          randomResponse,
+          randomMessageResponse,
           reasoning
         );
       }, 500);
     },
-    [streamResponse]
+    [streamMessageResponse]
   );
 
   useEffect(() => {
@@ -578,8 +564,8 @@ const Example = () => {
       <Conversation>
         <ConversationContent>
           {messages.map(({ versions, ...message }) => (
-            <Branch defaultBranch={0} key={message.key}>
-              <BranchMessages>
+            <MessageBranch defaultBranch={0} key={message.key}>
+              <MessageBranchContent>
                 {versions.map((version) => (
                   <Message
                     from={message.from}
@@ -620,21 +606,21 @@ const Example = () => {
                             "group-[.is-assistant]:bg-transparent group-[.is-assistant]:p-0 group-[.is-assistant]:text-foreground"
                           )}
                         >
-                          <Response>{version.content}</Response>
+                          <MessageResponse>{version.content}</MessageResponse>
                         </MessageContent>
                       )}
                     </div>
                   </Message>
                 ))}
-              </BranchMessages>
+              </MessageBranchContent>
               {versions.length > 1 && (
-                <BranchSelector className="px-0" from={message.from}>
-                  <BranchPrevious />
-                  <BranchPage />
-                  <BranchNext />
-                </BranchSelector>
+                <MessageBranchSelector className="px-0" from={message.from}>
+                  <MessageBranchPrevious />
+                  <MessageBranchPage />
+                  <MessageBranchNext />
+                </MessageBranchSelector>
               )}
-            </Branch>
+            </MessageBranch>
           ))}
         </ConversationContent>
         <ConversationScrollButton />
