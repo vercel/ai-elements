@@ -1,5 +1,10 @@
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
+import {
+  ResizableHandle,
+  ResizablePanel,
+  ResizablePanelGroup,
+} from "@repo/shadcn-ui/components/ui/resizable";
 import { cn } from "@repo/shadcn-ui/lib/utils";
 import { DynamicCodeBlock } from "fumadocs-ui/components/dynamic-codeblock";
 import { Tab, Tabs } from "fumadocs-ui/components/tabs";
@@ -61,8 +66,17 @@ export const Preview = async ({ path, className }: ComponentPreviewProps) => {
 
   return (
     <Tabs items={["Preview", "Code"]}>
-      <Tab className={cn("not-prose h-[600px] overflow-auto", className)}>
-        <Component />
+      <Tab className={cn("not-prose h-[600px] overflow-auto p-0", className)}>
+        <ResizablePanelGroup direction="horizontal">
+          <ResizablePanel className="p-4" defaultSize={100}>
+            <Component />
+          </ResizablePanel>
+          <ResizableHandle
+            className="translate-x-px border-none [&>div]:shrink-0"
+            withHandle
+          />
+          <ResizablePanel defaultSize={0} />
+        </ResizablePanelGroup>
       </Tab>
       <Tab className="p-0">
         <div className="h-[600px] [&_.fd-scroll-container]:h-full [&_.fd-scroll-container]:max-h-none">
