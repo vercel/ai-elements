@@ -59,15 +59,19 @@ const Example = () => {
   const [open, setOpen] = useState(false);
   const [selectedModel, setSelectedModel] = useState<string>("gpt-4o");
 
-  const selectedModelName =
-    models.find((model) => model.id === selectedModel)?.name || "Select model";
+  const selectedModelData = models.find((model) => model.id === selectedModel);
 
   return (
     <div className="flex items-center justify-center p-8">
       <ModelSelector onOpenChange={setOpen} open={open}>
         <ModelSelectorTrigger asChild>
           <Button className="w-[200px] justify-between" variant="outline">
-            {selectedModelName}
+            {selectedModelData?.chefSlug && (
+              <ModelSelectorLogo provider={selectedModelData.chefSlug} />
+            )}
+            {selectedModelData?.name && (
+              <ModelSelectorName>{selectedModelData.name}</ModelSelectorName>
+            )}
             <CheckIcon className="ml-2 size-4 shrink-0 opacity-50" />
           </Button>
         </ModelSelectorTrigger>
