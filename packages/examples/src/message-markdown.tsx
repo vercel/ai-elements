@@ -1,7 +1,7 @@
 "use client";
 
 import { Message, MessageAvatar, MessageContent } from "@repo/elements/message";
-import { Response } from "@repo/elements/response";
+import { MessageResponse } from "@repo/elements/message";
 import { useEffect, useState } from "react";
 
 const assistantMessageTokens = [
@@ -102,7 +102,7 @@ const Example = () => {
     <>
       <Message from="user">
         <MessageContent>
-          <Response>What is the weather in Tokyo?</Response>
+          <MessageResponse>What is the weather in Tokyo?</MessageResponse>
         </MessageContent>
         <MessageAvatar
           name="Hayden Bleasel"
@@ -111,7 +111,7 @@ const Example = () => {
       </Message>
       <Message from="assistant">
         <MessageContent>
-          <Response>{content}</Response>
+          <MessageResponse>{content}</MessageResponse>
         </MessageContent>
         <MessageAvatar name="OpenAI" src="https://github.com/openai.png" />
       </Message>

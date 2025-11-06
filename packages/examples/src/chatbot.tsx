@@ -1,13 +1,13 @@
 "use client";
 
 import {
-  Branch,
-  BranchMessages,
-  BranchNext,
-  BranchPage,
-  BranchPrevious,
-  BranchSelector,
-} from "@repo/elements/branch";
+  MessageBranch,
+  MessageBranchContent,
+  MessageBranchNext,
+  MessageBranchPage,
+  MessageBranchPrevious,
+  MessageBranchSelector,
+} from "@repo/elements/message";
 import {
   Conversation,
   ConversationContent,
@@ -49,7 +49,7 @@ import {
   ReasoningContent,
   ReasoningTrigger,
 } from "@repo/elements/reasoning";
-import { Response } from "@repo/elements/response";
+import { MessageResponse } from "@repo/elements/message";
 import {
   Source,
   Sources,
@@ -461,8 +461,8 @@ const Example = () => {
       <Conversation>
         <ConversationContent>
           {messages.map(({ versions, ...message }) => (
-            <Branch defaultBranch={0} key={message.key}>
-              <BranchMessages>
+            <MessageBranch defaultBranch={0} key={message.key}>
+              <MessageBranchContent>
                 {versions.map((version) => (
                   <Message
                     from={message.from}
@@ -492,21 +492,21 @@ const Example = () => {
                         </Reasoning>
                       )}
                       <MessageContent>
-                        <Response>{version.content}</Response>
+                        <MessageResponse>{version.content}</MessageResponse>
                       </MessageContent>
                     </div>
                     <MessageAvatar name={message.name} src={message.avatar} />
                   </Message>
                 ))}
-              </BranchMessages>
+              </MessageBranchContent>
               {versions.length > 1 && (
-                <BranchSelector from={message.from}>
-                  <BranchPrevious />
-                  <BranchPage />
-                  <BranchNext />
-                </BranchSelector>
+                <MessageBranchSelector from={message.from}>
+                  <MessageBranchPrevious />
+                  <MessageBranchPage />
+                  <MessageBranchNext />
+                </MessageBranchSelector>
               )}
-            </Branch>
+            </MessageBranch>
           ))}
         </ConversationContent>
         <ConversationScrollButton />

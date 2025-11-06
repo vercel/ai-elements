@@ -1,10 +1,10 @@
 ---
 title: Message
-description: Displays a chat interface message from either a user or an AI.
+description: A comprehensive suite of components for displaying chat messages, including message rendering, branching, actions, and markdown responses.
 path: elements/components/message
 ---
 
-The `Message` component displays a chat interface message from either a user or an AI. It includes an avatar, a name, and a message content.
+The `Message` component suite provides a complete set of tools for building chat interfaces. It includes components for displaying messages from users and AI assistants, managing multiple response branches, adding action buttons, and rendering markdown content.
 
 <Preview path="message" />
 
@@ -12,92 +12,246 @@ The `Message` component displays a chat interface message from either a user or 
 
 <ElementsInstaller path="message" />
 
-## Usage with AI SDK
+## Core Message Components
 
-Render messages in a list with `useChat`.
+### Basic Message Display
+
+The core `Message` component displays a chat interface message from either a user or an AI. It includes support for avatars and flexible content rendering.
+
+```tsx
+import { Message, MessageContent, MessageAvatar } from '@/components/ai-elements/message';
+
+<Message from="user">
+  <MessageContent>Hello, how are you?</MessageContent>
+  <MessageAvatar src="https://github.com/user.png" name="User" />
+</Message>
+```
+
+### Features
+
+- Displays messages from both the user and AI assistant with distinct styling
+- Two visual variants: **contained** (default) and **flat** for different design preferences
+- Includes avatar images for message senders with fallback initials
+- Shows the sender's name through avatar fallbacks
+- Automatically aligns user and assistant messages on opposite sides
+- Uses different background colors for user and assistant messages
+- Accepts any React node as message content
+
+### Variants
+
+#### Contained (default)
+The **contained** variant provides distinct visual separation with colored backgrounds:
+- User messages appear with primary background color and are right-aligned
+- Assistant messages have secondary background color and are left-aligned
+- Both message types have padding and rounded corners
+
+#### Flat
+The **flat** variant offers a minimalist design that matches modern AI interfaces like ChatGPT and Gemini:
+- User messages use softer secondary colors with subtle borders
+- Assistant messages display full-width without background or padding
+- Creates a cleaner, more streamlined conversation appearance
+
+### Examples
+
+#### Render Markdown
+
+We can use the `MessageResponse` component to render markdown content.
+
+<Preview path="message-markdown" />
+
+#### Flat Variant
+
+The flat variant provides a minimalist design that matches modern AI interfaces.
+
+<Preview path="message-flat" />
+
+## Message Response
+
+The `MessageResponse` component renders markdown content from a large language model. It uses [Streamdown](https://streamdown.ai/) under the hood to render the markdown.
+
+<Preview path="message-response" />
+
+<Callout label={false} type="warning">
+  **Important:** After adding the component, you'll need to add the following to your `globals.css` file:
+
+  ```css
+  @source "../node_modules/streamdown/dist/index.js";
+  ```
+
+  This is **required** for the MessageResponse component to work properly. Without this import, the Streamdown styles will not be applied to your project. See [Streamdown's documentation](https://streamdown.ai/) for more details.
+</Callout>
+
+### Response Features
+
+- Renders markdown content with support for paragraphs, links, and code blocks
+- Supports GFM features like tables, task lists, and strikethrough text via remark-gfm
+- Supports rendering Math Equations via rehype-katex
+- **Smart streaming support** - automatically completes incomplete formatting during real-time text streaming
+- Code blocks are rendered with syntax highlighting for various programming languages
+- Code blocks include a button to easily copy code to clipboard
+- Adapts to different screen sizes while maintaining readability
+- Seamlessly integrates with both light and dark themes
+- Customizable appearance through className props and Tailwind CSS utilities
+- Built with accessibility in mind for all users
+
+## Message Actions
+
+The `MessageActions` and `MessageAction` components provide a flexible row of action buttons for AI responses with common actions like retry, like, dislike, copy, and share.
+
+<Preview path="message-actions" />
+
+### Actions Features
+
+- Row of composable action buttons with consistent styling
+- Support for custom actions with tooltips
+- State management for toggle actions (like, dislike, favorite)
+- Keyboard accessible with proper ARIA labels
+- Clipboard and Web Share API integration
+- TypeScript support with proper type definitions
+- Consistent with design system styling
+
+### Actions Examples
+
+<Preview path="message-actions-hover" />
+
+### Usage with AI SDK
+
+Build a simple chat UI where the user can copy or regenerate the most recent message.
 
 Add the following component to your frontend:
 
 ```tsx title="app/page.tsx"
 'use client';
 
+import { useState } from 'react';
+import { MessageActions, MessageAction } from '@/components/ai-elements/message';
 import { Message, MessageContent } from '@/components/ai-elements/message';
+import {
+  Conversation,
+  ConversationContent,
+  ConversationScrollButton,
+} from '@/components/ai-elements/conversation';
+import {
+  Input,
+  PromptInputTextarea,
+  PromptInputSubmit,
+} from '@/components/ai-elements/prompt-input';
+import { MessageResponse } from '@/components/ai-elements/message';
+import { RefreshCcwIcon, CopyIcon } from 'lucide-react';
 import { useChat } from '@ai-sdk/react';
-import { Response } from '@/components/ai-elements/response';
+import { Fragment } from 'react';
 
-const MessageDemo = () => {
-  const { messages } = useChat();
+const ActionsDemo = () => {
+  const [input, setInput] = useState('');
+  const { messages, sendMessage, status, regenerate } = useChat();
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (input.trim()) {
+      sendMessage({ text: input });
+      setInput('');
+    }
+  };
 
   return (
     <div className="max-w-4xl mx-auto p-6 relative size-full rounded-lg border h-[600px]">
       <div className="flex flex-col h-full">
-        {messages.map((message) => (
-          <Message from={message.role} key={message.id}>
-            <MessageContent>
-              {message.parts.map((part, i) => {
-                switch (part.type) {
-                  case 'text': // we don't use any reasoning or tool calls in this example
-                    return (
-                      <Response key={`${message.id}-${i}`}>
-                        {part.text}
-                      </Response>
-                    );
-                  default:
-                    return null;
-                }
-              })}
-            </MessageContent>
-          </Message>
-        ))}
+        <Conversation>
+          <ConversationContent>
+            {messages.map((message, messageIndex) => (
+              <Fragment key={message.id}>
+                {message.parts.map((part, i) => {
+                  switch (part.type) {
+                    case 'text':
+                      const isLastMessage =
+                        messageIndex === messages.length - 1;
+
+                      return (
+                        <Fragment key={`${message.id}-${i}`}>
+                          <Message from={message.role}>
+                            <MessageContent>
+                              <MessageResponse>{part.text}</MessageResponse>
+                            </MessageContent>
+                          </Message>
+                          {message.role === 'assistant' && isLastMessage && (
+                            <MessageActions>
+                              <MessageAction
+                                onClick={() => regenerate()}
+                                label="Retry"
+                              >
+                                <RefreshCcwIcon className="size-3" />
+                              </MessageAction>
+                              <MessageAction
+                                onClick={() =>
+                                  navigator.clipboard.writeText(part.text)
+                                }
+                                label="Copy"
+                              >
+                                <CopyIcon className="size-3" />
+                              </MessageAction>
+                            </MessageActions>
+                          )}
+                        </Fragment>
+                      );
+                    default:
+                      return null;
+                  }
+                })}
+              </Fragment>
+            ))}
+          </ConversationContent>
+          <ConversationScrollButton />
+        </Conversation>
+
+        <Input
+          onSubmit={handleSubmit}
+          className="mt-4 w-full max-w-2xl mx-auto relative"
+        >
+          <PromptInputTextarea
+            value={input}
+            placeholder="Say something..."
+            onChange={(e) => setInput(e.currentTarget.value)}
+            className="pr-12"
+          />
+          <PromptInputSubmit
+            status={status === 'streaming' ? 'streaming' : 'ready'}
+            disabled={!input.trim()}
+            className="absolute bottom-1 right-1"
+          />
+        </Input>
       </div>
     </div>
   );
 };
 
-export default MessageDemo;
+export default ActionsDemo;
 ```
 
-## Features
+## Message Branching
 
-- Displays messages from both the user and AI assistant with distinct styling.
-- Two visual variants: **contained** (default) and **flat** for different design preferences.
-- Includes avatar images for message senders with fallback initials.
-- Shows the sender's name through avatar fallbacks.
-- Automatically aligns user and assistant messages on opposite sides.
-- Uses different background colors for user and assistant messages.
-- Accepts any React node as message content.
+The `MessageBranch` components manage multiple versions of AI messages, allowing users to navigate between different response branches. They provide a clean, modern interface with customizable themes and keyboard-accessible navigation buttons.
 
-## Variants
+<Preview path="message-branch" />
 
-### Contained (default)
-The **contained** variant provides distinct visual separation with colored backgrounds:
-- User messages appear with primary background color and are right-aligned
-- Assistant messages have secondary background color and are left-aligned
-- Both message types have padding and rounded corners
+<Callout>
+  Branching is an advanced use case that you can implement yourself to suit your
+  application's needs. While the AI SDK does not provide built-in support for
+  branching, you have full flexibility to design and manage multiple response
+  paths as required.
+</Callout>
 
-### Flat
-The **flat** variant offers a minimalist design that matches modern AI interfaces like ChatGPT and Gemini:
-- User messages use softer secondary colors with subtle borders
-- Assistant messages display full-width without background or padding
-- Creates a cleaner, more streamlined conversation appearance
+### Branching Features
 
-## Notes
-
-Always render the `AIMessageContent` first, then the `AIMessageAvatar`. The `AIMessage` component is a wrapper that determines the alignment of the message.
-
-## Examples
-
-### Render Markdown
-
-We can use the [`Response`](/components/response) component to render markdown content.
-
-<Preview path="message-markdown" />
-
-### Flat Variant
-
-The flat variant provides a minimalist design that matches modern AI interfaces.
-
-<Preview path="message-flat" />
+- Context-based state management for multiple message branches
+- Navigation controls for moving between branches (previous/next)
+- Uses CSS to prevent re-rendering of branches when switching
+- Branch counter showing current position (e.g., "1 of 3")
+- Automatic branch tracking and synchronization
+- Callbacks for branch change and navigation using `onBranchChange`
+- Support for custom branch change callbacks
+- Responsive design with mobile-friendly controls
+- Clean, modern styling with customizable themes
+- Keyboard-accessible navigation buttons
 
 ## Props
 
@@ -150,6 +304,169 @@ The flat variant provides a minimalist design that matches modern AI interfaces.
       description:
         'Any other props are spread to the underlying Avatar component.',
       type: 'React.ComponentProps<typeof Avatar>',
+    },
+  }}
+/>
+
+### `<MessageResponse />`
+
+<TypeTable
+  type={{
+    children: {
+      description: 'The markdown content to render.',
+      type: 'string',
+    },
+    parseIncompleteMarkdown: {
+      description: 'Whether to parse and fix incomplete markdown syntax (e.g., unclosed code blocks or lists).',
+      type: 'boolean',
+      default: 'true',
+    },
+    className: {
+      description: 'CSS class names to apply to the wrapper div element.',
+      type: 'string',
+    },
+    components: {
+      description: 'Custom React components to use for rendering markdown elements (e.g., custom heading, paragraph, code block components).',
+      type: 'object',
+    },
+    allowedImagePrefixes: {
+      description: 'Array of allowed URL prefixes for images. Use ["*"] to allow all images.',
+      type: 'string[]',
+      default: '["*"]',
+    },
+    allowedLinkPrefixes: {
+      description: 'Array of allowed URL prefixes for links. Use ["*"] to allow all links.',
+      type: 'string[]',
+      default: '["*"]',
+    },
+    defaultOrigin: {
+      description: 'Default origin to use for relative URLs in links and images.',
+      type: 'string',
+    },
+    rehypePlugins: {
+      description: 'Array of rehype plugins to use for processing HTML. Includes KaTeX for math rendering by default.',
+      type: 'array',
+      default: '[rehypeKatex]',
+    },
+    remarkPlugins: {
+      description: 'Array of remark plugins to use for processing markdown. Includes GitHub Flavored Markdown and math support by default.',
+      type: 'array',
+      default: '[remarkGfm, remarkMath]',
+    },
+    '...props': {
+      description: 'Any other props are spread to the root div.',
+      type: 'React.HTMLAttributes<HTMLDivElement>',
+    },
+  }}
+/>
+
+### `<MessageActions />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'HTML attributes to spread to the root div.',
+      type: 'React.HTMLAttributes<HTMLDivElement>',
+    },
+  }}
+/>
+
+### `<MessageAction />`
+
+<TypeTable
+  type={{
+    tooltip: {
+      description: 'Optional tooltip text shown on hover.',
+      type: 'string',
+    },
+    label: {
+      description:
+        'Accessible label for screen readers. Also used as fallback if tooltip is not provided.',
+      type: 'string',
+    },
+    '...props': {
+      description:
+        'Any other props are spread to the underlying shadcn/ui Button component.',
+      type: 'React.ComponentProps<typeof Button>',
+    },
+  }}
+/>
+
+### `<MessageBranch />`
+
+<TypeTable
+  type={{
+    defaultBranch: {
+      description: 'The index of the branch to show by default.',
+      type: 'number',
+      default: '0',
+    },
+    onBranchChange: {
+      description: 'Callback fired when the branch changes.',
+      type: '(branchIndex: number) => void',
+    },
+    '...props': {
+      description: 'Any other props are spread to the root div.',
+      type: 'React.HTMLAttributes<HTMLDivElement>',
+    },
+  }}
+/>
+
+### `<MessageBranchContent />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any other props are spread to the root div.',
+      type: 'React.HTMLAttributes<HTMLDivElement>',
+    },
+  }}
+/>
+
+### `<MessageBranchSelector />`
+
+<TypeTable
+  type={{
+    from: {
+      description: 'Aligns the selector for user, assistant or system messages.',
+      type: 'UIMessage["role"]',
+    },
+    '...props': {
+      description: 'Any other props are spread to the selector container.',
+      type: 'React.HTMLAttributes<HTMLDivElement>',
+    },
+  }}
+/>
+
+### `<MessageBranchPrevious />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any other props are spread to the underlying shadcn/ui Button component.',
+      type: 'React.ComponentProps<typeof Button>',
+    },
+  }}
+/>
+
+### `<MessageBranchNext />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any other props are spread to the underlying shadcn/ui Button component.',
+      type: 'React.ComponentProps<typeof Button>',
+    },
+  }}
+/>
+
+### `<MessageBranchPage />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any other props are spread to the underlying span element.',
+      type: 'React.HTMLAttributes<HTMLSpanElement>',
     },
   }}
 />

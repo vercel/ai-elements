@@ -1,6 +1,6 @@
 "use client";
 
-import { Action, Actions } from "@repo/elements/actions";
+import { MessageAction, MessageActions } from "@repo/elements/message";
 import { Message, MessageContent } from "@repo/elements/message";
 import {
   CopyIcon,
@@ -70,13 +70,13 @@ Try hovering over this message to see the actions appear!`;
   return (
     <Message className="group flex flex-col items-start gap-2" from="assistant">
       <MessageContent>{responseContent}</MessageContent>
-      <Actions className="mt-2 opacity-0 group-hover:opacity-100">
+      <MessageActions className="mt-2 opacity-0 group-hover:opacity-100">
         {actions.map((action) => (
-          <Action key={action.label} label={action.label}>
+          <MessageAction key={action.label} label={action.label}>
             <action.icon className="size-3" />
-          </Action>
+          </MessageAction>
         ))}
-      </Actions>
+      </MessageActions>
     </Message>
   );
 };

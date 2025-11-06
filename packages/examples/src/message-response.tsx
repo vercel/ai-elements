@@ -1,6 +1,6 @@
 "use client";
 
-import { Response } from "@repo/elements/response";
+import { MessageResponse } from "@repo/elements/message";
 import { useEffect, useState } from "react";
 
 const tokens = [
@@ -243,7 +243,7 @@ const Example = () => {
     return () => clearInterval(interval);
   }, []);
 
-  return <Response className="h-[500px]">{content}</Response>;
+  return <MessageResponse className="h-[500px]">{content}</MessageResponse>;
 };
 
 export default Example;

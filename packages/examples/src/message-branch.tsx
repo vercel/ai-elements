@@ -1,13 +1,13 @@
 "use client";
 
 import {
-  Branch,
-  BranchMessages,
-  BranchNext,
-  BranchPage,
-  BranchPrevious,
-  BranchSelector,
-} from "@repo/elements/branch";
+  MessageBranch,
+  MessageBranchContent,
+  MessageBranchNext,
+  MessageBranchPage,
+  MessageBranchPrevious,
+  MessageBranchSelector,
+} from "@repo/elements/message";
 import { Message, MessageAvatar, MessageContent } from "@repo/elements/message";
 import { nanoid } from "nanoid";
 
@@ -51,8 +51,8 @@ const Example = () => {
 
   return (
     <div style={{ height: "300px" }}>
-      <Branch defaultBranch={0} onBranchChange={handleBranchChange}>
-        <BranchMessages>
+      <MessageBranch defaultBranch={0} onBranchChange={handleBranchChange}>
+        <MessageBranchContent>
           {userMessages.map((message) => (
             <Message from="user" key={message.id}>
               <MessageContent>{message.content}</MessageContent>
@@ -62,29 +62,29 @@ const Example = () => {
               />
             </Message>
           ))}
-        </BranchMessages>
-        <BranchSelector from="user">
-          <BranchPrevious />
-          <BranchPage />
-          <BranchNext />
-        </BranchSelector>
-      </Branch>
+        </MessageBranchContent>
+        <MessageBranchSelector from="user">
+          <MessageBranchPrevious />
+          <MessageBranchPage />
+          <MessageBranchNext />
+        </MessageBranchSelector>
+      </MessageBranch>
 
-      <Branch defaultBranch={0} onBranchChange={handleBranchChange}>
-        <BranchMessages>
+      <MessageBranch defaultBranch={0} onBranchChange={handleBranchChange}>
+        <MessageBranchContent>
           {assistantMessages.map((message) => (
             <Message from="assistant" key={message.id}>
               <MessageContent>{message.content}</MessageContent>
               <MessageAvatar name="AI" src="https://github.com/openai.png" />
             </Message>
           ))}
-        </BranchMessages>
-        <BranchSelector from="assistant">
-          <BranchPrevious />
-          <BranchPage />
-          <BranchNext />
-        </BranchSelector>
-      </Branch>
+        </MessageBranchContent>
+        <MessageBranchSelector from="assistant">
+          <MessageBranchPrevious />
+          <MessageBranchPage />
+          <MessageBranchNext />
+        </MessageBranchSelector>
+      </MessageBranch>
     </div>
   );
 };

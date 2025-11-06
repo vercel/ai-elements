@@ -1,6 +1,6 @@
 "use client";
 
-import { Action, Actions } from "@repo/elements/actions";
+import { MessageAction, MessageActions } from "@repo/elements/message";
 import { Conversation, ConversationContent } from "@repo/elements/conversation";
 import { Message, MessageContent } from "@repo/elements/message";
 import {
@@ -87,13 +87,13 @@ const Example = () => {
           >
             <MessageContent>{message.content}</MessageContent>
             {message.from === "assistant" && (
-              <Actions className="mt-2">
+              <MessageActions className="mt-2">
                 {actions.map((action) => (
-                  <Action key={action.label} label={action.label}>
+                  <MessageAction key={action.label} label={action.label}>
                     <action.icon className="size-4" />
-                  </Action>
+                  </MessageAction>
                 ))}
-              </Actions>
+              </MessageActions>
             )}
           </Message>
         ))}
