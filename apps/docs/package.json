@@ -16,7 +16,7 @@
     "@vercel/microfrontends": "^2.1.0",
     "@vercel/speed-insights": "^1.2.0",
     "class-variance-authority": "^0.7.1",
-    "fumadocs-core": "16.0.4",
+    "fumadocs-core": "16.0.6",
     "fumadocs-mdx": "13.0.2",
     "fumadocs-ui": "16.0.4",
     "lucide-react": "^0.548.0",
