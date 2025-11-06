@@ -1,0 +1,288 @@
+---
+title: Model Selector
+description: A searchable command palette for selecting AI models in your chat interface.
+path: elements/components/model-selector
+---
+
+The `ModelSelector` component provides a searchable command palette interface for selecting AI models. It's built on top of the cmdk library and provides a keyboard-navigable interface with search functionality.
+
+<Preview path="model-selector" />
+
+## Installation
+
+<ElementsInstaller path="model-selector" />
+
+## Usage
+
+```tsx
+import {
+  ModelSelector,
+  ModelSelectorDialog,
+  ModelSelectorEmpty,
+  ModelSelectorGroup,
+  ModelSelectorInput,
+  ModelSelectorItem,
+  ModelSelectorList,
+  ModelSelectorSeparator,
+  ModelSelectorShortcut,
+} from '@/components/ai-elements/model-selector';
+```
+
+```tsx
+<ModelSelector>
+  <ModelSelectorInput placeholder="Search models..." />
+  <ModelSelectorList>
+    <ModelSelectorEmpty>No models found.</ModelSelectorEmpty>
+    <ModelSelectorGroup heading="OpenAI">
+      <ModelSelectorItem value="gpt-4o">GPT-4o</ModelSelectorItem>
+      <ModelSelectorItem value="gpt-4o-mini">GPT-4o Mini</ModelSelectorItem>
+    </ModelSelectorGroup>
+    <ModelSelectorSeparator />
+    <ModelSelectorGroup heading="Anthropic">
+      <ModelSelectorItem value="claude-opus-4-20250514">
+        Claude 4 Opus
+      </ModelSelectorItem>
+      <ModelSelectorItem value="claude-sonnet-4-20250514">
+        Claude 4 Sonnet
+      </ModelSelectorItem>
+    </ModelSelectorGroup>
+  </ModelSelectorList>
+</ModelSelector>
+```
+
+## Usage with AI SDK
+
+Build a model selector that integrates with `useChat` to dynamically switch between AI models.
+
+Add the following component to your frontend:
+
+```tsx title="app/page.tsx"
+'use client';
+
+import {
+  ModelSelector,
+  ModelSelectorEmpty,
+  ModelSelectorGroup,
+  ModelSelectorInput,
+  ModelSelectorItem,
+  ModelSelectorList,
+} from '@/components/ai-elements/model-selector';
+import { useState } from 'react';
+import { useChat } from '@ai-sdk/react';
+import { Message, MessageContent } from '@/components/ai-elements/message';
+import { Response } from '@/components/ai-elements/response';
+import { CheckIcon } from 'lucide-react';
+
+const models = [
+  { id: 'gpt-4o', name: 'GPT-4o', provider: 'OpenAI' },
+  { id: 'gpt-4o-mini', name: 'GPT-4o Mini', provider: 'OpenAI' },
+  { id: 'claude-opus-4-20250514', name: 'Claude 4 Opus', provider: 'Anthropic' },
+  { id: 'claude-sonnet-4-20250514', name: 'Claude 4 Sonnet', provider: 'Anthropic' },
+];
+
+const ModelSelectorDemo = () => {
+  const [selectedModel, setSelectedModel] = useState<string>(models[0].id);
+  const { messages, sendMessage } = useChat({
+    body: { model: selectedModel },
+  });
+
+  return (
+    <div className="max-w-4xl mx-auto p-6 relative size-full rounded-lg border h-[600px]">
+      <div className="flex flex-col h-full gap-4">
+        <ModelSelector className="w-full max-w-md rounded-lg border">
+          <ModelSelectorInput placeholder="Search models..." />
+          <ModelSelectorList>
+            <ModelSelectorEmpty>No models found.</ModelSelectorEmpty>
+            {['OpenAI', 'Anthropic'].map((provider) => (
+              <ModelSelectorGroup key={provider} heading={provider}>
+                {models
+                  .filter((model) => model.provider === provider)
+                  .map((model) => (
+                    <ModelSelectorItem
+                      key={model.id}
+                      value={model.id}
+                      onSelect={() => setSelectedModel(model.id)}
+                    >
+                      <span>{model.name}</span>
+                      {selectedModel === model.id && (
+                        <CheckIcon className="ml-auto size-4" />
+                      )}
+                    </ModelSelectorItem>
+                  ))}
+              </ModelSelectorGroup>
+            ))}
+          </ModelSelectorList>
+        </ModelSelector>
+
+        <div className="flex-1 overflow-auto">
+          {messages.map((message) => (
+            <Message from={message.role} key={message.id}>
+              <MessageContent>
+                {message.parts.map((part, i) => {
+                  switch (part.type) {
+                    case 'text':
+                      return (
+                        <Response key={`${message.id}-${i}`}>
+                          {part.text}
+                        </Response>
+                      );
+                    default:
+                      return null;
+                  }
+                })}
+              </MessageContent>
+            </Message>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default ModelSelectorDemo;
+```
+
+## Features
+
+- Searchable interface with keyboard navigation
+- Fuzzy search filtering across model names
+- Grouped model organization by provider
+- Keyboard shortcuts support
+- Empty state handling
+- Customizable styling with Tailwind CSS
+- Built on cmdk for excellent accessibility
+- Support for both inline and dialog modes
+- TypeScript support with proper type definitions
+
+## Variants
+
+### Inline (default)
+The inline variant displays the model selector directly in your interface, useful for persistent model selection controls.
+
+### Dialog
+The dialog variant shows the model selector in a modal overlay, useful for command palette-style interfaces.
+
+```tsx
+<ModelSelectorDialog open={open} onOpenChange={setOpen}>
+  <ModelSelectorInput placeholder="Search models..." />
+  <ModelSelectorList>
+    {/* ... */}
+  </ModelSelectorList>
+</ModelSelectorDialog>
+```
+
+## Props
+
+### `<ModelSelector />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any other props are spread to the underlying Command component.',
+      type: 'React.ComponentProps<typeof Command>',
+    },
+  }}
+/>
+
+### `<ModelSelectorDialog />`
+
+<TypeTable
+  type={{
+    title: {
+      description: 'Title for the dialog (screen reader only).',
+      type: 'string',
+      default: '"Command Palette"',
+    },
+    description: {
+      description: 'Description for the dialog (screen reader only).',
+      type: 'string',
+      default: '"Search for a command to run..."',
+    },
+    showCloseButton: {
+      description: 'Whether to show the close button.',
+      type: 'boolean',
+      default: 'true',
+    },
+    '...props': {
+      description: 'Any other props are spread to the underlying Dialog component.',
+      type: 'React.ComponentProps<typeof Dialog>',
+    },
+  }}
+/>
+
+### `<ModelSelectorInput />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any other props are spread to the underlying CommandInput component.',
+      type: 'React.ComponentProps<typeof CommandInput>',
+    },
+  }}
+/>
+
+### `<ModelSelectorList />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any other props are spread to the underlying CommandList component.',
+      type: 'React.ComponentProps<typeof CommandList>',
+    },
+  }}
+/>
+
+### `<ModelSelectorEmpty />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any other props are spread to the underlying CommandEmpty component.',
+      type: 'React.ComponentProps<typeof CommandEmpty>',
+    },
+  }}
+/>
+
+### `<ModelSelectorGroup />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any other props are spread to the underlying CommandGroup component.',
+      type: 'React.ComponentProps<typeof CommandGroup>',
+    },
+  }}
+/>
+
+### `<ModelSelectorItem />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any other props are spread to the underlying CommandItem component.',
+      type: 'React.ComponentProps<typeof CommandItem>',
+    },
+  }}
+/>
+
+### `<ModelSelectorShortcut />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any other props are spread to the underlying CommandShortcut component.',
+      type: 'React.ComponentProps<typeof CommandShortcut>',
+    },
+  }}
+/>
+
+### `<ModelSelectorSeparator />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any other props are spread to the underlying CommandSeparator component.',
+      type: 'React.ComponentProps<typeof CommandSeparator>',
+    },
+  }}
+/>
