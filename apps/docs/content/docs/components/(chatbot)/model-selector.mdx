@@ -50,98 +50,6 @@ import {
 </ModelSelector>
 ```
 
-## Usage with AI SDK
-
-Build a model selector that integrates with `useChat` to dynamically switch between AI models.
-
-Add the following component to your frontend:
-
-```tsx title="app/page.tsx"
-'use client';
-
-import {
-  ModelSelector,
-  ModelSelectorEmpty,
-  ModelSelectorGroup,
-  ModelSelectorInput,
-  ModelSelectorItem,
-  ModelSelectorList,
-} from '@/components/ai-elements/model-selector';
-import { useState } from 'react';
-import { useChat } from '@ai-sdk/react';
-import { Message, MessageContent } from '@/components/ai-elements/message';
-import { Response } from '@/components/ai-elements/response';
-import { CheckIcon } from 'lucide-react';
-
-const models = [
-  { id: 'gpt-4o', name: 'GPT-4o', provider: 'OpenAI' },
-  { id: 'gpt-4o-mini', name: 'GPT-4o Mini', provider: 'OpenAI' },
-  { id: 'claude-opus-4-20250514', name: 'Claude 4 Opus', provider: 'Anthropic' },
-  { id: 'claude-sonnet-4-20250514', name: 'Claude 4 Sonnet', provider: 'Anthropic' },
-];
-
-const ModelSelectorDemo = () => {
-  const [selectedModel, setSelectedModel] = useState<string>(models[0].id);
-  const { messages, sendMessage } = useChat({
-    body: { model: selectedModel },
-  });
-
-  return (
-    <div className="max-w-4xl mx-auto p-6 relative size-full rounded-lg border h-[600px]">
-      <div className="flex flex-col h-full gap-4">
-        <ModelSelector className="w-full max-w-md rounded-lg border">
-          <ModelSelectorInput placeholder="Search models..." />
-          <ModelSelectorList>
-            <ModelSelectorEmpty>No models found.</ModelSelectorEmpty>
-            {['OpenAI', 'Anthropic'].map((provider) => (
-              <ModelSelectorGroup key={provider} heading={provider}>
-                {models
-                  .filter((model) => model.provider === provider)
-                  .map((model) => (
-                    <ModelSelectorItem
-                      key={model.id}
-                      value={model.id}
-                      onSelect={() => setSelectedModel(model.id)}
-                    >
-                      <span>{model.name}</span>
-                      {selectedModel === model.id && (
-                        <CheckIcon className="ml-auto size-4" />
-                      )}
-                    </ModelSelectorItem>
-                  ))}
-              </ModelSelectorGroup>
-            ))}
-          </ModelSelectorList>
-        </ModelSelector>
-
-        <div className="flex-1 overflow-auto">
-          {messages.map((message) => (
-            <Message from={message.role} key={message.id}>
-              <MessageContent>
-                {message.parts.map((part, i) => {
-                  switch (part.type) {
-                    case 'text':
-                      return (
-                        <Response key={`${message.id}-${i}`}>
-                          {part.text}
-                        </Response>
-                      );
-                    default:
-                      return null;
-                  }
-                })}
-              </MessageContent>
-            </Message>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-};
-
-export default ModelSelectorDemo;
-```
-
 ## Features
 
 - Searchable interface with keyboard navigation
@@ -154,23 +62,6 @@ export default ModelSelectorDemo;
 - Support for both inline and dialog modes
 - TypeScript support with proper type definitions
 
-## Variants
-
-### Inline (default)
-The inline variant displays the model selector directly in your interface, useful for persistent model selection controls.
-
-### Dialog
-The dialog variant shows the model selector in a modal overlay, useful for command palette-style interfaces.
-
-```tsx
-<ModelSelectorDialog open={open} onOpenChange={setOpen}>
-  <ModelSelectorInput placeholder="Search models..." />
-  <ModelSelectorList>
-    {/* ... */}
-  </ModelSelectorList>
-</ModelSelectorDialog>
-```
-
 ## Props
 
 ### `<ModelSelector />`
@@ -178,8 +69,30 @@ The dialog variant shows the model selector in a modal overlay, useful for comma
 <TypeTable
   type={{
     '...props': {
-      description: 'Any other props are spread to the underlying Command component.',
-      type: 'React.ComponentProps<typeof Command>',
+      description: 'Any other props are spread to the underlying Dialog component.',
+      type: 'React.ComponentProps<typeof Dialog>',
+    },
+  }}
+/>
+
+### `<ModelSelectorTrigger />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any other props are spread to the underlying DialogTrigger component.',
+      type: 'React.ComponentProps<typeof DialogTrigger>',
+    },
+  }}
+/>
+
+### `<ModelSelectorContent />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any other props are spread to the underlying DialogContent component.',
+      type: 'React.ComponentProps<typeof DialogContent>',
     },
   }}
 />
@@ -188,24 +101,9 @@ The dialog variant shows the model selector in a modal overlay, useful for comma
 
 <TypeTable
   type={{
-    title: {
-      description: 'Title for the dialog (screen reader only).',
-      type: 'string',
-      default: '"Command Palette"',
-    },
-    description: {
-      description: 'Description for the dialog (screen reader only).',
-      type: 'string',
-      default: '"Search for a command to run..."',
-    },
-    showCloseButton: {
-      description: 'Whether to show the close button.',
-      type: 'boolean',
-      default: 'true',
-    },
     '...props': {
-      description: 'Any other props are spread to the underlying Dialog component.',
-      type: 'React.ComponentProps<typeof Dialog>',
+      description: 'Any other props are spread to the underlying CommandDialog component.',
+      type: 'React.ComponentProps<typeof CommandDialog>',
     },
   }}
 />
@@ -283,6 +181,44 @@ The dialog variant shows the model selector in a modal overlay, useful for comma
     '...props': {
       description: 'Any other props are spread to the underlying CommandSeparator component.',
       type: 'React.ComponentProps<typeof CommandSeparator>',
+    },
+  }}
+/>
+
+### `<ModelSelectorLogo />`
+
+<TypeTable
+  type={{
+    provider: {
+      description: 'The AI provider name. Supports major providers like "openai", "anthropic", "google", "mistral", etc.',
+      type: 'string',
+      required: true,
+    },
+    '...props': {
+      description: 'Any other props are spread to the underlying img element (except src and alt which are generated).',
+      type: 'Omit<React.ComponentProps<"img">, "src" | "alt">',
+    },
+  }}
+/>
+
+### `<ModelSelectorLogoGroup />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any other props are spread to the underlying div element.',
+      type: 'React.ComponentProps<"div">',
+    },
+  }}
+/>
+
+### `<ModelSelectorName />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any other props are spread to the underlying span element.',
+      type: 'React.ComponentProps<"span">',
     },
   }}
 />
