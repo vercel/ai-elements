@@ -35,8 +35,8 @@ const components = args.length >= 2 ? args.slice(1) : ["all"];
 const targetUrls = components
   .map((component) =>
     new URL(
-      `/${component}.json`,
-      "https://ai-sdk.dev/elements/api/registry"
+      `${component}.json`,
+      "https://ai-sdk.dev/elements/api/registry/"
     ).toString()
   )
   .join(" ");
