@@ -8,6 +8,9 @@ import {
   ModelSelectorInput,
   ModelSelectorItem,
   ModelSelectorList,
+  ModelSelectorLogo,
+  ModelSelectorLogoGroup,
+  ModelSelectorName,
   ModelSelectorTrigger,
 } from "@repo/elements/model-selector";
 import { Button } from "@repo/shadcn-ui/components/ui/button";
@@ -18,27 +21,37 @@ const models = [
   {
     id: "gpt-4o",
     name: "GPT-4o",
-    provider: "OpenAI",
+    chef: "OpenAI",
+    chefSlug: "openai",
+    providers: ["openai", "azure"],
   },
   {
     id: "gpt-4o-mini",
     name: "GPT-4o Mini",
-    provider: "OpenAI",
+    chef: "OpenAI",
+    chefSlug: "openai",
+    providers: ["openai", "azure"],
   },
   {
     id: "claude-opus-4-20250514",
     name: "Claude 4 Opus",
-    provider: "Anthropic",
+    chef: "Anthropic",
+    chefSlug: "anthropic",
+    providers: ["anthropic", "azure", "google", "amazon-bedrock"],
   },
   {
     id: "claude-sonnet-4-20250514",
     name: "Claude 4 Sonnet",
-    provider: "Anthropic",
+    chef: "Anthropic",
+    chefSlug: "anthropic",
+    providers: ["anthropic", "azure", "google", "amazon-bedrock"],
   },
   {
     id: "gemini-2.0-flash-exp",
     name: "Gemini 2.0 Flash",
-    provider: "Google",
+    chef: "Google",
+    chefSlug: "google",
+    providers: ["google"],
   },
 ];
 
@@ -51,9 +64,9 @@ const Example = () => {
 
   return (
     <div className="flex items-center justify-center p-8">
-      <ModelSelector open={open} onOpenChange={setOpen}>
+      <ModelSelector onOpenChange={setOpen} open={open}>
         <ModelSelectorTrigger asChild>
-          <Button variant="outline" className="w-[200px] justify-between">
+          <Button className="w-[200px] justify-between" variant="outline">
             {selectedModelName}
             <CheckIcon className="ml-2 size-4 shrink-0 opacity-50" />
           </Button>
@@ -64,7 +77,7 @@ const Example = () => {
             <ModelSelectorEmpty>No models found.</ModelSelectorEmpty>
             <ModelSelectorGroup heading="OpenAI">
               {models
-                .filter((model) => model.provider === "OpenAI")
+                .filter((model) => model.chef === "OpenAI")
                 .map((model) => (
                   <ModelSelectorItem
                     key={model.id}
@@ -74,16 +87,24 @@ const Example = () => {
                     }}
                     value={model.id}
                   >
-                    <span>{model.name}</span>
-                    {selectedModel === model.id && (
+                    <ModelSelectorLogo provider={model.chefSlug} />
+                    <ModelSelectorName>{model.name}</ModelSelectorName>
+                    <ModelSelectorLogoGroup>
+                      {model.providers.map((provider) => (
+                        <ModelSelectorLogo key={provider} provider={provider} />
+                      ))}
+                    </ModelSelectorLogoGroup>
+                    {selectedModel === model.id ? (
                       <CheckIcon className="ml-auto size-4" />
+                    ) : (
+                      <div className="ml-auto size-4" />
                     )}
                   </ModelSelectorItem>
                 ))}
             </ModelSelectorGroup>
             <ModelSelectorGroup heading="Anthropic">
               {models
-                .filter((model) => model.provider === "Anthropic")
+                .filter((model) => model.chef === "Anthropic")
                 .map((model) => (
                   <ModelSelectorItem
                     key={model.id}
@@ -93,16 +114,24 @@ const Example = () => {
                     }}
                     value={model.id}
                   >
-                    <span>{model.name}</span>
-                    {selectedModel === model.id && (
+                    <ModelSelectorLogo provider={model.chefSlug} />
+                    <ModelSelectorName>{model.name}</ModelSelectorName>
+                    <ModelSelectorLogoGroup>
+                      {model.providers.map((provider) => (
+                        <ModelSelectorLogo key={provider} provider={provider} />
+                      ))}
+                    </ModelSelectorLogoGroup>
+                    {selectedModel === model.id ? (
                       <CheckIcon className="ml-auto size-4" />
+                    ) : (
+                      <div className="ml-auto size-4" />
                     )}
                   </ModelSelectorItem>
                 ))}
             </ModelSelectorGroup>
             <ModelSelectorGroup heading="Google">
               {models
-                .filter((model) => model.provider === "Google")
+                .filter((model) => model.chef === "Google")
                 .map((model) => (
                   <ModelSelectorItem
                     key={model.id}
@@ -112,9 +141,17 @@ const Example = () => {
                     }}
                     value={model.id}
                   >
-                    <span>{model.name}</span>
-                    {selectedModel === model.id && (
+                    <ModelSelectorLogo provider={model.chefSlug} />
+                    <ModelSelectorName>{model.name}</ModelSelectorName>
+                    <ModelSelectorLogoGroup>
+                      {model.providers.map((provider) => (
+                        <ModelSelectorLogo key={provider} provider={provider} />
+                      ))}
+                    </ModelSelectorLogoGroup>
+                    {selectedModel === model.id ? (
                       <CheckIcon className="ml-auto size-4" />
+                    ) : (
+                      <div className="ml-auto size-4" />
                     )}
                   </ModelSelectorItem>
                 ))}

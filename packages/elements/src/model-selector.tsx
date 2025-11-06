@@ -95,3 +95,109 @@ export type ModelSelectorSeparatorProps = ComponentProps<
 export const ModelSelectorSeparator = (props: ModelSelectorSeparatorProps) => (
   <CommandSeparator {...props} />
 );
+
+export type ModelSelectorLogoProps = Omit<
+  ComponentProps<"img">,
+  "src" | "alt"
+> & {
+  provider:
+    | "moonshotai-cn"
+    | "lucidquery"
+    | "moonshotai"
+    | "zai-coding-plan"
+    | "alibaba"
+    | "xai"
+    | "vultr"
+    | "nvidia"
+    | "upstage"
+    | "groq"
+    | "github-copilot"
+    | "mistral"
+    | "vercel"
+    | "nebius"
+    | "deepseek"
+    | "alibaba-cn"
+    | "google-vertex-anthropic"
+    | "venice"
+    | "chutes"
+    | "cortecs"
+    | "github-models"
+    | "togetherai"
+    | "azure"
+    | "baseten"
+    | "huggingface"
+    | "opencode"
+    | "fastrouter"
+    | "google"
+    | "google-vertex"
+    | "cloudflare-workers-ai"
+    | "inception"
+    | "wandb"
+    | "openai"
+    | "zhipuai-coding-plan"
+    | "perplexity"
+    | "openrouter"
+    | "zenmux"
+    | "v0"
+    | "iflowcn"
+    | "synthetic"
+    | "deepinfra"
+    | "zhipuai"
+    | "submodel"
+    | "zai"
+    | "inference"
+    | "requesty"
+    | "morph"
+    | "lmstudio"
+    | "anthropic"
+    | "aihubmix"
+    | "fireworks-ai"
+    | "modelscope"
+    | "llama"
+    | "scaleway"
+    | "amazon-bedrock"
+    | "cerebras"
+    | (string & {});
+};
+
+export const ModelSelectorLogo = ({
+  provider,
+  className,
+  ...props
+}: ModelSelectorLogoProps) => (
+  <img
+    {...props}
+    alt={`${provider} logo`}
+    className={cn(
+      "size-4 shrink-0 rounded-full border bg-secondary",
+      className
+    )}
+    height={16}
+    src={`https://models.dev/logos/${provider}.svg`}
+    width={16}
+  />
+);
+
+export type ModelSelectorLogoGroupProps = ComponentProps<"div">;
+
+export const ModelSelectorLogoGroup = ({
+  className,
+  ...props
+}: ModelSelectorLogoGroupProps) => (
+  <div
+    className={cn(
+      "-space-x-1 flex shrink-0 items-center [&>img]:ring-1 [&>img]:ring-background",
+      className
+    )}
+    {...props}
+  />
+);
+
+export type ModelSelectorNameProps = ComponentProps<"span">;
+
+export const ModelSelectorName = ({
+  className,
+  ...props
+}: ModelSelectorNameProps) => (
+  <span className={cn("flex-1 truncate", className)} {...props} />
+);
