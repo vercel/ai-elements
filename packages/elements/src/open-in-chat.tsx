@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@repo/shadcn-ui/components/ui/button";
 import {
   DropdownMenu,
