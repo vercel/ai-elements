@@ -35,7 +35,7 @@
     "@types/hast": "^3.0.4",
     "@types/react": "19.2.2",
     "@vitejs/plugin-react": "^5.1.0",
-    "@vitest/browser": "^4.0.4",
+    "@vitest/browser": "^4.0.6",
     "@vitest/browser-playwright": "^4.0.4",
     "@vitest/coverage-v8": "^4.0.4",
     "playwright": "^1.56.1",
