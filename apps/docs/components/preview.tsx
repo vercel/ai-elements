@@ -66,10 +66,12 @@ export const Preview = async ({ path, className }: ComponentPreviewProps) => {
 
   return (
     <Tabs items={["Preview", "Code"]}>
-      <Tab className={cn("not-prose h-[600px] overflow-auto p-0", className)}>
+      <Tab className={cn("not-prose p-0", className)}>
         <ResizablePanelGroup direction="horizontal">
-          <ResizablePanel className="p-4" defaultSize={100}>
-            <Component />
+          <ResizablePanel defaultSize={100}>
+            <div className="h-[600px] overflow-auto p-4">
+              <Component />
+            </div>
           </ResizablePanel>
           <ResizableHandle
             className="translate-x-px border-none [&>div]:shrink-0"
