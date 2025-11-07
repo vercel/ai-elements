@@ -43,8 +43,9 @@ export const CopyMarkdown = ({ markdownUrl }: CopyMarkdownProps) => {
       className="shadow-none"
       disabled={isLoading}
       onClick={onClick}
+      size="sm"
       type="button"
-      variant="secondary"
+      variant="outline"
     >
       {checked ? <Check /> : <Copy />}
       Copy Markdown
