@@ -1,3 +1,16 @@
+import {
+  OpenIn,
+  OpenInChatGPT,
+  OpenInClaude,
+  OpenInContent,
+  OpenInCursor,
+  OpenInScira,
+  OpenInSeparator,
+  OpenInT3,
+  OpenInTrigger,
+  OpenInv0,
+} from "@repo/elements/open-in-chat";
+import { Button } from "@repo/shadcn-ui/components/ui/button";
 import { createRelativeLink } from "fumadocs-ui/mdx";
 import {
   DocsBody,
@@ -5,9 +18,10 @@ import {
   DocsPage,
   DocsTitle,
 } from "fumadocs-ui/page";
+import { ChevronDownIcon } from "lucide-react";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { LLMCopyButton, ViewOptions } from "@/components/page-actions";
+import { CopyMarkdown } from "@/components/copy-markdown";
 import { source } from "@/lib/source";
 import { getMDXComponents } from "@/mdx-components";
 
@@ -22,6 +36,12 @@ export default async function Page(props: PageProps<"/[[...slug]]">) {
   const MDXContent = page.data.body;
   const parsedUrl = page.url === "/" ? "/index" : page.url;
   const markdownUrl = `/elements${parsedUrl}.mdx`;
+  const protocol = process.env.NODE_ENV === "production" ? "https" : "http";
+  const fullMarkdownUrl = new URL(
+    markdownUrl,
+    `${protocol}://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+  );
+  const query = `Read ${fullMarkdownUrl}, I want to ask questions about it.`;
 
   return (
     <DocsPage
@@ -37,11 +57,30 @@ export default async function Page(props: PageProps<"/[[...slug]]">) {
       <DocsTitle>{page.data.title}</DocsTitle>
       <DocsDescription>{page.data.description}</DocsDescription>
       <div className="-mt-8 mb-8 flex flex-row items-center gap-2">
-        <LLMCopyButton markdownUrl={markdownUrl} />
-        <ViewOptions
-          githubUrl={`https://github.com/vercel/ai-elements/blob/main/apps/docs/content/docs/${page.path}`}
-          markdownUrl={markdownUrl}
-        />
+        <CopyMarkdown markdownUrl={markdownUrl} />
+        <OpenIn query={query}>
+          <OpenInTrigger>
+            <Button size="sm" type="button" variant="outline">
+              Open in
+              <ChevronDownIcon className="size-4" />
+            </Button>
+          </OpenInTrigger>
+          <OpenInContent
+            align="end"
+            alignOffset={-36}
+            collisionPadding={8}
+            side="bottom"
+            sideOffset={8}
+          >
+            <OpenInv0 />
+            <OpenInSeparator />
+            <OpenInChatGPT />
+            <OpenInClaude />
+            <OpenInT3 />
+            <OpenInScira />
+            <OpenInCursor />
+          </OpenInContent>
+        </OpenIn>
       </div>
       <DocsBody>
         <MDXContent
@@ -57,9 +96,9 @@ export default async function Page(props: PageProps<"/[[...slug]]">) {
 
 export const generateStaticParams = () => source.generateParams();
 
-export async function generateMetadata(
+export const generateMetadata = async (
   props: PageProps<"/[[...slug]]">
-): Promise<Metadata> {
+): Promise<Metadata> => {
   const params = await props.params;
   const page = source.getPage(params.slug);
 
@@ -102,4 +141,4 @@ export async function generateMetadata(
       creator: "@vercel",
     },
   };
-}
+};
