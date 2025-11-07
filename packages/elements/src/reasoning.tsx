@@ -10,7 +10,7 @@ import { cn } from "@repo/shadcn-ui/lib/utils";
 import { BrainIcon, ChevronDownIcon } from "lucide-react";
 import type { ComponentProps } from "react";
 import { createContext, memo, useContext, useEffect, useState } from "react";
-import { Response } from "./response";
+import { Streamdown } from "streamdown";
 import { Shimmer } from "./shimmer";
 
 type ReasoningContextValue = {
@@ -168,7 +168,7 @@ export const ReasoningContent = memo(
       )}
       {...props}
     >
-      <Response className="grid gap-2">{children}</Response>
+      <Streamdown {...props}>{children}</Streamdown>
     </CollapsibleContent>
   )
 );
