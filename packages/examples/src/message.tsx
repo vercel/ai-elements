@@ -4,6 +4,8 @@ import {
   Message,
   MessageAction,
   MessageActions,
+  MessageAttachment,
+  MessageAttachments,
   MessageBranch,
   MessageBranchContent,
   MessageBranchNext,
@@ -28,11 +30,31 @@ const messages: {
   from: "user" | "assistant";
   versions?: { id: string; content: string }[];
   content?: string;
+  attachments?: {
+    type: "file";
+    url: string;
+    mediaType?: string;
+    filename?: string;
+  }[];
 }[] = [
   {
     key: nanoid(),
     from: "user",
     content: "How do React hooks work and when should I use them?",
+    attachments: [
+      {
+        type: "file",
+        url: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=400&fit=crop",
+        mediaType: "image/jpeg",
+        filename: "palace-of-fine-arts.jpg",
+      },
+      {
+        type: "file",
+        url: "",
+        mediaType: "application/pdf",
+        filename: "react-hooks-guide.pdf",
+      },
+    ],
   },
   {
     key: nanoid(),
@@ -226,6 +248,13 @@ const Example = () => {
             </MessageBranch>
           ) : (
             <div key={message.key}>
+              {message.attachments && message.attachments.length > 0 && (
+                <MessageAttachments className="mb-2">
+                  {message.attachments.map((attachment) => (
+                    <MessageAttachment data={attachment} key={attachment.url} />
+                  ))}
+                </MessageAttachments>
+              )}
               <MessageContent>
                 {message.from === "assistant" ? (
                   <MessageResponse>{message.content}</MessageResponse>

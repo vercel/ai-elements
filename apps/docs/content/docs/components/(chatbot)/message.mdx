@@ -29,6 +29,7 @@ The `Message` component suite provides a complete set of tools for building chat
 - **Response branching** with navigation controls to switch between multiple AI response versions
 - **Markdown rendering** with GFM support (tables, task lists, strikethrough), math equations, and smart streaming
 - **Action buttons** for common operations (retry, like, dislike, copy, share) with tooltips and state management
+- **File attachments** display with support for images and generic files with preview and remove functionality
 - Code blocks with syntax highlighting and copy-to-clipboard functionality
 - Keyboard accessible with proper ARIA labels
 - Responsive design that adapts to different screen sizes
@@ -343,3 +344,65 @@ export default ActionsDemo;
     },
   }}
 />
+
+### `<MessageAttachments />`
+
+A container component for displaying file attachments in a message. Automatically positions attachments at the end of the message with proper spacing and alignment.
+
+<TypeTable
+  type={{
+    children: {
+      description: 'MessageAttachment components to render. Returns null if no children provided.',
+      type: 'ReactNode',
+    },
+    '...props': {
+      description: 'Any other props are spread to the root div.',
+      type: 'React.ComponentProps<"div">',
+    },
+  }}
+/>
+
+**Example:**
+
+```tsx
+<MessageAttachments className="mb-2">
+  {files.map((attachment) => (
+    <MessageAttachment data={attachment} key={attachment.url} />
+  ))}
+</MessageAttachments>
+```
+
+### `<MessageAttachment />`
+
+Displays a single file attachment. Images are shown as thumbnails (96px × 96px) with rounded corners. Non-image files show a paperclip icon with the filename.
+
+<TypeTable
+  type={{
+    data: {
+      description: 'The file data to display. Must include url and mediaType.',
+      type: 'FileUIPart',
+    },
+    onRemove: {
+      description: 'Optional callback fired when the remove button is clicked. If provided, a remove button will appear on hover.',
+      type: '() => void',
+    },
+    '...props': {
+      description: 'Any other props are spread to the root div.',
+      type: 'React.HTMLAttributes<HTMLDivElement>',
+    },
+  }}
+/>
+
+**Example:**
+
+```tsx
+<MessageAttachment
+  data={{
+    type: "file",
+    url: "https://example.com/image.jpg",
+    mediaType: "image/jpeg",
+    filename: "image.jpg"
+  }}
+  onRemove={() => console.log("Remove clicked")}
+/>
+```
