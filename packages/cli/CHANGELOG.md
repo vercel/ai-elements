@@ -1,5 +1,25 @@
 # ai-elements
 
+## 1.6.0
+
+### Minor Changes
+
+- 3c34582: Create new Checkpoint component
+- 1ac23c8: Add MessageAttachments
+- 29c2d43: Add ModelSelector component
+- d5f1159: Merge Actions, Branch and Response into Message
+
+### Patch Changes
+
+- 5a5342e: fix: ensure prompt input attachments render inside header
+- 478ec07: Use CornerDownLeftIcon for prompt input
+- 227d1ca: change ChainOfThoughtStep label and description types from string to ReactNode
+- 61a25e5: Fix open-in-chat trigger icon
+- 0a5297c: Remove Controls from Canvas
+- 5c16b4f: Add `use client` directive to open-in-chat
+- 328173b: Polyfill ToolUIPart["approval"] in latest AI SDK
+- 0c53bac: Add support for multiple CLI args
+
 ## 1.5.0
 
 ### Minor Changes
