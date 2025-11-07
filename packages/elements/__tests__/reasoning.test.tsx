@@ -126,6 +126,15 @@ describe("ReasoningTrigger", () => {
     expect(screen.getByText("Thinking...")).toBeInTheDocument();
   });
 
+  it("renders generic message when duration is undefined", () => {
+    render(
+      <Reasoning isStreaming={false}>
+        <ReasoningTrigger />
+      </Reasoning>
+    );
+    expect(screen.getByText("Thought for a few seconds")).toBeInTheDocument();
+  });
+
   it("renders custom children", () => {
     render(
       <Reasoning>
