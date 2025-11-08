@@ -12,10 +12,12 @@ import {
 import {
   Dialog,
   DialogContent,
+  DialogTitle,
   DialogTrigger,
 } from "@repo/shadcn-ui/components/ui/dialog";
 import { cn } from "@repo/shadcn-ui/lib/utils";
 import type { ComponentProps } from "react";
+import { VisuallyHidden } from 'radix-ui'
 
 export type ModelSelectorProps = ComponentProps<typeof Dialog>;
 
@@ -29,14 +31,20 @@ export const ModelSelectorTrigger = (props: ModelSelectorTriggerProps) => (
   <DialogTrigger {...props} />
 );
 
-export type ModelSelectorContentProps = ComponentProps<typeof DialogContent>;
+export type ModelSelectorContentProps = ComponentProps<typeof DialogContent> & {
+  title?: React.ReactNode;
+};
 
 export const ModelSelectorContent = ({
   className,
   children,
+  title,
   ...props
 }: ModelSelectorContentProps) => (
   <DialogContent className={cn("p-0", className)} {...props}>
+    <VisuallyHidden.Root>
+      <DialogTitle>{title || 'Model Selector'}</DialogTitle>
+    </VisuallyHidden.Root>
     <Command className="**:data-[slot=command-input-wrapper]:h-auto">
       {children}
     </Command>
