@@ -17,7 +17,6 @@ import {
 } from "@repo/shadcn-ui/components/ui/dialog";
 import { cn } from "@repo/shadcn-ui/lib/utils";
 import type { ComponentProps } from "react";
-import { VisuallyHidden } from 'radix-ui'
 
 export type ModelSelectorProps = ComponentProps<typeof Dialog>;
 
@@ -42,9 +41,7 @@ export const ModelSelectorContent = ({
   ...props
 }: ModelSelectorContentProps) => (
   <DialogContent className={cn("p-0", className)} {...props}>
-    <VisuallyHidden.Root>
-      <DialogTitle>{title || 'Model Selector'}</DialogTitle>
-    </VisuallyHidden.Root>
+    <DialogTitle className="sr-only">{title || 'Model Selector'}</DialogTitle>
     <Command className="**:data-[slot=command-input-wrapper]:h-auto">
       {children}
     </Command>
