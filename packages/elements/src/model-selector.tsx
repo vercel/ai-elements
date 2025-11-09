@@ -16,7 +16,7 @@ import {
   DialogTrigger,
 } from "@repo/shadcn-ui/components/ui/dialog";
 import { cn } from "@repo/shadcn-ui/lib/utils";
-import type { ComponentProps } from "react";
+import type { ReactNode, ComponentProps } from "react";
 
 export type ModelSelectorProps = ComponentProps<typeof Dialog>;
 
@@ -31,17 +31,17 @@ export const ModelSelectorTrigger = (props: ModelSelectorTriggerProps) => (
 );
 
 export type ModelSelectorContentProps = ComponentProps<typeof DialogContent> & {
-  title?: React.ReactNode;
+  title?: ReactNode;
 };
 
 export const ModelSelectorContent = ({
   className,
   children,
-  title,
+  title = "Model Selector",
   ...props
 }: ModelSelectorContentProps) => (
   <DialogContent className={cn("p-0", className)} {...props}>
-    <DialogTitle className="sr-only">{title || 'Model Selector'}</DialogTitle>
+    <DialogTitle className="sr-only">{title}</DialogTitle>
     <Command className="**:data-[slot=command-input-wrapper]:h-auto">
       {children}
     </Command>
