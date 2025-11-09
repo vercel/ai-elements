@@ -22,6 +22,7 @@ import { ChevronDownIcon } from "lucide-react";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { CopyMarkdown } from "@/components/copy-markdown";
+import { getLLMText } from "@/lib/get-llm-text";
 import { source } from "@/lib/source";
 import { getMDXComponents } from "@/mdx-components";
 
@@ -42,6 +43,7 @@ export default async function Page(props: PageProps<"/[[...slug]]">) {
     `${protocol}://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
   );
   const query = `Read ${fullMarkdownUrl}, I want to ask questions about it.`;
+  const text = await getLLMText(page);
 
   return (
     <DocsPage
@@ -57,7 +59,7 @@ export default async function Page(props: PageProps<"/[[...slug]]">) {
       <DocsTitle>{page.data.title}</DocsTitle>
       <DocsDescription>{page.data.description}</DocsDescription>
       <div className="-mt-8 mb-8 flex flex-row items-center gap-2">
-        <CopyMarkdown markdownUrl={markdownUrl} />
+        <CopyMarkdown text={text} />
         <OpenIn query={query}>
           <OpenInTrigger>
             <Button size="sm" type="button" variant="outline">

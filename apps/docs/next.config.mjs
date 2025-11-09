@@ -18,16 +18,6 @@ const config = {
     ],
   },
 
-  // biome-ignore lint/suspicious/useAwait: "rewrites is async"
-  async rewrites() {
-    return [
-      {
-        source: "/:path*.mdx",
-        destination: "/llms.mdx/:path*",
-      },
-    ];
-  },
-
   // biome-ignore lint/suspicious/useAwait: "redirects is async"
   async redirects() {
     return [
