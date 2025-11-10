@@ -15,9 +15,9 @@ After installing AI Elements components, you can use them in your application li
 import {
   Message,
   MessageContent,
+  MessageResponse,
 } from '@/components/ai-elements/message';
 import { useChat } from '@ai-sdk/react';
-import { Response } from '@/components/ai-elements/response';
 
 const Example = () => {
   const { messages } = useChat();
@@ -30,7 +30,7 @@ const Example = () => {
             {parts.map((part, i) => {
               switch (part.type) {
                 case 'text':
-                  return <Response key={`${role}-${i}`}>{part.text}</Response>;
+                  return <MessageResponse key={`${role}-${i}`}>{part.text}</MessageResponse>;
               }
             })}
           </MessageContent>
@@ -43,7 +43,7 @@ const Example = () => {
 export default Example;
 ```
 
-In the example above, we import the `Message` component from our AI Elements directory and include it in our JSX. Then, we compose the component with the `MessageContent` and `Response` subcomponents. You can style or configure the component just as you would if you wrote it yourself – since the code lives in your project, you can even open the component file to see how it works or make custom modifications.
+In the example above, we import the `Message` component from our AI Elements directory and include it in our JSX. Then, we compose the component with the `MessageContent` and `MessageResponse` subcomponents. You can style or configure the component just as you would if you wrote it yourself – since the code lives in your project, you can even open the component file to see how it works or make custom modifications.
 
 ## Extensibility
 

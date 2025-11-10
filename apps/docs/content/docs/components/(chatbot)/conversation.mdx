@@ -36,7 +36,7 @@ import {
 import { MessageSquare } from 'lucide-react';
 import { useState } from 'react';
 import { useChat } from '@ai-sdk/react';
-import { Response } from '@/components/ai-elements/response';
+import { MessageResponse } from '@/components/ai-elements/message';
 
 const ConversationDemo = () => {
   const [input, setInput] = useState('');
@@ -69,9 +69,9 @@ const ConversationDemo = () => {
                       switch (part.type) {
                         case 'text': // we don't use any reasoning or tool calls in this example
                           return (
-                            <Response key={`${message.id}-${i}`}>
+                            <MessageResponse key={`${message.id}-${i}`}>
                               {part.text}
-                            </Response>
+                            </MessageResponse>
                           );
                         default:
                           return null;

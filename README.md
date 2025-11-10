@@ -132,8 +132,8 @@ import {
 import {
   Message,
   MessageContent,
+  MessageResponse,
 } from '@/components/ai-elements/message';
-import { Response } from '@/components/ai-elements/response';
 
 export default function Chat() {
   const { messages } = useChat();
@@ -144,7 +144,7 @@ export default function Chat() {
         {messages.map((message, index) => (
           <Message key={index} from={message.role}>
             <MessageContent>
-              <Response>{message.content}</Response>
+              <MessageResponse>{message.content}</MessageResponse>
             </MessageContent>
           </Message>
         ))}

@@ -24,7 +24,7 @@ Add the following component to your frontend:
 import { useChat } from '@ai-sdk/react';
 import { DefaultChatTransport, type ToolUIPart } from 'ai';
 import { Button } from '@/components/ui/button';
-import { Response } from '@/components/ai-elements/response';
+import { MessageResponse } from '@/components/ai-elements/message';
 import {
   Tool,
   ToolContent,
@@ -85,9 +85,9 @@ const Example = () => {
                 <ToolInput input={weatherTool.input} />
                 <ToolOutput
                   output={
-                    <Response>
+                    <MessageResponse>
                       {formatWeatherResult(weatherTool.output)}
-                    </Response>
+                    </MessageResponse>
                   }
                   errorText={weatherTool.errorText}
                 />

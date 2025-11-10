@@ -35,7 +35,7 @@ import {
   ConfirmationActions,
   ConfirmationAction,
 } from '@/components/ai-elements/confirmation';
-import { Response } from '@/components/ai-elements/response';
+import { MessageResponse } from '@/components/ai-elements/message';
 
 type DeleteFileInput = {
   filePath: string;
@@ -117,11 +117,11 @@ const Example = () => {
         )}
 
         {deleteTool?.output && (
-          <Response>
+          <MessageResponse>
             {deleteTool.output.success
               ? deleteTool.output.message
               : `Error: ${deleteTool.output.message}`}
-          </Response>
+          </MessageResponse>
         )}
       </div>
     </div>
