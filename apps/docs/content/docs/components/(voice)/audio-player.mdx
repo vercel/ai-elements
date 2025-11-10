@@ -24,6 +24,20 @@ The `AudioPlayer` component provides a flexible and customizable audio playback 
 - Responsive design that works across devices
 - Full TypeScript support with proper types for all components
 
+## Variants
+
+### AI SDK Speech Result
+
+The `AudioPlayer` component can be used to play audio from an AI SDK Speech Result.
+
+<Preview path="audio-player" />
+
+### Remote Audio
+
+The `AudioPlayer` component can be used to play remote audio files.
+
+<Preview path="audio-player-remote" />
+
 ## Props
 
 ### `<AudioPlayer />`
@@ -45,17 +59,23 @@ Root MediaController component. Accepts all MediaController props except `audio`
 
 ### `<AudioPlayerElement />`
 
-The audio element that contains the media source.
+The audio element that contains the media source. Accepts either a remote URL or AI SDK Speech Result data.
 
 <TypeTable
   type={{
     src: {
-      description: 'The URL of the audio file to play.',
+      description: 'The URL of the audio file to play (for remote audio).',
       type: 'string',
+      optional: true,
+    },
+    data: {
+      description: 'AI SDK Speech Result audio data with base64 encoding (for AI-generated audio).',
+      type: 'SpeechResult["audio"]',
+      optional: true,
     },
     '...props': {
-      description: 'Any other props are spread to the audio element.',
-      type: 'React.ComponentProps<"audio">',
+      description: 'Any other props are spread to the audio element (excluding src when using data).',
+      type: 'Omit<React.ComponentProps<"audio">, "src">',
     },
   }}
 />
