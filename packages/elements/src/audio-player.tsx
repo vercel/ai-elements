@@ -6,6 +6,7 @@ import {
   ButtonGroupText,
 } from "@repo/shadcn-ui/components/ui/button-group";
 import { cn } from "@repo/shadcn-ui/lib/utils";
+import type { Experimental_SpeechResult as SpeechResult } from "ai";
 import {
   MediaControlBar,
   MediaController,
@@ -65,10 +66,27 @@ export const AudioPlayer = ({
   </MediaController>
 );
 
-export type AudioPlayerElementProps = ComponentProps<"audio">;
+export type AudioPlayerElementProps = Omit<ComponentProps<"audio">, "src"> &
+  (
+    | {
+        data: SpeechResult["audio"];
+      }
+    | {
+        src: string;
+      }
+  );
 
-export const AudioPlayerElement = (props: AudioPlayerElementProps) => (
-  <audio data-slot="audio-player-element" slot="media" {...props} />
+export const AudioPlayerElement = ({ ...props }: AudioPlayerElementProps) => (
+  <audio
+    data-slot="audio-player-element"
+    slot="media"
+    src={
+      "src" in props
+        ? props.src
+        : `data:${props.data.mediaType};base64,${props.data.base64}`
+    }
+    {...props}
+  />
 );
 
 export type AudioPlayerControlBarProps = ComponentProps<typeof MediaControlBar>;
