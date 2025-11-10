@@ -148,21 +148,30 @@ const Example = () => {
 
   return (
     <Conversation className="relative size-full">
-      <ConversationContent>
-        {visibleMessages.length === 0 ? (
+      {visibleMessages.length === 0 ? (
+        <ConversationContent>
           <ConversationEmptyState
             description="Messages will appear here as the conversation progresses."
             icon={<MessageSquareIcon className="size-6" />}
             title="Start a conversation"
           />
-        ) : (
-          visibleMessages.map(({ key, value, from }) => (
-            <Message from={from} key={key}>
-              <MessageContent>{value}</MessageContent>
-            </Message>
-          ))
-        )}
-      </ConversationContent>
+        </ConversationContent>
+      ) : (
+        <ConversationContent
+          count={visibleMessages.length}
+          estimateSize={80}
+          overscan={3}
+          renderItem={(index) => {
+            const message = visibleMessages[index];
+            if (!message) return null;
+            return (
+              <Message from={message.from} key={message.key}>
+                <MessageContent>{message.value}</MessageContent>
+              </Message>
+            );
+          }}
+        />
+      )}
       <ConversationScrollButton />
     </Conversation>
   );
