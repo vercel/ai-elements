@@ -1,5 +1,6 @@
 "use client";
 
+import type { UseChatHelpers } from "@ai-sdk/react";
 import { Button } from "@repo/shadcn-ui/components/ui/button";
 import {
   Command,
@@ -69,6 +70,7 @@ import {
   useRef,
   useState,
 } from "react";
+
 // ============================================================================
 // Provider Context & Types
 // ============================================================================
@@ -411,10 +413,7 @@ export const PromptInputActionAddAttachments = ({
   );
 };
 
-export type PromptInputMessage = {
-  text?: string;
-  files?: FileUIPart[];
-};
+export type PromptInputMessage = UseChatHelpers<never>["sendMessage"];
 
 export type PromptInputProps = Omit<
   HTMLAttributes<HTMLFormElement>,
@@ -753,7 +752,7 @@ export const PromptInput = ({
         onSubmit={handleSubmit}
         {...props}
       >
-        <InputGroup>{children}</InputGroup>
+        <InputGroup className="overflow-hidden">{children}</InputGroup>
       </form>
     </>
   );

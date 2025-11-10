@@ -299,7 +299,6 @@ const Example = () => {
             {selectedModelData?.name && (
               <ModelSelectorName>{selectedModelData.name}</ModelSelectorName>
             )}
-            <CheckIcon className="ml-2 size-4 shrink-0 opacity-50" />
           </Button>
         </ModelSelectorTrigger>
         <ModelSelectorContent>
@@ -307,7 +306,7 @@ const Example = () => {
           <ModelSelectorList>
             <ModelSelectorEmpty>No models found.</ModelSelectorEmpty>
             {chefs.map((chef) => (
-              <ModelSelectorGroup key={chef} heading={chef}>
+              <ModelSelectorGroup heading={chef} key={chef}>
                 {models
                   .filter((model) => model.chef === chef)
                   .map((model) => (
