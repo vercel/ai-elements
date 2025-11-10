@@ -1,0 +1,188 @@
+---
+title: Audio Player
+description: A composable audio player component built on media-chrome, with shadcn styling and flexible controls.
+path: elements/components/audio-player
+---
+
+The `AudioPlayer` component provides a flexible and customizable audio playback interface built on top of media-chrome. It features a composable architecture that allows you to build audio experiences with custom controls, metadata display, and seamless integration with AI-generated audio content.
+
+<Preview path="audio-player" />
+
+## Installation
+
+<ElementsInstaller path="audio-player" />
+
+## Features
+
+- Built on media-chrome for reliable audio playback
+- Fully composable architecture with granular control components
+- ButtonGroup integration for cohesive control layout
+- Individual control components (play, seek, volume, etc.)
+- Flexible layout with customizable control bars
+- CSS custom properties for deep theming
+- Shadcn/ui Button component styling
+- Responsive design that works across devices
+- Full TypeScript support with proper types for all components
+
+## Props
+
+### `<AudioPlayer />`
+
+Root MediaController component. Accepts all MediaController props except `audio` (which is set to `true` by default).
+
+<TypeTable
+  type={{
+    style: {
+      description: 'Custom CSS properties can be passed to override media-chrome theming variables.',
+      type: 'CSSProperties',
+    },
+    '...props': {
+      description: 'Any other props are spread to the MediaController component.',
+      type: 'Omit<React.ComponentProps<typeof MediaController>, "audio">',
+    },
+  }}
+/>
+
+### `<AudioPlayerElement />`
+
+The audio element that contains the media source.
+
+<TypeTable
+  type={{
+    src: {
+      description: 'The URL of the audio file to play.',
+      type: 'string',
+    },
+    '...props': {
+      description: 'Any other props are spread to the audio element.',
+      type: 'React.ComponentProps<"audio">',
+    },
+  }}
+/>
+
+### `<AudioPlayerControlBar />`
+
+Container for control buttons, wraps children in a ButtonGroup.
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any other props are spread to the MediaControlBar component.',
+      type: 'React.ComponentProps<typeof MediaControlBar>',
+    },
+  }}
+/>
+
+### `<AudioPlayerPlayButton />`
+
+Play/pause button wrapped in a shadcn Button component.
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any other props are spread to the MediaPlayButton component.',
+      type: 'React.ComponentProps<typeof MediaPlayButton>',
+    },
+  }}
+/>
+
+### `<AudioPlayerSeekBackwardButton />`
+
+Seek backward button wrapped in a shadcn Button component.
+
+<TypeTable
+  type={{
+    seekOffset: {
+      description: 'The number of seconds to seek backward.',
+      type: 'number',
+      default: '10',
+    },
+    '...props': {
+      description: 'Any other props are spread to the MediaSeekBackwardButton component.',
+      type: 'React.ComponentProps<typeof MediaSeekBackwardButton>',
+    },
+  }}
+/>
+
+### `<AudioPlayerSeekForwardButton />`
+
+Seek forward button wrapped in a shadcn Button component.
+
+<TypeTable
+  type={{
+    seekOffset: {
+      description: 'The number of seconds to seek forward.',
+      type: 'number',
+      default: '10',
+    },
+    '...props': {
+      description: 'Any other props are spread to the MediaSeekForwardButton component.',
+      type: 'React.ComponentProps<typeof MediaSeekForwardButton>',
+    },
+  }}
+/>
+
+### `<AudioPlayerTimeDisplay />`
+
+Displays the current playback time, wrapped in ButtonGroupText.
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any other props are spread to the MediaTimeDisplay component.',
+      type: 'React.ComponentProps<typeof MediaTimeDisplay>',
+    },
+  }}
+/>
+
+### `<AudioPlayerTimeRange />`
+
+Seek slider for controlling playback position, wrapped in ButtonGroupText.
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any other props are spread to the MediaTimeRange component.',
+      type: 'React.ComponentProps<typeof MediaTimeRange>',
+    },
+  }}
+/>
+
+### `<AudioPlayerDurationDisplay />`
+
+Displays the total duration of the audio, wrapped in ButtonGroupText.
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any other props are spread to the MediaDurationDisplay component.',
+      type: 'React.ComponentProps<typeof MediaDurationDisplay>',
+    },
+  }}
+/>
+
+### `<AudioPlayerMuteButton />`
+
+Mute/unmute button, wrapped in ButtonGroupText.
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any other props are spread to the MediaMuteButton component.',
+      type: 'React.ComponentProps<typeof MediaMuteButton>',
+    },
+  }}
+/>
+
+### `<AudioPlayerVolumeRange />`
+
+Volume slider control, wrapped in ButtonGroupText.
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any other props are spread to the MediaVolumeRange component.',
+      type: 'React.ComponentProps<typeof MediaVolumeRange>',
+    },
+  }}
+/>
