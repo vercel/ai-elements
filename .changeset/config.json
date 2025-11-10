@@ -9,7 +9,6 @@
   "updateInternalDependencies": "patch",
   "ignore": [
     "docs",
-    "registry",
     "@repo/elements",
     "@repo/examples",
     "@repo/typescript-config",

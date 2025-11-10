@@ -34,7 +34,10 @@ const components = args.length >= 2 ? args.slice(1) : ["all"];
 // Get the target URLs for all components
 const targetUrls = components
   .map((component) =>
-    new URL(`/${component}.json`, "https://registry.ai-sdk.dev").toString()
+    new URL(
+      `${component}.json`,
+      "https://ai-sdk.dev/elements/api/registry/"
+    ).toString()
   )
   .join(" ");
 
