@@ -231,7 +231,11 @@ export const MicSelectorLabel = ({
   console.log(matches, device.label);
 
   if (!matches) {
-    return device.label;
+    return (
+      <span className={className} {...props}>
+        {device.label}
+      </span>
+    );
   }
 
   const [, deviceId] = matches;
