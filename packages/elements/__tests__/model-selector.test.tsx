@@ -382,10 +382,7 @@ describe("ModelSelectorLogo", () => {
     render(<ModelSelectorLogo provider="openai" />);
     const logo = screen.getByAltText("openai logo");
     expect(logo).toBeInTheDocument();
-    expect(logo).toHaveAttribute(
-      "src",
-      "https://models.dev/logos/openai.svg"
-    );
+    expect(logo).toHaveAttribute("src", "https://models.dev/logos/openai.svg");
     expect(logo).toHaveAttribute("width", "12");
     expect(logo).toHaveAttribute("height", "12");
   });

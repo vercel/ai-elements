@@ -1,19 +1,34 @@
 "use client";
 
 import {
+  Conversation,
+  ConversationContent,
+  ConversationScrollButton,
+} from "@repo/elements/conversation";
+import {
+  Message,
   MessageBranch,
   MessageBranchContent,
   MessageBranchNext,
   MessageBranchPage,
   MessageBranchPrevious,
   MessageBranchSelector,
+  MessageContent,
+  MessageResponse,
 } from "@repo/elements/message";
 import {
-  Conversation,
-  ConversationContent,
-  ConversationScrollButton,
-} from "@repo/elements/conversation";
-import { Message, MessageContent } from "@repo/elements/message";
+  ModelSelector,
+  ModelSelectorContent,
+  ModelSelectorEmpty,
+  ModelSelectorGroup,
+  ModelSelectorInput,
+  ModelSelectorItem,
+  ModelSelectorList,
+  ModelSelectorLogo,
+  ModelSelectorLogoGroup,
+  ModelSelectorName,
+  ModelSelectorTrigger,
+} from "@repo/elements/model-selector";
 import {
   PromptInput,
   PromptInputActionAddAttachments,
@@ -32,24 +47,10 @@ import {
   PromptInputTools,
 } from "@repo/elements/prompt-input";
 import {
-  ModelSelector,
-  ModelSelectorContent,
-  ModelSelectorEmpty,
-  ModelSelectorGroup,
-  ModelSelectorInput,
-  ModelSelectorItem,
-  ModelSelectorList,
-  ModelSelectorLogo,
-  ModelSelectorLogoGroup,
-  ModelSelectorName,
-  ModelSelectorTrigger,
-} from "@repo/elements/model-selector";
-import {
   Reasoning,
   ReasoningContent,
   ReasoningTrigger,
 } from "@repo/elements/reasoning";
-import { MessageResponse } from "@repo/elements/message";
 import {
   Source,
   Sources,
@@ -548,7 +549,9 @@ const Example = () => {
                   <ModelSelectorTrigger asChild>
                     <PromptInputButton>
                       {selectedModelData?.chefSlug && (
-                        <ModelSelectorLogo provider={selectedModelData.chefSlug} />
+                        <ModelSelectorLogo
+                          provider={selectedModelData.chefSlug}
+                        />
                       )}
                       {selectedModelData?.name && (
                         <ModelSelectorName>
@@ -562,7 +565,7 @@ const Example = () => {
                     <ModelSelectorList>
                       <ModelSelectorEmpty>No models found.</ModelSelectorEmpty>
                       {["OpenAI", "Anthropic", "Google"].map((chef) => (
-                        <ModelSelectorGroup key={chef} heading={chef}>
+                        <ModelSelectorGroup heading={chef} key={chef}>
                           {models
                             .filter((m) => m.chef === chef)
                             .map((m) => (
