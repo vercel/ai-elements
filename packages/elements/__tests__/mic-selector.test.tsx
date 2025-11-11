@@ -1,10 +1,7 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import {
-  MicSelectorLabel,
-  useAudioDevices,
-} from "../src/mic-selector";
+import { MicSelectorLabel, useAudioDevices } from "../src/mic-selector";
 
 // Mock navigator.mediaDevices
 const mockDevices: MediaDeviceInfo[] = [
@@ -93,9 +90,7 @@ describe("MicSelectorLabel", () => {
 
   it("accepts custom className prop", () => {
     const device = mockDevices[1];
-    render(
-      <MicSelectorLabel className="custom-label" device={device} />
-    );
+    render(<MicSelectorLabel className="custom-label" device={device} />);
 
     // Verify component renders
     expect(screen.getByText("External Microphone")).toBeInTheDocument();
@@ -116,13 +111,19 @@ describe("useAudioDevices hook", () => {
 
     render(<TestComponent />);
 
-    await waitFor(() => {
-      expect(screen.getByTestId("loading")).toHaveTextContent("Loaded");
-    }, { timeout: 3000 });
+    await waitFor(
+      () => {
+        expect(screen.getByTestId("loading")).toHaveTextContent("Loaded");
+      },
+      { timeout: 3000 }
+    );
 
-    await waitFor(() => {
-      expect(screen.getByTestId("count")).toHaveTextContent("3");
-    }, { timeout: 3000 });
+    await waitFor(
+      () => {
+        expect(screen.getByTestId("count")).toHaveTextContent("3");
+      },
+      { timeout: 3000 }
+    );
   });
 
   it("filters only audio input devices", async () => {
@@ -146,9 +147,12 @@ describe("useAudioDevices hook", () => {
 
     render(<TestComponent />);
 
-    await waitFor(() => {
-      expect(screen.getByTestId("count")).toHaveTextContent("3");
-    }, { timeout: 3000 });
+    await waitFor(
+      () => {
+        expect(screen.getByTestId("count")).toHaveTextContent("3");
+      },
+      { timeout: 3000 }
+    );
   });
 
   it("handles errors gracefully", async () => {
@@ -166,13 +170,21 @@ describe("useAudioDevices hook", () => {
 
     render(<TestComponent />);
 
-    await waitFor(() => {
-      expect(screen.getByTestId("loading")).toHaveTextContent("Loaded");
-    }, { timeout: 3000 });
+    await waitFor(
+      () => {
+        expect(screen.getByTestId("loading")).toHaveTextContent("Loaded");
+      },
+      { timeout: 3000 }
+    );
 
-    await waitFor(() => {
-      expect(screen.getByTestId("error")).toHaveTextContent("Permission denied");
-    }, { timeout: 3000 });
+    await waitFor(
+      () => {
+        expect(screen.getByTestId("error")).toHaveTextContent(
+          "Permission denied"
+        );
+      },
+      { timeout: 3000 }
+    );
   });
 
   it("requests permission when loadDevices is called", async () => {
@@ -180,7 +192,9 @@ describe("useAudioDevices hook", () => {
       const { loadDevices, hasPermission } = useAudioDevices();
       return (
         <div>
-          <button onClick={loadDevices} type="button">Request Permission</button>
+          <button onClick={loadDevices} type="button">
+            Request Permission
+          </button>
           <div data-testid="permission">
             {hasPermission ? "Granted" : "Not granted"}
           </div>
@@ -190,20 +204,31 @@ describe("useAudioDevices hook", () => {
 
     render(<TestComponent />);
 
-    await waitFor(() => {
-      expect(screen.getByTestId("permission")).toHaveTextContent("Not granted");
-    }, { timeout: 3000 });
+    await waitFor(
+      () => {
+        expect(screen.getByTestId("permission")).toHaveTextContent(
+          "Not granted"
+        );
+      },
+      { timeout: 3000 }
+    );
 
     const button = screen.getByText("Request Permission");
     await userEvent.setup().click(button);
 
-    await waitFor(() => {
-      expect(mockGetUserMedia).toHaveBeenCalledWith({ audio: true });
-    }, { timeout: 3000 });
+    await waitFor(
+      () => {
+        expect(mockGetUserMedia).toHaveBeenCalledWith({ audio: true });
+      },
+      { timeout: 3000 }
+    );
 
-    await waitFor(() => {
-      expect(screen.getByTestId("permission")).toHaveTextContent("Granted");
-    }, { timeout: 3000 });
+    await waitFor(
+      () => {
+        expect(screen.getByTestId("permission")).toHaveTextContent("Granted");
+      },
+      { timeout: 3000 }
+    );
   });
 
   it("returns devices array", async () => {
@@ -212,7 +237,10 @@ describe("useAudioDevices hook", () => {
       return (
         <div>
           {devices.map((device) => (
-            <div key={device.deviceId} data-testid={`device-${device.deviceId}`}>
+            <div
+              data-testid={`device-${device.deviceId}`}
+              key={device.deviceId}
+            >
               {device.label}
             </div>
           ))}
@@ -222,11 +250,14 @@ describe("useAudioDevices hook", () => {
 
     render(<TestComponent />);
 
-    await waitFor(() => {
-      expect(screen.getByTestId("device-device-1")).toBeInTheDocument();
-      expect(screen.getByTestId("device-device-2")).toBeInTheDocument();
-      expect(screen.getByTestId("device-device-3")).toBeInTheDocument();
-    }, { timeout: 3000 });
+    await waitFor(
+      () => {
+        expect(screen.getByTestId("device-device-1")).toBeInTheDocument();
+        expect(screen.getByTestId("device-device-2")).toBeInTheDocument();
+        expect(screen.getByTestId("device-device-3")).toBeInTheDocument();
+      },
+      { timeout: 3000 }
+    );
   });
 
   it("returns loading state initially", () => {
@@ -264,13 +295,19 @@ describe("useAudioDevices hook", () => {
     const { unmount } = render(<TestComponent />);
 
     await waitFor(() => {
-      expect(addEventListener).toHaveBeenCalledWith("devicechange", expect.any(Function));
+      expect(addEventListener).toHaveBeenCalledWith(
+        "devicechange",
+        expect.any(Function)
+      );
     });
 
     unmount();
 
     await waitFor(() => {
-      expect(removeEventListener).toHaveBeenCalledWith("devicechange", expect.any(Function));
+      expect(removeEventListener).toHaveBeenCalledWith(
+        "devicechange",
+        expect.any(Function)
+      );
     });
   });
 
@@ -279,7 +316,9 @@ describe("useAudioDevices hook", () => {
       const { loadDevices, loading } = useAudioDevices();
       return (
         <div>
-          <button onClick={loadDevices} type="button">Load</button>
+          <button onClick={loadDevices} type="button">
+            Load
+          </button>
           <div data-testid="loading">{loading ? "Loading" : "Loaded"}</div>
         </div>
       );
@@ -287,9 +326,12 @@ describe("useAudioDevices hook", () => {
 
     render(<TestComponent />);
 
-    await waitFor(() => {
-      expect(screen.getByTestId("loading")).toHaveTextContent("Loaded");
-    }, { timeout: 3000 });
+    await waitFor(
+      () => {
+        expect(screen.getByTestId("loading")).toHaveTextContent("Loaded");
+      },
+      { timeout: 3000 }
+    );
 
     const button = screen.getByText("Load");
 
@@ -298,8 +340,11 @@ describe("useAudioDevices hook", () => {
     await userEvent.setup().click(button);
 
     // Should only call getUserMedia once per actual load
-    await waitFor(() => {
-      expect(mockGetUserMedia).toHaveBeenCalled();
-    }, { timeout: 3000 });
+    await waitFor(
+      () => {
+        expect(mockGetUserMedia).toHaveBeenCalled();
+      },
+      { timeout: 3000 }
+    );
   });
 });

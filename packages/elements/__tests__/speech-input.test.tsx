@@ -147,9 +147,12 @@ describe("SpeechInput - Speech Recognition", () => {
     await user.click(button);
 
     // Should have animate-pulse when listening
-    await waitFor(() => {
-      expect(button).toHaveClass("animate-pulse");
-    }, { timeout: 3000 });
+    await waitFor(
+      () => {
+        expect(button).toHaveClass("animate-pulse");
+      },
+      { timeout: 3000 }
+    );
   });
 
   it("calls onTranscriptionChange with final transcript", async () => {
@@ -187,7 +190,10 @@ describe("SpeechInput - Speech Recognition", () => {
             0: { transcript: "Hello world", confidence: 0.9 },
             isFinal: true,
             length: 1,
-            item: (index: number) => ({ transcript: "Hello world", confidence: 0.9 }),
+            item: (index: number) => ({
+              transcript: "Hello world",
+              confidence: 0.9,
+            }),
           },
         ],
       });
@@ -239,12 +245,14 @@ describe("SpeechInput - Speech Recognition", () => {
     }
 
     // Wait a bit to ensure callback wasn't called
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await new Promise((resolve) => setTimeout(resolve, 100));
     expect(handleTranscription).not.toHaveBeenCalled();
   });
 
   it("handles speech recognition errors and logs them", async () => {
-    const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    const consoleErrorSpy = vi
+      .spyOn(console, "error")
+      .mockImplementation(() => {});
     let recognitionInstance: any = null;
 
     class TrackableMockSpeechRecognition extends MockSpeechRecognition {
@@ -275,7 +283,10 @@ describe("SpeechInput - Speech Recognition", () => {
     }
 
     await waitFor(() => {
-      expect(consoleErrorSpy).toHaveBeenCalledWith("Speech recognition error:", "no-speech");
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        "Speech recognition error:",
+        "no-speech"
+      );
     });
 
     consoleErrorSpy.mockRestore();
@@ -322,7 +333,7 @@ describe("SpeechInput - Speech Recognition", () => {
     }
 
     // Wait to ensure callback wasn't called for empty transcript
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await new Promise((resolve) => setTimeout(resolve, 100));
     expect(handleTranscription).not.toHaveBeenCalled();
   });
 

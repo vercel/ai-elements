@@ -1,5 +1,4 @@
 import { render, screen } from "@testing-library/react";
-import { userEvent } from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
   AudioPlayer,
@@ -75,7 +74,9 @@ describe("AudioPlayer", () => {
 
 describe("AudioPlayerElement", () => {
   it("renders audio element with remote src", () => {
-    const { container } = render(<AudioPlayerElement src="https://example.com/audio.mp3" />);
+    const { container } = render(
+      <AudioPlayerElement src="https://example.com/audio.mp3" />
+    );
     const audio = container.querySelector('[data-slot="audio-player-element"]');
     expect(audio).toBeInTheDocument();
     expect(audio).toHaveAttribute("src", "https://example.com/audio.mp3");
@@ -92,22 +93,23 @@ describe("AudioPlayerElement", () => {
     const { container } = render(<AudioPlayerElement data={mockData} />);
     const audio = container.querySelector('[data-slot="audio-player-element"]');
     expect(audio).toBeInTheDocument();
-    expect(audio).toHaveAttribute("src", "data:audio/mpeg;base64,SGVsbG8gV29ybGQ=");
+    expect(audio).toHaveAttribute(
+      "src",
+      "data:audio/mpeg;base64,SGVsbG8gV29ybGQ="
+    );
   });
 
   it("has slot attribute set to media", () => {
-    const { container } = render(<AudioPlayerElement src="https://example.com/audio.mp3" />);
+    const { container } = render(
+      <AudioPlayerElement src="https://example.com/audio.mp3" />
+    );
     const audio = container.querySelector('[data-slot="audio-player-element"]');
     expect(audio).toHaveAttribute("slot", "media");
   });
 
   it("accepts additional audio props", () => {
     const { container } = render(
-      <AudioPlayerElement
-        autoPlay
-        loop
-        src="https://example.com/audio.mp3"
-      />
+      <AudioPlayerElement autoPlay loop src="https://example.com/audio.mp3" />
     );
     const audio = container.querySelector('[data-slot="audio-player-element"]');
     expect(audio).toHaveAttribute("autoplay");
@@ -122,7 +124,9 @@ describe("AudioPlayerControlBar", () => {
         <div data-testid="controls">Controls</div>
       </AudioPlayerControlBar>
     );
-    const controlBar = container.querySelector('[data-slot="audio-player-control-bar"]');
+    const controlBar = container.querySelector(
+      '[data-slot="audio-player-control-bar"]'
+    );
     expect(controlBar).toBeInTheDocument();
     expect(screen.getByTestId("controls")).toBeInTheDocument();
   });
@@ -142,19 +146,27 @@ describe("AudioPlayerControlBar", () => {
 describe("AudioPlayerPlayButton", () => {
   it("renders play button", () => {
     const { container } = render(<AudioPlayerPlayButton />);
-    const button = container.querySelector('[data-slot="audio-player-play-button"]');
+    const button = container.querySelector(
+      '[data-slot="audio-player-play-button"]'
+    );
     expect(button).toBeInTheDocument();
   });
 
   it("applies custom className", () => {
-    const { container } = render(<AudioPlayerPlayButton className="custom-play" />);
-    const button = container.querySelector('[data-slot="audio-player-play-button"]');
+    const { container } = render(
+      <AudioPlayerPlayButton className="custom-play" />
+    );
+    const button = container.querySelector(
+      '[data-slot="audio-player-play-button"]'
+    );
     expect(button).toHaveClass("custom-play");
   });
 
   it("has transparent background", () => {
     const { container } = render(<AudioPlayerPlayButton />);
-    const button = container.querySelector('[data-slot="audio-player-play-button"]');
+    const button = container.querySelector(
+      '[data-slot="audio-player-play-button"]'
+    );
     expect(button).toHaveClass("bg-transparent");
   });
 });
@@ -162,19 +174,27 @@ describe("AudioPlayerPlayButton", () => {
 describe("AudioPlayerSeekBackwardButton", () => {
   it("renders seek backward button", () => {
     const { container } = render(<AudioPlayerSeekBackwardButton />);
-    const button = container.querySelector('[data-slot="audio-player-seek-backward-button"]');
+    const button = container.querySelector(
+      '[data-slot="audio-player-seek-backward-button"]'
+    );
     expect(button).toBeInTheDocument();
   });
 
   it("uses default seek offset of 10", () => {
     const { container } = render(<AudioPlayerSeekBackwardButton />);
-    const button = container.querySelector('[data-slot="audio-player-seek-backward-button"]');
+    const button = container.querySelector(
+      '[data-slot="audio-player-seek-backward-button"]'
+    );
     expect(button).toHaveAttribute("seekoffset", "10");
   });
 
   it("accepts custom seek offset", () => {
-    const { container } = render(<AudioPlayerSeekBackwardButton seekOffset={30} />);
-    const button = container.querySelector('[data-slot="audio-player-seek-backward-button"]');
+    const { container } = render(
+      <AudioPlayerSeekBackwardButton seekOffset={30} />
+    );
+    const button = container.querySelector(
+      '[data-slot="audio-player-seek-backward-button"]'
+    );
     expect(button).toHaveAttribute("seekoffset", "30");
   });
 });
@@ -182,19 +202,27 @@ describe("AudioPlayerSeekBackwardButton", () => {
 describe("AudioPlayerSeekForwardButton", () => {
   it("renders seek forward button", () => {
     const { container } = render(<AudioPlayerSeekForwardButton />);
-    const button = container.querySelector('[data-slot="audio-player-seek-forward-button"]');
+    const button = container.querySelector(
+      '[data-slot="audio-player-seek-forward-button"]'
+    );
     expect(button).toBeInTheDocument();
   });
 
   it("uses default seek offset of 10", () => {
     const { container } = render(<AudioPlayerSeekForwardButton />);
-    const button = container.querySelector('[data-slot="audio-player-seek-forward-button"]');
+    const button = container.querySelector(
+      '[data-slot="audio-player-seek-forward-button"]'
+    );
     expect(button).toHaveAttribute("seekoffset", "10");
   });
 
   it("accepts custom seek offset", () => {
-    const { container } = render(<AudioPlayerSeekForwardButton seekOffset={15} />);
-    const button = container.querySelector('[data-slot="audio-player-seek-forward-button"]');
+    const { container } = render(
+      <AudioPlayerSeekForwardButton seekOffset={15} />
+    );
+    const button = container.querySelector(
+      '[data-slot="audio-player-seek-forward-button"]'
+    );
     expect(button).toHaveAttribute("seekoffset", "15");
   });
 });
@@ -202,19 +230,27 @@ describe("AudioPlayerSeekForwardButton", () => {
 describe("AudioPlayerTimeDisplay", () => {
   it("renders time display", () => {
     const { container } = render(<AudioPlayerTimeDisplay />);
-    const display = container.querySelector('[data-slot="audio-player-time-display"]');
+    const display = container.querySelector(
+      '[data-slot="audio-player-time-display"]'
+    );
     expect(display).toBeInTheDocument();
   });
 
   it("has tabular-nums class", () => {
     const { container } = render(<AudioPlayerTimeDisplay />);
-    const display = container.querySelector('[data-slot="audio-player-time-display"]');
+    const display = container.querySelector(
+      '[data-slot="audio-player-time-display"]'
+    );
     expect(display).toHaveClass("tabular-nums");
   });
 
   it("applies custom className", () => {
-    const { container } = render(<AudioPlayerTimeDisplay className="custom-time" />);
-    const display = container.querySelector('[data-slot="audio-player-time-display"]');
+    const { container } = render(
+      <AudioPlayerTimeDisplay className="custom-time" />
+    );
+    const display = container.querySelector(
+      '[data-slot="audio-player-time-display"]'
+    );
     expect(display).toHaveClass("custom-time");
   });
 });
@@ -222,13 +258,19 @@ describe("AudioPlayerTimeDisplay", () => {
 describe("AudioPlayerTimeRange", () => {
   it("renders time range slider", () => {
     const { container } = render(<AudioPlayerTimeRange />);
-    const range = container.querySelector('[data-slot="audio-player-time-range"]');
+    const range = container.querySelector(
+      '[data-slot="audio-player-time-range"]'
+    );
     expect(range).toBeInTheDocument();
   });
 
   it("applies custom className", () => {
-    const { container } = render(<AudioPlayerTimeRange className="custom-range" />);
-    const range = container.querySelector('[data-slot="audio-player-time-range"]');
+    const { container } = render(
+      <AudioPlayerTimeRange className="custom-range" />
+    );
+    const range = container.querySelector(
+      '[data-slot="audio-player-time-range"]'
+    );
     expect(range).toHaveClass("custom-range");
   });
 });
@@ -236,19 +278,27 @@ describe("AudioPlayerTimeRange", () => {
 describe("AudioPlayerDurationDisplay", () => {
   it("renders duration display", () => {
     const { container } = render(<AudioPlayerDurationDisplay />);
-    const display = container.querySelector('[data-slot="audio-player-duration-display"]');
+    const display = container.querySelector(
+      '[data-slot="audio-player-duration-display"]'
+    );
     expect(display).toBeInTheDocument();
   });
 
   it("has tabular-nums class", () => {
     const { container } = render(<AudioPlayerDurationDisplay />);
-    const display = container.querySelector('[data-slot="audio-player-duration-display"]');
+    const display = container.querySelector(
+      '[data-slot="audio-player-duration-display"]'
+    );
     expect(display).toHaveClass("tabular-nums");
   });
 
   it("applies custom className", () => {
-    const { container } = render(<AudioPlayerDurationDisplay className="custom-duration" />);
-    const display = container.querySelector('[data-slot="audio-player-duration-display"]');
+    const { container } = render(
+      <AudioPlayerDurationDisplay className="custom-duration" />
+    );
+    const display = container.querySelector(
+      '[data-slot="audio-player-duration-display"]'
+    );
     expect(display).toHaveClass("custom-duration");
   });
 });
@@ -256,13 +306,19 @@ describe("AudioPlayerDurationDisplay", () => {
 describe("AudioPlayerMuteButton", () => {
   it("renders mute button", () => {
     const { container } = render(<AudioPlayerMuteButton />);
-    const button = container.querySelector('[data-slot="audio-player-mute-button"]');
+    const button = container.querySelector(
+      '[data-slot="audio-player-mute-button"]'
+    );
     expect(button).toBeInTheDocument();
   });
 
   it("applies custom className", () => {
-    const { container } = render(<AudioPlayerMuteButton className="custom-mute" />);
-    const button = container.querySelector('[data-slot="audio-player-mute-button"]');
+    const { container } = render(
+      <AudioPlayerMuteButton className="custom-mute" />
+    );
+    const button = container.querySelector(
+      '[data-slot="audio-player-mute-button"]'
+    );
     expect(button).toHaveClass("custom-mute");
   });
 });
@@ -270,13 +326,19 @@ describe("AudioPlayerMuteButton", () => {
 describe("AudioPlayerVolumeRange", () => {
   it("renders volume range slider", () => {
     const { container } = render(<AudioPlayerVolumeRange />);
-    const range = container.querySelector('[data-slot="audio-player-volume-range"]');
+    const range = container.querySelector(
+      '[data-slot="audio-player-volume-range"]'
+    );
     expect(range).toBeInTheDocument();
   });
 
   it("applies custom className", () => {
-    const { container } = render(<AudioPlayerVolumeRange className="custom-volume" />);
-    const range = container.querySelector('[data-slot="audio-player-volume-range"]');
+    const { container } = render(
+      <AudioPlayerVolumeRange className="custom-volume" />
+    );
+    const range = container.querySelector(
+      '[data-slot="audio-player-volume-range"]'
+    );
     expect(range).toHaveClass("custom-volume");
   });
 });
@@ -299,17 +361,39 @@ describe("Integration tests", () => {
       </AudioPlayer>
     );
 
-    expect(container.querySelector('[data-slot="audio-player"]')).toBeInTheDocument();
-    expect(container.querySelector('[data-slot="audio-player-element"]')).toBeInTheDocument();
-    expect(container.querySelector('[data-slot="audio-player-control-bar"]')).toBeInTheDocument();
-    expect(container.querySelector('[data-slot="audio-player-play-button"]')).toBeInTheDocument();
-    expect(container.querySelector('[data-slot="audio-player-seek-backward-button"]')).toBeInTheDocument();
-    expect(container.querySelector('[data-slot="audio-player-seek-forward-button"]')).toBeInTheDocument();
-    expect(container.querySelector('[data-slot="audio-player-time-display"]')).toBeInTheDocument();
-    expect(container.querySelector('[data-slot="audio-player-time-range"]')).toBeInTheDocument();
-    expect(container.querySelector('[data-slot="audio-player-duration-display"]')).toBeInTheDocument();
-    expect(container.querySelector('[data-slot="audio-player-mute-button"]')).toBeInTheDocument();
-    expect(container.querySelector('[data-slot="audio-player-volume-range"]')).toBeInTheDocument();
+    expect(
+      container.querySelector('[data-slot="audio-player"]')
+    ).toBeInTheDocument();
+    expect(
+      container.querySelector('[data-slot="audio-player-element"]')
+    ).toBeInTheDocument();
+    expect(
+      container.querySelector('[data-slot="audio-player-control-bar"]')
+    ).toBeInTheDocument();
+    expect(
+      container.querySelector('[data-slot="audio-player-play-button"]')
+    ).toBeInTheDocument();
+    expect(
+      container.querySelector('[data-slot="audio-player-seek-backward-button"]')
+    ).toBeInTheDocument();
+    expect(
+      container.querySelector('[data-slot="audio-player-seek-forward-button"]')
+    ).toBeInTheDocument();
+    expect(
+      container.querySelector('[data-slot="audio-player-time-display"]')
+    ).toBeInTheDocument();
+    expect(
+      container.querySelector('[data-slot="audio-player-time-range"]')
+    ).toBeInTheDocument();
+    expect(
+      container.querySelector('[data-slot="audio-player-duration-display"]')
+    ).toBeInTheDocument();
+    expect(
+      container.querySelector('[data-slot="audio-player-mute-button"]')
+    ).toBeInTheDocument();
+    expect(
+      container.querySelector('[data-slot="audio-player-volume-range"]')
+    ).toBeInTheDocument();
   });
 
   it("handles AI SDK speech result data format", () => {
