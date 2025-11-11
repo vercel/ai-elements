@@ -1,0 +1,162 @@
+---
+title: Speech Input
+description: A button component that captures voice input using the Web Speech API and converts it to text.
+path: elements/components/speech-input
+---
+
+The `SpeechInput` component provides an easy-to-use interface for capturing voice input in your application. Built on the Web Speech API, it offers continuous speech recognition with interim results and visual feedback for the listening state.
+
+<Preview path="speech-input" />
+
+## Installation
+
+<ElementsInstaller path="speech-input" />
+
+## Features
+
+- Built on Web Speech API (SpeechRecognition)
+- Continuous speech recognition with interim results
+- Visual feedback with pulse animation when listening
+- Automatic browser compatibility detection
+- Final transcript extraction and callbacks
+- Error handling and automatic state management
+- Extends shadcn/ui Button component
+- Full TypeScript support with proper Web Speech API types
+
+## Usage
+
+### Basic Usage
+
+```tsx
+import { SpeechInput } from "@repo/elements/speech-input";
+
+export default function Example() {
+  return (
+    <SpeechInput
+      onTranscriptionChange={(text) => console.log("Transcription:", text)}
+    />
+  );
+}
+```
+
+### With State Management
+
+```tsx
+import { SpeechInput } from "@repo/elements/speech-input";
+import { useState } from "react";
+
+export default function Example() {
+  const [transcript, setTranscript] = useState("");
+
+  return (
+    <div>
+      <SpeechInput
+        onTranscriptionChange={(text) => setTranscript((prev) => prev + " " + text)}
+        size="default"
+        variant="default"
+      />
+      <p>Transcript: {transcript}</p>
+    </div>
+  );
+}
+```
+
+### Custom Styling
+
+```tsx
+import { SpeechInput } from "@repo/elements/speech-input";
+
+export default function Example() {
+  return (
+    <SpeechInput
+      className="size-12"
+      onTranscriptionChange={(text) => console.log(text)}
+      size="icon"
+      variant="outline"
+    />
+  );
+}
+```
+
+## Props
+
+### `<SpeechInput />`
+
+The component extends the shadcn/ui Button component, so all Button props are available.
+
+<TypeTable
+  type={{
+    onTranscriptionChange: {
+      description: 'Callback fired when final transcription text is available. Only fires for completed phrases, not interim results.',
+      type: '(text: string) => void',
+      optional: true,
+    },
+    '...props': {
+      description: 'Any other props are spread to the Button component, including variant, size, disabled, etc.',
+      type: 'React.ComponentProps<typeof Button>',
+    },
+  }}
+/>
+
+## Behavior
+
+### Speech Recognition
+
+The component uses the Web Speech API with the following configuration:
+
+- **Continuous**: Set to `true` to keep recognition active until manually stopped
+- **Interim Results**: Set to `true` to receive partial results during speech
+- **Language**: Defaults to `"en-US"` for English (United States)
+
+### Transcription Processing
+
+The component processes speech recognition results and only calls `onTranscriptionChange` with **final transcripts**. Interim results are ignored to prevent incomplete text from being processed.
+
+### Visual States
+
+- **Default State**: Standard button appearance with microphone icon
+- **Listening State**: Pulsing animation with accent colors to indicate active listening
+- **Disabled State**: Button is disabled when Speech Recognition API is not available
+
+### Lifecycle
+
+1. **Mount**: Automatically initializes SpeechRecognition if available
+2. **Click**: Toggles between listening and stopped states
+3. **Unmount**: Automatically stops recognition and cleans up resources
+
+## Browser Support
+
+The component automatically detects browser support for the Web Speech API:
+
+- **Supported**: Chrome, Edge, Safari (with `webkit` prefix)
+- **Not Supported**: Firefox (as of 2025), older browsers
+
+The button will be automatically disabled in unsupported browsers.
+
+## Accessibility
+
+- Uses semantic button element via shadcn/ui Button
+- Visual feedback for listening state
+- Keyboard accessible (can be triggered with Space/Enter)
+- Screen reader friendly with proper button semantics
+
+## Notes
+
+- Requires a secure context (HTTPS or localhost)
+- Browser may prompt user for microphone permission
+- Only final transcripts trigger the `onTranscriptionChange` callback
+- Language is currently hardcoded to `"en-US"` (can be extended for multi-language support)
+- Continuous recognition continues until button is clicked again
+- Errors are logged to console and automatically stop recognition
+
+## TypeScript
+
+The component includes full TypeScript definitions for the Web Speech API:
+
+- `SpeechRecognition`
+- `SpeechRecognitionEvent`
+- `SpeechRecognitionResult`
+- `SpeechRecognitionAlternative`
+- `SpeechRecognitionErrorEvent`
+
+These types are properly declared for both standard and webkit-prefixed implementations.

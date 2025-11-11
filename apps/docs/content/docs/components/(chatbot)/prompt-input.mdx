@@ -37,14 +37,13 @@ import {
   PromptInputSelectItem,
   PromptInputSelectTrigger,
   PromptInputSelectValue,
-  PromptInputSpeechButton,
   PromptInputSubmit,
   PromptInputTextarea,
   PromptInputFooter,
   PromptInputTools,
 } from '@/components/ai-elements/prompt-input';
 import { GlobeIcon } from 'lucide-react';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { useChat } from '@ai-sdk/react';
 import {
   Conversation,
@@ -62,7 +61,6 @@ const InputDemo = () => {
   const [text, setText] = useState<string>('');
   const [model, setModel] = useState<string>(models[0].id);
   const [useWebSearch, setUseWebSearch] = useState<boolean>(false);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const { messages, status, sendMessage } = useChat();
 
@@ -126,7 +124,6 @@ const InputDemo = () => {
      
             <PromptInputTextarea
               onChange={(e) => setText(e.target.value)}
-              ref={textareaRef}
               value={text}
             />
           </PromptInputBody>
@@ -138,10 +135,6 @@ const InputDemo = () => {
                   <PromptInputActionAddAttachments />
                 </PromptInputActionMenuContent>
               </PromptInputActionMenu>
-              <PromptInputSpeechButton
-                onTranscriptionChange={setText}
-                textareaRef={textareaRef}
-              />
               <PromptInputButton
                 onClick={() => setUseWebSearch(!useWebSearch)}
                 variant={useWebSearch ? 'default' : 'ghost'}
@@ -509,68 +502,6 @@ export async function POST(req: Request) {
 
 Optional global provider that lifts PromptInput state outside of PromptInput. When used, it allows you to access and control the input state from anywhere within the provider tree. If not used, PromptInput stays fully self-managed.
 
-### `<PromptInputSpeechButton />`
-
-<TypeTable
-  type={{
-    textareaRef: {
-      description: 'Reference to the textarea element to insert transcribed text.',
-      type: 'RefObject<HTMLTextAreaElement | null>',
-    },
-    onTranscriptionChange: {
-      description: 'Callback fired when transcription text changes.',
-      type: '(text: string) => void',
-    },
-    '...props': {
-      description: 'Any other props are spread to the underlying PromptInputButton component.',
-      type: 'React.ComponentProps<typeof PromptInputButton>',
-    },
-  }}
-/>
-
-Built-in button component that provides native speech recognition using the Web Speech API. The button will be disabled if speech recognition is not supported in the browser. Displays a microphone icon and pulses while actively listening.
-
-## Hooks
-
-### `usePromptInputAttachments`
-
-Access and manage file attachments within a PromptInput context.
-
-```tsx
-const attachments = usePromptInputAttachments();
-
-// Available methods:
-attachments.files // Array of current attachments
-attachments.add(files) // Add new files
-attachments.remove(id) // Remove an attachment by ID
-attachments.clear() // Clear all attachments
-attachments.openFileDialog() // Open file selection dialog
-```
-
-### `usePromptInputController`
-
-Access the full PromptInput controller from a PromptInputProvider. Only available when using the provider.
-
-```tsx
-const controller = usePromptInputController();
-
-// Available methods:
-controller.textInput.value // Current text input value
-controller.textInput.setInput(value) // Set text input value
-controller.textInput.clear() // Clear text input
-controller.attachments // Same as usePromptInputAttachments
-```
-
-### `useProviderAttachments`
-
-Access attachments context from a PromptInputProvider. Only available when using the provider.
-
-```tsx
-const attachments = useProviderAttachments();
-
-// Same interface as usePromptInputAttachments
-```
-
 ### `<PromptInputHeader />`
 
 <TypeTable
@@ -761,3 +692,45 @@ const attachments = useProviderAttachments();
     },
   }}
 />
+
+
+## Hooks
+
+### `usePromptInputAttachments`
+
+Access and manage file attachments within a PromptInput context.
+
+```tsx
+const attachments = usePromptInputAttachments();
+
+// Available methods:
+attachments.files // Array of current attachments
+attachments.add(files) // Add new files
+attachments.remove(id) // Remove an attachment by ID
+attachments.clear() // Clear all attachments
+attachments.openFileDialog() // Open file selection dialog
+```
+
+### `usePromptInputController`
+
+Access the full PromptInput controller from a PromptInputProvider. Only available when using the provider.
+
+```tsx
+const controller = usePromptInputController();
+
+// Available methods:
+controller.textInput.value // Current text input value
+controller.textInput.setInput(value) // Set text input value
+controller.textInput.clear() // Clear text input
+controller.attachments // Same as usePromptInputAttachments
+```
+
+### `useProviderAttachments`
+
+Access attachments context from a PromptInputProvider. Only available when using the provider.
+
+```tsx
+const attachments = useProviderAttachments();
+
+// Same interface as usePromptInputAttachments
+```

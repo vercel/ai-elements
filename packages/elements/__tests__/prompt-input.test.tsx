@@ -17,7 +17,6 @@ import {
   PromptInputSelectItem,
   PromptInputSelectTrigger,
   PromptInputSelectValue,
-  PromptInputSpeechButton,
   PromptInputSubmit,
   PromptInputTextarea,
   PromptInputTools,
@@ -651,9 +650,7 @@ describe("PromptInputSelect", () => {
               <PromptInputSelectValue placeholder="Select model" />
             </PromptInputSelectTrigger>
             <PromptInputSelectContent>
-              <PromptInputSelectItem value="gpt-4">
-                GPT-4
-              </PromptInputSelectItem>
+              <PromptInputSelectItem value="gpt-4">GPT-4</PromptInputSelectItem>
             </PromptInputSelectContent>
           </PromptInputSelect>
         </PromptInputBody>
@@ -1048,149 +1045,6 @@ describe("Paste functionality", () => {
 
     // Should not throw
     expect(() => textarea.dispatchEvent(pasteEvent)).not.toThrow();
-  });
-});
-
-describe("PromptInputSpeechButton", () => {
-  let mockRecognition: any;
-
-  beforeEach(() => {
-    // Mock SpeechRecognition API
-    mockRecognition = {
-      start: vi.fn(),
-      stop: vi.fn(),
-      continuous: false,
-      interimResults: false,
-      lang: "",
-      onstart: null,
-      onend: null,
-      onresult: null,
-      onerror: null,
-    };
-
-    // @ts-expect-error - Mocking browser API
-    window.SpeechRecognition = vi.fn(function (this: any) {
-      return mockRecognition;
-    });
-  });
-
-  afterEach(() => {
-    // @ts-expect-error - Cleaning up mock
-    delete window.SpeechRecognition;
-    // @ts-expect-error - Cleaning up mock
-    delete window.webkitSpeechRecognition;
-  });
-
-  it("renders button component", () => {
-    const { container } = render(<PromptInputSpeechButton />);
-    expect(container.querySelector("button")).toBeInTheDocument();
-  });
-
-  it("applies custom className", () => {
-    const { container } = render(
-      <PromptInputSpeechButton className="custom-speech-btn" />
-    );
-    const button = container.querySelector("button");
-    expect(button).toHaveClass("custom-speech-btn");
-  });
-
-  it("accepts additional props", () => {
-    render(<PromptInputSpeechButton data-testid="speech-btn" />);
-    expect(screen.getByTestId("speech-btn")).toBeInTheDocument();
-  });
-
-  it("initializes speech recognition when available", () => {
-    render(<PromptInputSpeechButton />);
-    // Verify speech recognition was properly initialized by checking properties
-    expect(mockRecognition.continuous).toBe(true);
-    expect(mockRecognition.interimResults).toBe(true);
-    expect(mockRecognition.lang).toBe("en-US");
-  });
-
-  it("toggles listening when clicked", async () => {
-    const user = userEvent.setup();
-    const { container } = render(<PromptInputSpeechButton />);
-    const button = container.querySelector("button");
-
-    if (button) {
-      await user.click(button);
-      expect(mockRecognition.start).toHaveBeenCalled();
-    }
-  });
-
-  it("stops recognition when clicked while listening", async () => {
-    const user = userEvent.setup();
-    const { container } = render(<PromptInputSpeechButton />);
-    const button = container.querySelector("button");
-
-    if (button) {
-      // Start listening
-      await user.click(button);
-      act(() => {
-        mockRecognition.onstart?.();
-      });
-
-      // Stop listening
-      await user.click(button);
-      expect(mockRecognition.stop).toHaveBeenCalled();
-    }
-  });
-
-  it("cleans up recognition on unmount", () => {
-    const { unmount } = render(<PromptInputSpeechButton />);
-    unmount();
-    expect(mockRecognition.stop).toHaveBeenCalled();
-  });
-
-  it("sets up speech recognition result handler", () => {
-    render(
-      <PromptInput onSubmit={vi.fn()}>
-        <PromptInputBody>
-          <PromptInputTextarea />
-          <PromptInputSpeechButton />
-        </PromptInputBody>
-      </PromptInput>
-    );
-
-    // Verify onresult handler is set up
-    expect(mockRecognition.onresult).toBeDefined();
-    expect(typeof mockRecognition.onresult).toBe("function");
-  });
-
-  it("sets up all speech recognition event handlers", () => {
-    render(<PromptInputSpeechButton />);
-
-    expect(mockRecognition.onstart).toBeDefined();
-    expect(mockRecognition.onend).toBeDefined();
-    expect(mockRecognition.onresult).toBeDefined();
-    expect(mockRecognition.onerror).toBeDefined();
-  });
-
-  it("handles speech recognition error", () => {
-    const consoleError = vi
-      .spyOn(console, "error")
-      .mockImplementation(() => {});
-
-    render(<PromptInputSpeechButton />);
-
-    // Simulate error
-    mockRecognition.onerror?.({ error: "network" });
-
-    expect(consoleError).toHaveBeenCalledWith(
-      "Speech recognition error:",
-      "network"
-    );
-    consoleError.mockRestore();
-  });
-
-  it("is disabled when speech recognition not available", () => {
-    // @ts-expect-error - Removing mock
-    delete window.SpeechRecognition;
-
-    const { container } = render(<PromptInputSpeechButton />);
-    const button = container.querySelector("button");
-
-    expect(button).toBeDisabled();
   });
 });
 
@@ -1853,7 +1707,6 @@ describe("Integration tests", () => {
                   <PromptInputActionMenuItem>Action</PromptInputActionMenuItem>
                 </PromptInputActionMenuContent>
               </PromptInputActionMenu>
-              <PromptInputSpeechButton />
             </PromptInputTools>
             <PromptInputSubmit />
           </PromptInputFooter>

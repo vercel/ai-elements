@@ -1,6 +1,19 @@
 "use client";
 
 import {
+  ModelSelector,
+  ModelSelectorContent,
+  ModelSelectorEmpty,
+  ModelSelectorGroup,
+  ModelSelectorInput,
+  ModelSelectorItem,
+  ModelSelectorList,
+  ModelSelectorLogo,
+  ModelSelectorLogoGroup,
+  ModelSelectorName,
+  ModelSelectorTrigger,
+} from "@repo/elements/model-selector";
+import {
   PromptInput,
   PromptInputAttachment,
   PromptInputAttachments,
@@ -28,19 +41,6 @@ import {
   PromptInputTextarea,
   PromptInputTools,
 } from "@repo/elements/prompt-input";
-import {
-  ModelSelector,
-  ModelSelectorContent,
-  ModelSelectorEmpty,
-  ModelSelectorGroup,
-  ModelSelectorInput,
-  ModelSelectorItem,
-  ModelSelectorList,
-  ModelSelectorLogo,
-  ModelSelectorLogoGroup,
-  ModelSelectorName,
-  ModelSelectorTrigger,
-} from "@repo/elements/model-selector";
 import { Button } from "@repo/shadcn-ui/components/ui/button";
 import {
   AtSignIcon,
@@ -50,7 +50,7 @@ import {
   ImageIcon,
   RulerIcon,
 } from "lucide-react";
-import { useRef, useState } from "react";
+import { useState } from "react";
 
 const models = [
   {
@@ -130,7 +130,6 @@ const Example = () => {
   const [status, setStatus] = useState<
     "submitted" | "streaming" | "ready" | "error"
   >("ready");
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const selectedModelData = models.find((m) => m.id === model);
 
@@ -163,7 +162,7 @@ const Example = () => {
             <PromptInputHoverCard>
               <PromptInputHoverCardTrigger>
                 <PromptInputButton
-                  className="!h-8"
+                  className="h-8!"
                   size="icon-sm"
                   variant="outline"
                 >
@@ -273,10 +272,7 @@ const Example = () => {
             </PromptInputAttachments>
           </PromptInputHeader>
           <PromptInputBody>
-            <PromptInputTextarea
-              placeholder="Plan, search, build anything"
-              ref={textareaRef}
-            />
+            <PromptInputTextarea placeholder="Plan, search, build anything" />
           </PromptInputBody>
           <PromptInputFooter>
             <PromptInputTools>
@@ -287,7 +283,9 @@ const Example = () => {
                 <ModelSelectorTrigger asChild>
                   <PromptInputButton>
                     {selectedModelData?.chefSlug && (
-                      <ModelSelectorLogo provider={selectedModelData.chefSlug} />
+                      <ModelSelectorLogo
+                        provider={selectedModelData.chefSlug}
+                      />
                     )}
                     {selectedModelData?.name && (
                       <ModelSelectorName>
@@ -301,7 +299,7 @@ const Example = () => {
                   <ModelSelectorList>
                     <ModelSelectorEmpty>No models found.</ModelSelectorEmpty>
                     {["OpenAI", "Anthropic", "Google"].map((chef) => (
-                      <ModelSelectorGroup key={chef} heading={chef}>
+                      <ModelSelectorGroup heading={chef} key={chef}>
                         {models
                           .filter((m) => m.chef === chef)
                           .map((m) => (
