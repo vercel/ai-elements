@@ -26,7 +26,6 @@ import {
   PromptInputFooter,
   type PromptInputMessage,
   PromptInputProvider,
-  PromptInputSpeechButton,
   PromptInputSubmit,
   PromptInputTextarea,
   PromptInputTools,
@@ -35,7 +34,7 @@ import {
 import { Button } from "@repo/shadcn-ui/components/ui/button";
 import { ButtonGroup } from "@repo/shadcn-ui/components/ui/button-group";
 import { CheckIcon, GlobeIcon } from "lucide-react";
-import { useRef, useState } from "react";
+import { useState } from "react";
 
 const models = [
   {
@@ -132,7 +131,6 @@ const Example = () => {
   const [status, setStatus] = useState<
     "submitted" | "streaming" | "ready" | "error"
   >("ready");
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const selectedModelData = models.find((m) => m.id === model);
 
@@ -166,7 +164,7 @@ const Example = () => {
             {(attachment) => <PromptInputAttachment data={attachment} />}
           </PromptInputAttachments>
           <PromptInputBody>
-            <PromptInputTextarea ref={textareaRef} />
+            <PromptInputTextarea />
           </PromptInputBody>
           <PromptInputFooter>
             <PromptInputTools>
@@ -176,7 +174,6 @@ const Example = () => {
                   <PromptInputActionAddAttachments />
                 </PromptInputActionMenuContent>
               </PromptInputActionMenu>
-              <PromptInputSpeechButton textareaRef={textareaRef} />
               <PromptInputButton>
                 <GlobeIcon size={16} />
                 <span>Search</span>
