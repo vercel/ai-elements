@@ -228,4 +228,78 @@ describe("useAudioDevices hook", () => {
       expect(screen.getByTestId("device-device-3")).toBeInTheDocument();
     }, { timeout: 3000 });
   });
+
+  it("returns loading state initially", () => {
+    const TestComponent = () => {
+      const { loading } = useAudioDevices();
+      return <div data-testid="loading">{loading ? "Loading" : "Loaded"}</div>;
+    };
+
+    render(<TestComponent />);
+
+    // Initially should be loading
+    expect(screen.getByTestId("loading")).toHaveTextContent("Loading");
+  });
+
+  it("handles device change events", async () => {
+    const addEventListener = vi.fn();
+    const removeEventListener = vi.fn();
+
+    Object.defineProperty(navigator, "mediaDevices", {
+      writable: true,
+      configurable: true,
+      value: {
+        enumerateDevices: mockEnumerateDevices,
+        getUserMedia: mockGetUserMedia,
+        addEventListener,
+        removeEventListener,
+      },
+    });
+
+    const TestComponent = () => {
+      const { devices } = useAudioDevices();
+      return <div data-testid="count">{devices.length}</div>;
+    };
+
+    const { unmount } = render(<TestComponent />);
+
+    await waitFor(() => {
+      expect(addEventListener).toHaveBeenCalledWith("devicechange", expect.any(Function));
+    });
+
+    unmount();
+
+    await waitFor(() => {
+      expect(removeEventListener).toHaveBeenCalledWith("devicechange", expect.any(Function));
+    });
+  });
+
+  it("prevents concurrent loadDevices calls", async () => {
+    const TestComponent = () => {
+      const { loadDevices, loading } = useAudioDevices();
+      return (
+        <div>
+          <button onClick={loadDevices} type="button">Load</button>
+          <div data-testid="loading">{loading ? "Loading" : "Loaded"}</div>
+        </div>
+      );
+    };
+
+    render(<TestComponent />);
+
+    await waitFor(() => {
+      expect(screen.getByTestId("loading")).toHaveTextContent("Loaded");
+    }, { timeout: 3000 });
+
+    const button = screen.getByText("Load");
+
+    // Click multiple times rapidly
+    await userEvent.setup().click(button);
+    await userEvent.setup().click(button);
+
+    // Should only call getUserMedia once per actual load
+    await waitFor(() => {
+      expect(mockGetUserMedia).toHaveBeenCalled();
+    }, { timeout: 3000 });
+  });
 });

@@ -154,6 +154,17 @@ describe("SpeechInput - Speech Recognition", () => {
 
   it("calls onTranscriptionChange with final transcript", async () => {
     const handleTranscription = vi.fn();
+    let recognitionInstance: any = null;
+
+    // Override MockSpeechRecognition to capture the instance
+    class TrackableMockSpeechRecognition extends MockSpeechRecognition {
+      constructor() {
+        super();
+        recognitionInstance = this;
+      }
+    }
+
+    (window as any).SpeechRecognition = TrackableMockSpeechRecognition;
 
     render(<SpeechInput onTranscriptionChange={handleTranscription} />);
 
@@ -164,28 +175,41 @@ describe("SpeechInput - Speech Recognition", () => {
     const button = screen.getByRole("button");
     await userEvent.setup().click(button);
 
-    // Simulate speech recognition result
     await waitFor(() => {
-      const recognition = (window as any).lastRecognitionInstance;
-      if (recognition?.onresult) {
-        recognition.onresult({
-          results: [
-            {
-              0: { transcript: "Hello world", confidence: 0.9 },
-              isFinal: true,
-              length: 1,
-              item: (index: number) => ({ transcript: "Hello world", confidence: 0.9 }),
-            },
-          ],
-        });
-      }
+      expect(recognitionInstance).not.toBeNull();
     });
 
-    // Note: This test might need adjustment based on actual implementation
+    // Simulate speech recognition result with final transcript
+    if (recognitionInstance?.onresult) {
+      recognitionInstance.onresult({
+        results: [
+          {
+            0: { transcript: "Hello world", confidence: 0.9 },
+            isFinal: true,
+            length: 1,
+            item: (index: number) => ({ transcript: "Hello world", confidence: 0.9 }),
+          },
+        ],
+      });
+    }
+
+    await waitFor(() => {
+      expect(handleTranscription).toHaveBeenCalledWith("Hello world");
+    });
   });
 
   it("does not call onTranscriptionChange for interim results", async () => {
     const handleTranscription = vi.fn();
+    let recognitionInstance: any = null;
+
+    class TrackableMockSpeechRecognition extends MockSpeechRecognition {
+      constructor() {
+        super();
+        recognitionInstance = this;
+      }
+    }
+
+    (window as any).SpeechRecognition = TrackableMockSpeechRecognition;
 
     render(<SpeechInput onTranscriptionChange={handleTranscription} />);
 
@@ -196,26 +220,41 @@ describe("SpeechInput - Speech Recognition", () => {
     const button = screen.getByRole("button");
     await userEvent.setup().click(button);
 
-    // Simulate interim result (should not trigger callback)
     await waitFor(() => {
-      const recognition = (window as any).lastRecognitionInstance;
-      if (recognition?.onresult) {
-        recognition.onresult({
-          results: [
-            {
-              0: { transcript: "Hello", confidence: 0.5 },
-              isFinal: false,
-              length: 1,
-              item: (index: number) => ({ transcript: "Hello", confidence: 0.5 }),
-            },
-          ],
-        });
-      }
+      expect(recognitionInstance).not.toBeNull();
     });
+
+    // Simulate interim result (should not trigger callback)
+    if (recognitionInstance?.onresult) {
+      recognitionInstance.onresult({
+        results: [
+          {
+            0: { transcript: "Hello", confidence: 0.5 },
+            isFinal: false,
+            length: 1,
+            item: (index: number) => ({ transcript: "Hello", confidence: 0.5 }),
+          },
+        ],
+      });
+    }
+
+    // Wait a bit to ensure callback wasn't called
+    await new Promise(resolve => setTimeout(resolve, 100));
+    expect(handleTranscription).not.toHaveBeenCalled();
   });
 
-  it("logs errors when speech recognition fails", async () => {
+  it("handles speech recognition errors and logs them", async () => {
     const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    let recognitionInstance: any = null;
+
+    class TrackableMockSpeechRecognition extends MockSpeechRecognition {
+      constructor() {
+        super();
+        recognitionInstance = this;
+      }
+    }
+
+    (window as any).SpeechRecognition = TrackableMockSpeechRecognition;
 
     render(<SpeechInput />);
 
@@ -223,10 +262,85 @@ describe("SpeechInput - Speech Recognition", () => {
       expect(screen.getByRole("button")).not.toBeDisabled();
     });
 
-    // Verify that error handling is set up
-    expect(consoleErrorSpy).not.toHaveBeenCalled();
+    const button = screen.getByRole("button");
+    await userEvent.setup().click(button);
+
+    await waitFor(() => {
+      expect(recognitionInstance).not.toBeNull();
+    });
+
+    // Trigger error event
+    if (recognitionInstance?.onerror) {
+      recognitionInstance.onerror({ error: "no-speech" });
+    }
+
+    await waitFor(() => {
+      expect(consoleErrorSpy).toHaveBeenCalledWith("Speech recognition error:", "no-speech");
+    });
 
     consoleErrorSpy.mockRestore();
+  });
+
+  it("handles empty transcript gracefully", async () => {
+    const handleTranscription = vi.fn();
+    let recognitionInstance: any = null;
+
+    class TrackableMockSpeechRecognition extends MockSpeechRecognition {
+      constructor() {
+        super();
+        recognitionInstance = this;
+      }
+    }
+
+    (window as any).SpeechRecognition = TrackableMockSpeechRecognition;
+
+    render(<SpeechInput onTranscriptionChange={handleTranscription} />);
+
+    await waitFor(() => {
+      expect(screen.getByRole("button")).not.toBeDisabled();
+    });
+
+    const button = screen.getByRole("button");
+    await userEvent.setup().click(button);
+
+    await waitFor(() => {
+      expect(recognitionInstance).not.toBeNull();
+    });
+
+    // Simulate result with empty transcript
+    if (recognitionInstance?.onresult) {
+      recognitionInstance.onresult({
+        results: [
+          {
+            0: { transcript: "", confidence: 0.9 },
+            isFinal: true,
+            length: 1,
+            item: (index: number) => ({ transcript: "", confidence: 0.9 }),
+          },
+        ],
+      });
+    }
+
+    // Wait to ensure callback wasn't called for empty transcript
+    await new Promise(resolve => setTimeout(resolve, 100));
+    expect(handleTranscription).not.toHaveBeenCalled();
+  });
+
+  it("does nothing when clicking button if recognition is not available", async () => {
+    // No SpeechRecognition available
+    delete (window as any).SpeechRecognition;
+    delete (window as any).webkitSpeechRecognition;
+
+    render(<SpeechInput />);
+
+    const button = screen.getByRole("button");
+    expect(button).toBeDisabled();
+
+    // Try to click (should do nothing)
+    await userEvent.setup().click(button);
+
+    // Button should remain disabled
+    expect(button).toBeDisabled();
   });
 
   it("cleans up recognition on unmount", async () => {
