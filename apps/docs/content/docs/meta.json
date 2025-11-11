@@ -16,7 +16,6 @@
     "components/(voice)",
     "components/(workflow)",
     "components/(vibe-coding)",
-    "components/(documentation)",
     "components/(utilities)"
   ]
 }
