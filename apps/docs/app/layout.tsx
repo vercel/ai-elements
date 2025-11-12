@@ -27,7 +27,15 @@ export default function Layout({ children }: LayoutProps<"/">) {
       suppressHydrationWarning
     >
       <body className="flex min-h-screen flex-col">
-        <RootProvider>{children}</RootProvider>
+        <RootProvider
+          search={{
+            options: {
+              api: "/elements/api/search",
+            },
+          }}
+        >
+          {children}
+        </RootProvider>
         <SpeedInsights />
         <Analytics />
       </body>
