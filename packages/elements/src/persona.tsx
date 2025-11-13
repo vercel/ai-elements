@@ -30,13 +30,16 @@ type PersonaProps = {
 const stateMachine = "default";
 
 const sources = {
-  obsidian: "/obsidian.riv",
-  mana: "/mana.riv",
-  orb: "/orb.riv",
-  halo: "/halo.riv",
-  glint: "/glint.riv",
-  command: "/command.riv",
-  pal: "/pal.riv",
+  obsidian:
+    "https://ejiidnob33g9ap1r.public.blob.vercel-storage.com/obsidian-2.0.riv",
+  mana: "https://ejiidnob33g9ap1r.public.blob.vercel-storage.com/mana-2.0.rev",
+  orb: "https://ejiidnob33g9ap1r.public.blob.vercel-storage.com/orb-1.2.riv",
+  halo: "https://ejiidnob33g9ap1r.public.blob.vercel-storage.com/halo-2.0.riv",
+  glint:
+    "https://ejiidnob33g9ap1r.public.blob.vercel-storage.com/glint-2.0.riv",
+  command:
+    "https://ejiidnob33g9ap1r.public.blob.vercel-storage.com/command-2.0.riv",
+  pal: "https://ejiidnob33g9ap1r.public.blob.vercel-storage.com/pal-1.0.0.riv",
 };
 
 export const Persona: FC<PersonaProps> = ({
