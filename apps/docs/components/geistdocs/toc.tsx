@@ -17,7 +17,10 @@ export const TableOfContents = ({ children }: TableOfContentsProps) => {
 
   return (
     <PageTOC
-      className={cn("transition-all", isOpen && !isMobile && "right-[384px]!")}
+      className={cn(
+        "transition-[right]",
+        isOpen && !isMobile && "right-[384px]!"
+      )}
     >
       <p className="mb-1 font-medium text-sm">Table of Contents</p>
       <PageTOCItems variant="clerk" />
