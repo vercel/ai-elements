@@ -1,12 +1,17 @@
 "use client";
 
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@repo/shadcn-ui/components/ui/collapsible";
 import { cn } from "@repo/shadcn-ui/lib/utils";
 import type {
   Folder as FolderType,
   Item as ItemType,
   Separator as SeparatorType,
 } from "fumadocs-core/page-tree";
-import { ExternalLinkIcon } from "lucide-react";
+import { ChevronRightIcon, ExternalLinkIcon } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
@@ -18,10 +23,18 @@ type FolderProps = {
 };
 
 export const Folder = ({ item, level, children }: FolderProps) => (
-  <div className="mt-4 flex flex-col gap-2" data-level={level}>
-    <span className="text-pretty font-medium text-sm">{item.name}</span>
-    <ul>{children}</ul>
-  </div>
+  <Collapsible>
+    <CollapsibleTrigger
+      className="group mt-4 mb-2 flex w-full items-center justify-between gap-4 first-child:mt-0"
+      data-level={level}
+    >
+      <span className="text-pretty font-medium text-sm">{item.name}</span>
+      <ChevronRightIcon className="size-4 text-muted-foreground transition-transform group-data-[state=open]:rotate-90" />
+    </CollapsibleTrigger>
+    <CollapsibleContent>
+      <ul>{children}</ul>
+    </CollapsibleContent>
+  </Collapsible>
 );
 
 type ItemProps = {
