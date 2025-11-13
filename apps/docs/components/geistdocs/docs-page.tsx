@@ -8,9 +8,12 @@ import {
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import type { CSSProperties } from "react";
+import { ElementsDemo } from "@/components/elements-demo";
+import { ElementsInstaller } from "@/components/elements-installer";
+import { getMDXComponents } from "@/components/geistdocs/mdx-components";
 import { TableOfContents } from "@/components/geistdocs/toc";
+import { Preview } from "@/components/preview";
 import { getLLMText, getPageImage, source } from "@/lib/geistdocs/source";
-import { getMDXComponents } from "@/mdx-components";
 import { AskAI } from "./ask-ai";
 import { CopyPage } from "./copy-page";
 import { EditSource } from "./edit-source";
@@ -81,6 +84,9 @@ export const DocsPage = async ({ slug }: PageProps) => {
           components={getMDXComponents({
             // this allows you to link to other pages with relative file paths
             a: createRelativeLink(source, page),
+            Preview,
+            ElementsInstaller,
+            ElementsDemo,
           })}
         />
       </DocsBody>

@@ -20,11 +20,11 @@ import { toast } from "sonner";
 
 type CodeBlockProps = {
   children: ReactNode;
-  className: string;
-  icon: ReactNode;
-  style: CSSProperties;
-  tabIndex: number;
-  title: string;
+  className?: string;
+  icon?: ReactNode;
+  style?: CSSProperties;
+  tabIndex?: number;
+  title?: string;
 };
 
 export const CodeBlock = ({
