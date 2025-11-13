@@ -136,3 +136,4 @@
 #nd-sidebar { @apply mt-[146px]!; }
 :root { --fd-layout-width: 1308px; --fd-page-width: 100%; }
 #nd-page > article { @apply pt-[76px]!; }
+#nd-tocnav { @apply top-[53px]!; }

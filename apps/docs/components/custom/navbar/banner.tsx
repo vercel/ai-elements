@@ -1,7 +1,7 @@
 import type { CSSProperties } from "react";
 
 export const Banner = () => (
-  <div className="tracking-[0.004em] md:sticky md:top-[57px] md:z-50">
+  <div className="hidden tracking-[0.004em] md:sticky md:top-[57px] md:z-50 xl:block">
     <aside
       className="-translate-y-px z-30 flex min-h-[40px] items-center justify-center gap-x-2 border-y py-2 text-[14px] leading-5"
       style={{
