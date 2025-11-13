@@ -1,6 +1,6 @@
 import { ImageResponse } from "next/og";
 import type { NextRequest } from "next/server";
-import { source } from "../../lib/source";
+import { source } from "../../lib/geistdocs/source";
 
 const loadGoogleFont = async (font: string, text: string, weights: string) => {
   const url = `https://fonts.googleapis.com/css2?family=${font}:wght@${weights}&text=${encodeURIComponent(text)}`;

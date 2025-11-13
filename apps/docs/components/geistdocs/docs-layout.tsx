@@ -4,7 +4,7 @@ import { source } from "@/lib/geistdocs/source";
 
 export const DocsLayout = ({
   children,
-}: Pick<LayoutProps<"/docs">, "children">) => (
+}: Pick<LayoutProps<"/">, "children">) => (
   <FumadocsDocsLayout
     containerProps={{
       className: "mx-0",
