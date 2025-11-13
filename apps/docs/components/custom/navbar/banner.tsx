@@ -15,7 +15,7 @@ export const Banner = () => (
           <div aria-hidden="true" className="shrink-0">
             <svg
               height="16"
-              stroke-linejoin="round"
+              strokeLinejoin="round"
               style={{ color: "currentColor" }}
               viewBox="0 0 16 16"
               width="16"
