@@ -14,7 +14,6 @@ import { Preview } from "@/components/custom/preview";
 import { getMDXComponents } from "@/components/geistdocs/mdx-components";
 import { TableOfContents } from "@/components/geistdocs/toc";
 import { getLLMText, getPageImage, source } from "@/lib/geistdocs/source";
-import { AskAI } from "./ask-ai";
 import { CopyPage } from "./copy-page";
 import { EditSource } from "./edit-source";
 import { Feedback } from "./feedback";
@@ -68,7 +67,7 @@ export const DocsPage = async ({ slug }: PageProps) => {
             <ScrollTop />
             <Feedback />
             <CopyPage text={markdown} />
-            <AskAI query={query} />
+            {/* <AskAI query={query} /> */}
             <OpenInChat query={query} />
           </TableOfContents>
         ),
