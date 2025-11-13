@@ -129,3 +129,12 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Fumadocs sidebar temporary fix */
+#nd-sidebar > div:first-child {
+  @apply hidden;
+}
+
+/* Patches for AI SDK custom nav */
+#nd-toc { --fd-nav-height: 57px; }
+#nd-sidebar { @apply mt-[57px]!; }
