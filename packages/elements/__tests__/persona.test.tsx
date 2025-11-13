@@ -1,0 +1,549 @@
+import { render, waitFor } from "@testing-library/react";
+import type { RiveParameters } from "@rive-app/react-webgl2";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { Persona } from "../src/persona";
+
+// Mock the Rive hooks and components
+const mockUseRive = vi.fn();
+const mockUseStateMachineInput = vi.fn();
+const MockRiveComponent = vi.fn(() => <div data-testid="rive-component" />);
+
+vi.mock("@rive-app/react-webgl2", () => ({
+  useRive: () => mockUseRive(),
+  useStateMachineInput: (rive: any, stateMachine: string, input: string) =>
+    mockUseStateMachineInput(rive, stateMachine, input),
+}));
+
+// Mock console methods
+beforeEach(() => {
+  vi.spyOn(console, "warn").mockImplementation(() => {});
+  vi.spyOn(console, "error").mockImplementation(() => {});
+
+  // Reset mocks
+  mockUseRive.mockReset();
+  mockUseStateMachineInput.mockReset();
+  MockRiveComponent.mockClear();
+
+  // Default mock implementations
+  mockUseRive.mockReturnValue({
+    rive: {},
+    RiveComponent: MockRiveComponent,
+  });
+
+  mockUseStateMachineInput.mockReturnValue({
+    value: false,
+  });
+});
+
+describe("Persona", () => {
+  it("renders the Rive component", () => {
+    const { getByTestId } = render(<Persona state="idle" />);
+    expect(getByTestId("rive-component")).toBeInTheDocument();
+  });
+
+  it("uses default variant 'orb' when not specified", () => {
+    render(<Persona state="idle" />);
+
+    expect(mockUseRive).toHaveBeenCalledWith(
+      expect.objectContaining({
+        src: "/orb.riv",
+        stateMachines: "default",
+        autoplay: true,
+      })
+    );
+  });
+
+  it("renders with obsidian variant", () => {
+    render(<Persona state="idle" variant="obsidian" />);
+
+    expect(mockUseRive).toHaveBeenCalledWith(
+      expect.objectContaining({
+        src: "/obsidian.riv",
+      })
+    );
+  });
+
+  it("renders with mana variant", () => {
+    render(<Persona state="idle" variant="mana" />);
+
+    expect(mockUseRive).toHaveBeenCalledWith(
+      expect.objectContaining({
+        src: "/mana.riv",
+      })
+    );
+  });
+
+  it("renders with orb variant", () => {
+    render(<Persona state="idle" variant="orb" />);
+
+    expect(mockUseRive).toHaveBeenCalledWith(
+      expect.objectContaining({
+        src: "/orb.riv",
+      })
+    );
+  });
+
+  it("renders with halo variant", () => {
+    render(<Persona state="idle" variant="halo" />);
+
+    expect(mockUseRive).toHaveBeenCalledWith(
+      expect.objectContaining({
+        src: "/halo.riv",
+      })
+    );
+  });
+
+  it("renders with glint variant", () => {
+    render(<Persona state="idle" variant="glint" />);
+
+    expect(mockUseRive).toHaveBeenCalledWith(
+      expect.objectContaining({
+        src: "/glint.riv",
+      })
+    );
+  });
+
+  it("renders with command variant", () => {
+    render(<Persona state="idle" variant="command" />);
+
+    expect(mockUseRive).toHaveBeenCalledWith(
+      expect.objectContaining({
+        src: "/command.riv",
+      })
+    );
+  });
+
+  it("renders with pal variant", () => {
+    render(<Persona state="idle" variant="pal" />);
+
+    expect(mockUseRive).toHaveBeenCalledWith(
+      expect.objectContaining({
+        src: "/pal.riv",
+      })
+    );
+  });
+
+  it("applies custom className", () => {
+    MockRiveComponent.mockImplementation(({ className }) => (
+      <div className={className} data-testid="rive-component" />
+    ));
+
+    const { getByTestId } = render(
+      <Persona className="custom-class" state="idle" />
+    );
+
+    const component = getByTestId("rive-component");
+    expect(component).toHaveClass("custom-class");
+  });
+
+  it("applies default size classes", () => {
+    MockRiveComponent.mockImplementation(({ className }) => (
+      <div className={className} data-testid="rive-component" />
+    ));
+
+    const { getByTestId } = render(<Persona state="idle" />);
+
+    const component = getByTestId("rive-component");
+    expect(component.className).toContain("size-16");
+    expect(component.className).toContain("shrink-0");
+  });
+
+  it("merges custom className with default classes", () => {
+    MockRiveComponent.mockImplementation(({ className }) => (
+      <div className={className} data-testid="rive-component" />
+    ));
+
+    const { getByTestId } = render(
+      <Persona className="size-32" state="idle" />
+    );
+
+    const component = getByTestId("rive-component");
+    expect(component.className).toContain("size-32");
+    expect(component.className).toContain("shrink-0");
+  });
+
+  it("initializes state machine inputs for listening, thinking, and speaking", () => {
+    const mockRive = { id: "test-rive" };
+    mockUseRive.mockReturnValue({
+      rive: mockRive,
+      RiveComponent: MockRiveComponent,
+    });
+
+    render(<Persona state="idle" />);
+
+    expect(mockUseStateMachineInput).toHaveBeenCalledWith(
+      mockRive,
+      "default",
+      "listening"
+    );
+    expect(mockUseStateMachineInput).toHaveBeenCalledWith(
+      mockRive,
+      "default",
+      "thinking"
+    );
+    expect(mockUseStateMachineInput).toHaveBeenCalledWith(
+      mockRive,
+      "default",
+      "speaking"
+    );
+  });
+});
+
+describe("Persona - State Management", () => {
+  it("sets listening input to true when state is listening", async () => {
+    const mockListeningInput = { value: false };
+    const mockThinkingInput = { value: false };
+    const mockSpeakingInput = { value: false };
+
+    mockUseStateMachineInput.mockImplementation((rive, sm, input) => {
+      if (input === "listening") return mockListeningInput;
+      if (input === "thinking") return mockThinkingInput;
+      if (input === "speaking") return mockSpeakingInput;
+      return { value: false };
+    });
+
+    render(<Persona state="listening" />);
+
+    await waitFor(() => {
+      expect(mockListeningInput.value).toBe(true);
+      expect(mockThinkingInput.value).toBe(false);
+      expect(mockSpeakingInput.value).toBe(false);
+    });
+  });
+
+  it("sets thinking input to true when state is thinking", async () => {
+    const mockListeningInput = { value: false };
+    const mockThinkingInput = { value: false };
+    const mockSpeakingInput = { value: false };
+
+    mockUseStateMachineInput.mockImplementation((rive, sm, input) => {
+      if (input === "listening") return mockListeningInput;
+      if (input === "thinking") return mockThinkingInput;
+      if (input === "speaking") return mockSpeakingInput;
+      return { value: false };
+    });
+
+    render(<Persona state="thinking" />);
+
+    await waitFor(() => {
+      expect(mockListeningInput.value).toBe(false);
+      expect(mockThinkingInput.value).toBe(true);
+      expect(mockSpeakingInput.value).toBe(false);
+    });
+  });
+
+  it("sets speaking input to true when state is speaking", async () => {
+    const mockListeningInput = { value: false };
+    const mockThinkingInput = { value: false };
+    const mockSpeakingInput = { value: false };
+
+    mockUseStateMachineInput.mockImplementation((rive, sm, input) => {
+      if (input === "listening") return mockListeningInput;
+      if (input === "thinking") return mockThinkingInput;
+      if (input === "speaking") return mockSpeakingInput;
+      return { value: false };
+    });
+
+    render(<Persona state="speaking" />);
+
+    await waitFor(() => {
+      expect(mockListeningInput.value).toBe(false);
+      expect(mockThinkingInput.value).toBe(false);
+      expect(mockSpeakingInput.value).toBe(true);
+    });
+  });
+
+  it("sets all inputs to false when state is idle", async () => {
+    const mockListeningInput = { value: false };
+    const mockThinkingInput = { value: false };
+    const mockSpeakingInput = { value: false };
+
+    mockUseStateMachineInput.mockImplementation((rive, sm, input) => {
+      if (input === "listening") return mockListeningInput;
+      if (input === "thinking") return mockThinkingInput;
+      if (input === "speaking") return mockSpeakingInput;
+      return { value: false };
+    });
+
+    render(<Persona state="idle" />);
+
+    await waitFor(() => {
+      expect(mockListeningInput.value).toBe(false);
+      expect(mockThinkingInput.value).toBe(false);
+      expect(mockSpeakingInput.value).toBe(false);
+    });
+  });
+
+  it("sets all inputs to false when state is asleep", async () => {
+    const mockListeningInput = { value: false };
+    const mockThinkingInput = { value: false };
+    const mockSpeakingInput = { value: false };
+
+    mockUseStateMachineInput.mockImplementation((rive, sm, input) => {
+      if (input === "listening") return mockListeningInput;
+      if (input === "thinking") return mockThinkingInput;
+      if (input === "speaking") return mockSpeakingInput;
+      return { value: false };
+    });
+
+    render(<Persona state="asleep" />);
+
+    await waitFor(() => {
+      expect(mockListeningInput.value).toBe(false);
+      expect(mockThinkingInput.value).toBe(false);
+      expect(mockSpeakingInput.value).toBe(false);
+    });
+  });
+
+  it("updates state inputs when state prop changes", async () => {
+    const mockListeningInput = { value: false };
+    const mockThinkingInput = { value: false };
+    const mockSpeakingInput = { value: false };
+
+    mockUseStateMachineInput.mockImplementation((rive, sm, input) => {
+      if (input === "listening") return mockListeningInput;
+      if (input === "thinking") return mockThinkingInput;
+      if (input === "speaking") return mockSpeakingInput;
+      return { value: false };
+    });
+
+    const { rerender } = render(<Persona state="idle" />);
+
+    await waitFor(() => {
+      expect(mockListeningInput.value).toBe(false);
+    });
+
+    rerender(<Persona state="listening" />);
+
+    await waitFor(() => {
+      expect(mockListeningInput.value).toBe(true);
+    });
+
+    rerender(<Persona state="thinking" />);
+
+    await waitFor(() => {
+      expect(mockListeningInput.value).toBe(false);
+      expect(mockThinkingInput.value).toBe(true);
+    });
+  });
+
+  it("handles null state machine inputs gracefully", async () => {
+    mockUseStateMachineInput.mockReturnValue(null);
+
+    // Should not throw an error
+    expect(() => {
+      render(<Persona state="listening" />);
+    }).not.toThrow();
+  });
+});
+
+describe("Persona - Lifecycle Callbacks", () => {
+  it("calls onLoad when provided", () => {
+    const onLoad = vi.fn();
+    render(<Persona onLoad={onLoad} state="idle" />);
+
+    expect(mockUseRive).toHaveBeenCalledWith(
+      expect.objectContaining({
+        onLoad,
+      })
+    );
+  });
+
+  it("calls onLoadError when provided", () => {
+    const onLoadError = vi.fn();
+    render(<Persona onLoadError={onLoadError} state="idle" />);
+
+    expect(mockUseRive).toHaveBeenCalledWith(
+      expect.objectContaining({
+        onLoadError,
+      })
+    );
+  });
+
+  it("calls onReady when animation is ready", () => {
+    const onReady = vi.fn();
+    render(<Persona onReady={onReady} state="idle" />);
+
+    expect(mockUseRive).toHaveBeenCalledWith(
+      expect.objectContaining({
+        onRiveReady: onReady,
+      })
+    );
+  });
+
+  it("calls onPause when provided", () => {
+    const onPause = vi.fn();
+    render(<Persona onPause={onPause} state="idle" />);
+
+    expect(mockUseRive).toHaveBeenCalledWith(
+      expect.objectContaining({
+        onPause,
+      })
+    );
+  });
+
+  it("calls onPlay when provided", () => {
+    const onPlay = vi.fn();
+    render(<Persona onPlay={onPlay} state="idle" />);
+
+    expect(mockUseRive).toHaveBeenCalledWith(
+      expect.objectContaining({
+        onPlay,
+      })
+    );
+  });
+
+  it("calls onStop when provided", () => {
+    const onStop = vi.fn();
+    render(<Persona onStop={onStop} state="idle" />);
+
+    expect(mockUseRive).toHaveBeenCalledWith(
+      expect.objectContaining({
+        onStop,
+      })
+    );
+  });
+
+  it("passes all lifecycle callbacks simultaneously", () => {
+    const callbacks = {
+      onLoad: vi.fn(),
+      onLoadError: vi.fn(),
+      onReady: vi.fn(),
+      onPause: vi.fn(),
+      onPlay: vi.fn(),
+      onStop: vi.fn(),
+    };
+
+    render(
+      <Persona
+        onLoad={callbacks.onLoad}
+        onLoadError={callbacks.onLoadError}
+        onPause={callbacks.onPause}
+        onPlay={callbacks.onPlay}
+        onReady={callbacks.onReady}
+        onStop={callbacks.onStop}
+        state="idle"
+      />
+    );
+
+    expect(mockUseRive).toHaveBeenCalledWith(
+      expect.objectContaining({
+        onLoad: callbacks.onLoad,
+        onLoadError: callbacks.onLoadError,
+        onRiveReady: callbacks.onReady,
+        onPause: callbacks.onPause,
+        onPlay: callbacks.onPlay,
+        onStop: callbacks.onStop,
+      })
+    );
+  });
+});
+
+describe("Persona - Integration", () => {
+  it("renders with all props combined", async () => {
+    const mockListeningInput = { value: false };
+    const mockThinkingInput = { value: false };
+    const mockSpeakingInput = { value: false };
+
+    mockUseStateMachineInput.mockImplementation((rive, sm, input) => {
+      if (input === "listening") return mockListeningInput;
+      if (input === "thinking") return mockThinkingInput;
+      if (input === "speaking") return mockSpeakingInput;
+      return { value: false };
+    });
+
+    MockRiveComponent.mockImplementation(({ className }) => (
+      <div className={className} data-testid="rive-component" />
+    ));
+
+    const callbacks = {
+      onLoad: vi.fn(),
+      onReady: vi.fn(),
+      onPlay: vi.fn(),
+    };
+
+    const { getByTestId } = render(
+      <Persona
+        className="size-64 rounded-full"
+        onLoad={callbacks.onLoad}
+        onPlay={callbacks.onPlay}
+        onReady={callbacks.onReady}
+        state="listening"
+        variant="halo"
+      />
+    );
+
+    // Check render
+    const component = getByTestId("rive-component");
+    expect(component).toBeInTheDocument();
+
+    // Check className
+    expect(component.className).toContain("size-64");
+    expect(component.className).toContain("rounded-full");
+
+    // Check variant
+    expect(mockUseRive).toHaveBeenCalledWith(
+      expect.objectContaining({
+        src: "/halo.riv",
+      })
+    );
+
+    // Check callbacks
+    expect(mockUseRive).toHaveBeenCalledWith(
+      expect.objectContaining({
+        onLoad: callbacks.onLoad,
+        onRiveReady: callbacks.onReady,
+        onPlay: callbacks.onPlay,
+      })
+    );
+
+    // Check state
+    await waitFor(() => {
+      expect(mockListeningInput.value).toBe(true);
+    });
+  });
+
+  it("uses 'default' as the state machine name for all variants", () => {
+    const variants = [
+      "obsidian",
+      "mana",
+      "orb",
+      "halo",
+      "glint",
+      "command",
+      "pal",
+    ] as const;
+
+    variants.forEach((variant) => {
+      mockUseRive.mockClear();
+      render(<Persona state="idle" variant={variant} />);
+
+      expect(mockUseRive).toHaveBeenCalledWith(
+        expect.objectContaining({
+          stateMachines: "default",
+        })
+      );
+    });
+  });
+
+  it("always sets autoplay to true", () => {
+    const states = [
+      "idle",
+      "listening",
+      "thinking",
+      "speaking",
+      "asleep",
+    ] as const;
+
+    states.forEach((state) => {
+      mockUseRive.mockClear();
+      render(<Persona state={state} />);
+
+      expect(mockUseRive).toHaveBeenCalledWith(
+        expect.objectContaining({
+          autoplay: true,
+        })
+      );
+    });
+  });
+});

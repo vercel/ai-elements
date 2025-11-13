@@ -14,6 +14,7 @@
   "dependencies": {
     "@radix-ui/react-use-controllable-state": "^1.2.2",
     "@repo/shadcn-ui": "workspace:*",
+    "@rive-app/react-webgl2": "^4.24.0",
     "@xyflow/react": "^12.9.2",
     "ai": "^5.0.108",
     "class-variance-authority": "^0.7.1",
