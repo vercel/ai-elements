@@ -45,7 +45,7 @@ export const DocsPage = async ({ slug }: PageProps) => {
   const path = page.path;
 
   if (owner && repo && path) {
-    editOnGithubUrl = `https://github.com/${owner}/${repo}/edit/main/content/docs/${path}`;
+    editOnGithubUrl = `https://github.com/${owner}/${repo}/edit/main/apps/docs/content/docs/${path}`;
   }
 
   const protocol = process.env.VERCEL_URL ? "https" : "http";
