@@ -38,7 +38,7 @@ export const CodeBlock = ({
   const ref = useRef<HTMLPreElement>(null);
   const [isCopied, setIsCopied] = useState(false);
 
-  const copyToClipboard = async () => {
+  const copyToClipboard = useCallback(async () => {
     if (typeof window === "undefined" || !navigator?.clipboard?.writeText) {
       toast.error("Clipboard API not available");
       return;
@@ -60,26 +60,36 @@ export const CodeBlock = ({
 
       toast.error(message);
     }
-  };
+  }, []);
 
   const Icon = isCopied ? CheckIcon : CopyIcon;
 
   const CodeBlockComponent = useCallback(
     (props: { className?: string }) => (
-      <pre
-        className={cn(
-          "not-prose overflow-x-auto rounded-sm border bg-background py-3 text-sm outline-none",
-          className,
-          props.className
-        )}
-        ref={ref}
-        style={style}
-        tabIndex={tabIndex}
-      >
-        {children}
-      </pre>
+      <div className="relative flex items-center gap-2 pr-1">
+        <pre
+          className={cn(
+            "not-prose flex-1 overflow-x-auto rounded-sm border bg-background py-3 text-sm outline-none",
+            className,
+            props.className
+          )}
+          ref={ref}
+          style={style}
+          tabIndex={tabIndex}
+        >
+          {children}
+        </pre>
+        <Button
+          className={cn("shrink-0", className)}
+          onClick={copyToClipboard}
+          size="icon"
+          variant="ghost"
+        >
+          <Icon size={14} />
+        </Button>
+      </div>
     ),
-    [children, style, tabIndex, className]
+    [children, style, tabIndex, className, copyToClipboard, Icon]
   );
 
   if (!title) {
