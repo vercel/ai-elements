@@ -107,7 +107,7 @@ export const ClientNavbar = ({ pages }: { pages: NavPageItem[] }) => (
           <SheetTitle>Navigation</SheetTitle>
           <SheetDescription>Navigate to different pages.</SheetDescription>
         </SheetHeader>
-        <div className="mt-8 flex flex-col items-start gap-2">
+        <div className="mt-4 flex flex-col items-start gap-2 p-4">
           {pages.map((page) => (
             <Button key={page.href} variant="ghost">
               <a href={page.href}>{page.tooltip}</a>
