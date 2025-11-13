@@ -1,7 +1,13 @@
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
-import { DynamicCodeBlock } from "fumadocs-ui/components/dynamic-codeblock";
-import { Tab, Tabs } from "fumadocs-ui/components/tabs";
+import { codeToHtml } from "shiki";
+import {
+  CodeBlockTab,
+  CodeBlockTabs,
+  CodeBlockTabsList,
+  CodeBlockTabsTrigger,
+} from "@/components/geistdocs/code-block-tabs";
+import { CodeBlock } from "../geistdocs/code-block";
 
 type ElementsInstallerProps = {
   path?: string;
@@ -48,41 +54,41 @@ export const ElementsInstaller = async ({ path }: ElementsInstallerProps) => {
     tabs.push("manual");
   }
 
+  const highlightedCode = await codeToHtml(sourceCode, {
+    lang: "tsx",
+    themes: {
+      light: "github-light",
+      dark: "github-dark",
+    },
+  });
+
   return (
     <div className="not-prose">
-      <Tabs
-        items={["ai-elements", "shadcn", ...(sourceCode ? ["manual"] : [])]}
-      >
-        <Tab>
-          <DynamicCodeBlock
-            code={elementsCommand}
-            codeblock={{
-              className: "bg-background",
-            }}
-            lang="bash"
-          />
-        </Tab>
-        <Tab>
-          <DynamicCodeBlock
-            code={shadcnCommand}
-            codeblock={{
-              className: "bg-background",
-            }}
-            lang="bash"
-          />
-        </Tab>
+      <CodeBlockTabs defaultValue="ai-elements">
+        <CodeBlockTabsList>
+          <CodeBlockTabsTrigger value="ai-elements">
+            AI Elements
+          </CodeBlockTabsTrigger>
+          <CodeBlockTabsTrigger value="shadcn">shadcn CLI</CodeBlockTabsTrigger>
+          {sourceCode && (
+            <CodeBlockTabsTrigger value="manual">Manual</CodeBlockTabsTrigger>
+          )}
+        </CodeBlockTabsList>
+        <CodeBlockTab className="not-prose" value="ai-elements">
+          <CodeBlock className="px-4">{elementsCommand}</CodeBlock>
+        </CodeBlockTab>
+        <CodeBlockTab className="not-prose" value="shadcn">
+          <CodeBlock className="px-4">{shadcnCommand}</CodeBlock>
+        </CodeBlockTab>
         {sourceCode && (
-          <Tab>
-            <DynamicCodeBlock
-              code={sourceCode}
-              codeblock={{
-                className: "bg-background",
-              }}
-              lang="tsx"
-            />
-          </Tab>
+          <CodeBlockTab className="not-prose" value="manual">
+            <CodeBlock className="max-h-[600px] overflow-y-auto">
+              {/** biome-ignore lint/security/noDangerouslySetInnerHtml: "this is needed." */}
+              <pre dangerouslySetInnerHTML={{ __html: highlightedCode }} />
+            </CodeBlock>
+          </CodeBlockTab>
         )}
-      </Tabs>
+      </CodeBlockTabs>
     </div>
   );
 };
