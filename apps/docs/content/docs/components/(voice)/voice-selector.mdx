@@ -1,0 +1,445 @@
+---
+title: Voice Selector
+description: A composable dialog component for selecting AI voices with metadata display and search functionality.
+path: elements/components/voice-selector
+---
+
+The `VoiceSelector` component provides a flexible and composable interface for selecting AI voices. Built on shadcn/ui's Dialog and Command components, it features a searchable voice list with support for metadata display (gender, accent, age), grouping, and customizable layouts. The component includes a context provider for accessing voice selection state from any nested component.
+
+<Preview path="voice-selector" />
+
+## Installation
+
+<ElementsInstaller path="voice-selector" />
+
+## Features
+
+- Fully composable architecture with granular control components
+- Built on shadcn/ui Dialog and Command components
+- React Context API for accessing state in nested components
+- Searchable voice list with real-time filtering
+- Support for voice metadata with icons and emojis (gender icons, accent flags, age)
+- Voice grouping with separators and bullet dividers
+- Keyboard navigation support
+- Controlled and uncontrolled component patterns
+- Full TypeScript support with proper types for all components
+
+## Props
+
+### `<VoiceSelector />`
+
+Root Dialog component that provides context for all child components. Manages both voice selection and dialog open states.
+
+<TypeTable
+  type={{
+    value: {
+      description: 'The selected voice ID (controlled).',
+      type: 'string',
+      optional: true,
+    },
+    defaultValue: {
+      description: 'The default selected voice ID (uncontrolled).',
+      type: 'string',
+      optional: true,
+    },
+    onValueChange: {
+      description: 'Callback fired when the selected voice changes.',
+      type: '(value: string | undefined) => void',
+      optional: true,
+    },
+    defaultOpen: {
+      description: 'The default open state (uncontrolled).',
+      type: 'boolean',
+      optional: true,
+      default: 'false',
+    },
+    open: {
+      description: 'The open state (controlled).',
+      type: 'boolean',
+      optional: true,
+    },
+    onOpenChange: {
+      description: 'Callback fired when the open state changes.',
+      type: '(open: boolean) => void',
+      optional: true,
+    },
+    modal: {
+      description: 'Whether the dialog is modal (blocks interaction with the rest of the page).',
+      type: 'boolean',
+      optional: true,
+      default: 'true',
+    },
+    '...props': {
+      description: 'Any other props are spread to the Dialog component.',
+      type: 'React.ComponentProps<typeof Dialog>',
+    },
+  }}
+/>
+
+### `<VoiceSelectorTrigger />`
+
+Button or element that opens the voice selector dialog.
+
+<TypeTable
+  type={{
+    asChild: {
+      description: 'Change the default rendered element for the one passed as a child, merging their props and behavior.',
+      type: 'boolean',
+      optional: true,
+      default: 'false',
+    },
+    '...props': {
+      description: 'Any other props are spread to the DialogTrigger component.',
+      type: 'React.ComponentProps<typeof DialogTrigger>',
+    },
+  }}
+/>
+
+### `<VoiceSelectorContent />`
+
+Container for the Command component and voice list, rendered inside the dialog.
+
+<TypeTable
+  type={{
+    title: {
+      description: 'The title for screen readers. Hidden visually but accessible to assistive technologies.',
+      type: 'ReactNode',
+      optional: true,
+      default: '"Voice Selector"',
+    },
+    className: {
+      description: 'Additional CSS classes to apply to the dialog content.',
+      type: 'string',
+      optional: true,
+    },
+    '...props': {
+      description: 'Any other props are spread to the DialogContent component.',
+      type: 'React.ComponentProps<typeof DialogContent>',
+    },
+  }}
+/>
+
+### `<VoiceSelectorDialog />`
+
+Alternative dialog implementation using CommandDialog for a full-screen command palette style.
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any other props are spread to the CommandDialog component.',
+      type: 'React.ComponentProps<typeof CommandDialog>',
+    },
+  }}
+/>
+
+### `<VoiceSelectorInput />`
+
+Search input for filtering voices.
+
+<TypeTable
+  type={{
+    placeholder: {
+      description: 'Placeholder text for the search input.',
+      type: 'string',
+      optional: true,
+    },
+    className: {
+      description: 'Additional CSS classes to apply.',
+      type: 'string',
+      optional: true,
+    },
+    '...props': {
+      description: 'Any other props are spread to the CommandInput component.',
+      type: 'React.ComponentProps<typeof CommandInput>',
+    },
+  }}
+/>
+
+### `<VoiceSelectorList />`
+
+Scrollable container for voice items and groups.
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any other props are spread to the CommandList component.',
+      type: 'React.ComponentProps<typeof CommandList>',
+    },
+  }}
+/>
+
+### `<VoiceSelectorEmpty />`
+
+Message shown when no voices match the search query.
+
+<TypeTable
+  type={{
+    children: {
+      description: 'The message to display.',
+      type: 'ReactNode',
+      default: '"No results found."',
+    },
+    '...props': {
+      description: 'Any other props are spread to the CommandEmpty component.',
+      type: 'React.ComponentProps<typeof CommandEmpty>',
+    },
+  }}
+/>
+
+### `<VoiceSelectorGroup />`
+
+Groups related voices together with an optional heading.
+
+<TypeTable
+  type={{
+    heading: {
+      description: 'The heading text for the group.',
+      type: 'string',
+      optional: true,
+    },
+    '...props': {
+      description: 'Any other props are spread to the CommandGroup component.',
+      type: 'React.ComponentProps<typeof CommandGroup>',
+    },
+  }}
+/>
+
+### `<VoiceSelectorItem />`
+
+Selectable item representing a voice.
+
+<TypeTable
+  type={{
+    value: {
+      description: 'The unique identifier for this voice. Used for search filtering.',
+      type: 'string',
+    },
+    onSelect: {
+      description: 'Callback fired when the voice is selected.',
+      type: '(value: string) => void',
+      optional: true,
+    },
+    '...props': {
+      description: 'Any other props are spread to the CommandItem component.',
+      type: 'React.ComponentProps<typeof CommandItem>',
+    },
+  }}
+/>
+
+### `<VoiceSelectorSeparator />`
+
+Visual separator between voice groups.
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any other props are spread to the CommandSeparator component.',
+      type: 'React.ComponentProps<typeof CommandSeparator>',
+    },
+  }}
+/>
+
+### `<VoiceSelectorName />`
+
+Displays the voice name with proper styling.
+
+<TypeTable
+  type={{
+    className: {
+      description: 'Additional CSS classes to apply.',
+      type: 'string',
+      optional: true,
+    },
+    '...props': {
+      description: 'Any other props are spread to the span element.',
+      type: 'React.ComponentProps<"span">',
+    },
+  }}
+/>
+
+### `<VoiceSelectorGender />`
+
+Displays the voice gender metadata with icons from Lucide. Supports multiple gender identities with corresponding icons.
+
+<TypeTable
+  type={{
+    value: {
+      description: 'The gender value that determines which icon to display. Supported values: "male" (Mars), "female" (Venus), "transgender", "androgyne", "non-binary", "intersex". Defaults to a small circle if no value matches.',
+      type: '"male" | "female" | "transgender" | "androgyne" | "non-binary" | "intersex"',
+      optional: true,
+    },
+    className: {
+      description: 'Additional CSS classes to apply.',
+      type: 'string',
+      optional: true,
+    },
+    children: {
+      description: 'Override the icon with custom content.',
+      type: 'ReactNode',
+      optional: true,
+    },
+    '...props': {
+      description: 'Any other props are spread to the span element.',
+      type: 'React.ComponentProps<"span">',
+    },
+  }}
+/>
+
+### `<VoiceSelectorAccent />`
+
+Displays the voice accent metadata with emoji flags representing different countries/regions.
+
+<TypeTable
+  type={{
+    value: {
+      description: 'The accent value that determines which flag emoji to display. Supports 27 different accents including: "american" 🇺🇸, "british" 🇬🇧, "australian" 🇦🇺, "canadian" 🇨🇦, "irish" 🇮🇪, "scottish" 🏴󠁧󠁢󠁳󠁣󠁴󠁿, "indian" 🇮🇳, "south-african" 🇿🇦, "new-zealand" 🇳🇿, "spanish" 🇪🇸, "french" 🇫🇷, "german" 🇩🇪, "italian" 🇮🇹, "portuguese" 🇵🇹, "brazilian" 🇧🇷, "mexican" 🇲🇽, "argentinian" 🇦🇷, "japanese" 🇯🇵, "chinese" 🇨🇳, "korean" 🇰🇷, "russian" 🇷🇺, "arabic" 🇸🇦, "dutch" 🇳🇱, "swedish" 🇸🇪, "norwegian" 🇳🇴, "danish" 🇩🇰, "finnish" 🇫🇮, "polish" 🇵🇱, "turkish" 🇹🇷, "greek" 🇬🇷. Also accepts any custom string value.',
+      type: '"american" | "british" | "australian" | "canadian" | "irish" | "scottish" | "indian" | "south-african" | "new-zealand" | "spanish" | "french" | "german" | "italian" | "portuguese" | "brazilian" | "mexican" | "argentinian" | "japanese" | "chinese" | "korean" | "russian" | "arabic" | "dutch" | "swedish" | "norwegian" | "danish" | "finnish" | "polish" | "turkish" | "greek" | string',
+      optional: true,
+    },
+    className: {
+      description: 'Additional CSS classes to apply.',
+      type: 'string',
+      optional: true,
+    },
+    children: {
+      description: 'Override the flag emoji with custom content.',
+      type: 'ReactNode',
+      optional: true,
+    },
+    '...props': {
+      description: 'Any other props are spread to the span element.',
+      type: 'React.ComponentProps<"span">',
+    },
+  }}
+/>
+
+### `<VoiceSelectorAge />`
+
+Displays the voice age metadata with muted styling and tabular numbers for consistent alignment.
+
+<TypeTable
+  type={{
+    className: {
+      description: 'Additional CSS classes to apply.',
+      type: 'string',
+      optional: true,
+    },
+    '...props': {
+      description: 'Any other props are spread to the span element.',
+      type: 'React.ComponentProps<"span">',
+    },
+  }}
+/>
+
+### `<VoiceSelectorDescription />`
+
+Displays a description for the voice with muted styling.
+
+<TypeTable
+  type={{
+    className: {
+      description: 'Additional CSS classes to apply.',
+      type: 'string',
+      optional: true,
+    },
+    '...props': {
+      description: 'Any other props are spread to the span element.',
+      type: 'React.ComponentProps<"span">',
+    },
+  }}
+/>
+
+### `<VoiceSelectorAttributes />`
+
+Container for grouping voice attributes (gender, accent, age) together. Use with `VoiceSelectorBullet` for separation.
+
+<TypeTable
+  type={{
+    className: {
+      description: 'Additional CSS classes to apply.',
+      type: 'string',
+      optional: true,
+    },
+    '...props': {
+      description: 'Any other props are spread to the div element.',
+      type: 'React.ComponentProps<"div">',
+    },
+  }}
+/>
+
+### `<VoiceSelectorBullet />`
+
+Displays a bullet separator (•) between voice attributes. Hidden from screen readers via `aria-hidden`.
+
+<TypeTable
+  type={{
+    className: {
+      description: 'Additional CSS classes to apply.',
+      type: 'string',
+      optional: true,
+    },
+    '...props': {
+      description: 'Any other props are spread to the span element.',
+      type: 'React.ComponentProps<"span">',
+    },
+  }}
+/>
+
+### `<VoiceSelectorShortcut />`
+
+Displays keyboard shortcuts for voice items.
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any other props are spread to the CommandShortcut component.',
+      type: 'React.ComponentProps<typeof CommandShortcut>',
+    },
+  }}
+/>
+
+## Hooks
+
+### `useVoiceSelector()`
+
+A custom hook for accessing the voice selector context. This hook allows you to access and control the voice selection state from any component nested within `VoiceSelector`.
+
+```tsx
+import { useVoiceSelector } from "@repo/elements/voice-selector";
+
+export default function CustomVoiceDisplay() {
+  const { value, setValue, open, setOpen } = useVoiceSelector();
+
+  return (
+    <div>
+      <p>Selected voice: {value ?? "None"}</p>
+      <button onClick={() => setOpen(!open)}>
+        Toggle Dialog
+      </button>
+    </div>
+  );
+}
+```
+
+#### Return Value
+
+<TypeTable
+  type={{
+    value: {
+      description: 'The currently selected voice ID.',
+      type: 'string | undefined',
+    },
+    setValue: {
+      description: 'Function to update the selected voice ID.',
+      type: '(value: string | undefined) => void',
+    },
+    open: {
+      description: 'Whether the dialog is currently open.',
+      type: 'boolean',
+    },
+    setOpen: {
+      description: 'Function to control the dialog open state.',
+      type: '(open: boolean) => void',
+    },
+  }}
+/>
