@@ -1,6 +1,6 @@
 import "@/app/global.css";
 import { cn } from "@repo/shadcn-ui/lib/utils";
-import { Navbar } from "@/components/geistdocs/navbar";
+import { AiSdkNav } from "@/components/custom/navbar";
 import { GeistdocsProvider } from "@/components/geistdocs/provider";
 import { mono, sans } from "@/lib/geistdocs/fonts";
 
@@ -11,12 +11,8 @@ const Layout = ({ children }: LayoutProps<"/">) => (
     suppressHydrationWarning
   >
     <body className="flex min-h-screen flex-col">
-      <GeistdocsProvider basePath="/elements">
-        <Navbar items={[]} suggestions={[]}>
-          <span>Logo</span>
-        </Navbar>
-        {children}
-      </GeistdocsProvider>
+      <AiSdkNav />
+      <GeistdocsProvider basePath="/elements">{children}</GeistdocsProvider>
     </body>
   </html>
 );

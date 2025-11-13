@@ -49,7 +49,7 @@ const LogoGithub = () => (
 );
 
 export const ClientNavbar = ({ pages }: { pages: NavPageItem[] }) => (
-  <div className="fixed top-0 right-0 left-0 z-40 flex items-center justify-between bg-background/80 py-2.5 backdrop-blur-sm">
+  <div className="sticky top-0 flex items-center justify-between bg-background/80 py-2.5 backdrop-blur-sm">
     <div className="flex select-none flex-row items-center">
       <div className="flex shrink-0 flex-row items-center gap-2">
         <HomeLinks />
