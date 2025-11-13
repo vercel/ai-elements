@@ -1,5 +1,7 @@
 "use client";
 
+import { Button } from "@repo/shadcn-ui/components/ui/button";
+import { Kbd } from "@repo/shadcn-ui/components/ui/kbd";
 import { useDocsSearch } from "fumadocs-core/search/client";
 import {
   SearchDialog as FumadocsSearchDialog,
@@ -14,8 +16,6 @@ import {
 } from "fumadocs-ui/components/dialog/search";
 import { useI18n } from "fumadocs-ui/contexts/i18n";
 import { useSearchContext } from "fumadocs-ui/contexts/search";
-import { Button } from "../ui/button";
-import { Kbd } from "../ui/kbd";
 
 export const SearchDialog = (props: SharedProps) => {
   const { locale } = useI18n();

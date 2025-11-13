@@ -1,5 +1,6 @@
 "use client";
 
+import { cn } from "@repo/shadcn-ui/lib/utils";
 import type {
   Folder as FolderType,
   Item as ItemType,
@@ -9,7 +10,6 @@ import { ExternalLinkIcon } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
-import { cn } from "@/lib/utils";
 
 type FolderProps = {
   item: FolderType;

@@ -1,8 +1,8 @@
 "use client";
 
+import { Button } from "@repo/shadcn-ui/components/ui/button";
 import { MoonIcon, SunIcon } from "lucide-react";
 import { useTheme } from "next-themes";
-import { Button } from "../ui/button";
 
 export const ThemeToggle = () => {
   const { resolvedTheme, setTheme } = useTheme();

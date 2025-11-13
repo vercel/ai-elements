@@ -1,11 +1,11 @@
 "use client";
 
+import { Separator } from "@repo/shadcn-ui/components/ui/separator";
+import { useIsMobile } from "@repo/shadcn-ui/hooks/use-mobile";
+import { cn } from "@repo/shadcn-ui/lib/utils";
 import { PageTOC, PageTOCItems } from "fumadocs-ui/layouts/docs/page";
 import type { ReactNode } from "react";
 import { useChatContext } from "@/hooks/geistdocs/use-chat";
-import { useIsMobile } from "@/hooks/use-mobile";
-import { cn } from "@/lib/utils";
-import { Separator } from "../ui/separator";
 
 type TableOfContentsProps = {
   children: ReactNode;

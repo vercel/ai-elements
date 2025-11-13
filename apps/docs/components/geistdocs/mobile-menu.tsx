@@ -1,8 +1,8 @@
 "use client";
 
+import { Button } from "@repo/shadcn-ui/components/ui/button";
 import { useSidebar } from "fumadocs-ui/contexts/sidebar";
 import { MenuIcon } from "lucide-react";
-import { Button } from "../ui/button";
 
 export const MobileMenu = () => {
   const { setOpen } = useSidebar();

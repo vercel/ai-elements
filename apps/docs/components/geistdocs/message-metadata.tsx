@@ -1,14 +1,14 @@
-import { isToolUIPart } from "ai";
-import { BookmarkIcon } from "lucide-react";
-import type { MyUIMessage } from "@/app/api/chat/types";
-import { Shimmer } from "../ai-elements/shimmer";
+import { Shimmer } from "@repo/elements/shimmer";
 import {
   Source,
   Sources,
   SourcesContent,
   SourcesTrigger,
-} from "../ai-elements/sources";
-import { Spinner } from "../ui/spinner";
+} from "@repo/elements/sources";
+import { Spinner } from "@repo/shadcn-ui/components/ui/spinner";
+import { isToolUIPart } from "ai";
+import { BookmarkIcon } from "lucide-react";
+import type { MyUIMessage } from "@/app/api/chat/types";
 
 type MessageMetadataProps = {
   parts: MyUIMessage["parts"];

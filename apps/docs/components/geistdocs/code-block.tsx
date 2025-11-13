@@ -1,5 +1,13 @@
 "use client";
 
+import { Button } from "@repo/shadcn-ui/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@repo/shadcn-ui/components/ui/card";
+import { cn } from "@repo/shadcn-ui/lib/utils";
 import { CheckIcon, CopyIcon } from "lucide-react";
 import {
   type CSSProperties,
@@ -9,9 +17,6 @@ import {
   useState,
 } from "react";
 import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
 
 type CodeBlockProps = {
   children: ReactNode;

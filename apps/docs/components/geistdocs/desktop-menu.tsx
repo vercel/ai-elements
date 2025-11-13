@@ -1,13 +1,13 @@
 "use client";
 
-import Link from "next/link";
 import {
   NavigationMenu,
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
-} from "@/components/ui/navigation-menu";
-import { useIsMobile } from "@/hooks/use-mobile";
+} from "@repo/shadcn-ui/components/ui/navigation-menu";
+import { useIsMobile } from "@repo/shadcn-ui/hooks/use-mobile";
+import Link from "next/link";
 
 type DesktopMenuProps = {
   items: { label: string; href: string }[];

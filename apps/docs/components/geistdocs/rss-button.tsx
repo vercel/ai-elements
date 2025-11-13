@@ -1,5 +1,5 @@
+import { Button } from "@repo/shadcn-ui/components/ui/button";
 import { RssIcon } from "lucide-react";
-import { Button } from "../ui/button";
 
 export const RSSButton = () => (
   <Button asChild size="icon-sm" type="button" variant="ghost">

@@ -2,22 +2,16 @@
 
 import type { UIMessage } from "@ai-sdk/react";
 import { useChat } from "@ai-sdk/react";
-import { useLiveQuery } from "dexie-react-hooks";
-import { ChevronRightIcon, MessagesSquareIcon, Trash } from "lucide-react";
-import { Portal } from "radix-ui";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { toast } from "sonner";
-import type { MyUIMessage } from "@/app/api/chat/types";
 import {
   Conversation,
   ConversationContent,
   ConversationScrollButton,
-} from "@/components/ai-elements/conversation";
+} from "@repo/elements/conversation";
 import {
   Message,
   MessageContent,
   MessageResponse,
-} from "@/components/ai-elements/message";
+} from "@repo/elements/message";
 import {
   PromptInput,
   PromptInputAttachment,
@@ -28,18 +22,32 @@ import {
   PromptInputProvider,
   PromptInputSubmit,
   PromptInputTextarea,
-} from "@/components/ai-elements/prompt-input";
-import { Suggestion, Suggestions } from "@/components/ai-elements/suggestion";
-import { Button } from "@/components/ui/button";
-import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
+} from "@repo/elements/prompt-input";
+import { Suggestion, Suggestions } from "@repo/elements/suggestion";
+import { Button } from "@repo/shadcn-ui/components/ui/button";
+import { ButtonGroup } from "@repo/shadcn-ui/components/ui/button-group";
+import {
+  Drawer,
+  DrawerContent,
+  DrawerTrigger,
+} from "@repo/shadcn-ui/components/ui/drawer";
+import { Kbd, KbdGroup } from "@repo/shadcn-ui/components/ui/kbd";
+import { Spinner } from "@repo/shadcn-ui/components/ui/spinner";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@repo/shadcn-ui/components/ui/tooltip";
+import { useIsMobile } from "@repo/shadcn-ui/hooks/use-mobile";
+import { cn } from "@repo/shadcn-ui/lib/utils";
+import { useLiveQuery } from "dexie-react-hooks";
+import { ChevronRightIcon, MessagesSquareIcon, Trash } from "lucide-react";
+import { Portal } from "radix-ui";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { toast } from "sonner";
+import type { MyUIMessage } from "@/app/api/chat/types";
 import { useChatContext } from "@/hooks/geistdocs/use-chat";
-import { useIsMobile } from "@/hooks/use-mobile";
-import { db } from "@/lib/db";
-import { cn } from "@/lib/utils";
-import { ButtonGroup } from "../ui/button-group";
-import { Kbd, KbdGroup } from "../ui/kbd";
-import { Spinner } from "../ui/spinner";
-import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
+import { db } from "@/lib/geistdocs/db";
 import { CopyChat } from "./copy-chat";
 import { MessageMetadata } from "./message-metadata";
 

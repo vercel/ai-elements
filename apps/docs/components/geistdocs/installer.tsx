@@ -1,16 +1,16 @@
 "use client";
 
-import { track } from "@vercel/analytics";
-import { CheckIcon, CopyIcon } from "lucide-react";
-import { useState } from "react";
-import { toast } from "sonner";
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupButton,
   InputGroupInput,
   InputGroupText,
-} from "@/components/ui/input-group";
+} from "@repo/shadcn-ui/components/ui/input-group";
+import { track } from "@vercel/analytics";
+import { CheckIcon, CopyIcon } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
 
 const COPY_TIMEOUT = 2000;
 

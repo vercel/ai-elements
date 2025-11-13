@@ -1,6 +1,14 @@
 "use client";
 
 import { SiGithub, SiMarkdown } from "@icons-pack/react-simple-icons";
+import { Button } from "@repo/shadcn-ui/components/ui/button";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@repo/shadcn-ui/components/ui/popover";
+import { Textarea } from "@repo/shadcn-ui/components/ui/textarea";
+import { cn } from "@repo/shadcn-ui/lib/utils";
 import {
   AngryIcon,
   FrownIcon,
@@ -11,10 +19,6 @@ import {
 import { usePathname } from "next/navigation";
 import { type SyntheticEvent, useEffect, useState, useTransition } from "react";
 import { discuss } from "@/app/actions/discuss";
-import { cn } from "@/lib/utils";
-import { Button } from "../ui/button";
-import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
-import { Textarea } from "../ui/textarea";
 
 const emotions = [
   {

@@ -1,6 +1,6 @@
 import { DocsLayout as FumadocsDocsLayout } from "fumadocs-ui/layouts/docs";
 import { Folder, Item, Separator } from "@/components/geistdocs/sidebar";
-import { source } from "@/lib/source";
+import { source } from "@/lib/geistdocs/source";
 
 export const DocsLayout = ({
   children,

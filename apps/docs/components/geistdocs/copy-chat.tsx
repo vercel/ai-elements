@@ -1,13 +1,13 @@
-import type { UIMessage } from "ai";
-import { CheckIcon, CopyIcon } from "lucide-react";
-import { useState } from "react";
-import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
+import { Button } from "@repo/shadcn-ui/components/ui/button";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
+} from "@repo/shadcn-ui/components/ui/tooltip";
+import type { UIMessage } from "ai";
+import { CheckIcon, CopyIcon } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
 
 export const CopyChat = ({ messages }: { messages: UIMessage[] }) => {
   const [copied, setCopied] = useState(false);

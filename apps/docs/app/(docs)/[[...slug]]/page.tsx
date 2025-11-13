@@ -4,7 +4,7 @@ import {
   generateStaticPageParams,
 } from "@/components/geistdocs/docs-page";
 
-const Page = async (props: PageProps<"/docs/[[...slug]]">) => {
+const Page = async (props: PageProps<"/[[...slug]]">) => {
   const params = await props.params;
 
   return <DocsPage slug={params.slug} />;
@@ -12,9 +12,7 @@ const Page = async (props: PageProps<"/docs/[[...slug]]">) => {
 
 export const generateStaticParams = generateStaticPageParams;
 
-export const generateMetadata = async (
-  props: PageProps<"/docs/[[...slug]]">
-) => {
+export const generateMetadata = async (props: PageProps<"/[[...slug]]">) => {
   const params = await props.params;
 
   return generatePageMetadata(params.slug);

@@ -4,7 +4,7 @@ import { remarkInclude } from "fumadocs-mdx/config";
 import { remark } from "remark";
 import remarkGfm from "remark-gfm";
 import remarkMdx from "remark-mdx";
-import type { source } from "@/lib/source";
+import type { source } from "@/lib/geistdocs/source";
 
 const processor = remark()
   .use(remarkMdx)

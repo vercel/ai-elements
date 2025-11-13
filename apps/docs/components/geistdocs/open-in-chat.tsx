@@ -1,4 +1,3 @@
-import { ExternalLinkIcon } from "lucide-react";
 import {
   OpenIn,
   OpenInChatGPT,
@@ -10,7 +9,8 @@ import {
   OpenInT3,
   OpenInTrigger,
   OpenInv0,
-} from "@/components/ai-elements/open-in-chat";
+} from "@repo/elements/open-in-chat";
+import { ExternalLinkIcon } from "lucide-react";
 
 type OpenInChatProps = {
   query: string;

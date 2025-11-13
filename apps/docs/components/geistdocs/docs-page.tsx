@@ -9,7 +9,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import type { CSSProperties } from "react";
 import { TableOfContents } from "@/components/geistdocs/toc";
-import { getLLMText, getPageImage, source } from "@/lib/source";
+import { getLLMText, getPageImage, source } from "@/lib/geistdocs/source";
 import { getMDXComponents } from "@/mdx-components";
 import { AskAI } from "./ask-ai";
 import { CopyPage } from "./copy-page";

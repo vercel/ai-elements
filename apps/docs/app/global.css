@@ -2,6 +2,7 @@
 @import "fumadocs-ui/css/shadcn.css";
 @import "fumadocs-ui/css/preset.css";
 @import "tw-animate-css";
+@import "./styles/geistdocs.css";
 
 @source "../**/*.{ts,tsx,mdx}";
 @source "../node_modules/@repo/*/**/*.{ts,tsx}";
@@ -127,51 +128,4 @@
   body {
     @apply bg-background text-foreground;
   }
-}
-
-/* This layer is by next-forge */
-@layer base {
-  ::after,
-  ::before,
-  ::backdrop,
-  ::file-selector-button {
-    @apply border-border;
-  }
-  * {
-    @apply min-w-0;
-  }
-  html {
-    text-rendering: optimizelegibility;
-  }
-  body {
-    @apply min-h-dvh;
-  }
-  input::placeholder,
-  textarea::placeholder {
-    @apply text-muted-foreground;
-  }
-  button:not(:disabled),
-  [role="button"]:not(:disabled) {
-    @apply cursor-pointer;
-  }
-}
-
-/* Fix Fumadocs theme toggle icons */
-[data-theme-toggle] svg {
-  @apply fill-none;
-}
-
-.prose h1,
-.prose h2,
-.prose h3,
-.prose h4,
-.prose h5,
-.prose h6 {
-  @apply font-semibold tracking-tight;
-}
-
-:root {
-  --fd-nav-height: 57px;
-  --fd-page-width: 100%;
-  --fd-layout-width: 100%;
 }
