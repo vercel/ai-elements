@@ -1,3 +1,5 @@
+import type { CSSProperties } from "react";
+
 export const Banner = () => (
   <div className="tracking-[0.004em] md:sticky md:top-[57px] md:z-50">
     <aside
@@ -40,12 +42,14 @@ export const Banner = () => (
             className="-my-px h-6 cursor-pointer rounded-xs border-none bg-transparent px-0 py-1 font-medium font-sans text-blue-1000 underline decoration-blue-400 underline-offset-[5px] outline-none hover:text-blue-900 hover:decoration-blue-500 focus-visible:shadow-focus-ring"
             href="/docs/introduction/announcing-ai-sdk-6-beta"
             rel="noopener"
-            style={{
-              color: "oklch(26.67% 0.1099 254.34)",
-              textDecorationColor: "oklch(91.58% 0.0473 245.11621922481282)",
-              "--tw-shadow":
-                "0 0 0 2px var(--ds-background-100), 0 0 0 4px var(--banner-focus-color) !important",
-            }}
+            style={
+              {
+                color: "oklch(26.67% 0.1099 254.34)",
+                textDecorationColor: "oklch(91.58% 0.0473 245.11621922481282)",
+                "--tw-shadow":
+                  "0 0 0 2px var(--ds-background-100), 0 0 0 4px var(--banner-focus-color) !important",
+              } as CSSProperties
+            }
             target="_blank"
           >
             Learn more
