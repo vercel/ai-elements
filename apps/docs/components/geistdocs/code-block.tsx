@@ -102,7 +102,7 @@ export const CodeBlock = ({
         <div
           className="size-3.5 shrink-0"
           // biome-ignore lint/security/noDangerouslySetInnerHtml: "Required for icon prop."
-          dangerouslySetInnerHTML={{ __html: icon as TrustedHTML }}
+          dangerouslySetInnerHTML={{ __html: icon as unknown as TrustedHTML }}
         />
         <CardTitle className="flex-1 font-mono font-normal text-sm tracking-tight">
           {title}
