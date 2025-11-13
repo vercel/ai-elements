@@ -84,10 +84,10 @@ export const Preview = async ({ path, className }: ComponentPreviewProps) => {
         <CodeBlockTabsTrigger value="preview">Preview</CodeBlockTabsTrigger>
         <CodeBlockTabsTrigger value="code">Code</CodeBlockTabsTrigger>
       </CodeBlockTabsList>
-      <CodeBlockTab className={cn("not-prose p-0", className)} value="preview">
+      <CodeBlockTab className="not-prose p-0" value="preview">
         <ResizablePanelGroup direction="horizontal">
           <ResizablePanel defaultSize={100}>
-            <div className="h-[600px] overflow-auto p-4">
+            <div className={cn("h-[600px] overflow-auto p-4", className)}>
               <Component />
             </div>
           </ResizablePanel>
