@@ -109,7 +109,7 @@ export const ClientNavbar = ({ pages }: { pages: NavPageItem[] }) => (
         </SheetHeader>
         <div className="mt-4 flex flex-col items-start gap-2 p-4">
           {pages.map((page) => (
-            <Button key={page.href} variant="ghost">
+            <Button asChild className="w-full" key={page.href} variant="ghost">
               <a href={page.href}>{page.tooltip}</a>
             </Button>
           ))}
