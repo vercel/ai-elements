@@ -1,6 +1,12 @@
 import { TypeTable } from "fumadocs-ui/components/type-table";
 import defaultMdxComponents from "fumadocs-ui/mdx";
 import type { MDXComponents } from "mdx/types";
+import {
+  Callout,
+  CalloutContainer,
+  CalloutDescription,
+  CalloutTitle,
+} from "./callout";
 import { CodeBlock } from "./code-block";
 import {
   CodeBlockTab,
@@ -21,5 +27,11 @@ export const getMDXComponents = (
   CodeBlockTabsList,
   CodeBlockTabsTrigger,
   CodeBlockTab,
+
   TypeTable,
+
+  Callout,
+  CalloutContainer,
+  CalloutTitle,
+  CalloutDescription,
 });
