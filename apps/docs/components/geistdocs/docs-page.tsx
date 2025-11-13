@@ -8,11 +8,11 @@ import {
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import type { CSSProperties } from "react";
-import { ElementsDemo } from "@/components/elements-demo";
-import { ElementsInstaller } from "@/components/elements-installer";
+import { ElementsDemo } from "@/components/custom/elements-demo";
+import { ElementsInstaller } from "@/components/custom/elements-installer";
+import { Preview } from "@/components/custom/preview";
 import { getMDXComponents } from "@/components/geistdocs/mdx-components";
 import { TableOfContents } from "@/components/geistdocs/toc";
-import { Preview } from "@/components/preview";
 import { getLLMText, getPageImage, source } from "@/lib/geistdocs/source";
 import { AskAI } from "./ask-ai";
 import { CopyPage } from "./copy-page";

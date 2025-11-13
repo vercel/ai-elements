@@ -13,7 +13,7 @@ import {
   CodeBlockTabsList,
   CodeBlockTabsTrigger,
 } from "@/components/geistdocs/code-block-tabs";
-import { CodeBlock } from "./geistdocs/code-block";
+import { CodeBlock } from "../geistdocs/code-block";
 
 type ComponentPreviewProps = {
   path: string;
