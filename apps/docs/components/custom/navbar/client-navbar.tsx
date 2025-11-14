@@ -11,6 +11,7 @@ import {
 } from "@repo/shadcn-ui/components/ui/sheet";
 import { ExternalLinkIcon, MenuIcon } from "lucide-react";
 import Link from "next/link";
+import { ThemeToggle } from "@/components/geistdocs/theme-toggle";
 import { CustomSearch } from "./custom-search";
 import { HomeLinks } from "./home-links";
 
@@ -49,7 +50,7 @@ const LogoGithub = () => (
 );
 
 export const ClientNavbar = ({ pages }: { pages: NavPageItem[] }) => (
-  <div className="fixed top-0 right-0 left-0 z-40 flex items-center justify-between bg-background/80 py-2.5 backdrop-blur-sm">
+  <div className="sticky top-0 z-40 flex items-center justify-between border-b bg-background py-2.5">
     <div className="flex select-none flex-row items-center">
       <div className="flex shrink-0 flex-row items-center gap-2">
         <HomeLinks />
@@ -107,9 +108,9 @@ export const ClientNavbar = ({ pages }: { pages: NavPageItem[] }) => (
           <SheetTitle>Navigation</SheetTitle>
           <SheetDescription>Navigate to different pages.</SheetDescription>
         </SheetHeader>
-        <div className="mt-8 flex flex-col items-start gap-2">
+        <div className="mt-4 flex flex-col items-start gap-2 p-4">
           {pages.map((page) => (
-            <Button key={page.href} variant="ghost">
+            <Button asChild className="w-full" key={page.href} variant="ghost">
               <a href={page.href}>{page.tooltip}</a>
             </Button>
           ))}
@@ -119,6 +120,7 @@ export const ClientNavbar = ({ pages }: { pages: NavPageItem[] }) => (
 
     <div className="hidden lg:flex">
       <div className="hidden flex-row items-center justify-end gap-2 px-6 md:px-4 lg:col-span-1 lg:col-start-2 xl:flex">
+        <ThemeToggle />
         <CustomSearch />
         <Button
           aria-label="Feedback"

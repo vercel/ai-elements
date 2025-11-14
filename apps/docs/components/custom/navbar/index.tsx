@@ -1,6 +1,7 @@
 "use client";
 
 import { Suspense } from "react";
+import { Banner } from "./banner";
 import { ClientNavbar } from "./client-navbar";
 import { ElementsButton } from "./elements-button";
 
@@ -63,5 +64,6 @@ const SuspendedNavbar = () => {
 export const AiSdkNav = () => (
   <Suspense fallback={<ClientNavbar pages={PAGES} />}>
     <SuspendedNavbar />
+    <Banner />
   </Suspense>
 );

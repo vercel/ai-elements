@@ -1,7 +1,12 @@
 import ChatGPTExample from "@repo/examples/demo-chatgpt";
 import ClaudeExample from "@repo/examples/demo-claude";
 import GrokExample from "@repo/examples/demo-grok";
-import { Tab, Tabs } from "fumadocs-ui/components/tabs";
+import {
+  CodeBlockTab,
+  CodeBlockTabs,
+  CodeBlockTabsList,
+  CodeBlockTabsTrigger,
+} from "@/components/geistdocs/code-block-tabs";
 
 const tabs = [
   {
@@ -22,14 +27,22 @@ const tabs = [
 ];
 
 export const ElementsDemo = () => (
-  <Tabs className="w-full" items={tabs.map((tab) => tab.name)}>
+  <CodeBlockTabs defaultValue={tabs[0].name}>
+    <CodeBlockTabsList>
+      {tabs.map((tab) => (
+        <CodeBlockTabsTrigger key={tab.name} value={tab.name}>
+          {tab.name}
+        </CodeBlockTabsTrigger>
+      ))}
+    </CodeBlockTabsList>
     {tabs.map((tab) => (
-      <Tab
+      <CodeBlockTab
         className="not-prose not-fumadocs-codeblock h-[600px] overflow-y-auto p-0"
         key={tab.name}
+        value={tab.name}
       >
         {tab.content}
-      </Tab>
+      </CodeBlockTab>
     ))}
-  </Tabs>
+  </CodeBlockTabs>
 );
