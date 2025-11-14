@@ -9,7 +9,7 @@ const mockUseStateMachineInput = vi.fn();
 const MockRiveComponent = vi.fn(() => <div data-testid="rive-component" />);
 
 vi.mock("@rive-app/react-webgl2", () => ({
-  useRive: () => mockUseRive(),
+  useRive: (params: any) => mockUseRive(params),
   useStateMachineInput: (rive: any, stateMachine: string, input: string) =>
     mockUseStateMachineInput(rive, stateMachine, input),
 }));
@@ -46,7 +46,7 @@ describe("Persona", () => {
 
     expect(mockUseRive).toHaveBeenCalledWith(
       expect.objectContaining({
-        src: "/orb.riv",
+        src: "https://ejiidnob33g9ap1r.public.blob.vercel-storage.com/orb-1.2.riv",
         stateMachines: "default",
         autoplay: true,
       })
@@ -58,7 +58,7 @@ describe("Persona", () => {
 
     expect(mockUseRive).toHaveBeenCalledWith(
       expect.objectContaining({
-        src: "/obsidian.riv",
+        src: "https://ejiidnob33g9ap1r.public.blob.vercel-storage.com/obsidian-2.0.riv",
       })
     );
   });
@@ -68,7 +68,7 @@ describe("Persona", () => {
 
     expect(mockUseRive).toHaveBeenCalledWith(
       expect.objectContaining({
-        src: "/mana.riv",
+        src: "https://ejiidnob33g9ap1r.public.blob.vercel-storage.com/mana-2.0.rev",
       })
     );
   });
@@ -78,7 +78,7 @@ describe("Persona", () => {
 
     expect(mockUseRive).toHaveBeenCalledWith(
       expect.objectContaining({
-        src: "/orb.riv",
+        src: "https://ejiidnob33g9ap1r.public.blob.vercel-storage.com/orb-1.2.riv",
       })
     );
   });
@@ -88,7 +88,7 @@ describe("Persona", () => {
 
     expect(mockUseRive).toHaveBeenCalledWith(
       expect.objectContaining({
-        src: "/halo.riv",
+        src: "https://ejiidnob33g9ap1r.public.blob.vercel-storage.com/halo-2.0.riv",
       })
     );
   });
@@ -98,7 +98,7 @@ describe("Persona", () => {
 
     expect(mockUseRive).toHaveBeenCalledWith(
       expect.objectContaining({
-        src: "/glint.riv",
+        src: "https://ejiidnob33g9ap1r.public.blob.vercel-storage.com/glint-2.0.riv",
       })
     );
   });
@@ -108,7 +108,7 @@ describe("Persona", () => {
 
     expect(mockUseRive).toHaveBeenCalledWith(
       expect.objectContaining({
-        src: "/command.riv",
+        src: "https://ejiidnob33g9ap1r.public.blob.vercel-storage.com/command-2.0.riv",
       })
     );
   });
@@ -118,7 +118,7 @@ describe("Persona", () => {
 
     expect(mockUseRive).toHaveBeenCalledWith(
       expect.objectContaining({
-        src: "/pal.riv",
+        src: "https://ejiidnob33g9ap1r.public.blob.vercel-storage.com/pal-1.0.0.riv",
       })
     );
   });
@@ -484,7 +484,7 @@ describe("Persona - Integration", () => {
     // Check variant
     expect(mockUseRive).toHaveBeenCalledWith(
       expect.objectContaining({
-        src: "/halo.riv",
+        src: "https://ejiidnob33g9ap1r.public.blob.vercel-storage.com/halo-2.0.riv",
       })
     );
 
