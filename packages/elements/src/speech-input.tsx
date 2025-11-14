@@ -2,7 +2,7 @@
 
 import { Button } from "@repo/shadcn-ui/components/ui/button";
 import { cn } from "@repo/shadcn-ui/lib/utils";
-import { MicIcon } from "lucide-react";
+import { MicIcon, SquareIcon } from "lucide-react";
 import {
   type ComponentProps,
   useCallback,
@@ -146,17 +146,39 @@ export const SpeechInput = ({
   }, [recognition, isListening]);
 
   return (
-    <Button
-      className={cn(
-        "relative transition-all duration-200",
-        isListening && "animate-pulse bg-accent text-accent-foreground",
-        className
-      )}
-      disabled={!recognition}
-      onClick={toggleListening}
-      {...props}
-    >
-      <MicIcon className="size-4" />
-    </Button>
+    <div className="relative inline-flex items-center justify-center">
+      {/* Animated pulse rings */}
+      {isListening &&
+        [0, 1, 2].map((index) => (
+          <div
+            className="absolute inset-0 animate-ping rounded-full border-2 border-red-400/30"
+            key={index}
+            style={{
+              animationDelay: `${index * 0.3}s`,
+              animationDuration: "2s",
+            }}
+          />
+        ))}
+
+      {/* Main record button */}
+      <Button
+        className={cn(
+          "relative z-10 rounded-full transition-all duration-300",
+          isListening
+            ? "bg-destructive text-white hover:bg-destructive/80 hover:text-white"
+            : "bg-primary text-primary-foreground hover:bg-primary/80 hover:text-primary-foreground",
+          className
+        )}
+        disabled={!recognition}
+        onClick={toggleListening}
+        {...props}
+      >
+        {isListening ? (
+          <SquareIcon className="size-4" />
+        ) : (
+          <MicIcon className="size-4" />
+        )}
+      </Button>
+    </div>
   );
 };
