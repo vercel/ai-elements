@@ -1,14 +1,18 @@
+import { cn } from "@repo/shadcn-ui/lib/utils";
 import type { CSSProperties } from "react";
 
 export const Banner = () => (
   <div className="hidden tracking-[0.004em] md:sticky md:top-[57px] md:z-50 xl:block">
     <aside
-      className="-translate-y-px z-30 flex min-h-[40px] items-center justify-center gap-x-2 border-y py-2 text-[14px] leading-5"
-      style={{
-        borderColor: "oklch(91.58% 0.0473 245.11621922481282)",
-        backgroundColor: "oklch(97.32% 0.0141 251.56)",
-        color: "oklch(53.18% 0.2399 256.9900584162342)",
-      }}
+      className={cn(
+        "-translate-y-px z-30 flex min-h-[40px] items-center justify-center gap-x-2 border-y py-2 text-[14px] leading-5",
+        "border-[oklch(91.58%_0.0473_245.11621922481282)]",
+        "bg-[oklch(97.32%_0.0141_251.56)]",
+        "text-[oklch(53.18%_0.2399_256.9900584162342)]",
+        "dark:border-[oklch(34.1%_0.121_254.74)]",
+        "dark:bg-[oklch(22.17%_0.069_259.89)]",
+        "dark:text-[oklch(91.58%_0.0473_245.11621922481282)]"
+      )}
     >
       <div className="flex w-full flex-col gap-2 px-6 md:flex-row md:items-center md:justify-center">
         <div className="flex items-center gap-2">
@@ -39,12 +43,15 @@ export const Banner = () => (
         </div>
         <div className="ml-6 md:ml-0">
           <a
-            className="-my-px h-6 cursor-pointer rounded-xs border-none bg-transparent px-0 py-1 font-medium font-sans text-blue-1000 underline decoration-blue-400 underline-offset-[5px] outline-none hover:text-blue-900 hover:decoration-blue-500 focus-visible:shadow-focus-ring"
+            className={cn(
+              "-my-px h-6 cursor-pointer rounded-xs border-none bg-transparent px-0 py-1 font-medium font-sans underline decoration-blue-400 underline-offset-[5px] outline-none hover:text-blue-900 hover:decoration-blue-500 focus-visible:shadow-focus-ring",
+              "text-[oklch(26.67%_0.1099_254.34)]",
+              "dark:text-white"
+            )}
             href="/docs/introduction/announcing-ai-sdk-6-beta"
             rel="noopener"
             style={
               {
-                color: "oklch(26.67% 0.1099 254.34)",
                 textDecorationColor: "oklch(91.58% 0.0473 245.11621922481282)",
                 "--tw-shadow":
                   "0 0 0 2px var(--ds-background-100), 0 0 0 4px var(--banner-focus-color) !important",

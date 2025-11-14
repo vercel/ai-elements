@@ -11,6 +11,7 @@ import {
 } from "@repo/shadcn-ui/components/ui/sheet";
 import { ExternalLinkIcon, MenuIcon } from "lucide-react";
 import Link from "next/link";
+import { ThemeToggle } from "@/components/geistdocs/theme-toggle";
 import { CustomSearch } from "./custom-search";
 import { HomeLinks } from "./home-links";
 
@@ -119,6 +120,7 @@ export const ClientNavbar = ({ pages }: { pages: NavPageItem[] }) => (
 
     <div className="hidden lg:flex">
       <div className="hidden flex-row items-center justify-end gap-2 px-6 md:px-4 lg:col-span-1 lg:col-start-2 xl:flex">
+        <ThemeToggle />
         <CustomSearch />
         <Button
           aria-label="Feedback"
