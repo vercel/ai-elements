@@ -53,6 +53,9 @@ export const CodeBlockTabs = ({
 export const CodeBlockTab = (props: ComponentProps<typeof TabsContent>) => (
   <TabsContent
     {...props}
-    className={cn("[&_pre]:rounded-none [&_pre]:border-none", props.className)}
+    className={cn(
+      "[&>div]:mb-0 [&_pre]:rounded-none [&_pre]:border-none",
+      props.className
+    )}
   />
 );
