@@ -23,6 +23,10 @@ export const getMDXComponents = (
 
   pre: CodeBlock,
 
+  a: (props) => (
+    <a {...props} className="font-normal text-primary no-underline" />
+  ),
+
   CodeBlockTabs,
   CodeBlockTabsList,
   CodeBlockTabsTrigger,
