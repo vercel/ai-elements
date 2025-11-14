@@ -1,5 +1,11 @@
 # ai-elements
 
+## 1.6.2
+
+### Patch Changes
+
+- a1b1929: Fix: Update PromptInputSpeechButton SpeechRecognition usage
+
 ## 1.6.1
 
 ### Patch Changes
