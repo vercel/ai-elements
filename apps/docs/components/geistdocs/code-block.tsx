@@ -66,21 +66,31 @@ export const CodeBlock = ({
 
   const CodeBlockComponent = useCallback(
     (props: { className?: string }) => (
-      <div className="relative flex items-center gap-2 pr-1">
-        <pre
-          className={cn(
-            "not-prose flex-1 overflow-x-auto rounded-sm border bg-background py-3 text-sm outline-none",
-            className,
-            props.className
-          )}
-          ref={ref}
-          style={style}
-          tabIndex={tabIndex}
-        >
-          {children}
-        </pre>
+      <pre
+        className={cn(
+          "not-prose flex-1 overflow-x-auto rounded-sm border bg-background py-3 text-sm outline-none",
+          className,
+          props.className
+        )}
+        ref={ref}
+        style={style}
+        tabIndex={tabIndex}
+      >
+        {children}
+      </pre>
+    ),
+    [children, style, tabIndex, className]
+  );
+
+  if (!title) {
+    return (
+      <div className="relative">
+        <CodeBlockComponent />
         <Button
-          className={cn("shrink-0", className)}
+          className={cn(
+            "absolute top-[5px] right-[5px] bg-background/80 backdrop-blur-sm",
+            className
+          )}
           onClick={copyToClipboard}
           size="icon"
           variant="ghost"
@@ -88,12 +98,7 @@ export const CodeBlock = ({
           <Icon size={14} />
         </Button>
       </div>
-    ),
-    [children, style, tabIndex, className, copyToClipboard, Icon]
-  );
-
-  if (!title) {
-    return <CodeBlockComponent />;
+    );
   }
 
   return (
