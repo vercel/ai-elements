@@ -22,7 +22,7 @@ export const TableOfContents = ({ children }: TableOfContentsProps) => {
         isOpen && !isMobile && "right-[384px]!"
       )}
     >
-      <p className="mb-1 font-medium text-sm">Table of Contents</p>
+      <p className="mb-1 font-medium text-sm">On this page</p>
       <PageTOCItems variant="clerk" />
 
       {children && (
