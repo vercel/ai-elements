@@ -51,7 +51,7 @@ export const DocsPage = async ({ slug }: PageProps) => {
   const protocol = process.env.VERCEL_URL ? "https" : "http";
   const url = new URL(
     page.url,
-    `${protocol}://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+    `${protocol}://${process.env.BASE_URL}`
   ).toString();
   const query = `Read this page, I want to ask questions about it. ${url}`;
 

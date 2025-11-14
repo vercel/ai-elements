@@ -10,7 +10,7 @@ import type { Registry, RegistryItem } from "shadcn/schema";
 import { Project } from "ts-morph";
 
 const protocol = process.env.NODE_ENV === "development" ? "http" : "https";
-const registryUrl = `${protocol}://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`;
+const registryUrl = `${protocol}://${process.env.BASE_URL}`;
 
 const packageDir = join(process.cwd(), "..", "..", "packages", "elements");
 const packagePath = join(packageDir, "package.json");
