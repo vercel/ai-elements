@@ -84,7 +84,7 @@ export const CodeBlock = ({
 
   if (!title) {
     return (
-      <div className="relative">
+      <div className="relative mb-6">
         <CodeBlockComponent />
         <Button
           className={cn(
@@ -102,7 +102,7 @@ export const CodeBlock = ({
   }
 
   return (
-    <Card className="not-prose gap-0 overflow-hidden rounded-sm p-0 shadow-none">
+    <Card className="not-prose mb-6 gap-0 overflow-hidden rounded-sm p-0 shadow-none">
       <CardHeader className="flex items-center gap-2 border-b bg-sidebar py-1.5! pr-1.5 pl-4 text-muted-foreground">
         <div
           className="size-3.5 shrink-0"
