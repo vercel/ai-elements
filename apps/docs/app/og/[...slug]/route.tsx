@@ -56,21 +56,16 @@ export const GET = async (
         <div
           style={{
             textWrap: "balance",
-            fontWeight: 500,
-            fontSize: title && title.length > 20 ? 48 : 64,
-            letterSpacing: "-0.06em",
           }}
-          tw="text-white tracking-tight flex leading-[1.1] mb-4"
+          tw="text-5xl font-medium text-white tracking-tight flex leading-[1.1] mb-4"
         >
           {title}
         </div>
         <div
           style={{
-            color: "#8B8B8B",
-            lineHeight: "44px",
             textWrap: "balance",
           }}
-          tw="text-[32px]"
+          tw="text-[32px] leading-[1.2] text-[#8B8B8B]"
         >
           {description}
         </div>
