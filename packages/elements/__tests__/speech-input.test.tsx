@@ -133,7 +133,7 @@ describe("SpeechInput - Speech Recognition", () => {
   it("applies pulse animation when listening", async () => {
     const user = userEvent.setup();
 
-    render(<SpeechInput />);
+    const { container } = render(<SpeechInput />);
 
     await waitFor(() => {
       expect(screen.getByRole("button")).not.toBeDisabled();
@@ -141,15 +141,19 @@ describe("SpeechInput - Speech Recognition", () => {
 
     const button = screen.getByRole("button");
 
-    // Should not have animate-pulse initially
-    expect(button).not.toHaveClass("animate-pulse");
+    // Should not have animate-ping divs initially
+    expect(
+      container.querySelectorAll(".animate-ping").length
+    ).toBe(0);
 
     await user.click(button);
 
-    // Should have animate-pulse when listening
+    // Should have animate-ping divs when listening
     await waitFor(
       () => {
-        expect(button).toHaveClass("animate-pulse");
+        expect(
+          container.querySelectorAll(".animate-ping").length
+        ).toBe(3);
       },
       { timeout: 3000 }
     );
