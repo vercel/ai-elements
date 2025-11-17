@@ -14,6 +14,7 @@ AI Elements supports MCP to supercharge your AI development workflow.
 First, make sure you're using an AI development tool that supports MCP:
 
 - [Claude Desktop](https://claude.ai/download) (Free - recommended for beginners)
+- [Claude Code](https://www.claude.com/product/claude-code) (AI coding assistant)
 - [Cursor](https://www.cursor.com/) (AI-powered code editor)
 - [Windsurf by Codeium](https://windsurf.com/) (AI development platform)
 - Other MCP-compatible tools
@@ -22,12 +23,14 @@ First, make sure you're using an AI development tool that supports MCP:
 
 Depending on your AI tool, you'll need to edit one of these files:
 
-- **Claude Desktop**: `.cursor/mcp.json`
+- **Claude Desktop**: `Claude/claude_desktop_config.json`
+- **Claude Code**: `.claude.json`
 - **Cursor**: `.cursor/mcp.json`
 - **Windsurf**: `.codeium/windsurf/mcp_config.json`
 - **Other tools**: Check your tool's MCP documentation
 
 ### Step 3: Add AI Elements Configuration
+#### Option A: Manual Configuration (All Tools)
 
 Copy and paste this configuration into your MCP config file:
 
@@ -45,6 +48,12 @@ Copy and paste this configuration into your MCP config file:
   }
 }
 ```
+#### Option B: Quick Install (Claude Code Only)
+If you're using Claude Code, you can use the built-in command:
+
+`claude mcp add --transport http ai-elements https://registry.ai-sdk.dev/api/mcp`
+
+This automatically adds the server to your .claude.json configuration.
 
 ### Step 4: Restart Your AI Tool
 
