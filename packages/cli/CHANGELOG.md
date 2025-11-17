@@ -1,5 +1,12 @@
 # ai-elements
 
+## 1.6.3
+
+### Patch Changes
+
+- b0d5347: Fix model selector logos in dark mode
+- ae31076: Fix duplicate overflows in Conversation element
+
 ## 1.6.2
 
 ### Patch Changes
