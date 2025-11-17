@@ -1,8 +1,13 @@
+"use client";
+
 import { cn } from "@repo/shadcn-ui/lib/utils";
 import {
   type RiveParameters,
   useRive,
   useStateMachineInput,
+  useViewModel,
+  useViewModelInstance,
+  useViewModelInstanceColor,
 } from "@rive-app/react-webgl2";
 import type { FC } from "react";
 import { useEffect } from "react";
@@ -64,6 +69,22 @@ export const Persona: FC<PersonaProps> = ({
     onPlay,
     onStop,
   });
+
+  const viewModel = useViewModel(rive, { useDefault: true });
+  const viewModelInstance = useViewModelInstance(viewModel, {
+    rive,
+    useDefault: true,
+  });
+  const { value: rgb, setRgb } = useViewModelInstanceColor(
+    "color",
+    viewModelInstance
+  );
+
+  console.log(rgb, variant, "x");
+
+  useEffect(() => {
+    setRgb(0, 0, 0);
+  }, [setRgb]);
 
   const listeningInput = useStateMachineInput(rive, stateMachine, "listening");
   const thinkingInput = useStateMachineInput(rive, stateMachine, "thinking");
