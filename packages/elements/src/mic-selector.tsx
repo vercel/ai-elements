@@ -31,7 +31,7 @@ const deviceIdRegex = /\(([\da-fA-F]{4}:[\da-fA-F]{4})\)$/;
 
 type MicSelectorContextType = {
   data: MediaDeviceInfo[];
-  value: string;
+  value: string | undefined;
   onValueChange?: (value: string) => void;
   open: boolean;
   onOpenChange?: (open: boolean) => void;
@@ -41,7 +41,7 @@ type MicSelectorContextType = {
 
 const MicSelectorContext = createContext<MicSelectorContextType>({
   data: [],
-  value: "",
+  value: undefined,
   onValueChange: undefined,
   open: false,
   onOpenChange: undefined,
@@ -51,8 +51,8 @@ const MicSelectorContext = createContext<MicSelectorContextType>({
 
 export type MicSelectorProps = ComponentProps<typeof Popover> & {
   defaultValue?: string;
-  value?: string;
-  onValueChange?: (value: string) => void;
+  value?: string | undefined;
+  onValueChange?: (value: string | undefined) => void;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
 };
@@ -66,8 +66,8 @@ export const MicSelector = ({
   onOpenChange: controlledOnOpenChange,
   ...props
 }: MicSelectorProps) => {
-  const [value, onValueChange] = useControllableState({
-    defaultProp: defaultValue ?? "",
+  const [value, onValueChange] = useControllableState<string | undefined>({
+    defaultProp: defaultValue,
     prop: controlledValue,
     onChange: controlledOnValueChange,
   });
@@ -79,12 +79,11 @@ export const MicSelector = ({
   const [width, setWidth] = useState(200);
   const { devices, loading, hasPermission, loadDevices } = useAudioDevices();
 
-  const handleOpenChange = async (newOpen: boolean) => {
+  useEffect(() => {
     if (open && !hasPermission && !loading) {
-      await loadDevices();
+      loadDevices();
     }
-    onOpenChange(newOpen);
-  };
+  }, [open, hasPermission, loading, loadDevices]);
 
   return (
     <MicSelectorContext.Provider
@@ -93,7 +92,7 @@ export const MicSelector = ({
         value,
         onValueChange,
         open,
-        onOpenChange: handleOpenChange,
+        onOpenChange,
         width,
         setWidth,
       }}
@@ -155,7 +154,7 @@ export const MicSelectorContent = ({
   popoverOptions,
   ...props
 }: MicSelectorContentProps) => {
-  const { width } = useContext(MicSelectorContext);
+  const { width, onValueChange, value } = useContext(MicSelectorContext);
 
   return (
     <PopoverContent
@@ -163,7 +162,7 @@ export const MicSelectorContent = ({
       style={{ width }}
       {...popoverOptions}
     >
-      <Command {...props} />
+      <Command onValueChange={onValueChange} value={value} {...props} />
     </PopoverContent>
   );
 };
