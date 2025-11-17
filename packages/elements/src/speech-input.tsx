@@ -68,11 +68,13 @@ declare global {
 
 export type SpeechInputProps = ComponentProps<typeof Button> & {
   onTranscriptionChange?: (text: string) => void;
+  lang?: string;
 };
 
 export const SpeechInput = ({
   className,
   onTranscriptionChange,
+  lang = "en-US",
   ...props
 }: SpeechInputProps) => {
   const [isListening, setIsListening] = useState(false);
@@ -92,7 +94,7 @@ export const SpeechInput = ({
 
       speechRecognition.continuous = true;
       speechRecognition.interimResults = true;
-      speechRecognition.lang = "en-US";
+      speechRecognition.lang = lang;
 
       speechRecognition.onstart = () => {
         setIsListening(true);
@@ -131,7 +133,7 @@ export const SpeechInput = ({
         recognitionRef.current.stop();
       }
     };
-  }, [onTranscriptionChange]);
+  }, [onTranscriptionChange, lang]);
 
   const toggleListening = useCallback(() => {
     if (!recognition) {
