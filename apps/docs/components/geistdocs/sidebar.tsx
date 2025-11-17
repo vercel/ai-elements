@@ -1,5 +1,11 @@
 "use client";
 
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@repo/shadcn-ui/components/ui/collapsible";
+import { cn } from "@repo/shadcn-ui/lib/utils";
 import type {
   Folder as FolderType,
   Item as ItemType,
@@ -9,12 +15,6 @@ import { ChevronRightIcon, ExternalLinkIcon } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
-import { cn } from "@/lib/utils";
 
 type FolderProps = {
   item: FolderType;
