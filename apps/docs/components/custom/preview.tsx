@@ -100,7 +100,7 @@ export const Preview = async ({ path, className }: ComponentPreviewProps) => {
       </CodeBlockTab>
       <CodeBlockTab className="p-0" value="code">
         <div className="not-prose h-[600px] overflow-y-auto">
-          <CodeBlock>
+          <CodeBlock className="pt-0">
             {/** biome-ignore lint/security/noDangerouslySetInnerHtml: "this is needed." */}
             <pre dangerouslySetInnerHTML={{ __html: highlightedCode }} />
           </CodeBlock>
