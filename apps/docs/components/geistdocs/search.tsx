@@ -23,6 +23,7 @@ export const SearchDialog = (props: SharedProps) => {
   const { search, setSearch, query } = useDocsSearch({
     type: "fetch",
     locale,
+    api: "/elements/api/search",
   });
 
   return (

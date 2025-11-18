@@ -11,7 +11,7 @@ const Layout = ({ children }: LayoutProps<"/">) => (
     suppressHydrationWarning
   >
     <body className="flex min-h-screen flex-col">
-      <GeistdocsProvider basePath="/elements">
+      <GeistdocsProvider>
         <AiSdkNav />
         {children}
       </GeistdocsProvider>
