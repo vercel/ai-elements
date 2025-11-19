@@ -27,7 +27,11 @@ import {
   ConversationEmptyState,
   ConversationScrollButton,
 } from '@/components/ai-elements/conversation';
-import { Message, MessageContent } from '@/components/ai-elements/message';
+import { 
+  Message, 
+  MessageContent,
+  MessageResponse,
+} from '@/components/ai-elements/message';
 import {
   Input,
   PromptInputTextarea,
@@ -36,7 +40,6 @@ import {
 import { MessageSquare } from 'lucide-react';
 import { useState } from 'react';
 import { useChat } from '@ai-sdk/react';
-import { MessageResponse } from '@/components/ai-elements/message';
 
 const ConversationDemo = () => {
   const [input, setInput] = useState('');
