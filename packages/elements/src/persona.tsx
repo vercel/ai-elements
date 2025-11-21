@@ -35,16 +35,54 @@ type PersonaProps = {
 const stateMachine = "default";
 
 const sources = {
-  obsidian:
-    "https://ejiidnob33g9ap1r.public.blob.vercel-storage.com/obsidian-2.0.riv",
-  mana: "https://ejiidnob33g9ap1r.public.blob.vercel-storage.com/mana-2.0.rev",
-  orb: "https://ejiidnob33g9ap1r.public.blob.vercel-storage.com/orb-1.2.riv",
-  halo: "https://ejiidnob33g9ap1r.public.blob.vercel-storage.com/halo-2.0.riv",
-  glint:
-    "https://ejiidnob33g9ap1r.public.blob.vercel-storage.com/glint-2.0.riv",
-  command:
-    "https://ejiidnob33g9ap1r.public.blob.vercel-storage.com/command-2.0.riv",
-  pal: "https://ejiidnob33g9ap1r.public.blob.vercel-storage.com/pal-1.0.0.riv",
+  obsidian: {
+    source:
+      "https://ejiidnob33g9ap1r.public.blob.vercel-storage.com/obsidian-2.0.riv",
+    dynamicColor: true,
+  },
+  mana: {
+    source:
+      "https://ejiidnob33g9ap1r.public.blob.vercel-storage.com/mana-2.0.riv",
+    dynamicColor: false,
+  },
+  orb: {
+    source:
+      "https://ejiidnob33g9ap1r.public.blob.vercel-storage.com/orb-1.2.riv",
+    dynamicColor: false,
+  },
+  halo: {
+    source:
+      "https://ejiidnob33g9ap1r.public.blob.vercel-storage.com/halo-2.0.riv",
+    dynamicColor: true,
+  },
+  glint: {
+    source:
+      "https://ejiidnob33g9ap1r.public.blob.vercel-storage.com/glint-2.0.riv",
+    dynamicColor: true,
+  },
+  command: {
+    source:
+      "https://ejiidnob33g9ap1r.public.blob.vercel-storage.com/command-2.0.riv",
+    dynamicColor: true,
+  },
+  pal: {
+    source:
+      "https://ejiidnob33g9ap1r.public.blob.vercel-storage.com/pal-1.0.0.riv",
+    dynamicColor: false,
+  },
+};
+
+const getTheme = () => {
+  if (typeof window !== "undefined") {
+    if (document.documentElement.classList.contains("dark")) {
+      return "dark";
+    }
+    if (window.matchMedia?.("(prefers-color-scheme: dark)").matches) {
+      return "dark";
+    }
+  }
+
+  return "light";
 };
 
 export const Persona: FC<PersonaProps> = ({
@@ -58,8 +96,14 @@ export const Persona: FC<PersonaProps> = ({
   onStop,
   className,
 }) => {
+  const source = sources[variant];
+
+  if (!source) {
+    throw new Error(`Invalid variant: ${variant}`);
+  }
+
   const { rive, RiveComponent } = useRive({
-    src: sources[variant],
+    src: source.source,
     stateMachines: stateMachine,
     autoplay: true,
     onLoad,
@@ -70,25 +114,34 @@ export const Persona: FC<PersonaProps> = ({
     onStop,
   });
 
+  const theme = getTheme();
+
   const viewModel = useViewModel(rive, { useDefault: true });
   const viewModelInstance = useViewModelInstance(viewModel, {
     rive,
     useDefault: true,
   });
-  const { value: rgb, setRgb } = useViewModelInstanceColor(
+  const viewModelInstanceColor = useViewModelInstanceColor(
     "color",
     viewModelInstance
   );
 
-  console.log(rgb, variant, "x");
-
   useEffect(() => {
-    setRgb(0, 0, 0);
-  }, [setRgb]);
+    if (!(viewModelInstanceColor && source.dynamicColor)) {
+      return;
+    }
+
+    if (theme === "dark") {
+      viewModelInstanceColor.setRgb(255, 255, 255);
+    } else {
+      viewModelInstanceColor.setRgb(0, 0, 0);
+    }
+  }, [viewModelInstanceColor, theme, source.dynamicColor]);
 
   const listeningInput = useStateMachineInput(rive, stateMachine, "listening");
   const thinkingInput = useStateMachineInput(rive, stateMachine, "thinking");
   const speakingInput = useStateMachineInput(rive, stateMachine, "speaking");
+  const asleepInput = useStateMachineInput(rive, stateMachine, "asleep");
 
   useEffect(() => {
     if (listeningInput) {
@@ -100,7 +153,10 @@ export const Persona: FC<PersonaProps> = ({
     if (speakingInput) {
       speakingInput.value = state === "speaking";
     }
-  }, [state, listeningInput, thinkingInput, speakingInput]);
+    if (asleepInput) {
+      asleepInput.value = state === "asleep";
+    }
+  }, [state, listeningInput, thinkingInput, speakingInput, asleepInput]);
 
   return <RiveComponent className={cn("size-16 shrink-0", className)} />;
 };
