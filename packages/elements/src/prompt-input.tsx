@@ -653,6 +653,8 @@ export const PromptInput = ({
     if (event.currentTarget.files) {
       add(event.currentTarget.files);
     }
+    // Reset input value to allow selecting files that were previously removed
+    event.currentTarget.value = "";
   };
 
   const convertBlobUrlToDataUrl = async (url: string): Promise<string> => {
