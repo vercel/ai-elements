@@ -669,15 +669,21 @@ export const PromptInput = ({
     event.currentTarget.value = "";
   };
 
-  const convertBlobUrlToDataUrl = async (url: string): Promise<string> => {
-    const response = await fetch(url);
-    const blob = await response.blob();
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onloadend = () => resolve(reader.result as string);
-      reader.onerror = reject;
-      reader.readAsDataURL(blob);
-    });
+  const convertBlobUrlToDataUrl = async (
+    url: string
+  ): Promise<string | null> => {
+    try {
+      const response = await fetch(url);
+      const blob = await response.blob();
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result as string);
+        reader.onerror = () => resolve(null);
+        reader.readAsDataURL(blob);
+      });
+    } catch {
+      return null;
+    }
   };
 
   const ctx = useMemo<AttachmentsContext>(
@@ -713,40 +719,46 @@ export const PromptInput = ({
     Promise.all(
       files.map(async ({ id, ...item }) => {
         if (item.url && item.url.startsWith("blob:")) {
+          const dataUrl = await convertBlobUrlToDataUrl(item.url);
+          // If conversion failed, keep the original blob URL
           return {
             ...item,
-            url: await convertBlobUrlToDataUrl(item.url),
+            url: dataUrl ?? item.url,
           };
         }
         return item;
       })
-    ).then((convertedFiles: FileUIPart[]) => {
-      try {
-        const result = onSubmit({ text, files: convertedFiles }, event);
+    )
+      .then((convertedFiles: FileUIPart[]) => {
+        try {
+          const result = onSubmit({ text, files: convertedFiles }, event);
 
-        // Handle both sync and async onSubmit
-        if (result instanceof Promise) {
-          result
-            .then(() => {
-              clear();
-              if (usingProvider) {
-                controller.textInput.clear();
-              }
-            })
-            .catch(() => {
-              // Don't clear on error - user may want to retry
-            });
-        } else {
-          // Sync function completed without throwing, clear attachments
-          clear();
-          if (usingProvider) {
-            controller.textInput.clear();
+          // Handle both sync and async onSubmit
+          if (result instanceof Promise) {
+            result
+              .then(() => {
+                clear();
+                if (usingProvider) {
+                  controller.textInput.clear();
+                }
+              })
+              .catch(() => {
+                // Don't clear on error - user may want to retry
+              });
+          } else {
+            // Sync function completed without throwing, clear attachments
+            clear();
+            if (usingProvider) {
+              controller.textInput.clear();
+            }
           }
+        } catch {
+          // Don't clear on error - user may want to retry
         }
-      } catch (error) {
+      })
+      .catch(() => {
         // Don't clear on error - user may want to retry
-      }
-    });
+      });
   };
 
   // Render with or without local provider
