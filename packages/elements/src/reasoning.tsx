@@ -126,7 +126,7 @@ const defaultGetThinkingMessage = (isStreaming: boolean, duration?: number) => {
 };
 
 export const ReasoningTrigger = memo(
-  ({ className, children, getThinkingMessage = defaultGetThinkingMessage ...props }: ReasoningTriggerProps) => {
+  ({ className, children, getThinkingMessage = defaultGetThinkingMessage, ...props }: ReasoningTriggerProps) => {
     const { isStreaming, isOpen, duration } = useReasoning();
 
     return (
