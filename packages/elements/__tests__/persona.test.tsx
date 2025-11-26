@@ -1,5 +1,4 @@
 import { render, waitFor } from "@testing-library/react";
-import type { RiveParameters } from "@rive-app/react-webgl2";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { Persona } from "../src/persona";
 
@@ -109,16 +108,6 @@ describe("Persona", () => {
     expect(mockUseRive).toHaveBeenCalledWith(
       expect.objectContaining({
         src: "https://ejiidnob33g9ap1r.public.blob.vercel-storage.com/command-2.0.riv",
-      })
-    );
-  });
-
-  it("renders with pal variant", () => {
-    render(<Persona state="idle" variant="pal" />);
-
-    expect(mockUseRive).toHaveBeenCalledWith(
-      expect.objectContaining({
-        src: "https://ejiidnob33g9ap1r.public.blob.vercel-storage.com/pal-1.0.0.riv",
       })
     );
   });
@@ -511,7 +500,6 @@ describe("Persona - Integration", () => {
       "halo",
       "glint",
       "command",
-      "pal",
     ] as const;
 
     variants.forEach((variant) => {
