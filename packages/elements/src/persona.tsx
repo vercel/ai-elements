@@ -65,11 +65,6 @@ const sources = {
       "https://ejiidnob33g9ap1r.public.blob.vercel-storage.com/command-2.0.riv",
     dynamicColor: true,
   },
-  pal: {
-    source:
-      "https://ejiidnob33g9ap1r.public.blob.vercel-storage.com/pal-1.0.0.riv",
-    dynamicColor: false,
-  },
 };
 
 const getTheme = () => {

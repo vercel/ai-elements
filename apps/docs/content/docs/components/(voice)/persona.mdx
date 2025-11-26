@@ -15,7 +15,7 @@ The `Persona` component displays an animated AI visual that responds to differen
 ## Features
 
 - Smooth state-based animations powered by Rive
-- Multiple visual variants (obsidian, mana, orb, halo, glint, command, pal)
+- Multiple visual variants (obsidian, mana, orb, halo, glint, command)
 - Responsive to five distinct states: idle, listening, thinking, speaking, and asleep
 - WebGL2-accelerated rendering for optimal performance
 - Customizable size and styling
@@ -50,10 +50,6 @@ The Persona component comes with 7 distinct visual variants, each with its own u
 
 <Preview path="persona-command" />
 
-### Pal
-
-<Preview path="persona-pal" />
-
 ## Props
 
 ### `<Persona />`
@@ -63,48 +59,49 @@ The root component that renders the animated AI visual.
 <TypeTable
   type={{
     state: {
-      description: 'The current state of the AI persona. Controls which animation is displayed.',
+      description:
+        "The current state of the AI persona. Controls which animation is displayed.",
       type: '"idle" | "listening" | "thinking" | "speaking" | "asleep"',
       default: '"idle"',
     },
     variant: {
-      description: 'The visual style variant to display.',
-      type: '"obsidian" | "mana" | "orb" | "halo" | "glint" | "command" | "pal"',
+      description: "The visual style variant to display.",
+      type: '"obsidian" | "mana" | "orb" | "halo" | "glint" | "command"',
       optional: true,
       default: '"orb"',
     },
     className: {
-      description: 'Additional CSS classes to apply to the component.',
-      type: 'string',
+      description: "Additional CSS classes to apply to the component.",
+      type: "string",
       optional: true,
     },
     onLoad: {
-      description: 'Callback fired when the Rive file starts loading.',
+      description: "Callback fired when the Rive file starts loading.",
       type: 'RiveParameters["onLoad"]',
       optional: true,
     },
     onLoadError: {
-      description: 'Callback fired if the Rive file fails to load.',
+      description: "Callback fired if the Rive file fails to load.",
       type: 'RiveParameters["onLoadError"]',
       optional: true,
     },
     onReady: {
-      description: 'Callback fired when the Rive animation is ready to play.',
-      type: '() => void',
+      description: "Callback fired when the Rive animation is ready to play.",
+      type: "() => void",
       optional: true,
     },
     onPause: {
-      description: 'Callback fired when the animation is paused.',
+      description: "Callback fired when the animation is paused.",
       type: 'RiveParameters["onPause"]',
       optional: true,
     },
     onPlay: {
-      description: 'Callback fired when the animation starts playing.',
+      description: "Callback fired when the animation starts playing.",
       type: 'RiveParameters["onPlay"]',
       optional: true,
     },
     onStop: {
-      description: 'Callback fired when the animation is stopped.',
+      description: "Callback fired when the animation is stopped.",
       type: 'RiveParameters["onStop"]',
       optional: true,
     },
@@ -140,7 +137,9 @@ import { Persona } from "@repo/elements/persona";
 import { useState } from "react";
 
 export default function App() {
-  const [state, setState] = useState<"idle" | "listening" | "thinking" | "speaking" | "asleep">("idle");
+  const [state, setState] = useState<
+    "idle" | "listening" | "thinking" | "speaking" | "asleep"
+  >("idle");
 
   const startListening = () => setState("listening");
   const startThinking = () => setState("thinking");
@@ -197,4 +196,3 @@ export default function App() {
   );
 }
 ```
-
