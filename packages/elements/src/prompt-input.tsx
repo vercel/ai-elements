@@ -150,7 +150,7 @@ export function PromptInputProvider({
   const clearInput = useCallback(() => setTextInput(""), []);
 
   // ----- attachments state (global when wrapped)
-  const [attachements, setAttachements] = useState<
+  const [attachmentFiles, setAttachmentFiles] = useState<
     (FileUIPart & { id: string })[]
   >([]);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -162,7 +162,7 @@ export function PromptInputProvider({
       return;
     }
 
-    setAttachements((prev) =>
+    setAttachmentFiles((prev) =>
       prev.concat(
         incoming.map((file) => ({
           id: nanoid(),
@@ -176,7 +176,7 @@ export function PromptInputProvider({
   }, []);
 
   const remove = useCallback((id: string) => {
-    setAttachements((prev) => {
+    setAttachmentFiles((prev) => {
       const found = prev.find((f) => f.id === id);
       if (found?.url) {
         URL.revokeObjectURL(found.url);
@@ -186,7 +186,7 @@ export function PromptInputProvider({
   }, []);
 
   const clear = useCallback(() => {
-    setAttachements((prev) => {
+    setAttachmentFiles((prev) => {
       for (const f of prev) {
         if (f.url) {
           URL.revokeObjectURL(f.url);
@@ -197,8 +197,8 @@ export function PromptInputProvider({
   }, []);
 
   // Keep a ref to attachments for cleanup on unmount (avoids stale closure)
-  const attachmentsRef = useRef(attachements);
-  attachmentsRef.current = attachements;
+  const attachmentsRef = useRef(attachmentFiles);
+  attachmentsRef.current = attachmentFiles;
 
   // Cleanup blob URLs on unmount to prevent memory leaks
   useEffect(() => {
@@ -217,14 +217,14 @@ export function PromptInputProvider({
 
   const attachments = useMemo<AttachmentsContext>(
     () => ({
-      files: attachements,
+      files: attachmentFiles,
       add,
       remove,
       clear,
       openFileDialog,
       fileInputRef,
     }),
-    [attachements, add, remove, clear, openFileDialog]
+    [attachmentFiles, add, remove, clear, openFileDialog]
   );
 
   const __registerFileInput = useCallback(
