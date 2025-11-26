@@ -34,6 +34,15 @@ beforeEach(() => {
   // Reset window.SpeechRecognition
   delete (window as any).SpeechRecognition;
   delete (window as any).webkitSpeechRecognition;
+
+  // Reset MediaRecorder to ensure consistent test behavior
+  delete (window as any).MediaRecorder;
+  // Also mock navigator.mediaDevices to be undefined
+  Object.defineProperty(navigator, "mediaDevices", {
+    value: undefined,
+    writable: true,
+    configurable: true,
+  });
 });
 
 describe("SpeechInput", () => {
@@ -189,8 +198,10 @@ describe("SpeechInput - Speech Recognition", () => {
     // Simulate speech recognition result with final transcript
     if (recognitionInstance?.onresult) {
       recognitionInstance.onresult({
-        results: [
-          {
+        resultIndex: 0,
+        results: {
+          length: 1,
+          0: {
             0: { transcript: "Hello world", confidence: 0.9 },
             isFinal: true,
             length: 1,
@@ -199,7 +210,7 @@ describe("SpeechInput - Speech Recognition", () => {
               confidence: 0.9,
             }),
           },
-        ],
+        },
       });
     }
 
@@ -237,14 +248,16 @@ describe("SpeechInput - Speech Recognition", () => {
     // Simulate interim result (should not trigger callback)
     if (recognitionInstance?.onresult) {
       recognitionInstance.onresult({
-        results: [
-          {
+        resultIndex: 0,
+        results: {
+          length: 1,
+          0: {
             0: { transcript: "Hello", confidence: 0.5 },
             isFinal: false,
             length: 1,
             item: (index: number) => ({ transcript: "Hello", confidence: 0.5 }),
           },
-        ],
+        },
       });
     }
 
@@ -325,14 +338,16 @@ describe("SpeechInput - Speech Recognition", () => {
     // Simulate result with empty transcript
     if (recognitionInstance?.onresult) {
       recognitionInstance.onresult({
-        results: [
-          {
+        resultIndex: 0,
+        results: {
+          length: 1,
+          0: {
             0: { transcript: "", confidence: 0.9 },
             isFinal: true,
             length: 1,
             item: (index: number) => ({ transcript: "", confidence: 0.9 }),
           },
-        ],
+        },
       });
     }
 
@@ -370,5 +385,233 @@ describe("SpeechInput - Speech Recognition", () => {
     unmount();
 
     expect(stopSpy).toHaveBeenCalled();
+  });
+});
+
+describe("SpeechInput - MediaRecorder Fallback", () => {
+  let mockTrack: any;
+  let mockStream: any;
+  let mediaRecorderInstances: any[];
+
+  // Mock MediaRecorder class that captures instances
+  class MockMediaRecorder {
+    state = "inactive";
+    ondataavailable: ((event: any) => void) | null = null;
+    onstop: (() => void) | null = null;
+    onerror: ((event: any) => void) | null = null;
+
+    constructor() {
+      mediaRecorderInstances.push(this);
+    }
+
+    start = vi.fn(() => {
+      this.state = "recording";
+    });
+
+    stop = vi.fn(() => {
+      this.state = "inactive";
+      if (this.onstop) {
+        this.onstop();
+      }
+    });
+  }
+
+  beforeEach(() => {
+    mediaRecorderInstances = [];
+
+    // Remove SpeechRecognition to force MediaRecorder mode
+    delete (window as any).SpeechRecognition;
+    delete (window as any).webkitSpeechRecognition;
+
+    // Create mock track
+    mockTrack = {
+      stop: vi.fn(),
+    };
+
+    // Create mock stream
+    mockStream = {
+      getTracks: vi.fn(() => [mockTrack]),
+    };
+
+    // Mock MediaRecorder constructor
+    (window as any).MediaRecorder = MockMediaRecorder;
+
+    // Mock navigator.mediaDevices
+    Object.defineProperty(navigator, "mediaDevices", {
+      value: {
+        getUserMedia: vi.fn().mockResolvedValue(mockStream),
+      },
+      writable: true,
+      configurable: true,
+    });
+  });
+
+  it("is disabled when onAudioRecorded is not provided", async () => {
+    render(<SpeechInput />);
+
+    await waitFor(() => {
+      const button = screen.getByRole("button");
+      expect(button).toBeDisabled();
+    });
+  });
+
+  it("is enabled when onAudioRecorded is provided", async () => {
+    const handleAudioRecorded = vi.fn().mockResolvedValue("test transcript");
+
+    render(<SpeechInput onAudioRecorded={handleAudioRecorded} />);
+
+    await waitFor(() => {
+      const button = screen.getByRole("button");
+      expect(button).not.toBeDisabled();
+    });
+  });
+
+  it("starts recording when clicked", async () => {
+    const user = userEvent.setup();
+    const handleAudioRecorded = vi.fn().mockResolvedValue("test transcript");
+
+    render(<SpeechInput onAudioRecorded={handleAudioRecorded} />);
+
+    await waitFor(() => {
+      expect(screen.getByRole("button")).not.toBeDisabled();
+    });
+
+    const button = screen.getByRole("button");
+    await user.click(button);
+
+    await waitFor(() => {
+      expect(navigator.mediaDevices.getUserMedia).toHaveBeenCalledWith({
+        audio: true,
+      });
+    });
+
+    await waitFor(() => {
+      expect(mediaRecorderInstances.length).toBeGreaterThan(0);
+      expect(mediaRecorderInstances[0].start).toHaveBeenCalled();
+    });
+  });
+
+  it("stops recording and transcribes when clicked again", async () => {
+    const user = userEvent.setup();
+    const handleAudioRecorded = vi.fn().mockResolvedValue("transcribed text");
+    const handleTranscriptionChange = vi.fn();
+
+    render(
+      <SpeechInput
+        onAudioRecorded={handleAudioRecorded}
+        onTranscriptionChange={handleTranscriptionChange}
+      />
+    );
+
+    await waitFor(() => {
+      expect(screen.getByRole("button")).not.toBeDisabled();
+    });
+
+    const button = screen.getByRole("button");
+
+    // Start recording
+    await user.click(button);
+
+    await waitFor(() => {
+      expect(mediaRecorderInstances.length).toBeGreaterThan(0);
+    });
+
+    const recorder = mediaRecorderInstances[0];
+
+    // Simulate data available
+    if (recorder.ondataavailable) {
+      recorder.ondataavailable({ data: new Blob(["test"], { type: "audio/webm" }) });
+    }
+
+    // Stop recording (second click)
+    await user.click(button);
+
+    await waitFor(() => {
+      expect(handleAudioRecorded).toHaveBeenCalled();
+    });
+
+    await waitFor(() => {
+      expect(handleTranscriptionChange).toHaveBeenCalledWith("transcribed text");
+    });
+  });
+
+  it("releases microphone tracks on stop", async () => {
+    const user = userEvent.setup();
+    const handleAudioRecorded = vi.fn().mockResolvedValue("text");
+
+    render(<SpeechInput onAudioRecorded={handleAudioRecorded} />);
+
+    await waitFor(() => {
+      expect(screen.getByRole("button")).not.toBeDisabled();
+    });
+
+    const button = screen.getByRole("button");
+
+    // Start recording
+    await user.click(button);
+
+    await waitFor(() => {
+      expect(mediaRecorderInstances.length).toBeGreaterThan(0);
+    });
+
+    const recorder = mediaRecorderInstances[0];
+
+    // Simulate data available
+    if (recorder.ondataavailable) {
+      recorder.ondataavailable({ data: new Blob(["test"], { type: "audio/webm" }) });
+    }
+
+    // Stop recording
+    await user.click(button);
+
+    await waitFor(() => {
+      expect(mockTrack.stop).toHaveBeenCalled();
+    });
+  });
+
+  it("handles transcription errors gracefully", async () => {
+    const user = userEvent.setup();
+    const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    const handleAudioRecorded = vi.fn().mockRejectedValue(new Error("Transcription failed"));
+    const handleTranscriptionChange = vi.fn();
+
+    render(
+      <SpeechInput
+        onAudioRecorded={handleAudioRecorded}
+        onTranscriptionChange={handleTranscriptionChange}
+      />
+    );
+
+    await waitFor(() => {
+      expect(screen.getByRole("button")).not.toBeDisabled();
+    });
+
+    const button = screen.getByRole("button");
+
+    // Start recording
+    await user.click(button);
+
+    await waitFor(() => {
+      expect(mediaRecorderInstances.length).toBeGreaterThan(0);
+    });
+
+    const recorder = mediaRecorderInstances[0];
+
+    // Simulate data available
+    if (recorder.ondataavailable) {
+      recorder.ondataavailable({ data: new Blob(["test"], { type: "audio/webm" }) });
+    }
+
+    // Stop recording
+    await user.click(button);
+
+    await waitFor(() => {
+      expect(consoleErrorSpy).toHaveBeenCalledWith("Transcription error:", expect.any(Error));
+    });
+
+    // Transcription change should not be called on error
+    expect(handleTranscriptionChange).not.toHaveBeenCalled();
+
+    consoleErrorSpy.mockRestore();
   });
 });
