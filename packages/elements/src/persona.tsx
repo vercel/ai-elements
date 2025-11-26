@@ -10,7 +10,7 @@ import {
   useViewModelInstanceColor,
 } from "@rive-app/react-webgl2";
 import type { FC, ReactNode } from "react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export type PersonaState =
   | "idle"
@@ -47,7 +47,7 @@ const sources = {
     dynamicColor: false,
     hasModel: true,
   },
-  orb: {
+  opal: {
     source:
       "https://ejiidnob33g9ap1r.public.blob.vercel-storage.com/orb-1.2.riv",
     dynamicColor: false,
@@ -73,7 +73,7 @@ const sources = {
   },
 };
 
-const getTheme = () => {
+const getCurrentTheme = (): "light" | "dark" => {
   if (typeof window !== "undefined") {
     if (document.documentElement.classList.contains("dark")) {
       return "dark";
@@ -82,8 +82,43 @@ const getTheme = () => {
       return "dark";
     }
   }
-
   return "light";
+};
+
+const useTheme = () => {
+  const [theme, setTheme] = useState<"light" | "dark">(getCurrentTheme);
+
+  useEffect(() => {
+    // Watch for classList changes
+    const observer = new MutationObserver(() => {
+      setTheme(getCurrentTheme());
+    });
+
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["class"],
+    });
+
+    // Watch for OS-level theme changes
+    let mql: MediaQueryList | null = null;
+    const handleMediaChange = () => {
+      setTheme(getCurrentTheme());
+    };
+
+    if (window.matchMedia) {
+      mql = window.matchMedia("(prefers-color-scheme: dark)");
+      mql.addEventListener("change", handleMediaChange);
+    }
+
+    return () => {
+      observer.disconnect();
+      if (mql) {
+        mql.removeEventListener("change", handleMediaChange);
+      }
+    };
+  }, []);
+
+  return theme;
 };
 
 type PersonaWithModelProps = {
@@ -97,7 +132,7 @@ const PersonaWithModel = ({
   source,
   children,
 }: PersonaWithModelProps) => {
-  const theme = getTheme();
+  const theme = useTheme();
   const viewModel = useViewModel(rive, { useDefault: true });
   const viewModelInstance = useViewModelInstance(viewModel, {
     rive,
@@ -113,11 +148,8 @@ const PersonaWithModel = ({
       return;
     }
 
-    if (theme === "dark") {
-      viewModelInstanceColor.setRgb(255, 255, 255);
-    } else {
-      viewModelInstanceColor.setRgb(0, 0, 0);
-    }
+    const [r, g, b] = theme === "dark" ? [255, 255, 255] : [0, 0, 0];
+    viewModelInstanceColor.setRgb(r, g, b);
   }, [viewModelInstanceColor, theme, source.dynamicColor]);
 
   return children;
@@ -131,7 +163,7 @@ const PersonaWithoutModel = ({ children }: PersonaWithoutModelProps) =>
   children;
 
 export const Persona: FC<PersonaProps> = ({
-  variant = "orb",
+  variant = "obsidian",
   state = "idle",
   onLoad,
   onLoadError,
