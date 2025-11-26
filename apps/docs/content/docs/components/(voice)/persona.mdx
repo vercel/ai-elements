@@ -6,7 +6,7 @@ path: elements/components/persona
 
 The `Persona` component displays an animated AI visual that responds to different conversational states. Built with Rive WebGL2, it provides smooth, high-performance animations for various AI interaction states including idle, listening, thinking, speaking, and asleep. The component supports multiple visual variants to match different design aesthetics.
 
-<Preview path="persona-orb" />
+<Preview path="persona-obsidian" />
 
 ## Installation
 
@@ -15,7 +15,7 @@ The `Persona` component displays an animated AI visual that responds to differen
 ## Features
 
 - Smooth state-based animations powered by Rive
-- Multiple visual variants (obsidian, mana, orb, halo, glint, command)
+- Multiple visual variants (obsidian, mana, opal, halo, glint, command)
 - Responsive to five distinct states: idle, listening, thinking, speaking, and asleep
 - WebGL2-accelerated rendering for optimal performance
 - Customizable size and styling
@@ -26,7 +26,7 @@ The `Persona` component displays an animated AI visual that responds to differen
 
 The Persona component comes with 7 distinct visual variants, each with its own unique aesthetic:
 
-### Obsidian
+### Obsidian (Default)
 
 <Preview path="persona-obsidian" />
 
@@ -34,9 +34,9 @@ The Persona component comes with 7 distinct visual variants, each with its own u
 
 <Preview path="persona-mana" />
 
-### Orb (Default)
+### Opal
 
-<Preview path="persona-orb" />
+<Preview path="persona-opal" />
 
 ### Halo
 
@@ -66,9 +66,9 @@ The root component that renders the animated AI visual.
     },
     variant: {
       description: "The visual style variant to display.",
-      type: '"obsidian" | "mana" | "orb" | "halo" | "glint" | "command"',
+      type: '"obsidian" | "mana" | "opal" | "halo" | "glint" | "command"',
       optional: true,
-      default: '"orb"',
+      default: '"obsidian"',
     },
     className: {
       description: "Additional CSS classes to apply to the component.",
@@ -126,7 +126,7 @@ The Persona component responds to five distinct states, each triggering differen
 import { Persona } from "@repo/elements/persona";
 
 export default function App() {
-  return <Persona state="listening" variant="orb" />;
+  return <Persona state="listening" variant="opal" />;
 }
 ```
 
@@ -148,7 +148,7 @@ export default function App() {
 
   return (
     <div>
-      <Persona state={state} variant="orb" className="size-32" />
+      <Persona state={state} variant="opal" className="size-32" />
       <div>
         <button onClick={startListening}>Listen</button>
         <button onClick={startThinking}>Think</button>
