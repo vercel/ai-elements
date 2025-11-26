@@ -196,6 +196,21 @@ export function PromptInputProvider({
     });
   }, []);
 
+  // Keep a ref to attachments for cleanup on unmount (avoids stale closure)
+  const attachmentsRef = useRef(attachements);
+  attachmentsRef.current = attachements;
+
+  // Cleanup blob URLs on unmount to prevent memory leaks
+  useEffect(() => {
+    return () => {
+      for (const f of attachmentsRef.current) {
+        if (f.url) {
+          URL.revokeObjectURL(f.url);
+        }
+      }
+    };
+  }, []);
+
   const openFileDialog = useCallback(() => {
     openRef.current?.();
   }, []);
