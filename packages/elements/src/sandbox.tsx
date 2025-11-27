@@ -177,10 +177,18 @@ export type SandboxCopyButtonProps = {
 export const SandboxCopyButton = ({ className }: SandboxCopyButtonProps) => {
   const ctx = useContext(SandboxTabsContext);
 
-  const handleCopy = () => {
-    if (ctx) {
+  const handleCopy = async () => {
+    if (
+      ctx &&
+      typeof window !== "undefined" &&
+      navigator?.clipboard?.writeText
+    ) {
       const content = ctx.contents.current.get(ctx.activeTab) ?? "";
-      navigator.clipboard.writeText(content);
+      try {
+        await navigator.clipboard.writeText(content);
+      } catch (error) {
+        console.error("Failed to copy to clipboard:", error);
+      }
     }
   };
 
