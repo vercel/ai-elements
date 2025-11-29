@@ -30,11 +30,11 @@ export const PAGES: NavPageItem[] = [
     tooltip: "Providers",
     name: "providers",
   },
-  // {
-  //   href: '/showcase',
-  //   tooltip: 'Showcase',
-  //   name: 'showcase',
-  // },
+  {
+    href: '/tools-registry',
+    tooltip: 'Tools Registry',
+    name: 'tools-registry',
+  },
   {
     href: "/playground",
     tooltip: "Playground",
