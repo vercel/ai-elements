@@ -28,7 +28,7 @@ jobs:
           private-key: ${{ secrets.AI_ELEMENTS_APP_PRIVATE_KEY }}
 
       - name: Checkout Repo
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           token: ${{ steps.generate-token.outputs.token }}
 
