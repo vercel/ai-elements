@@ -39,11 +39,11 @@ import { cn } from "@repo/shadcn-ui/lib/utils";
 import type { ChatStatus, FileUIPart, SourceDocumentUIPart } from "ai";
 import {
   CornerDownLeftIcon,
+  GlobeIcon,
   ImageIcon,
   Loader2Icon,
   MicIcon,
   PaperclipIcon,
-  GlobeIcon,
   PlusIcon,
   SquareIcon,
   XIcon,
@@ -413,10 +413,11 @@ export function PromptInputAttachments({
   );
 }
 
-export type PromptInputReferencedSourceProps = HTMLAttributes<HTMLDivElement> & {
-  data: SourceDocumentUIPart & { id: string };
-  className?: string;
-};
+export type PromptInputReferencedSourceProps =
+  HTMLAttributes<HTMLDivElement> & {
+    data: SourceDocumentUIPart & { id: string };
+    className?: string;
+  };
 
 export function PromptInputReferencedSource({
   data,
@@ -504,15 +505,16 @@ export function PromptInputReferencedSources({
     return null;
   }
 
-  return <div
+  return (
+    <div
       className={cn("flex flex-wrap items-center gap-2 p-3", className)}
       {...props}
     >
-    {referencedSources.sources.map((source) => (
-      <Fragment key={source.id}>{children(source)}</Fragment>
-    ))}
-  </div>
-
+      {referencedSources.sources.map((source) => (
+        <Fragment key={source.id}>{children(source)}</Fragment>
+      ))}
+    </div>
+  );
 }
 
 export type PromptInputActionAddAttachmentsProps = ComponentProps<
@@ -688,17 +690,30 @@ export const PromptInput = ({
           return prev.filter((file) => file.id !== id);
         });
 
-  const clear = usingProvider
-    ? () => controller.attachments.clear()
-    : () =>
-        setItems((prev) => {
-          for (const file of prev) {
-            if (file.url) {
-              URL.revokeObjectURL(file.url);
+  const clearAttachments = useCallback(
+    () =>
+      usingProvider
+        ? controller?.attachments.clear()
+        : setItems((prev) => {
+            for (const file of prev) {
+              if (file.url) {
+                URL.revokeObjectURL(file.url);
+              }
             }
-          }
-          return [];
-        });
+            return [];
+          }),
+    [usingProvider, controller]
+  );
+
+  const clearReferencedSources = useCallback(
+    () => setReferencedSources([]),
+    []
+  );
+
+  const clear = useCallback(() => {
+    clearAttachments();
+    clearReferencedSources();
+  }, [clearAttachments, clearReferencedSources]);
 
   const openFileDialog = usingProvider
     ? () => controller.attachments.openFileDialog()
@@ -801,11 +816,11 @@ export const PromptInput = ({
       files: files.map((item) => ({ ...item, id: item.id })),
       add,
       remove,
-      clear,
+      clear: clearAttachments,
       openFileDialog,
       fileInputRef: inputRef,
     }),
-    [files, add, remove, clear, openFileDialog]
+    [files, add, remove, clearAttachments, openFileDialog]
   );
 
   const refsCtx = useMemo<ReferencedSourcesContext>(
@@ -820,9 +835,9 @@ export const PromptInput = ({
       remove: (id: string) => {
         setReferencedSources((prev) => prev.filter((s) => s.id !== id));
       },
-      clear: () => setReferencedSources([]),
+      clear: clearReferencedSources,
     }),
-    [referencedSources]
+    [referencedSources, clearReferencedSources]
   );
 
   const handleSubmit: FormEventHandler<HTMLFormElement> = (event) => {
@@ -870,7 +885,7 @@ export const PromptInput = ({
               // Don't clear on error - user may want to retry
             });
         } else {
-          // Sync function completed without throwing, clear attachments
+          // Sync function completed without throwing, clear inputs
           clear();
           if (usingProvider) {
             controller.textInput.clear();
