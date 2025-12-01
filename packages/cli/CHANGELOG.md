@@ -1,5 +1,29 @@
 # ai-elements
 
+## 1.6.3
+
+### Patch Changes
+
+- b0d5347: Fix model selector logos in dark mode
+- ae31076: Fix duplicate overflows in Conversation element
+
+## 1.6.2
+
+### Patch Changes
+
+- a1b1929: Fix: Update PromptInputSpeechButton SpeechRecognition usage
+
+## 1.6.1
+
+### Patch Changes
+
+- f887f5c: Update PromptInputMessage to use AI SDK types
+- 6fa1d46: fix(reasoning): make "Thought for a few seconds" message reachable
+- d3d91ba: Remove unused hast type
+- e6c656c: fix(model-selector): add DialogTitle for ModelSelectorContent
+- 342bb23: fix prompt-input onSubmit types
+- 70bf5fd: chore: fix checkpoint overflow
+
 ## 1.6.0
 
 ### Minor Changes

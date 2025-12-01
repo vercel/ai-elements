@@ -14,7 +14,7 @@ The `Conversation` component wraps messages and automatically scrolls to the bot
 
 ## Usage with AI SDK
 
-Build a simple conversational UI with `Conversation` and [`PromptInput`](/components/prompt-input):
+Build a simple conversational UI with `Conversation` and [`PromptInput`](/elements/components/prompt-input):
 
 Add the following component to your frontend:
 
@@ -27,7 +27,11 @@ import {
   ConversationEmptyState,
   ConversationScrollButton,
 } from '@/components/ai-elements/conversation';
-import { Message, MessageContent } from '@/components/ai-elements/message';
+import { 
+  Message, 
+  MessageContent,
+  MessageResponse,
+} from '@/components/ai-elements/message';
 import {
   Input,
   PromptInputTextarea,
@@ -36,7 +40,6 @@ import {
 import { MessageSquare } from 'lucide-react';
 import { useState } from 'react';
 import { useChat } from '@ai-sdk/react';
-import { MessageResponse } from '@/components/ai-elements/message';
 
 const ConversationDemo = () => {
   const [input, setInput] = useState('');

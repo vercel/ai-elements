@@ -28,7 +28,6 @@ import { CheckIcon, XIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Confirmation,
-  ConfirmationContent,
   ConfirmationRequest,
   ConfirmationAccepted,
   ConfirmationRejected,
@@ -74,21 +73,19 @@ const Example = () => {
 
         {deleteTool?.approval && (
           <Confirmation approval={deleteTool.approval} state={deleteTool.state}>
-            <ConfirmationContent>
-              <ConfirmationRequest>
-                This tool wants to delete: <code>{deleteTool.input?.filePath}</code>
-                <br />
-                Do you approve this action?
-              </ConfirmationRequest>
-              <ConfirmationAccepted>
-                <CheckIcon className="size-4" />
-                <span>You approved this tool execution</span>
-              </ConfirmationAccepted>
-              <ConfirmationRejected>
-                <XIcon className="size-4" />
-                <span>You rejected this tool execution</span>
-              </ConfirmationRejected>
-            </ConfirmationContent>
+            <ConfirmationRequest>
+              This tool wants to delete: <code>{deleteTool.input?.filePath}</code>
+              <br />
+              Do you approve this action?
+            </ConfirmationRequest>
+            <ConfirmationAccepted>
+              <CheckIcon className="size-4" />
+              <span>You approved this tool execution</span>
+            </ConfirmationAccepted>
+            <ConfirmationRejected>
+              <XIcon className="size-4" />
+              <span>You rejected this tool execution</span>
+            </ConfirmationRejected>
             <ConfirmationActions>
               <ConfirmationAction
                 variant="outline"
@@ -233,21 +230,6 @@ Shows the rejected status when user rejects and state is `output-denied`.
     '...props': {
       description: 'Any other props are spread to the Alert component.',
       type: 'React.ComponentProps<typeof Alert>',
-    },
-  }}
-/>
-
-### `<ConfirmationContent />`
-
-<TypeTable
-  type={{
-    className: {
-      description: 'Additional CSS classes to apply to the AlertDescription component.',
-      type: 'string',
-    },
-    '...props': {
-      description: 'Any other props are spread to the AlertDescription component.',
-      type: 'React.ComponentProps<typeof AlertDescription>',
     },
   }}
 />

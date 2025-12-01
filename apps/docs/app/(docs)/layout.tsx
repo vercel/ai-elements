@@ -1,25 +1,7 @@
-import { DocsLayout } from "fumadocs-ui/layouts/docs";
-import { AiSdkNav } from "@/components/navbar";
-import { source } from "@/lib/source";
+import { DocsLayout } from "@/components/geistdocs/docs-layout";
 
 const Layout = ({ children }: LayoutProps<"/">) => (
-  <DocsLayout
-    links={[]}
-    nav={{
-      component: <AiSdkNav />,
-    }}
-    searchToggle={{
-      enabled: false,
-    }}
-    sidebar={{
-      collapsible: false,
-      tabs: [],
-      className: "bg-background! transition-none! border-none!",
-    }}
-    tree={source.pageTree}
-  >
-    {children}
-  </DocsLayout>
+  <DocsLayout>{children}</DocsLayout>
 );
 
 export default Layout;

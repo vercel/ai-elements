@@ -18,6 +18,20 @@ const config = {
     ],
   },
 
+  // biome-ignore lint/suspicious/useAwait: "rewrites is async"
+  async rewrites() {
+    return [
+      {
+        source: "/elements/docs/:path*.mdx",
+        destination: "/elements/llms.mdx/:path*",
+      },
+      {
+        source: "/elements/docs/:path*.md",
+        destination: "/elements/llms.mdx/:path*",
+      },
+    ];
+  },
+
   // biome-ignore lint/suspicious/useAwait: "redirects is async"
   async redirects() {
     return [
