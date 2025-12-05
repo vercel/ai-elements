@@ -13,12 +13,12 @@
     "ai": "^5.0.89",
     "lucide-react": "^0.552.0",
     "nanoid": "^5.1.6",
-    "react": "19.2.0",
+    "react": "19.2.1",
     "sonner": "^2.0.7"
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
-    "@types/react": "19.2.2",
+    "@types/react": "19.2.7",
     "typescript": "^5.9.3"
   }
 }
