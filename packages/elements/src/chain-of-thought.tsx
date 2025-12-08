@@ -161,7 +161,7 @@ export type ChainOfThoughtSearchResultsProps = ComponentProps<"div">;
 
 export const ChainOfThoughtSearchResults = memo(
   ({ className, ...props }: ChainOfThoughtSearchResultsProps) => (
-    <div className={cn("flex items-center gap-2", className)} {...props} />
+    <div className={cn("flex flex-wrap items-center gap-2", className)} {...props} />
   )
 );
 
