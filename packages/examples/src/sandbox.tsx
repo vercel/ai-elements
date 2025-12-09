@@ -4,7 +4,6 @@ import {
   Sandbox,
   SandboxCode,
   SandboxContent,
-  SandboxCopyButton,
   SandboxHeader,
   SandboxOutput,
   SandboxTabContent,
@@ -83,7 +82,6 @@ const Example = () => {
                 <SandboxTabsTrigger value="code">Code</SandboxTabsTrigger>
                 <SandboxTabsTrigger value="output">Output</SandboxTabsTrigger>
               </SandboxTabsList>
-              <SandboxCopyButton />
             </SandboxTabsBar>
             <SandboxTabContent value="code">
               <SandboxCode

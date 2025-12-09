@@ -5,7 +5,6 @@ import {
   Sandbox,
   SandboxCode,
   SandboxContent,
-  SandboxCopyButton,
   SandboxHeader,
   SandboxOutput,
   SandboxTabContent,
@@ -315,76 +314,6 @@ describe("SandboxTabsTrigger", () => {
   });
 });
 
-describe("SandboxCopyButton", () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
-  it("renders copy button", () => {
-    render(
-      <Sandbox defaultOpen>
-        <SandboxContent>
-          <SandboxTabs defaultValue="code">
-            <SandboxTabsBar>
-              <SandboxTabsList>
-                <SandboxTabsTrigger value="code">Code</SandboxTabsTrigger>
-              </SandboxTabsList>
-              <SandboxCopyButton />
-            </SandboxTabsBar>
-          </SandboxTabs>
-        </SandboxContent>
-      </Sandbox>
-    );
-    expect(screen.getByRole("button")).toBeInTheDocument();
-  });
-
-  it("copies active tab content to clipboard", async () => {
-    const user = userEvent.setup();
-    const writeTextSpy = vi.spyOn(navigator.clipboard, "writeText");
-
-    render(
-      <Sandbox defaultOpen>
-        <SandboxContent>
-          <SandboxTabs defaultValue="code">
-            <SandboxTabsBar>
-              <SandboxTabsList>
-                <SandboxTabsTrigger value="code">Code</SandboxTabsTrigger>
-              </SandboxTabsList>
-              <SandboxCopyButton />
-            </SandboxTabsBar>
-            <SandboxTabContent value="code">
-              <SandboxCode code="const x = 1;" language="javascript" />
-            </SandboxTabContent>
-          </SandboxTabs>
-        </SandboxContent>
-      </Sandbox>
-    );
-
-    const button = screen.getByRole("button");
-    await user.click(button);
-
-    expect(writeTextSpy).toHaveBeenCalledWith("const x = 1;");
-  });
-
-  it("applies custom className", () => {
-    render(
-      <Sandbox defaultOpen>
-        <SandboxContent>
-          <SandboxTabs defaultValue="code">
-            <SandboxTabsBar>
-              <SandboxTabsList>
-                <SandboxTabsTrigger value="code">Code</SandboxTabsTrigger>
-              </SandboxTabsList>
-              <SandboxCopyButton className="custom-copy" />
-            </SandboxTabsBar>
-          </SandboxTabs>
-        </SandboxContent>
-      </Sandbox>
-    );
-    const wrapper = screen.getByRole("button").parentElement;
-    expect(wrapper).toHaveClass("custom-copy");
-  });
-});
 
 describe("SandboxTabContent", () => {
   it("renders content for active tab", () => {
@@ -450,7 +379,27 @@ describe("SandboxCode", () => {
     });
   });
 
-  it("registers content with tabs context", async () => {
+  it("includes copy button", () => {
+    render(
+      <Sandbox defaultOpen>
+        <SandboxContent>
+          <SandboxTabs defaultValue="code">
+            <SandboxTabsBar>
+              <SandboxTabsList>
+                <SandboxTabsTrigger value="code">Code</SandboxTabsTrigger>
+              </SandboxTabsList>
+            </SandboxTabsBar>
+            <SandboxTabContent value="code">
+              <SandboxCode code="const x = 1;" language="javascript" />
+            </SandboxTabContent>
+          </SandboxTabs>
+        </SandboxContent>
+      </Sandbox>
+    );
+    expect(screen.getByRole("button")).toBeInTheDocument();
+  });
+
+  it("copies code to clipboard", async () => {
     const user = userEvent.setup();
     const writeTextSpy = vi.spyOn(navigator.clipboard, "writeText");
 
@@ -461,30 +410,19 @@ describe("SandboxCode", () => {
             <SandboxTabsBar>
               <SandboxTabsList>
                 <SandboxTabsTrigger value="code">Code</SandboxTabsTrigger>
-                <SandboxTabsTrigger value="output">Output</SandboxTabsTrigger>
               </SandboxTabsList>
-              <SandboxCopyButton />
             </SandboxTabsBar>
             <SandboxTabContent value="code">
               <SandboxCode code="const x = 1;" language="javascript" />
-            </SandboxTabContent>
-            <SandboxTabContent value="output">
-              <SandboxOutput code="Result: 1" />
             </SandboxTabContent>
           </SandboxTabs>
         </SandboxContent>
       </Sandbox>
     );
 
-    // Copy code tab
     const copyButton = screen.getByRole("button");
     await user.click(copyButton);
     expect(writeTextSpy).toHaveBeenCalledWith("const x = 1;");
-
-    // Switch to output tab and copy
-    await user.click(screen.getByText("Output"));
-    await user.click(copyButton);
-    expect(writeTextSpy).toHaveBeenCalledWith("Result: 1");
   });
 
   it("applies custom className", async () => {
@@ -537,7 +475,27 @@ describe("SandboxOutput", () => {
     });
   });
 
-  it("registers content with tabs context", async () => {
+  it("includes copy button", () => {
+    render(
+      <Sandbox defaultOpen>
+        <SandboxContent>
+          <SandboxTabs defaultValue="output">
+            <SandboxTabsBar>
+              <SandboxTabsList>
+                <SandboxTabsTrigger value="output">Output</SandboxTabsTrigger>
+              </SandboxTabsList>
+            </SandboxTabsBar>
+            <SandboxTabContent value="output">
+              <SandboxOutput code="Output text" />
+            </SandboxTabContent>
+          </SandboxTabs>
+        </SandboxContent>
+      </Sandbox>
+    );
+    expect(screen.getByRole("button")).toBeInTheDocument();
+  });
+
+  it("copies output to clipboard", async () => {
     const user = userEvent.setup();
     const writeTextSpy = vi.spyOn(navigator.clipboard, "writeText");
 
@@ -549,7 +507,6 @@ describe("SandboxOutput", () => {
               <SandboxTabsList>
                 <SandboxTabsTrigger value="output">Output</SandboxTabsTrigger>
               </SandboxTabsList>
-              <SandboxCopyButton />
             </SandboxTabsBar>
             <SandboxTabContent value="output">
               <SandboxOutput code="Output text" />
@@ -600,7 +557,6 @@ describe("Sandbox integration", () => {
                 <SandboxTabsTrigger value="code">Code</SandboxTabsTrigger>
                 <SandboxTabsTrigger value="output">Output</SandboxTabsTrigger>
               </SandboxTabsList>
-              <SandboxCopyButton />
             </SandboxTabsBar>
             <SandboxTabContent value="code">
               <SandboxCode code="print('Hello')" language="python" />

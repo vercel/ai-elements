@@ -14,26 +14,9 @@ import {
 import { cn } from "@repo/shadcn-ui/lib/utils";
 import type { ToolUIPart } from "ai";
 import { ChevronDownIcon, Code } from "lucide-react";
-import {
-  type ComponentProps,
-  createContext,
-  type MutableRefObject,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import type { ComponentProps } from "react";
 import { CodeBlock, CodeBlockCopyButton } from "./code-block";
 import { getStatusBadge } from "./tool";
-
-type SandboxTabsContextValue = {
-  activeTab: string;
-  contents: MutableRefObject<Map<string, string>>;
-  registerContent: (tab: string, content: string) => void;
-};
-
-const SandboxTabsContext = createContext<SandboxTabsContextValue | null>(null);
-const SandboxTabContentContext = createContext<string | null>(null);
 
 export type SandboxRootProps = ComponentProps<typeof Collapsible>;
 
@@ -90,43 +73,9 @@ export const SandboxContent = ({
 
 export type SandboxTabsProps = ComponentProps<typeof Tabs>;
 
-export const SandboxTabs = ({
-  className,
-  defaultValue,
-  value,
-  onValueChange,
-  ...props
-}: SandboxTabsProps) => {
-  const [internalActiveTab, setInternalActiveTab] = useState(
-    defaultValue ?? value ?? ""
-  );
-  const contentsRef = useRef(new Map<string, string>());
-
-  const activeTab = value ?? internalActiveTab;
-
-  const registerContent = (tab: string, content: string) => {
-    contentsRef.current.set(tab, content);
-  };
-
-  const handleValueChange = (newValue: string) => {
-    setInternalActiveTab(newValue);
-    onValueChange?.(newValue);
-  };
-
-  return (
-    <SandboxTabsContext.Provider
-      value={{ activeTab, contents: contentsRef, registerContent }}
-    >
-      <Tabs
-        className={cn("w-full", className)}
-        defaultValue={defaultValue}
-        onValueChange={handleValueChange}
-        value={value}
-        {...props}
-      />
-    </SandboxTabsContext.Provider>
-  );
-};
+export const SandboxTabs = ({ className, ...props }: SandboxTabsProps) => (
+  <Tabs className={cn("w-full", className)} {...props} />
+);
 
 export type SandboxTabsBarProps = ComponentProps<"div">;
 
@@ -170,103 +119,36 @@ export const SandboxTabsTrigger = ({
   />
 );
 
-export type SandboxCopyButtonProps = {
-  className?: string;
-};
-
-export const SandboxCopyButton = ({ className }: SandboxCopyButtonProps) => {
-  const ctx = useContext(SandboxTabsContext);
-
-  const handleCopy = async () => {
-    if (
-      ctx &&
-      typeof window !== "undefined" &&
-      navigator?.clipboard?.writeText
-    ) {
-      const content = ctx.contents.current.get(ctx.activeTab) ?? "";
-      try {
-        await navigator.clipboard.writeText(content);
-      } catch (error) {
-        console.error("Failed to copy to clipboard:", error);
-      }
-    }
-  };
-
-  return (
-    <div
-      className={cn("ml-auto flex items-center justify-end pr-2", className)}
-    >
-      <CodeBlockCopyButton
-        className="opacity-0 transition-opacity duration-200 group-hover:opacity-100"
-        onCopy={handleCopy}
-        size="sm"
-      />
-    </div>
-  );
-};
-
 export type SandboxTabContentProps = ComponentProps<typeof TabsContent>;
 
 export const SandboxTabContent = ({
   className,
-  value,
   ...props
 }: SandboxTabContentProps) => (
-  <SandboxTabContentContext.Provider value={value ?? null}>
-    <TabsContent
-      className={cn("mt-0 text-sm", className)}
-      value={value}
-      {...props}
-    />
-  </SandboxTabContentContext.Provider>
+  <TabsContent className={cn("mt-0 text-sm", className)} {...props} />
 );
 
 export type SandboxCodeProps = ComponentProps<typeof CodeBlock>;
 
-export const SandboxCode = ({
-  className,
-  code,
-  ...props
-}: SandboxCodeProps) => {
-  const tabsCtx = useContext(SandboxTabsContext);
-  const tabValue = useContext(SandboxTabContentContext);
-
-  useEffect(() => {
-    if (tabsCtx && tabValue && code) {
-      tabsCtx.registerContent(tabValue, code);
-    }
-  }, [tabsCtx, tabValue, code]);
-
-  return (
-    <CodeBlock className={cn("border-0", className)} code={code} {...props} />
-  );
-};
+export const SandboxCode = ({ className, ...props }: SandboxCodeProps) => (
+  <CodeBlock className={cn("border-0", className)} {...props}>
+    <CodeBlockCopyButton
+      className="opacity-0 transition-opacity duration-200 group-hover:opacity-100"
+      size="sm"
+    />
+  </CodeBlock>
+);
 
 export type SandboxOutputProps = Omit<
   ComponentProps<typeof CodeBlock>,
   "language"
 >;
 
-export const SandboxOutput = ({
-  className,
-  code,
-  ...props
-}: SandboxOutputProps) => {
-  const tabsCtx = useContext(SandboxTabsContext);
-  const tabValue = useContext(SandboxTabContentContext);
-
-  useEffect(() => {
-    if (tabsCtx && tabValue && code) {
-      tabsCtx.registerContent(tabValue, code);
-    }
-  }, [tabsCtx, tabValue, code]);
-
-  return (
-    <CodeBlock
-      className={cn("border-0", className)}
-      code={code}
-      language="log"
-      {...props}
+export const SandboxOutput = ({ className, ...props }: SandboxOutputProps) => (
+  <CodeBlock className={cn("border-0", className)} language="log" {...props}>
+    <CodeBlockCopyButton
+      className="opacity-0 transition-opacity duration-200 group-hover:opacity-100"
+      size="sm"
     />
-  );
-};
+  </CodeBlock>
+);

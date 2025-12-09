@@ -33,7 +33,6 @@ import {
   Sandbox,
   SandboxCode,
   SandboxContent,
-  SandboxCopyButton,
   SandboxHeader,
   SandboxOutput,
   SandboxTabContent,
@@ -64,7 +63,6 @@ export const CodeSandbox = ({ toolPart }: CodeSandboxProps) => {
               <SandboxTabsTrigger value="code">Code</SandboxTabsTrigger>
               <SandboxTabsTrigger value="output">Output</SandboxTabsTrigger>
             </SandboxTabsList>
-            <SandboxCopyButton />
           </SandboxTabsBar>
           <SandboxTabContent value="code">
             <SandboxCode code={code} language="tsx" />
@@ -173,19 +171,6 @@ export const CodeSandbox = ({ toolPart }: CodeSandboxProps) => {
   }}
 />
 
-### `<SandboxCopyButton />`
-
-Automatically copies the content of the currently active tab. Must be used within `SandboxTabs`.
-
-<TypeTable
-  type={{
-    className: {
-      description: "Additional CSS classes for the container div.",
-      type: "string",
-    },
-  }}
-/>
-
 ### `<SandboxTabContent />`
 
 <TypeTable
@@ -200,6 +185,8 @@ Automatically copies the content of the currently active tab. Must be used withi
 
 ### `<SandboxCode />`
 
+Renders a syntax-highlighted code block with a built-in copy button.
+
 <TypeTable
   type={{
     "...props": {
@@ -211,6 +198,8 @@ Automatically copies the content of the currently active tab. Must be used withi
 />
 
 ### `<SandboxOutput />`
+
+Renders output with log syntax highlighting and a built-in copy button.
 
 <TypeTable
   type={{
