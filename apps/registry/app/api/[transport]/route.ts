@@ -3,7 +3,7 @@ import { join } from "node:path";
 import { track } from "@vercel/analytics/server";
 import { createMcpHandler } from "mcp-handler";
 import type { RegistryItem } from "shadcn/schema";
-import { z } from "zod";
+import { z } from "zod/v3";
 
 const packageDir = join(process.cwd(), "..", "..", "packages", "elements");
 const srcDir = join(packageDir, "src");
@@ -38,7 +38,11 @@ const handler = createMcpHandler(
     server.tool(
       "get_ai_elements_component",
       "Provides information about an AI Elements component.",
-      { component: z.enum(componentNames as [string, ...string[]]) },
+      {
+        component: z
+          .string()
+          .describe(`Component name. Available: ${componentNames.join(", ")}`),
+      },
       async ({ component }) => {
         const tsxFile = tsxFiles.find(
           (file) => file.name === `${component}.tsx`
@@ -47,7 +51,10 @@ const handler = createMcpHandler(
         if (!tsxFile) {
           return {
             content: [
-              { type: "text", text: `Component ${component} not found` },
+              {
+                type: "text",
+                text: `Component "${component}" not found. Available components: ${componentNames.join(", ")}`,
+              },
             ],
           };
         }
