@@ -180,7 +180,7 @@ This project follows a Code of Conduct. By participating, you agree to uphold pr
 
 ## License
 
-By contributing, you agree that your contributions will be licensed under the same license as the project (MIT).
+By contributing, you agree that your contributions will be licensed under the same license as the project ([Apache License 2.0](../LICENSE)).
 
 ## Recognition
 
