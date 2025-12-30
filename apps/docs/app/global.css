@@ -137,3 +137,17 @@
 :root { --fd-layout-width: 1308px; --fd-page-width: 100%; }
 #nd-page > article { @apply pt-[76px]!; }
 #nd-tocnav { @apply top-[53px]!; }
+
+@layer base {
+  /* 当处于暗色模式时，强制覆盖 Shiki 的行内 color */
+  .dark pre[style*="--shiki-dark"],
+  .dark code[style*="--shiki-dark"] {
+    color: var(--shiki-dark) !important;
+    background-color: #0d1117 !important;
+  }
+
+  /* 针对 span 级别的语法高亮颜色 */
+  .dark span[style*="--shiki-dark"] {
+    color: var(--shiki-dark) !important;
+  }
+}
