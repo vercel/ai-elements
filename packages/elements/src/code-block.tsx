@@ -74,7 +74,6 @@ export async function highlightCode(
   const transformers: ShikiTransformer[] = showLineNumbers
     ? [lineNumberTransformer]
     : [];
-  
   return await Promise.all([
     codeToHtml(code, {
       lang: language,
