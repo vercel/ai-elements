@@ -49,6 +49,23 @@ const lineNumberTransformer: ShikiTransformer = {
   },
 };
 
+const fixWhiteColorInLightThemeTransformer: ShikiTransformer = {
+  name: "fix-white-color-in-light-theme",
+  span(node) {
+    const style = node.properties.style;
+    if (style && typeof style === "string") {
+      // Replace white colors with a visible dark color
+      const fixedStyle = style.replace(
+        /color:\s*(white)\b/gi,
+        "color:#383A42"
+      );
+      if (fixedStyle !== style) {
+        node.properties.style = fixedStyle;
+      }
+    }
+  },
+};
+
 export async function highlightCode(
   code: string,
   language: BundledLanguage,
@@ -58,23 +75,6 @@ export async function highlightCode(
     ? [lineNumberTransformer]
     : [];
   
-  const fixWhiteColorInLightThemeTransformer: ShikiTransformer = {
-    name: "fix-white-color-in-light-theme",
-    span(node) {
-      const style = node.properties.style;
-      if (style && typeof style === "string") {
-        // Replace white colors with a visible dark color
-        const fixedStyle = style.replace(
-          /color:\s*(white)\b/gi,
-          "color:#383A42"
-        );
-        if (fixedStyle !== style) {
-          node.properties.style = fixedStyle;
-        }
-      }
-    },
-  };
-
   return await Promise.all([
     codeToHtml(code, {
       lang: language,
