@@ -28,7 +28,7 @@
     "jotai": "^2.15.1",
     "lucide-react": "^0.552.0",
     "mermaid": "^11.12.2",
-    "next": "16.0.10",
+    "next": "16.1.1",
     "next-themes": "^0.4.6",
     "octokit": "^5.0.5",
     "radix-ui": "^1.4.3",
