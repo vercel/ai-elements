@@ -31,7 +31,6 @@ import {
   PromptInputHoverCard,
   PromptInputHoverCardContent,
   PromptInputHoverCardTrigger,
-  type PromptInputMessage,
   PromptInputProvider,
   PromptInputSubmit,
   PromptInputTab,
@@ -40,6 +39,10 @@ import {
   PromptInputTabLabel,
   PromptInputTextarea,
   PromptInputTools,
+  PromptInputReferencedSource,
+  PromptInputReferencedSources,
+  usePromptInputReferencedSources,
+  type PromptInputMessage,
 } from "@repo/elements/prompt-input";
 import { Button } from "@repo/shadcn-ui/components/ui/button";
 import {
@@ -50,7 +53,8 @@ import {
   ImageIcon,
   RulerIcon,
 } from "lucide-react";
-import { useState } from "react";
+import { useRef, useState } from "react";
+import type { SourceDocumentUIPart } from "ai";
 
 const models = [
   {
@@ -93,24 +97,11 @@ const models = [
 const SUBMITTING_TIMEOUT = 200;
 const STREAMING_TIMEOUT = 2000;
 
-const sampleFiles = {
-  activeTabs: [{ path: "prompt-input.tsx", location: "packages/elements/src" }],
-  recents: [
-    { path: "queue.tsx", location: "apps/test/app/examples" },
-    { path: "queue.tsx", location: "packages/elements/src" },
-  ],
-  added: [
-    { path: "prompt-input.tsx", location: "packages/elements/src" },
-    { path: "queue.tsx", location: "apps/test/app/examples" },
-    { path: "queue.tsx", location: "packages/elements/src" },
-  ],
-  filesAndFolders: [
-    { path: "prompt-input.tsx", location: "packages/elements/src" },
-    { path: "queue.tsx", location: "apps/test/app/examples" },
-  ],
-  code: [{ path: "prompt-input.tsx", location: "packages/elements/src" }],
-  docs: [{ path: "README.md", location: "packages/elements" }],
-};
+const sampleSources: SourceDocumentUIPart[] = [
+  { type: "source-document", sourceId: "1", title: "prompt-input.tsx", filename: "packages/elements/src", mediaType: "text/plain" },
+  { type: "source-document", sourceId: "2", title: "queue.tsx", filename: "apps/test/app/examples", mediaType: "text/plain" },
+  { type: "source-document", sourceId: "3", title: "queue.tsx", filename: "packages/elements/src", mediaType: "text/plain" },
+];
 
 const sampleTabs = {
   active: [{ path: "packages/elements/src/task-queue-panel.tsx" }],
@@ -143,8 +134,6 @@ const Example = () => {
 
     setStatus("submitted");
 
-    console.log("Submitting message:", message);
-
     setTimeout(() => {
       setStatus("streaming");
     }, SUBMITTING_TIMEOUT);
@@ -170,40 +159,7 @@ const Example = () => {
                 </PromptInputButton>
               </PromptInputHoverCardTrigger>
               <PromptInputHoverCardContent className="w-[400px] p-0">
-                <PromptInputCommand>
-                  <PromptInputCommandInput
-                    className="border-none focus-visible:ring-0"
-                    placeholder="Add files, folders, docs..."
-                  />
-                  <PromptInputCommandList>
-                    <PromptInputCommandEmpty className="p-3 text-muted-foreground text-sm">
-                      No results found.
-                    </PromptInputCommandEmpty>
-                    <PromptInputCommandGroup heading="Added">
-                      <PromptInputCommandItem>
-                        <GlobeIcon />
-                        <span>Active Tabs</span>
-                        <span className="ml-auto text-muted-foreground">✓</span>
-                      </PromptInputCommandItem>
-                    </PromptInputCommandGroup>
-                    <PromptInputCommandSeparator />
-                    <PromptInputCommandGroup heading="Other Files">
-                      {sampleFiles.added.map((file, index) => (
-                        <PromptInputCommandItem key={`${file.path}-${index}`}>
-                          <GlobeIcon className="text-primary" />
-                          <div className="flex flex-col">
-                            <span className="font-medium text-sm">
-                              {file.path}
-                            </span>
-                            <span className="text-muted-foreground text-xs">
-                              {file.location}
-                            </span>
-                          </div>
-                        </PromptInputCommandItem>
-                      ))}
-                    </PromptInputCommandGroup>
-                  </PromptInputCommandList>
-                </PromptInputCommand>
+                <SampleFilesMenu />
               </PromptInputHoverCardContent>
             </PromptInputHoverCard>
             <PromptInputHoverCard>
@@ -270,6 +226,9 @@ const Example = () => {
             <PromptInputAttachments>
               {(attachment) => <PromptInputAttachment data={attachment} />}
             </PromptInputAttachments>
+            <PromptInputReferencedSources>
+              {(source) => <PromptInputReferencedSource data={source} />}
+            </PromptInputReferencedSources>
           </PromptInputHeader>
           <PromptInputBody>
             <PromptInputTextarea placeholder="Plan, search, build anything" />
@@ -348,3 +307,56 @@ const Example = () => {
 };
 
 export default Example;
+
+const SampleFilesMenu = () => {
+  const refs = usePromptInputReferencedSources();
+
+  const handleAdd = (source: SourceDocumentUIPart) => {
+    refs.add(source);
+  };
+
+  return (
+    <PromptInputCommand>
+      <PromptInputCommandInput
+        className="border-none focus-visible:ring-0"
+        placeholder="Add files, folders, docs..."
+      />
+      <PromptInputCommandList>
+        <PromptInputCommandEmpty className="p-3 text-muted-foreground text-sm">
+          No results found.
+        </PromptInputCommandEmpty>
+        <PromptInputCommandGroup heading="Added">
+          <PromptInputCommandItem>
+            <GlobeIcon />
+            <span>Active Tabs</span>
+            <span className="ml-auto text-muted-foreground">✓</span>
+          </PromptInputCommandItem>
+        </PromptInputCommandGroup>
+        <PromptInputCommandSeparator />
+        <PromptInputCommandGroup heading="Other Files">
+          {sampleSources
+            .filter(
+              (source) =>
+                !refs.sources.some(
+                  (s) => s.title === source.title && s.filename === source.filename
+                )
+            )
+            .map((source, index) => (
+              <PromptInputCommandItem
+                key={`${source.title}-${index}`}
+                onSelect={() => handleAdd(source)}
+              >
+                <GlobeIcon className="text-primary" />
+                <div className="flex flex-col">
+                  <span className="font-medium text-sm">{source.title}</span>
+                  <span className="text-muted-foreground text-xs">
+                    {source.filename}
+                  </span>
+                </div>
+              </PromptInputCommandItem>
+            ))}
+        </PromptInputCommandGroup>
+      </PromptInputCommandList>
+    </PromptInputCommand>
+  );
+};

@@ -35,9 +35,10 @@ import {
   SelectValue,
 } from "@repo/shadcn-ui/components/ui/select";
 import { cn } from "@repo/shadcn-ui/lib/utils";
-import type { ChatStatus, FileUIPart } from "ai";
+import type { ChatStatus, FileUIPart, SourceDocumentUIPart } from "ai";
 import {
   CornerDownLeftIcon,
+  GlobeIcon,
   ImageIcon,
   Loader2Icon,
   PaperclipIcon,
@@ -200,15 +201,16 @@ export function PromptInputProvider({
   attachmentsRef.current = attachmentFiles;
 
   // Cleanup blob URLs on unmount to prevent memory leaks
-  useEffect(() => {
-    return () => {
+  useEffect(
+    () => () => {
       for (const f of attachmentsRef.current) {
         if (f.url) {
           URL.revokeObjectURL(f.url);
         }
       }
-    };
-  }, []);
+    },
+    []
+  );
 
   const openFileDialog = useCallback(() => {
     openRef.current?.();
@@ -273,6 +275,30 @@ export const usePromptInputAttachments = () => {
     );
   }
   return context;
+};
+
+// ============================================================================
+// Referenced Sources (Local to PromptInput)
+// ============================================================================
+
+export type ReferencedSourcesContext = {
+  sources: (SourceDocumentUIPart & { id: string })[];
+  add: (sources: SourceDocumentUIPart[] | SourceDocumentUIPart) => void;
+  remove: (id: string) => void;
+  clear: () => void;
+};
+
+export const LocalReferencedSourcesContext =
+  createContext<ReferencedSourcesContext | null>(null);
+
+export const usePromptInputReferencedSources = () => {
+  const ctx = useContext(LocalReferencedSourcesContext);
+  if (!ctx) {
+    throw new Error(
+      "usePromptInputReferencedSources must be used within a LocalReferencedSourcesContext.Provider"
+    );
+  }
+  return ctx;
 };
 
 export type PromptInputAttachmentProps = HTMLAttributes<HTMLDivElement> & {
@@ -391,11 +417,115 @@ export function PromptInputAttachments({
 
   return (
     <div
-      className={cn("flex flex-wrap items-center gap-2 p-3 w-full", className)}
+      className={cn("flex w-full flex-wrap items-center gap-2 p-3", className)}
       {...props}
     >
       {attachments.files.map((file) => (
         <Fragment key={file.id}>{children(file)}</Fragment>
+      ))}
+    </div>
+  );
+}
+
+export type PromptInputReferencedSourceProps =
+  HTMLAttributes<HTMLDivElement> & {
+    data: SourceDocumentUIPart & { id: string };
+    className?: string;
+  };
+
+export function PromptInputReferencedSource({
+  data,
+  className,
+  ...props
+}: PromptInputReferencedSourceProps) {
+  const referencedSources = usePromptInputReferencedSources();
+  const label = data.title || data.filename || "Source";
+
+  return (
+    <PromptInputHoverCard>
+      <HoverCardTrigger asChild>
+        <div
+          className={cn(
+            "group relative flex h-8 cursor-default select-none items-center gap-1.5 rounded-md border border-border px-1.5 font-medium text-sm transition-all hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
+            className
+          )}
+          key={data.id}
+          {...props}
+        >
+          <div className="relative size-5 shrink-0">
+            <div className="absolute inset-0 flex size-5 items-center justify-center overflow-hidden rounded bg-background transition-opacity group-hover:opacity-0">
+              <div className="flex size-5 items-center justify-center text-muted-foreground">
+                <GlobeIcon className="size-3" />
+              </div>
+            </div>
+            <Button
+              aria-label="Remove referenced source"
+              className="absolute inset-0 size-5 cursor-pointer rounded p-0 opacity-0 transition-opacity group-hover:pointer-events-auto group-hover:opacity-100 [&>svg]:size-2.5"
+              onClick={(e) => {
+                e.stopPropagation();
+                referencedSources.remove(data.id);
+              }}
+              type="button"
+              variant="ghost"
+            >
+              <XIcon />
+              <span className="sr-only">Remove</span>
+            </Button>
+          </div>
+
+          <span className="flex-1 truncate">{label}</span>
+        </div>
+      </HoverCardTrigger>
+      <PromptInputHoverCardContent className="w-auto p-2">
+        <div className="w-auto space-y-3">
+          <div className="flex items-center gap-2.5">
+            <div className="min-w-0 flex-1 space-y-1 px-0.5">
+              <h4 className="truncate font-semibold text-sm leading-none">
+                {label}
+              </h4>
+              {data.mediaType && (
+                <p className="truncate font-mono text-muted-foreground text-xs">
+                  {data.mediaType}
+                </p>
+              )}
+              {data.filename && (
+                <p className="truncate font-mono text-muted-foreground text-xs">
+                  {data.filename}
+                </p>
+              )}
+            </div>
+          </div>
+        </div>
+      </PromptInputHoverCardContent>
+    </PromptInputHoverCard>
+  );
+}
+
+export type PromptInputReferencedSourcesProps = Omit<
+  HTMLAttributes<HTMLDivElement>,
+  "children"
+> & {
+  children: (source: SourceDocumentUIPart & { id: string }) => ReactNode;
+};
+
+export function PromptInputReferencedSources({
+  children,
+  className,
+  ...props
+}: PromptInputReferencedSourcesProps) {
+  const referencedSources = usePromptInputReferencedSources();
+
+  if (!referencedSources.sources.length) {
+    return null;
+  }
+
+  return (
+    <div
+      className={cn("flex flex-wrap items-center gap-2 p-3", className)}
+      {...props}
+    >
+      {referencedSources.sources.map((source) => (
+        <Fragment key={source.id}>{children(source)}</Fragment>
       ))}
     </div>
   );
@@ -478,6 +608,11 @@ export const PromptInput = ({
   // ----- Local attachments (only used when no provider)
   const [items, setItems] = useState<(FileUIPart & { id: string })[]>([]);
   const files = usingProvider ? controller.attachments.files : items;
+
+  // ----- Local referenced sources (always local to PromptInput)
+  const [referencedSources, setReferencedSources] = useState<
+    (SourceDocumentUIPart & { id: string })[]
+  >([]);
 
   // Keep a ref to files for cleanup on unmount (avoids stale closure)
   const filesRef = useRef(files);
@@ -585,12 +720,36 @@ export const PromptInput = ({
     []
   );
 
+  const clearAttachments = useCallback(
+    () =>
+      usingProvider
+        ? controller?.attachments.clear()
+        : setItems((prev) => {
+            for (const file of prev) {
+              if (file.url) {
+                URL.revokeObjectURL(file.url);
+              }
+            }
+            return [];
+          }),
+    [usingProvider, controller]
+  );
+
+  const clearReferencedSources = useCallback(
+    () => setReferencedSources([]),
+    []
+  );
+
   const add = usingProvider ? controller.attachments.add : addLocal;
   const remove = usingProvider ? controller.attachments.remove : removeLocal;
-  const clear = usingProvider ? controller.attachments.clear : clearLocal;
   const openFileDialog = usingProvider
     ? controller.attachments.openFileDialog
     : openFileDialogLocal;
+
+  const clear = useCallback(() => {
+    clearAttachments();
+    clearReferencedSources();
+  }, [clearAttachments, clearReferencedSources]);
 
   // Let provider know about our hidden file input so external menus can call openFileDialog()
   useEffect(() => {
@@ -694,16 +853,33 @@ export const PromptInput = ({
     }
   };
 
-  const ctx = useMemo<AttachmentsContext>(
+  const attachmentsCtx = useMemo<AttachmentsContext>(
     () => ({
       files: files.map((item) => ({ ...item, id: item.id })),
       add,
       remove,
-      clear,
+      clear: clearAttachments,
       openFileDialog,
       fileInputRef: inputRef,
     }),
-    [files, add, remove, clear, openFileDialog]
+    [files, add, remove, clearAttachments, openFileDialog]
+  );
+
+  const refsCtx = useMemo<ReferencedSourcesContext>(
+    () => ({
+      sources: referencedSources,
+      add: (incoming: SourceDocumentUIPart[] | SourceDocumentUIPart) => {
+        const array = Array.isArray(incoming) ? incoming : [incoming];
+        setReferencedSources((prev) =>
+          prev.concat(array.map((s) => ({ ...s, id: nanoid() })))
+        );
+      },
+      remove: (id: string) => {
+        setReferencedSources((prev) => prev.filter((s) => s.id !== id));
+      },
+      clear: clearReferencedSources,
+    }),
+    [referencedSources, clearReferencedSources]
   );
 
   const handleSubmit: FormEventHandler<HTMLFormElement> = (event) => {
@@ -754,7 +930,7 @@ export const PromptInput = ({
                 // Don't clear on error - user may want to retry
               });
           } else {
-            // Sync function completed without throwing, clear attachments
+            // Sync function completed without throwing, clear inputs
             clear();
             if (usingProvider) {
               controller.textInput.clear();
@@ -793,11 +969,17 @@ export const PromptInput = ({
     </>
   );
 
-  return usingProvider ? (
-    inner
-  ) : (
-    <LocalAttachmentsContext.Provider value={ctx}>
+  const withReferencedSources = (
+    <LocalReferencedSourcesContext.Provider value={refsCtx}>
       {inner}
+    </LocalReferencedSourcesContext.Provider>
+  );
+
+  return usingProvider ? (
+    withReferencedSources
+  ) : (
+    <LocalAttachmentsContext.Provider value={attachmentsCtx}>
+      {withReferencedSources}
     </LocalAttachmentsContext.Provider>
   );
 };

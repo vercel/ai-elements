@@ -12,6 +12,8 @@ import {
   PromptInputAttachments,
   PromptInputBody,
   PromptInputButton,
+  PromptInputReferencedSource,
+  PromptInputReferencedSources,
   PromptInputSelect,
   PromptInputSelectContent,
   PromptInputSelectItem,
@@ -21,6 +23,7 @@ import {
   PromptInputTextarea,
   PromptInputTools,
   usePromptInputAttachments,
+  usePromptInputReferencedSources,
 } from "../src/prompt-input";
 
 // Mock URL.createObjectURL and URL.revokeObjectURL for tests
@@ -1889,6 +1892,446 @@ describe("PromptInputAttachment", () => {
 
     expect(screen.getByText("test.txt")).toBeInTheDocument();
     expect(textarea.value).toBe("Some tex");
+  });
+});
+
+describe("PromptInputReferencedSource", () => {
+  it("renders referenced source with globe icon", () => {
+    const onSubmit = vi.fn();
+    const source = {
+      id: "1",
+      type: "source-document" as const,
+      sourceId: "source-1",
+      title: "Test Document",
+      filename: "doc.pdf",
+      mediaType: "application/pdf",
+    };
+
+    render(
+      <PromptInput onSubmit={onSubmit}>
+        <PromptInputBody>
+          <PromptInputReferencedSource data={source} />
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    expect(screen.getByText("Test Document")).toBeInTheDocument();
+  });
+
+  it("falls back to filename when title is not provided", () => {
+    const onSubmit = vi.fn();
+    const source = {
+      id: "1",
+      type: "source-document" as const,
+      sourceId: "source-1",
+      title: "",
+      filename: "document.pdf",
+      mediaType: "application/pdf",
+    };
+
+    render(
+      <PromptInput onSubmit={onSubmit}>
+        <PromptInputBody>
+          <PromptInputReferencedSource data={source} />
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    expect(screen.getByText("document.pdf")).toBeInTheDocument();
+  });
+
+  it("removes referenced source when remove button clicked", async () => {
+    const onSubmit = vi.fn();
+    const user = userEvent.setup();
+
+    const ReferencedSourceConsumer = () => {
+      const refs = usePromptInputReferencedSources();
+      return (
+        <>
+          <button
+            data-testid="add-source"
+            onClick={() =>
+              refs.add({
+                type: "source-document",
+                sourceId: "source-1",
+                title: "Test Source",
+                mediaType: "text/plain",
+              })
+            }
+            type="button"
+          >
+            Add
+          </button>
+          <PromptInputReferencedSources>
+            {(source) => (
+              <PromptInputReferencedSource data={source} key={source.id} />
+            )}
+          </PromptInputReferencedSources>
+        </>
+      );
+    };
+
+    render(
+      <PromptInput onSubmit={onSubmit}>
+        <PromptInputBody>
+          <ReferencedSourceConsumer />
+          <PromptInputTextarea />
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    await user.click(screen.getByTestId("add-source"));
+    expect(screen.getByText("Test Source")).toBeInTheDocument();
+
+    const removeButton = screen.getByLabelText("Remove referenced source");
+    await user.click(removeButton);
+
+    expect(screen.queryByText("Test Source")).not.toBeInTheDocument();
+  });
+});
+
+describe("PromptInputReferencedSources", () => {
+  it("renders multiple referenced sources", async () => {
+    const onSubmit = vi.fn();
+    const user = userEvent.setup();
+
+    const ReferencedSourceConsumer = () => {
+      const refs = usePromptInputReferencedSources();
+      return (
+        <>
+          <button
+            data-testid="add-sources"
+            onClick={() =>
+              refs.add([
+                {
+                  type: "source-document",
+                  sourceId: "s1",
+                  title: "Source 1",
+                  mediaType: "text/plain",
+                },
+                {
+                  type: "source-document",
+                  sourceId: "s2",
+                  title: "Source 2",
+                  mediaType: "text/plain",
+                },
+              ])
+            }
+            type="button"
+          >
+            Add Sources
+          </button>
+          <PromptInputReferencedSources>
+            {(source) => <div key={source.id}>{source.title}</div>}
+          </PromptInputReferencedSources>
+        </>
+      );
+    };
+
+    render(
+      <PromptInput onSubmit={onSubmit}>
+        <PromptInputBody>
+          <ReferencedSourceConsumer />
+          <PromptInputTextarea />
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    await user.click(screen.getByTestId("add-sources"));
+
+    expect(screen.getByText("Source 1")).toBeInTheDocument();
+    expect(screen.getByText("Source 2")).toBeInTheDocument();
+  });
+
+  it("does not render when no sources exist", () => {
+    const onSubmit = vi.fn();
+
+    const ReferencedSourceConsumer = () => {
+      const refs = usePromptInputReferencedSources();
+      return (
+        <PromptInputReferencedSources data-testid="sources-container">
+          {(source) => <div key={source.id}>{source.title}</div>}
+        </PromptInputReferencedSources>
+      );
+    };
+
+    render(
+      <PromptInput onSubmit={onSubmit}>
+        <PromptInputBody>
+          <ReferencedSourceConsumer />
+          <PromptInputTextarea />
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    expect(screen.queryByTestId("sources-container")).not.toBeInTheDocument();
+  });
+
+  it("clears referenced sources after successful form submission", async () => {
+    const onSubmit = vi.fn(() => Promise.resolve());
+    const user = userEvent.setup();
+
+    const ReferencedSourceConsumer = () => {
+      const refs = usePromptInputReferencedSources();
+      return (
+        <>
+          <button
+            data-testid="add-source"
+            onClick={() =>
+              refs.add({
+                type: "source-document",
+                sourceId: "s1",
+                title: "Test Source",
+                mediaType: "text/plain",
+              })
+            }
+            type="button"
+          >
+            Add Source
+          </button>
+          <PromptInputReferencedSources>
+            {(source) => <div key={source.id}>{source.title}</div>}
+          </PromptInputReferencedSources>
+        </>
+      );
+    };
+
+    render(
+      <PromptInput onSubmit={onSubmit}>
+        <PromptInputBody>
+          <ReferencedSourceConsumer />
+          <PromptInputTextarea />
+          <PromptInputSubmit />
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    // Add a referenced source
+    await user.click(screen.getByTestId("add-source"));
+    expect(screen.getByText("Test Source")).toBeInTheDocument();
+
+    // Type and submit
+    const textarea = screen.getByPlaceholderText(
+      "What would you like to know?"
+    ) as HTMLTextAreaElement;
+    await user.type(textarea, "test message");
+    await user.keyboard("{Enter}");
+
+    // Wait for async submission to complete
+    await vi.waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledTimes(1);
+    });
+
+    // Give time for promise resolution
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
+    // Verify referenced source was cleared
+    expect(screen.queryByText("Test Source")).not.toBeInTheDocument();
+  });
+
+  it("does not clear referenced sources when onSubmit throws an error", async () => {
+    const onSubmit = vi.fn(() => {
+      throw new Error("Submission failed");
+    });
+    const user = userEvent.setup();
+
+    const ReferencedSourceConsumer = () => {
+      const refs = usePromptInputReferencedSources();
+      return (
+        <>
+          <button
+            data-testid="add-source"
+            onClick={() =>
+              refs.add({
+                type: "source-document",
+                sourceId: "s1",
+                title: "Test Source",
+                mediaType: "text/plain",
+              })
+            }
+            type="button"
+          >
+            Add Source
+          </button>
+          <PromptInputReferencedSources>
+            {(source) => <div key={source.id}>{source.title}</div>}
+          </PromptInputReferencedSources>
+        </>
+      );
+    };
+
+    render(
+      <PromptInput onSubmit={onSubmit}>
+        <PromptInputBody>
+          <ReferencedSourceConsumer />
+          <PromptInputTextarea />
+          <PromptInputSubmit />
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    // Add a referenced source
+    await user.click(screen.getByTestId("add-source"));
+    expect(screen.getByText("Test Source")).toBeInTheDocument();
+
+    // Type and submit
+    const textarea = screen.getByPlaceholderText(
+      "What would you like to know?"
+    ) as HTMLTextAreaElement;
+    await user.type(textarea, "test message");
+    await user.keyboard("{Enter}");
+
+    // Wait for submission attempt
+    await vi.waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledTimes(1);
+    });
+
+    // Verify referenced source was NOT cleared due to error
+    expect(screen.getByText("Test Source")).toBeInTheDocument();
+  });
+
+  it("does not clear referenced sources when async onSubmit rejects", async () => {
+    const onSubmit = vi.fn(() =>
+      Promise.reject(new Error("Async submission failed"))
+    );
+    const user = userEvent.setup();
+
+    const ReferencedSourceConsumer = () => {
+      const refs = usePromptInputReferencedSources();
+      return (
+        <>
+          <button
+            data-testid="add-source"
+            onClick={() =>
+              refs.add({
+                type: "source-document",
+                sourceId: "s1",
+                title: "Test Source",
+                mediaType: "text/plain",
+              })
+            }
+            type="button"
+          >
+            Add Source
+          </button>
+          <PromptInputReferencedSources>
+            {(source) => <div key={source.id}>{source.title}</div>}
+          </PromptInputReferencedSources>
+        </>
+      );
+    };
+
+    render(
+      <PromptInput onSubmit={onSubmit}>
+        <PromptInputBody>
+          <ReferencedSourceConsumer />
+          <PromptInputTextarea />
+          <PromptInputSubmit />
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    // Add a referenced source
+    await user.click(screen.getByTestId("add-source"));
+    expect(screen.getByText("Test Source")).toBeInTheDocument();
+
+    // Type and submit
+    const textarea = screen.getByPlaceholderText(
+      "What would you like to know?"
+    ) as HTMLTextAreaElement;
+    await user.type(textarea, "test message");
+    await user.keyboard("{Enter}");
+
+    // Wait for async submission attempt
+    await vi.waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledTimes(1);
+    });
+
+    // Give time for promise rejection
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
+    // Verify referenced source was NOT cleared due to rejection
+    expect(screen.getByText("Test Source")).toBeInTheDocument();
+  });
+
+  it("clears both attachments and referenced sources after successful submission", async () => {
+    const onSubmit = vi.fn(() => Promise.resolve());
+    const user = userEvent.setup();
+
+    const file = new File(["test"], "test.txt", { type: "text/plain" });
+
+    const Consumer = () => {
+      const attachments = usePromptInputAttachments();
+      const refs = usePromptInputReferencedSources();
+      return (
+        <>
+          <button
+            data-testid="add-file"
+            onClick={() => attachments.add([file])}
+            type="button"
+          >
+            Add File
+          </button>
+          <button
+            data-testid="add-source"
+            onClick={() =>
+              refs.add({
+                type: "source-document",
+                sourceId: "s1",
+                title: "Test Source",
+                mediaType: "text/plain",
+              })
+            }
+            type="button"
+          >
+            Add Source
+          </button>
+          <PromptInputAttachments>
+            {(attachment) => (
+              <div key={attachment.id}>{attachment.filename}</div>
+            )}
+          </PromptInputAttachments>
+          <PromptInputReferencedSources>
+            {(source) => <div key={source.id}>{source.title}</div>}
+          </PromptInputReferencedSources>
+        </>
+      );
+    };
+
+    render(
+      <PromptInput onSubmit={onSubmit}>
+        <PromptInputBody>
+          <Consumer />
+          <PromptInputTextarea />
+          <PromptInputSubmit />
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    // Add both attachment and referenced source
+    await user.click(screen.getByTestId("add-file"));
+    await user.click(screen.getByTestId("add-source"));
+    expect(screen.getByText("test.txt")).toBeInTheDocument();
+    expect(screen.getByText("Test Source")).toBeInTheDocument();
+
+    // Type and submit
+    const textarea = screen.getByPlaceholderText(
+      "What would you like to know?"
+    ) as HTMLTextAreaElement;
+    await user.type(textarea, "test message");
+    await user.keyboard("{Enter}");
+
+    // Wait for async submission
+    await vi.waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledTimes(1);
+    });
+
+    // Give time for promise resolution
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
+    // Verify both were cleared
+    expect(screen.queryByText("test.txt")).not.toBeInTheDocument();
+    expect(screen.queryByText("Test Source")).not.toBeInTheDocument();
   });
 });
 
