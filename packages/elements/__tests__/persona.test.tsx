@@ -5,12 +5,20 @@ import { Persona } from "../src/persona";
 // Mock the Rive hooks and components
 const mockUseRive = vi.fn();
 const mockUseStateMachineInput = vi.fn();
+const mockUseViewModel = vi.fn();
+const mockUseViewModelInstance = vi.fn();
+const mockUseViewModelInstanceColor = vi.fn();
 const MockRiveComponent = vi.fn(() => <div data-testid="rive-component" />);
 
 vi.mock("@rive-app/react-webgl2", () => ({
   useRive: (params: any) => mockUseRive(params),
   useStateMachineInput: (rive: any, stateMachine: string, input: string) =>
     mockUseStateMachineInput(rive, stateMachine, input),
+  useViewModel: (rive: any, options: any) => mockUseViewModel(rive, options),
+  useViewModelInstance: (viewModel: any, options: any) =>
+    mockUseViewModelInstance(viewModel, options),
+  useViewModelInstanceColor: (name: string, instance: any) =>
+    mockUseViewModelInstanceColor(name, instance),
 }));
 
 // Mock console methods
@@ -21,6 +29,9 @@ beforeEach(() => {
   // Reset mocks
   mockUseRive.mockReset();
   mockUseStateMachineInput.mockReset();
+  mockUseViewModel.mockReset();
+  mockUseViewModelInstance.mockReset();
+  mockUseViewModelInstanceColor.mockReset();
   MockRiveComponent.mockClear();
 
   // Default mock implementations
@@ -32,6 +43,10 @@ beforeEach(() => {
   mockUseStateMachineInput.mockReturnValue({
     value: false,
   });
+
+  mockUseViewModel.mockReturnValue({});
+  mockUseViewModelInstance.mockReturnValue({});
+  mockUseViewModelInstanceColor.mockReturnValue({ setRgb: vi.fn() });
 });
 
 describe("Persona", () => {
@@ -40,12 +55,12 @@ describe("Persona", () => {
     expect(getByTestId("rive-component")).toBeInTheDocument();
   });
 
-  it("uses default variant 'orb' when not specified", () => {
+  it("uses default variant 'obsidian' when not specified", () => {
     render(<Persona state="idle" />);
 
     expect(mockUseRive).toHaveBeenCalledWith(
       expect.objectContaining({
-        src: "https://ejiidnob33g9ap1r.public.blob.vercel-storage.com/orb-1.2.riv",
+        src: "https://ejiidnob33g9ap1r.public.blob.vercel-storage.com/obsidian-2.0.riv",
         stateMachines: "default",
         autoplay: true,
       })
@@ -67,13 +82,13 @@ describe("Persona", () => {
 
     expect(mockUseRive).toHaveBeenCalledWith(
       expect.objectContaining({
-        src: "https://ejiidnob33g9ap1r.public.blob.vercel-storage.com/mana-2.0.rev",
+        src: "https://ejiidnob33g9ap1r.public.blob.vercel-storage.com/mana-2.0.riv",
       })
     );
   });
 
-  it("renders with orb variant", () => {
-    render(<Persona state="idle" variant="orb" />);
+  it("renders with opal variant", () => {
+    render(<Persona state="idle" variant="opal" />);
 
     expect(mockUseRive).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -327,73 +342,73 @@ describe("Persona - State Management", () => {
 });
 
 describe("Persona - Lifecycle Callbacks", () => {
-  it("calls onLoad when provided", () => {
+  it("passes onLoad to useRive when provided", () => {
     const onLoad = vi.fn();
     render(<Persona onLoad={onLoad} state="idle" />);
 
     expect(mockUseRive).toHaveBeenCalledWith(
       expect.objectContaining({
-        onLoad,
+        onLoad: expect.any(Function),
       })
     );
   });
 
-  it("calls onLoadError when provided", () => {
+  it("passes onLoadError to useRive when provided", () => {
     const onLoadError = vi.fn();
     render(<Persona onLoadError={onLoadError} state="idle" />);
 
     expect(mockUseRive).toHaveBeenCalledWith(
       expect.objectContaining({
-        onLoadError,
+        onLoadError: expect.any(Function),
       })
     );
   });
 
-  it("calls onReady when animation is ready", () => {
+  it("passes onReady as onRiveReady to useRive when provided", () => {
     const onReady = vi.fn();
     render(<Persona onReady={onReady} state="idle" />);
 
     expect(mockUseRive).toHaveBeenCalledWith(
       expect.objectContaining({
-        onRiveReady: onReady,
+        onRiveReady: expect.any(Function),
       })
     );
   });
 
-  it("calls onPause when provided", () => {
+  it("passes onPause to useRive when provided", () => {
     const onPause = vi.fn();
     render(<Persona onPause={onPause} state="idle" />);
 
     expect(mockUseRive).toHaveBeenCalledWith(
       expect.objectContaining({
-        onPause,
+        onPause: expect.any(Function),
       })
     );
   });
 
-  it("calls onPlay when provided", () => {
+  it("passes onPlay to useRive when provided", () => {
     const onPlay = vi.fn();
     render(<Persona onPlay={onPlay} state="idle" />);
 
     expect(mockUseRive).toHaveBeenCalledWith(
       expect.objectContaining({
-        onPlay,
+        onPlay: expect.any(Function),
       })
     );
   });
 
-  it("calls onStop when provided", () => {
+  it("passes onStop to useRive when provided", () => {
     const onStop = vi.fn();
     render(<Persona onStop={onStop} state="idle" />);
 
     expect(mockUseRive).toHaveBeenCalledWith(
       expect.objectContaining({
-        onStop,
+        onStop: expect.any(Function),
       })
     );
   });
 
-  it("passes all lifecycle callbacks simultaneously", () => {
+  it("passes all lifecycle callbacks to useRive simultaneously", () => {
     const callbacks = {
       onLoad: vi.fn(),
       onLoadError: vi.fn(),
@@ -417,12 +432,12 @@ describe("Persona - Lifecycle Callbacks", () => {
 
     expect(mockUseRive).toHaveBeenCalledWith(
       expect.objectContaining({
-        onLoad: callbacks.onLoad,
-        onLoadError: callbacks.onLoadError,
-        onRiveReady: callbacks.onReady,
-        onPause: callbacks.onPause,
-        onPlay: callbacks.onPlay,
-        onStop: callbacks.onStop,
+        onLoad: expect.any(Function),
+        onLoadError: expect.any(Function),
+        onRiveReady: expect.any(Function),
+        onPause: expect.any(Function),
+        onPlay: expect.any(Function),
+        onStop: expect.any(Function),
       })
     );
   });
@@ -477,12 +492,12 @@ describe("Persona - Integration", () => {
       })
     );
 
-    // Check callbacks
+    // Check callbacks are passed (wrapped in stable refs)
     expect(mockUseRive).toHaveBeenCalledWith(
       expect.objectContaining({
-        onLoad: callbacks.onLoad,
-        onRiveReady: callbacks.onReady,
-        onPlay: callbacks.onPlay,
+        onLoad: expect.any(Function),
+        onRiveReady: expect.any(Function),
+        onPlay: expect.any(Function),
       })
     );
 
@@ -496,7 +511,7 @@ describe("Persona - Integration", () => {
     const variants = [
       "obsidian",
       "mana",
-      "orb",
+      "opal",
       "halo",
       "glint",
       "command",
