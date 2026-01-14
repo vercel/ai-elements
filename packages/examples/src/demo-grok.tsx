@@ -1,27 +1,21 @@
 "use client";
 
 import {
+  Conversation,
+  ConversationContent,
+  ConversationScrollButton,
+} from "@repo/elements/conversation";
+import {
+  Message,
   MessageBranch,
   MessageBranchContent,
   MessageBranchNext,
   MessageBranchPage,
   MessageBranchPrevious,
   MessageBranchSelector,
+  MessageContent,
+  MessageResponse,
 } from "@repo/elements/message";
-import {
-  Conversation,
-  ConversationContent,
-  ConversationScrollButton,
-} from "@repo/elements/conversation";
-import { Message, MessageContent } from "@repo/elements/message";
-import {
-  PromptInput,
-  PromptInputButton,
-  PromptInputFooter,
-  type PromptInputMessage,
-  PromptInputTextarea,
-  PromptInputTools,
-} from "@repo/elements/prompt-input";
 import {
   ModelSelector,
   ModelSelectorContent,
@@ -36,11 +30,18 @@ import {
   ModelSelectorTrigger,
 } from "@repo/elements/model-selector";
 import {
+  PromptInput,
+  PromptInputButton,
+  PromptInputFooter,
+  type PromptInputMessage,
+  PromptInputTextarea,
+  PromptInputTools,
+} from "@repo/elements/prompt-input";
+import {
   Reasoning,
   ReasoningContent,
   ReasoningTrigger,
 } from "@repo/elements/reasoning";
-import { MessageResponse } from "@repo/elements/message";
 import {
   Source,
   Sources,
@@ -55,10 +56,10 @@ import {
 } from "@repo/shadcn-ui/components/ui/dropdown-menu";
 import { cn } from "@repo/shadcn-ui/lib/utils";
 import type { ToolUIPart } from "ai";
-import { CheckIcon } from "lucide-react";
 import {
   AudioWaveformIcon,
   CameraIcon,
+  CheckIcon,
   ChevronDownIcon,
   FileIcon,
   ImageIcon,
@@ -494,7 +495,9 @@ const Example = () => {
         const assistantMessageKey = `assistant-${Date.now()}`;
         const assistantMessageId = `version-${Date.now()}`;
         const randomMessageResponse =
-          mockMessageResponses[Math.floor(Math.random() * mockMessageResponses.length)];
+          mockMessageResponses[
+            Math.floor(Math.random() * mockMessageResponses.length)
+          ];
 
         // Create reasoning for some responses
         const shouldHaveReasoning = Math.random() > 0.5;
@@ -733,7 +736,9 @@ const Example = () => {
                 <ModelSelectorTrigger asChild>
                   <PromptInputButton>
                     {selectedModelData?.chefSlug && (
-                      <ModelSelectorLogo provider={selectedModelData.chefSlug} />
+                      <ModelSelectorLogo
+                        provider={selectedModelData.chefSlug}
+                      />
                     )}
                     {selectedModelData?.name && (
                       <ModelSelectorName>

@@ -61,7 +61,7 @@ export const ClientNavbar = ({ pages }: { pages: NavPageItem[] }) => (
           {pages.map((page) => (
             <Button
               asChild
-              className="p-0 font-normal text-muted-foreground tracking-[0.13px] hover:text-foreground hover:no-underline"
+              className="p-0 font-normal text-muted-foreground hover:text-foreground hover:no-underline"
               key={page.href}
               variant="link"
             >

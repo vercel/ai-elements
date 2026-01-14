@@ -1,24 +1,6 @@
 "use client";
 
 import {
-  PromptInput,
-  PromptInputActionAddAttachments,
-  PromptInputActionMenu,
-  PromptInputActionMenuContent,
-  PromptInputActionMenuTrigger,
-  PromptInputAttachment,
-  PromptInputAttachments,
-  PromptInputBody,
-  PromptInputButton,
-  PromptInputFooter,
-  PromptInputHeader,
-  type PromptInputMessage,
-  PromptInputSpeechButton,
-  PromptInputSubmit,
-  PromptInputTextarea,
-  PromptInputTools,
-} from "@repo/elements/prompt-input";
-import {
   ModelSelector,
   ModelSelectorContent,
   ModelSelectorEmpty,
@@ -31,6 +13,23 @@ import {
   ModelSelectorName,
   ModelSelectorTrigger,
 } from "@repo/elements/model-selector";
+import {
+  PromptInput,
+  PromptInputActionAddAttachments,
+  PromptInputActionMenu,
+  PromptInputActionMenuContent,
+  PromptInputActionMenuTrigger,
+  PromptInputAttachment,
+  PromptInputAttachments,
+  PromptInputBody,
+  PromptInputButton,
+  PromptInputFooter,
+  PromptInputHeader,
+  type PromptInputMessage,
+  PromptInputSubmit,
+  PromptInputTextarea,
+  PromptInputTools,
+} from "@repo/elements/prompt-input";
 import {
   Queue,
   QueueItem,
@@ -133,7 +132,6 @@ const Example = () => {
     "submitted" | "streaming" | "ready" | "error"
   >("ready");
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const selectedModelData = models.find((m) => m.id === model);
 
@@ -225,7 +223,6 @@ const Example = () => {
         <PromptInputBody>
           <PromptInputTextarea
             onChange={(e) => setText(e.target.value)}
-            ref={textareaRef}
             value={text}
           />
         </PromptInputBody>
@@ -237,10 +234,6 @@ const Example = () => {
                 <PromptInputActionAddAttachments />
               </PromptInputActionMenuContent>
             </PromptInputActionMenu>
-            <PromptInputSpeechButton
-              onTranscriptionChange={setText}
-              textareaRef={textareaRef}
-            />
             <PromptInputButton>
               <GlobeIcon size={16} />
               <span>Search</span>
@@ -266,7 +259,7 @@ const Example = () => {
                 <ModelSelectorList>
                   <ModelSelectorEmpty>No models found.</ModelSelectorEmpty>
                   {["OpenAI", "Anthropic", "Google"].map((chef) => (
-                    <ModelSelectorGroup key={chef} heading={chef}>
+                    <ModelSelectorGroup heading={chef} key={chef}>
                       {models
                         .filter((m) => m.chef === chef)
                         .map((m) => (
