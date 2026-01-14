@@ -16,10 +16,13 @@ const componentNames = tsxFiles.map((file) => file.name.replace(".tsx", ""));
 
 const handler = createMcpHandler(
   (server) => {
-    server.tool(
+    server.registerTool(
       "get_ai_elements_components",
-      "Provides a list of all AI Elements components.",
-      {},
+      {
+        title: "Get AI Elements Components",
+        description: "Provides a list of all AI Elements components.",
+        inputSchema: {},
+      },
       async () => {
         if (process.env.NODE_ENV === "production") {
           try {
@@ -35,13 +38,18 @@ const handler = createMcpHandler(
       }
     );
 
-    server.tool(
+    server.registerTool(
       "get_ai_elements_component",
-      "Provides information about an AI Elements component.",
       {
-        component: z
-          .string()
-          .describe(`Component name. Available: ${componentNames.join(", ")}`),
+        title: "Get AI Elements Component",
+        description: "Provides information about an AI Elements component.",
+        inputSchema: {
+          component: z
+            .string()
+            .describe(
+              `Component name. Available: ${componentNames.join(", ")}`
+            ),
+        },
       },
       async ({ component }) => {
         const tsxFile = tsxFiles.find(

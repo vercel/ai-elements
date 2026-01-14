@@ -7,6 +7,7 @@
     "build": "next build"
   },
   "dependencies": {
+    "@modelcontextprotocol/sdk": "1.25.2",
     "@vercel/analytics": "^1.5.0",
     "mcp-handler": "^1.0.3",
     "next": "16.0.10",
@@ -14,7 +15,7 @@
     "react-dom": "19.2.1",
     "shadcn": "^3.5.0",
     "ts-morph": "^27.0.2",
-    "zod": "^4.1.12"
+    "zod": "^3.25.76"
   },
   "devDependencies": {
     "@types/node": "^24",
