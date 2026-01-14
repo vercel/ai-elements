@@ -3,7 +3,7 @@ import { join } from "node:path";
 import { track } from "@vercel/analytics/server";
 import { createMcpHandler } from "mcp-handler";
 import type { RegistryItem } from "shadcn/schema";
-import { z } from "zod";
+import { z } from "zod/v3";
 
 const packageDir = join(process.cwd(), "..", "..", "packages", "elements");
 const srcDir = join(packageDir, "src");
@@ -16,10 +16,13 @@ const componentNames = tsxFiles.map((file) => file.name.replace(".tsx", ""));
 
 const handler = createMcpHandler(
   (server) => {
-    server.tool(
+    server.registerTool(
       "get_ai_elements_components",
-      "Provides a list of all AI Elements components.",
-      {},
+      {
+        title: "Get AI Elements Components",
+        description: "Provides a list of all AI Elements components.",
+        inputSchema: {},
+      },
       async () => {
         if (process.env.NODE_ENV === "production") {
           try {
@@ -35,10 +38,19 @@ const handler = createMcpHandler(
       }
     );
 
-    server.tool(
+    server.registerTool(
       "get_ai_elements_component",
-      "Provides information about an AI Elements component.",
-      { component: z.enum(componentNames as [string, ...string[]]) },
+      {
+        title: "Get AI Elements Component",
+        description: "Provides information about an AI Elements component.",
+        inputSchema: {
+          component: z
+            .string()
+            .describe(
+              `Component name. Available: ${componentNames.join(", ")}`
+            ),
+        },
+      },
       async ({ component }) => {
         const tsxFile = tsxFiles.find(
           (file) => file.name === `${component}.tsx`
@@ -47,7 +59,10 @@ const handler = createMcpHandler(
         if (!tsxFile) {
           return {
             content: [
-              { type: "text", text: `Component ${component} not found` },
+              {
+                type: "text",
+                text: `Component "${component}" not found. Available components: ${componentNames.join(", ")}`,
+              },
             ],
           };
         }

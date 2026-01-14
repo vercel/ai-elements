@@ -1,19 +1,21 @@
 "use client";
 
 import {
+  Conversation,
+  ConversationContent,
+  ConversationScrollButton,
+} from "@repo/elements/conversation";
+import {
+  Message,
   MessageBranch,
   MessageBranchContent,
   MessageBranchNext,
   MessageBranchPage,
   MessageBranchPrevious,
   MessageBranchSelector,
+  MessageContent,
+  MessageResponse,
 } from "@repo/elements/message";
-import {
-  Conversation,
-  ConversationContent,
-  ConversationScrollButton,
-} from "@repo/elements/conversation";
-import { Message, MessageContent } from "@repo/elements/message";
 import {
   PromptInput,
   PromptInputButton,
@@ -27,7 +29,6 @@ import {
   ReasoningContent,
   ReasoningTrigger,
 } from "@repo/elements/reasoning";
-import { MessageResponse } from "@repo/elements/message";
 import {
   Source,
   Sources,
@@ -470,7 +471,9 @@ const Example = () => {
         const assistantMessageKey = `assistant-${Date.now()}`;
         const assistantMessageId = `version-${Date.now()}`;
         const randomMessageResponse =
-          mockMessageResponses[Math.floor(Math.random() * mockMessageResponses.length)];
+          mockMessageResponses[
+            Math.floor(Math.random() * mockMessageResponses.length)
+          ];
 
         // Create reasoning for some responses
         const shouldHaveReasoning = Math.random() > 0.5;

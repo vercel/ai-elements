@@ -14,20 +14,20 @@
     "lucide-react": "^0.552.0",
     "next-themes": "^0.4.6",
     "radix-ui": "latest",
-    "react": "19.2.0",
-    "react-day-picker": "9.11.1",
-    "react-dom": "19.2.0",
-    "react-hook-form": "^7.66.0",
+    "react": "19.2.1",
+    "react-day-picker": "9.11.3",
+    "react-dom": "19.2.1",
+    "react-hook-form": "^7.71.1",
     "react-resizable-panels": "^3.0.6",
     "recharts": "^2.15.4",
     "sonner": "^2.0.7",
     "tailwind-merge": "^3.3.1",
     "vaul": "^1.1.2",
-    "zod": "^4.1.12"
+    "zod": "^4.3.5"
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
-    "@types/react": "19.2.2",
-    "@types/react-dom": "^19.2.2"
+    "@types/react": "19.2.7",
+    "@types/react-dom": "^19.2.3"
   }
 }
