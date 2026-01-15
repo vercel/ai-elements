@@ -1,6 +1,18 @@
 import { act, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import React from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import {
+  Attachment,
+  AttachmentHoverCard,
+  AttachmentHoverCardContent,
+  AttachmentHoverCardTrigger,
+  AttachmentInfo,
+  AttachmentPreview,
+  AttachmentRemove,
+  Attachments,
+  type AttachmentData,
+} from "../src/attachment";
 import {
   PromptInput,
   PromptInputActionAddAttachments,
@@ -8,12 +20,8 @@ import {
   PromptInputActionMenuContent,
   PromptInputActionMenuItem,
   PromptInputActionMenuTrigger,
-  PromptInputAttachment,
-  PromptInputAttachments,
   PromptInputBody,
   PromptInputButton,
-  PromptInputReferencedSource,
-  PromptInputReferencedSources,
   PromptInputSelect,
   PromptInputSelectContent,
   PromptInputSelectItem,
@@ -25,6 +33,61 @@ import {
   usePromptInputAttachments,
   usePromptInputReferencedSources,
 } from "../src/prompt-input";
+
+// Backwards-compatibility aliases for tests (these components were moved to attachment.tsx)
+const PromptInputAttachment = ({
+  data,
+}: {
+  data: AttachmentData;
+}) => (
+  <Attachment data={data}>
+    <AttachmentPreview />
+    <AttachmentInfo />
+  </Attachment>
+);
+
+const PromptInputAttachments = ({
+  children,
+}: {
+  children: (attachment: AttachmentData) => React.ReactNode;
+}) => {
+  const attachments = usePromptInputAttachments();
+  if (!attachments.files.length) return null;
+  return (
+    <Attachments variant="inline">
+      {attachments.files.map((file) => (
+        <React.Fragment key={file.id}>{children(file)}</React.Fragment>
+      ))}
+    </Attachments>
+  );
+};
+
+const PromptInputReferencedSource = ({
+  data,
+}: {
+  data: AttachmentData;
+}) => (
+  <Attachment data={data}>
+    <AttachmentPreview />
+    <AttachmentInfo />
+  </Attachment>
+);
+
+const PromptInputReferencedSources = ({
+  children,
+}: {
+  children: (source: AttachmentData) => React.ReactNode;
+}) => {
+  const referencedSources = usePromptInputReferencedSources();
+  if (!referencedSources.sources.length) return null;
+  return (
+    <Attachments variant="inline">
+      {referencedSources.sources.map((source) => (
+        <React.Fragment key={source.id}>{children(source)}</React.Fragment>
+      ))}
+    </Attachments>
+  );
+};
 
 // Mock URL.createObjectURL and URL.revokeObjectURL for tests
 beforeEach(() => {
