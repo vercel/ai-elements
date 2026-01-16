@@ -98,7 +98,7 @@ export const HomeLinks = () => (
             height="75"
             rx="37.5"
             stroke="currentColor"
-            stroke-width="8"
+            strokeWidth="8"
             width="154"
             x="153"
             y="7.5"
