@@ -42,7 +42,7 @@ Copy and paste this configuration into your MCP config file:
       "args": [
         "-y",
         "mcp-remote",
-        "https://registry.ai-sdk.dev/api/mcp"
+        "https://ai-sdk.dev/elements/api/registry/api/mcp"
       ]
     }
   }
@@ -51,7 +51,7 @@ Copy and paste this configuration into your MCP config file:
 #### Option B: Quick Install (Claude Code Only)
 If you're using Claude Code, you can use the built-in command:
 
-`claude mcp add --transport http ai-elements https://registry.ai-sdk.dev/api/mcp`
+`claude mcp add --transport http ai-elements https://ai-sdk.dev/elements/api/registry/api/mcp`
 
 This automatically adds the server to your .claude.json configuration.
 
@@ -76,7 +76,7 @@ You can use AI Elements alongside other MCP servers:
   "mcpServers": {
     "ai-elements": {
       "command": "npx",
-      "args": ["-y", "mcp-remote", "https://registry.ai-sdk.dev/api/mcp"]
+      "args": ["-y", "mcp-remote", "https://ai-sdk.dev/elements/api/registry/api/mcp"]
     },
     "github": {
       "command": "npx",

@@ -15,7 +15,7 @@ You can use the AI Elements CLI directly with npx, or install it globally:
 npx ai-elements@latest
 
 # Or using shadcn cli
-npx shadcn@latest add https://registry.ai-sdk.dev/all.json
+npx shadcn@latest add https://ai-sdk.dev/elements/api/registry/all.json
 ```
 
 ## Prerequisites
@@ -68,10 +68,10 @@ You can also install components using the standard shadcn/ui CLI:
 
 ```bash
 # Install all components
-npx shadcn@latest add https://registry.ai-sdk.dev/all.json
+npx shadcn@latest add https://ai-sdk.dev/elements/api/registry/all.json
 
 # Install a specific component
-npx shadcn@latest add https://registry.ai-sdk.dev/message.json
+npx shadcn@latest add https://ai-sdk.dev/elements/api/registry/message.json
 ```
 
 ## Available Components
@@ -141,7 +141,7 @@ export default function Chat() {
 The AI Elements CLI:
 
 1. **Detects your package manager** (npm, pnpm, yarn, or bun) automatically
-2. **Fetches component registry** from `https://registry.ai-sdk.dev/registry.json`
+2. **Fetches component registry** from `https://ai-sdk.dev/elements/api/registry/registry.json`
 3. **Installs components** using the shadcn/ui CLI under the hood
 4. **Adds dependencies** and integrates with your existing shadcn/ui setup
 
