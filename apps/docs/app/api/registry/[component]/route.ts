@@ -106,7 +106,9 @@ const fileContents = await Promise.all(
   tsxFiles.map(async (tsxFile) => {
     const filePath = join(srcDir, tsxFile.name);
     const content = await fs.readFile(filePath, "utf-8");
-    const parsedContent = content.replace(/@repo\/shadcn-ui\//g, "@/");
+    const parsedContent = content
+      .replace(/@repo\/shadcn-ui\/components\/ui\//g, "@/registry/default/ui/")
+      .replace(/@repo\/shadcn-ui\/lib\//g, "@/lib/");
 
     return {
       type: "registry:component",
@@ -121,7 +123,8 @@ const exampleContents = await Promise.all(
     const filePath = join(examplesDir, exampleFile.name);
     const content = await fs.readFile(filePath, "utf-8");
     const parsedContent = content
-      .replace(/@repo\/shadcn-ui\//g, "@/")
+      .replace(/@repo\/shadcn-ui\/components\/ui\//g, "@/registry/default/ui/")
+      .replace(/@repo\/shadcn-ui\/lib\//g, "@/lib/")
       .replace(/@repo\/elements\//g, "@/components/ai-elements/");
 
     return {
@@ -141,7 +144,7 @@ const shadcnComponents =
   files
     .map((f) => f.content)
     .join("\n")
-    .match(/@\/components\/ui\/([a-z-]+)/g)
+    .match(/@\/registry\/default\/ui\/([a-z-]+)/g)
     ?.map((path) => path.split("/").pop())
     .filter((name): name is string => Boolean(name)) || [];
 
@@ -296,7 +299,7 @@ export const GET = async (_request: NextRequest, { params }: RequestProps) => {
             }
 
             // Check if it's a registry dependency (shadcn/ui components)
-            if (moduleName.startsWith("@/components/ui/")) {
+            if (moduleName.startsWith("@/registry/default/ui/")) {
               const componentName = moduleName.split("/").pop();
               if (componentName) {
                 allRegistryDependencies.add(componentName);
@@ -412,7 +415,7 @@ export const GET = async (_request: NextRequest, { params }: RequestProps) => {
       }
 
       // Check if it's a registry dependency (shadcn/ui components)
-      if (moduleName.startsWith("@/components/ui/")) {
+      if (moduleName.startsWith("@/registry/default/ui/")) {
         const componentName = moduleName.split("/").pop();
         if (componentName) {
           usedRegistryDependencies.add(componentName);

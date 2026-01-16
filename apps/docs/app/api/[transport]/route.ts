@@ -80,7 +80,9 @@ const handler = createMcpHandler(
         // Read the component file
         const filePath = join(srcDir, tsxFile.name);
         const content = await fs.readFile(filePath, "utf-8");
-        const parsedContent = content.replace(/@repo\/shadcn-ui\//g, "@/");
+        const parsedContent = content
+          .replace(/@repo\/shadcn-ui\/components\/ui\//g, "@/registry/default/ui/")
+          .replace(/@repo\/shadcn-ui\/lib\//g, "@/lib/");
 
         // Create a registry item for this component
         const componentInfo: RegistryItem = {
