@@ -1,7 +1,18 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { MicSelectorLabel, useAudioDevices } from "../src/mic-selector";
+import {
+  MicSelector,
+  MicSelectorContent,
+  MicSelectorEmpty,
+  MicSelectorInput,
+  MicSelectorItem,
+  MicSelectorLabel,
+  MicSelectorList,
+  MicSelectorTrigger,
+  MicSelectorValue,
+  useAudioDevices,
+} from "../src/mic-selector";
 
 // Mock navigator.mediaDevices
 const mockDevices: MediaDeviceInfo[] = [
@@ -36,12 +47,13 @@ beforeEach(() => {
   vi.spyOn(console, "error").mockImplementation(() => {});
   vi.spyOn(console, "log").mockImplementation(() => {});
 
-  // Mock ResizeObserver
-  (window as any).ResizeObserver = vi.fn().mockImplementation(() => ({
-    observe: vi.fn(),
-    unobserve: vi.fn(),
-    disconnect: vi.fn(),
-  }));
+  // Mock ResizeObserver as a proper class
+  class ResizeObserverMock {
+    observe = vi.fn();
+    unobserve = vi.fn();
+    disconnect = vi.fn();
+  }
+  window.ResizeObserver = ResizeObserverMock as any;
 
   // Setup navigator.mediaDevices mock
   Object.defineProperty(navigator, "mediaDevices", {
@@ -346,5 +358,414 @@ describe("useAudioDevices hook", () => {
       },
       { timeout: 3000 }
     );
+  });
+
+  it("handles non-Error exception in loadDevicesWithoutPermission", async () => {
+    mockEnumerateDevices.mockRejectedValueOnce("String error");
+
+    const TestComponent = () => {
+      const { error, loading } = useAudioDevices();
+      return (
+        <div>
+          <div data-testid="loading">{loading ? "Loading" : "Loaded"}</div>
+          <div data-testid="error">{error || "No error"}</div>
+        </div>
+      );
+    };
+
+    render(<TestComponent />);
+
+    await waitFor(
+      () => {
+        expect(screen.getByTestId("loading")).toHaveTextContent("Loaded");
+      },
+      { timeout: 3000 }
+    );
+
+    await waitFor(
+      () => {
+        expect(screen.getByTestId("error")).toHaveTextContent(
+          "Failed to get audio devices"
+        );
+      },
+      { timeout: 3000 }
+    );
+  });
+
+  it("handles non-Error exception in loadDevicesWithPermission", async () => {
+    mockGetUserMedia.mockRejectedValueOnce("String error");
+
+    const TestComponent = () => {
+      const { loadDevices, error, loading } = useAudioDevices();
+      return (
+        <div>
+          <button onClick={loadDevices} type="button">
+            Load
+          </button>
+          <div data-testid="loading">{loading ? "Loading" : "Loaded"}</div>
+          <div data-testid="error">{error || "No error"}</div>
+        </div>
+      );
+    };
+
+    render(<TestComponent />);
+
+    await waitFor(() => {
+      expect(screen.getByTestId("loading")).toHaveTextContent("Loaded");
+    });
+
+    await userEvent.setup().click(screen.getByText("Load"));
+
+    await waitFor(() => {
+      expect(screen.getByTestId("error")).toHaveTextContent(
+        "Failed to get audio devices"
+      );
+    });
+  });
+});
+
+describe("MicSelector", () => {
+  it("renders with default props", async () => {
+    render(
+      <MicSelector>
+        <MicSelectorTrigger>
+          <MicSelectorValue />
+        </MicSelectorTrigger>
+        <MicSelectorContent>
+          <MicSelectorInput />
+          <MicSelectorList>
+            {(devices) =>
+              devices.map((device) => (
+                <MicSelectorItem key={device.deviceId} value={device.deviceId}>
+                  {device.label}
+                </MicSelectorItem>
+              ))
+            }
+          </MicSelectorList>
+          <MicSelectorEmpty />
+        </MicSelectorContent>
+      </MicSelector>
+    );
+
+    expect(screen.getByText("Select microphone...")).toBeInTheDocument();
+  });
+
+  it("opens popover when trigger is clicked", async () => {
+    const user = userEvent.setup();
+
+    render(
+      <MicSelector>
+        <MicSelectorTrigger>
+          <MicSelectorValue />
+        </MicSelectorTrigger>
+        <MicSelectorContent>
+          <MicSelectorInput />
+          <MicSelectorList>
+            {(devices) =>
+              devices.map((device) => (
+                <MicSelectorItem key={device.deviceId} value={device.deviceId}>
+                  {device.label}
+                </MicSelectorItem>
+              ))
+            }
+          </MicSelectorList>
+          <MicSelectorEmpty />
+        </MicSelectorContent>
+      </MicSelector>
+    );
+
+    await user.click(screen.getByRole("button"));
+
+    await waitFor(() => {
+      expect(screen.getByPlaceholderText("Search microphones...")).toBeInTheDocument();
+    });
+  });
+
+  it("supports controlled value", async () => {
+    const onValueChange = vi.fn();
+
+    render(
+      <MicSelector value="device-1" onValueChange={onValueChange}>
+        <MicSelectorTrigger>
+          <MicSelectorValue />
+        </MicSelectorTrigger>
+        <MicSelectorContent>
+          <MicSelectorList>
+            {(devices) =>
+              devices.map((device) => (
+                <MicSelectorItem key={device.deviceId} value={device.deviceId}>
+                  {device.label}
+                </MicSelectorItem>
+              ))
+            }
+          </MicSelectorList>
+        </MicSelectorContent>
+      </MicSelector>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText(/MacBook Pro Microphone/)).toBeInTheDocument();
+    });
+  });
+
+  it("supports controlled open state", async () => {
+    const onOpenChange = vi.fn();
+
+    render(
+      <MicSelector open={true} onOpenChange={onOpenChange}>
+        <MicSelectorTrigger>
+          <MicSelectorValue />
+        </MicSelectorTrigger>
+        <MicSelectorContent>
+          <MicSelectorInput />
+          <MicSelectorList>
+            {(devices) =>
+              devices.map((device) => (
+                <MicSelectorItem key={device.deviceId} value={device.deviceId}>
+                  {device.label}
+                </MicSelectorItem>
+              ))
+            }
+          </MicSelectorList>
+        </MicSelectorContent>
+      </MicSelector>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByPlaceholderText("Search microphones...")).toBeInTheDocument();
+    });
+  });
+
+  it("supports defaultValue", async () => {
+    render(
+      <MicSelector defaultValue="device-2">
+        <MicSelectorTrigger>
+          <MicSelectorValue />
+        </MicSelectorTrigger>
+        <MicSelectorContent>
+          <MicSelectorList>
+            {(devices) =>
+              devices.map((device) => (
+                <MicSelectorItem key={device.deviceId} value={device.deviceId}>
+                  {device.label}
+                </MicSelectorItem>
+              ))
+            }
+          </MicSelectorList>
+        </MicSelectorContent>
+      </MicSelector>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText("External Microphone")).toBeInTheDocument();
+    });
+  });
+
+  it("selects item and closes popover", async () => {
+    const user = userEvent.setup();
+    const onValueChange = vi.fn();
+
+    render(
+      <MicSelector onValueChange={onValueChange}>
+        <MicSelectorTrigger>
+          <MicSelectorValue />
+        </MicSelectorTrigger>
+        <MicSelectorContent>
+          <MicSelectorList>
+            {(devices) =>
+              devices.map((device) => (
+                <MicSelectorItem key={device.deviceId} value={device.deviceId}>
+                  {device.label}
+                </MicSelectorItem>
+              ))
+            }
+          </MicSelectorList>
+        </MicSelectorContent>
+      </MicSelector>
+    );
+
+    await user.click(screen.getByRole("button"));
+
+    await waitFor(() => {
+      expect(screen.getByText("External Microphone")).toBeInTheDocument();
+    });
+
+    await user.click(screen.getByText("External Microphone"));
+
+    await waitFor(() => {
+      expect(onValueChange).toHaveBeenCalled();
+    });
+  });
+});
+
+describe("MicSelectorTrigger", () => {
+  it("renders children", () => {
+    render(
+      <MicSelector>
+        <MicSelectorTrigger>
+          <span>Custom Content</span>
+        </MicSelectorTrigger>
+      </MicSelector>
+    );
+
+    expect(screen.getByText("Custom Content")).toBeInTheDocument();
+  });
+
+  it("renders chevron icon", () => {
+    render(
+      <MicSelector>
+        <MicSelectorTrigger>
+          <span>Trigger</span>
+        </MicSelectorTrigger>
+      </MicSelector>
+    );
+
+    const button = screen.getByRole("button");
+    expect(button.querySelector("svg")).toBeInTheDocument();
+  });
+});
+
+describe("MicSelectorContent", () => {
+  it("renders with custom className", async () => {
+    const user = userEvent.setup();
+
+    render(
+      <MicSelector>
+        <MicSelectorTrigger>Trigger</MicSelectorTrigger>
+        <MicSelectorContent className="custom-class">
+          <MicSelectorEmpty />
+        </MicSelectorContent>
+      </MicSelector>
+    );
+
+    await user.click(screen.getByRole("button"));
+
+    await waitFor(() => {
+      expect(screen.getByText("No microphone found.")).toBeInTheDocument();
+    });
+  });
+});
+
+describe("MicSelectorInput", () => {
+  it("renders with default placeholder", async () => {
+    const user = userEvent.setup();
+
+    render(
+      <MicSelector>
+        <MicSelectorTrigger>Trigger</MicSelectorTrigger>
+        <MicSelectorContent>
+          <MicSelectorInput />
+        </MicSelectorContent>
+      </MicSelector>
+    );
+
+    await user.click(screen.getByRole("button"));
+
+    await waitFor(() => {
+      expect(screen.getByPlaceholderText("Search microphones...")).toBeInTheDocument();
+    });
+  });
+
+  it("renders with custom placeholder", async () => {
+    const user = userEvent.setup();
+
+    render(
+      <MicSelector>
+        <MicSelectorTrigger>Trigger</MicSelectorTrigger>
+        <MicSelectorContent>
+          <MicSelectorInput placeholder="Find mic..." />
+        </MicSelectorContent>
+      </MicSelector>
+    );
+
+    await user.click(screen.getByRole("button"));
+
+    await waitFor(() => {
+      expect(screen.getByPlaceholderText("Find mic...")).toBeInTheDocument();
+    });
+  });
+});
+
+describe("MicSelectorEmpty", () => {
+  it("renders default empty message", async () => {
+    const user = userEvent.setup();
+    mockEnumerateDevices.mockResolvedValueOnce([]);
+
+    render(
+      <MicSelector>
+        <MicSelectorTrigger>Trigger</MicSelectorTrigger>
+        <MicSelectorContent>
+          <MicSelectorList>{() => null}</MicSelectorList>
+          <MicSelectorEmpty />
+        </MicSelectorContent>
+      </MicSelector>
+    );
+
+    await user.click(screen.getByRole("button"));
+
+    await waitFor(() => {
+      expect(screen.getByText("No microphone found.")).toBeInTheDocument();
+    });
+  });
+
+  it("renders custom empty message", async () => {
+    const user = userEvent.setup();
+    mockEnumerateDevices.mockResolvedValueOnce([]);
+
+    render(
+      <MicSelector>
+        <MicSelectorTrigger>Trigger</MicSelectorTrigger>
+        <MicSelectorContent>
+          <MicSelectorList>{() => null}</MicSelectorList>
+          <MicSelectorEmpty>No mics available</MicSelectorEmpty>
+        </MicSelectorContent>
+      </MicSelector>
+    );
+
+    await user.click(screen.getByRole("button"));
+
+    await waitFor(() => {
+      expect(screen.getByText("No mics available")).toBeInTheDocument();
+    });
+  });
+});
+
+describe("MicSelectorValue", () => {
+  it("shows placeholder when no value selected", () => {
+    render(
+      <MicSelector>
+        <MicSelectorTrigger>
+          <MicSelectorValue />
+        </MicSelectorTrigger>
+      </MicSelector>
+    );
+
+    expect(screen.getByText("Select microphone...")).toBeInTheDocument();
+  });
+
+  it("shows selected device label", async () => {
+    render(
+      <MicSelector value="device-2">
+        <MicSelectorTrigger>
+          <MicSelectorValue />
+        </MicSelectorTrigger>
+      </MicSelector>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText("External Microphone")).toBeInTheDocument();
+    });
+  });
+
+  it("applies custom className", () => {
+    render(
+      <MicSelector>
+        <MicSelectorTrigger>
+          <MicSelectorValue className="custom-value" />
+        </MicSelectorTrigger>
+      </MicSelector>
+    );
+
+    expect(screen.getByText("Select microphone...")).toHaveClass("custom-value");
   });
 });

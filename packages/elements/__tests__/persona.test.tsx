@@ -443,6 +443,212 @@ describe("Persona - Lifecycle Callbacks", () => {
   });
 });
 
+describe("Persona - Callback Execution", () => {
+  it("invokes onLoad callback when rive loads", () => {
+    const onLoad = vi.fn();
+
+    mockUseRive.mockImplementation((params) => {
+      // Simulate calling onLoad
+      params.onLoad?.({ artboard: "test" });
+      return {
+        rive: {},
+        RiveComponent: MockRiveComponent,
+      };
+    });
+
+    render(<Persona onLoad={onLoad} state="idle" />);
+
+    expect(onLoad).toHaveBeenCalledWith({ artboard: "test" });
+  });
+
+  it("invokes onLoadError callback on error", () => {
+    const onLoadError = vi.fn();
+    const testError = new Error("Test error");
+
+    mockUseRive.mockImplementation((params) => {
+      // Simulate calling onLoadError
+      params.onLoadError?.(testError);
+      return {
+        rive: {},
+        RiveComponent: MockRiveComponent,
+      };
+    });
+
+    render(<Persona onLoadError={onLoadError} state="idle" />);
+
+    expect(onLoadError).toHaveBeenCalledWith(testError);
+  });
+
+  it("invokes onReady callback when rive is ready", () => {
+    const onReady = vi.fn();
+
+    mockUseRive.mockImplementation((params) => {
+      // Simulate calling onRiveReady
+      params.onRiveReady?.();
+      return {
+        rive: {},
+        RiveComponent: MockRiveComponent,
+      };
+    });
+
+    render(<Persona onReady={onReady} state="idle" />);
+
+    expect(onReady).toHaveBeenCalled();
+  });
+
+  it("invokes onPause callback when paused", () => {
+    const onPause = vi.fn();
+    const pauseEvent = { type: "pause" };
+
+    mockUseRive.mockImplementation((params) => {
+      params.onPause?.(pauseEvent);
+      return {
+        rive: {},
+        RiveComponent: MockRiveComponent,
+      };
+    });
+
+    render(<Persona onPause={onPause} state="idle" />);
+
+    expect(onPause).toHaveBeenCalledWith(pauseEvent);
+  });
+
+  it("invokes onPlay callback when played", () => {
+    const onPlay = vi.fn();
+    const playEvent = { type: "play" };
+
+    mockUseRive.mockImplementation((params) => {
+      params.onPlay?.(playEvent);
+      return {
+        rive: {},
+        RiveComponent: MockRiveComponent,
+      };
+    });
+
+    render(<Persona onPlay={onPlay} state="idle" />);
+
+    expect(onPlay).toHaveBeenCalledWith(playEvent);
+  });
+
+  it("invokes onStop callback when stopped", () => {
+    const onStop = vi.fn();
+    const stopEvent = { type: "stop" };
+
+    mockUseRive.mockImplementation((params) => {
+      params.onStop?.(stopEvent);
+      return {
+        rive: {},
+        RiveComponent: MockRiveComponent,
+      };
+    });
+
+    render(<Persona onStop={onStop} state="idle" />);
+
+    expect(onStop).toHaveBeenCalledWith(stopEvent);
+  });
+});
+
+describe("Persona - Asleep State", () => {
+  it("sets asleep input to true when state is asleep", async () => {
+    const mockListeningInput = { value: false };
+    const mockThinkingInput = { value: false };
+    const mockSpeakingInput = { value: false };
+    const mockAsleepInput = { value: false };
+
+    mockUseStateMachineInput.mockImplementation((rive, sm, input) => {
+      if (input === "listening") return mockListeningInput;
+      if (input === "thinking") return mockThinkingInput;
+      if (input === "speaking") return mockSpeakingInput;
+      if (input === "asleep") return mockAsleepInput;
+      return { value: false };
+    });
+
+    render(<Persona state="asleep" />);
+
+    await waitFor(() => {
+      expect(mockAsleepInput.value).toBe(true);
+      expect(mockListeningInput.value).toBe(false);
+      expect(mockThinkingInput.value).toBe(false);
+      expect(mockSpeakingInput.value).toBe(false);
+    });
+  });
+});
+
+describe("Persona - Invalid Variant", () => {
+  it("throws error for invalid variant", () => {
+    expect(() => {
+      // @ts-expect-error - testing invalid variant
+      render(<Persona state="idle" variant="invalid-variant" />);
+    }).toThrow("Invalid variant: invalid-variant");
+  });
+});
+
+describe("Persona - Dynamic Color", () => {
+  it("sets RGB to white in dark theme for dynamic color variants", async () => {
+    const mockSetRgb = vi.fn();
+    mockUseViewModelInstanceColor.mockReturnValue({ setRgb: mockSetRgb });
+
+    // Mock dark theme
+    document.documentElement.classList.add("dark");
+
+    render(<Persona state="idle" variant="obsidian" />);
+
+    await waitFor(() => {
+      expect(mockSetRgb).toHaveBeenCalledWith(255, 255, 255);
+    });
+
+    document.documentElement.classList.remove("dark");
+  });
+
+  it("sets RGB to black in light theme for dynamic color variants", async () => {
+    const mockSetRgb = vi.fn();
+    mockUseViewModelInstanceColor.mockReturnValue({ setRgb: mockSetRgb });
+
+    // Ensure light theme
+    document.documentElement.classList.remove("dark");
+
+    render(<Persona state="idle" variant="obsidian" />);
+
+    await waitFor(() => {
+      expect(mockSetRgb).toHaveBeenCalledWith(0, 0, 0);
+    });
+  });
+
+  it("does not set RGB for non-dynamic-color variants", async () => {
+    const mockSetRgb = vi.fn();
+    mockUseViewModelInstanceColor.mockReturnValue({ setRgb: mockSetRgb });
+
+    render(<Persona state="idle" variant="mana" />);
+
+    // Wait a bit to ensure effect has run
+    await new Promise((resolve) => setTimeout(resolve, 50));
+
+    expect(mockSetRgb).not.toHaveBeenCalled();
+  });
+
+  it("does not set RGB when viewModelInstanceColor is null", async () => {
+    mockUseViewModelInstanceColor.mockReturnValue(null);
+
+    // Should not throw
+    expect(() => {
+      render(<Persona state="idle" variant="obsidian" />);
+    }).not.toThrow();
+  });
+
+  it("uses PersonaWithoutModel for variants without model", () => {
+    // opal variant has hasModel: false
+    render(<Persona state="idle" variant="opal" />);
+
+    // Should not call useViewModel or useViewModelInstance for non-model variants
+    // (This is implicitly tested by the component rendering without error)
+    expect(mockUseRive).toHaveBeenCalledWith(
+      expect.objectContaining({
+        src: "https://ejiidnob33g9ap1r.public.blob.vercel-storage.com/orb-1.2.riv",
+      })
+    );
+  });
+});
+
 describe("Persona - Integration", () => {
   it("renders with all props combined", async () => {
     const mockListeningInput = { value: false };
