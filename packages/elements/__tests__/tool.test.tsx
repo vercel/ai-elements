@@ -79,7 +79,7 @@ describe("ToolHeader", () => {
     render(
       <Tool>
         <ToolHeader
-          state={"approval-requested" as any}
+          state="approval-requested"
           title="test"
           type="tool-test"
         />
@@ -92,7 +92,7 @@ describe("ToolHeader", () => {
     render(
       <Tool>
         <ToolHeader
-          state={"approval-responded" as any}
+          state="approval-responded"
           title="test"
           type="tool-test"
         />
@@ -105,7 +105,7 @@ describe("ToolHeader", () => {
     render(
       <Tool>
         <ToolHeader
-          state={"output-denied" as any}
+          state="output-denied"
           title="test"
           type="tool-test"
         />
@@ -121,6 +121,61 @@ describe("ToolHeader", () => {
       </Tool>
     );
     expect(container.querySelector("svg")).toBeInTheDocument();
+  });
+});
+
+describe("ToolHeader with DynamicToolUIPart", () => {
+  it("renders dynamic tool name from toolName prop", () => {
+    render(
+      <Tool defaultOpen>
+        <ToolHeader
+          state="input-available"
+          type="dynamic-tool"
+          toolName="web-search"
+        />
+      </Tool>
+    );
+    expect(screen.getByText("web-search")).toBeInTheDocument();
+  });
+
+  it("renders title over toolName for dynamic tools", () => {
+    render(
+      <Tool defaultOpen>
+        <ToolHeader
+          state="input-available"
+          type="dynamic-tool"
+          toolName="web-search"
+          title="Custom Title"
+        />
+      </Tool>
+    );
+    expect(screen.getByText("Custom Title")).toBeInTheDocument();
+  });
+
+  it("shows status badge for dynamic tools", () => {
+    render(
+      <Tool>
+        <ToolHeader
+          state="output-available"
+          type="dynamic-tool"
+          toolName="search"
+        />
+      </Tool>
+    );
+    expect(screen.getByText("Completed")).toBeInTheDocument();
+  });
+
+  it("shows approval-requested status for dynamic tools", () => {
+    render(
+      <Tool>
+        <ToolHeader
+          state="approval-requested"
+          type="dynamic-tool"
+          toolName="delete-file"
+        />
+      </Tool>
+    );
+    expect(screen.getByText("Awaiting Approval")).toBeInTheDocument();
   });
 });
 
