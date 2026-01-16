@@ -1645,6 +1645,60 @@ describe("File validation", () => {
       message: expect.any(String),
     });
   });
+
+  it("enforces maxFiles limit when using PromptInputProvider", async () => {
+    const {
+      PromptInputProvider,
+      PromptInput,
+      PromptInputBody,
+      PromptInputTextarea,
+      usePromptInputAttachments,
+    } = await import("../src/prompt-input");
+
+    const onSubmit = vi.fn();
+    const onError = vi.fn();
+    const user = userEvent.setup();
+
+    const file1 = new File(["test1"], "test1.txt", { type: "text/plain" });
+    const file2 = new File(["test2"], "test2.txt", { type: "text/plain" });
+    const file3 = new File(["test3"], "test3.txt", { type: "text/plain" });
+
+    const AttachmentConsumer = () => {
+      const attachments = usePromptInputAttachments();
+      return (
+        <>
+          <button
+            data-testid="add-files"
+            onClick={() => attachments.add([file1, file2, file3])}
+            type="button"
+          >
+            Add Files
+          </button>
+          <div data-testid="count">{attachments.files.length}</div>
+        </>
+      );
+    };
+
+    render(
+      <PromptInputProvider>
+        <PromptInput maxFiles={2} onError={onError} onSubmit={onSubmit}>
+          <PromptInputBody>
+            <AttachmentConsumer />
+            <PromptInputTextarea />
+          </PromptInputBody>
+        </PromptInput>
+      </PromptInputProvider>
+    );
+
+    await user.click(screen.getByTestId("add-files"));
+
+    // Only 2 files should be added even when using provider
+    expect(screen.getByTestId("count")).toHaveTextContent("2");
+    expect(onError).toHaveBeenCalledWith({
+      code: "max_files",
+      message: expect.any(String),
+    });
+  });
 });
 
 describe("Drag and drop", () => {

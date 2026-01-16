@@ -261,10 +261,10 @@ export function PromptInputProvider({
 const LocalAttachmentsContext = createContext<AttachmentsContext | null>(null);
 
 export const usePromptInputAttachments = () => {
-  // Dual-mode: prefer provider if present, otherwise use local
+  // Prefer local context (inside PromptInput) as it has validation, fall back to provider
   const provider = useOptionalProviderAttachments();
   const local = useContext(LocalAttachmentsContext);
-  const context = provider ?? local;
+  const context = local ?? provider;
   if (!context) {
     throw new Error(
       "usePromptInputAttachments must be used within a PromptInput or PromptInputProvider"
@@ -473,6 +473,50 @@ export const PromptInput = ({
     []
   );
 
+  // Wrapper that validates files before calling provider's add
+  const addWithProviderValidation = useCallback(
+    (fileList: File[] | FileList) => {
+      const incoming = Array.from(fileList);
+      const accepted = incoming.filter((f) => matchesAccept(f));
+      if (incoming.length && accepted.length === 0) {
+        onError?.({
+          code: "accept",
+          message: "No files match the accepted types.",
+        });
+        return;
+      }
+      const withinSize = (f: File) =>
+        maxFileSize ? f.size <= maxFileSize : true;
+      const sized = accepted.filter(withinSize);
+      if (accepted.length > 0 && sized.length === 0) {
+        onError?.({
+          code: "max_file_size",
+          message: "All files exceed the maximum size.",
+        });
+        return;
+      }
+
+      const currentCount = files.length;
+      const capacity =
+        typeof maxFiles === "number"
+          ? Math.max(0, maxFiles - currentCount)
+          : undefined;
+      const capped =
+        typeof capacity === "number" ? sized.slice(0, capacity) : sized;
+      if (typeof capacity === "number" && sized.length > capacity) {
+        onError?.({
+          code: "max_files",
+          message: "Too many files. Some were not added.",
+        });
+      }
+
+      if (capped.length > 0) {
+        controller?.attachments.add(capped);
+      }
+    },
+    [matchesAccept, maxFileSize, maxFiles, onError, files.length, controller]
+  );
+
   const clearAttachments = useCallback(
     () =>
       usingProvider
@@ -493,7 +537,7 @@ export const PromptInput = ({
     []
   );
 
-  const add = usingProvider ? controller.attachments.add : addLocal;
+  const add = usingProvider ? addWithProviderValidation : addLocal;
   const remove = usingProvider ? controller.attachments.remove : removeLocal;
   const openFileDialog = usingProvider
     ? controller.attachments.openFileDialog
@@ -728,9 +772,8 @@ export const PromptInput = ({
     </LocalReferencedSourcesContext.Provider>
   );
 
-  return usingProvider ? (
-    withReferencedSources
-  ) : (
+  // Always provide LocalAttachmentsContext so children get validated add function
+  return (
     <LocalAttachmentsContext.Provider value={attachmentsCtx}>
       {withReferencedSources}
     </LocalAttachmentsContext.Provider>
