@@ -13,15 +13,20 @@ import {
   MessageResponse,
 } from "@repo/elements/message";
 import {
+  Attachment,
+  AttachmentPreview,
+  AttachmentRemove,
+  Attachments,
+} from "@repo/elements/attachment";
+import {
   PromptInput,
-  PromptInputAttachment,
-  PromptInputAttachments,
   PromptInputBody,
   PromptInputFooter,
   type PromptInputProps,
   PromptInputProvider,
   PromptInputSubmit,
   PromptInputTextarea,
+  usePromptInputAttachments,
 } from "@repo/elements/prompt-input";
 import { Suggestion, Suggestions } from "@repo/elements/suggestion";
 import { Button } from "@repo/shadcn-ui/components/ui/button";
@@ -50,6 +55,29 @@ import { useChatContext } from "@/hooks/geistdocs/use-chat";
 import { db } from "@/lib/geistdocs/db";
 import { CopyChat } from "./copy-chat";
 import { MessageMetadata } from "./message-metadata";
+
+const PromptInputAttachmentsDisplay = () => {
+  const attachments = usePromptInputAttachments();
+
+  if (attachments.files.length === 0) {
+    return null;
+  }
+
+  return (
+    <Attachments variant="inline">
+      {attachments.files.map((attachment) => (
+        <Attachment
+          data={attachment}
+          key={attachment.id}
+          onRemove={() => attachments.remove(attachment.id)}
+        >
+          <AttachmentPreview />
+          <AttachmentRemove />
+        </Attachment>
+      ))}
+    </Attachments>
+  );
+};
 
 export const useChatPersistence = () => {
   const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(
@@ -294,9 +322,7 @@ const ChatInner = ({ suggestions }: ChatProps) => {
         )}
         <PromptInputProvider initialInput={localPrompt} key={providerKey}>
           <PromptInput globalDrop multiple onSubmit={handleSubmit}>
-            <PromptInputAttachments>
-              {(attachment) => <PromptInputAttachment data={attachment} />}
-            </PromptInputAttachments>
+            <PromptInputAttachmentsDisplay />
             <PromptInputBody>
               <PromptInputTextarea
                 maxLength={1000}

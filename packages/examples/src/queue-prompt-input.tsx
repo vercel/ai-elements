@@ -14,13 +14,17 @@ import {
   ModelSelectorTrigger,
 } from "@repo/elements/model-selector";
 import {
+  Attachment,
+  AttachmentPreview,
+  AttachmentRemove,
+  Attachments,
+} from "@repo/elements/attachment";
+import {
   PromptInput,
   PromptInputActionAddAttachments,
   PromptInputActionMenu,
   PromptInputActionMenuContent,
   PromptInputActionMenuTrigger,
-  PromptInputAttachment,
-  PromptInputAttachments,
   PromptInputBody,
   PromptInputButton,
   PromptInputFooter,
@@ -29,6 +33,7 @@ import {
   PromptInputSubmit,
   PromptInputTextarea,
   PromptInputTools,
+  usePromptInputAttachments,
 } from "@repo/elements/prompt-input";
 import {
   Queue,
@@ -117,6 +122,29 @@ const sampleTodos: QueueTodo[] = [
     status: "pending",
   },
 ];
+
+const PromptInputAttachmentsDisplay = () => {
+  const attachments = usePromptInputAttachments();
+
+  if (attachments.files.length === 0) {
+    return null;
+  }
+
+  return (
+    <Attachments variant="inline">
+      {attachments.files.map((attachment) => (
+        <Attachment
+          data={attachment}
+          key={attachment.id}
+          onRemove={() => attachments.remove(attachment.id)}
+        >
+          <AttachmentPreview />
+          <AttachmentRemove />
+        </Attachment>
+      ))}
+    </Attachments>
+  );
+};
 
 const Example = () => {
   const [todos, setTodos] = useState(sampleTodos);
@@ -216,9 +244,7 @@ const Example = () => {
       </Queue>
       <PromptInput globalDrop multiple onSubmit={handleSubmit}>
         <PromptInputHeader>
-          <PromptInputAttachments>
-            {(attachment) => <PromptInputAttachment data={attachment} />}
-          </PromptInputAttachments>
+          <PromptInputAttachmentsDisplay />
         </PromptInputHeader>
         <PromptInputBody>
           <PromptInputTextarea

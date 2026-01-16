@@ -22,15 +22,20 @@ Add the following component to your frontend:
 'use client';
 
 import {
+  Attachment,
+  AttachmentPreview,
+  AttachmentRemove,
+  Attachments,
+} from '@/components/ai-elements/attachment';
+import {
   PromptInput,
   PromptInputActionAddAttachments,
   PromptInputActionMenu,
   PromptInputActionMenuContent,
   PromptInputActionMenuTrigger,
-  PromptInputAttachment,
-  PromptInputAttachments,
   PromptInputBody,
   PromptInputButton,
+  PromptInputHeader,
   type PromptInputMessage,
   PromptInputSelect,
   PromptInputSelectContent,
@@ -41,6 +46,7 @@ import {
   PromptInputTextarea,
   PromptInputFooter,
   PromptInputTools,
+  usePromptInputAttachments,
 } from '@/components/ai-elements/prompt-input';
 import { GlobeIcon } from 'lucide-react';
 import { useState } from 'react';
@@ -51,6 +57,29 @@ import {
   ConversationScrollButton,
 } from '@/components/ai-elements/conversation';
 import { Message, MessageContent, MessageResponse } from '@/components/ai-elements/message';
+
+const PromptInputAttachmentsDisplay = () => {
+  const attachments = usePromptInputAttachments();
+
+  if (attachments.files.length === 0) {
+    return null;
+  }
+
+  return (
+    <Attachments variant="inline">
+      {attachments.files.map((attachment) => (
+        <Attachment
+          data={attachment}
+          key={attachment.id}
+          onRemove={() => attachments.remove(attachment.id)}
+        >
+          <AttachmentPreview />
+          <AttachmentRemove />
+        </Attachment>
+      ))}
+    </Attachments>
+  );
+};
 
 const models = [
   { id: 'gpt-4o', name: 'GPT-4o' },
@@ -116,9 +145,7 @@ const InputDemo = () => {
 
         <PromptInput onSubmit={handleSubmit} className="mt-4" globalDrop multiple>
           <PromptInputHeader>
-            <PromptInputAttachments>
-              {(attachment) => <PromptInputAttachment data={attachment} />}
-            </PromptInputAttachments>
+            <PromptInputAttachmentsDisplay />
           </PromptInputHeader>
           <PromptInputBody>
      
@@ -395,35 +422,9 @@ export async function POST(req: Request) {
   }}
 />
 
-### `<PromptInputAttachments />`
+### Attachments
 
-<TypeTable
-  type={{
-    children: {
-      description: 'Render function for each attachment.',
-      type: '(attachment: FileUIPart & { id: string }) => React.ReactNode',
-    },
-    '...props': {
-      description: 'Any other props are spread to the attachments container.',
-      type: 'React.HTMLAttributes<HTMLDivElement>',
-    },
-  }}
-/>
-
-### `<PromptInputAttachment />`
-
-<TypeTable
-  type={{
-    data: {
-      description: 'The attachment data to display.',
-      type: 'FileUIPart & { id: string }',
-    },
-    '...props': {
-      description: 'Any other props are spread to the attachment div.',
-      type: 'React.HTMLAttributes<HTMLDivElement>',
-    },
-  }}
-/>
+Attachment components have been moved to a separate module. See the [Attachment](/elements/components/attachment) component documentation for details on `<Attachments />`, `<Attachment />`, `<AttachmentPreview />`, `<AttachmentInfo />`, and `<AttachmentRemove />`.
 
 ### `<PromptInputActionMenu />`
 

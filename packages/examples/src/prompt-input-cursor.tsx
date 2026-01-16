@@ -14,9 +14,15 @@ import {
   ModelSelectorTrigger,
 } from "@repo/elements/model-selector";
 import {
+  Attachment,
+  AttachmentInfo,
+  AttachmentPreview,
+  AttachmentRemove,
+  Attachments,
+  type AttachmentData,
+} from "@repo/elements/attachment";
+import {
   PromptInput,
-  PromptInputAttachment,
-  PromptInputAttachments,
   PromptInputBody,
   PromptInputButton,
   PromptInputCommand,
@@ -39,8 +45,7 @@ import {
   PromptInputTabLabel,
   PromptInputTextarea,
   PromptInputTools,
-  PromptInputReferencedSource,
-  PromptInputReferencedSources,
+  usePromptInputAttachments,
   usePromptInputReferencedSources,
   type PromptInputMessage,
 } from "@repo/elements/prompt-input";
@@ -113,6 +118,53 @@ const sampleTabs = {
     { path: "packages/elements/src/queue.tsx" },
     { path: "apps/test/app/examples/queue.tsx" },
   ],
+};
+
+const PromptInputAttachmentsDisplay = () => {
+  const attachments = usePromptInputAttachments();
+
+  if (attachments.files.length === 0) {
+    return null;
+  }
+
+  return (
+    <Attachments variant="inline">
+      {attachments.files.map((attachment) => (
+        <Attachment
+          data={attachment}
+          key={attachment.id}
+          onRemove={() => attachments.remove(attachment.id)}
+        >
+          <AttachmentPreview />
+          <AttachmentRemove />
+        </Attachment>
+      ))}
+    </Attachments>
+  );
+};
+
+const PromptInputReferencedSourcesDisplay = () => {
+  const refs = usePromptInputReferencedSources();
+
+  if (refs.sources.length === 0) {
+    return null;
+  }
+
+  return (
+    <Attachments variant="inline">
+      {refs.sources.map((source) => (
+        <Attachment
+          data={source as AttachmentData}
+          key={source.id}
+          onRemove={() => refs.remove(source.id)}
+        >
+          <AttachmentPreview />
+          <AttachmentInfo />
+          <AttachmentRemove />
+        </Attachment>
+      ))}
+    </Attachments>
+  );
 };
 
 const Example = () => {
@@ -223,12 +275,8 @@ const Example = () => {
                 </div>
               </PromptInputHoverCardContent>
             </PromptInputHoverCard>
-            <PromptInputAttachments>
-              {(attachment) => <PromptInputAttachment data={attachment} />}
-            </PromptInputAttachments>
-            <PromptInputReferencedSources>
-              {(source) => <PromptInputReferencedSource data={source} />}
-            </PromptInputReferencedSources>
+            <PromptInputAttachmentsDisplay />
+            <PromptInputReferencedSourcesDisplay />
           </PromptInputHeader>
           <PromptInputBody>
             <PromptInputTextarea placeholder="Plan, search, build anything" />
