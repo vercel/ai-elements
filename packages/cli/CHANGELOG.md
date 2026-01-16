@@ -1,5 +1,28 @@
 # ai-elements
 
+## 1.7.0
+
+### Minor Changes
+
+- ef0a8a7: AI Voice Elements
+
+### Patch Changes
+
+- ef0a8a7: Update mcp server
+- 5fb2978: prevent duplicate attachments when dropping in form and globalDrop is enabled
+- a5eeca4: Adding multiple attachments sequentially breaks the prompt-input
+- f0625b5: fix MCP tool `get_ai_elements_component` not exposing component parameter due to Zod 4 incompatibility
+- 787dfc3: ReasoningTrigger allows custom getThinkingMessage function
+- 68bc484: fix(prompt-input): Adjust image preview hover state and alignment in input head
+- ef0a8a7: Add support for MediaRecorder and custom config to SpeechInput
+- d1a79c0: add scroll behavior to code block
+- 56ea3b9: build: expect errors for states added in ai-sdk v6
+- e1edb1b: MessageContent max width should respect parent's
+- b37a002: Handle non image file types in matchesAccept filter
+- a726985: fix(prompt-input): Reset file input value to allow re-selecting previously removed files
+- 16a9966: Wrap items CoT search results component
+- 0fbdc6a: Fix multiple memoization and perf issues with PromptInput
+
 ## 1.6.3
 
 ### Patch Changes
