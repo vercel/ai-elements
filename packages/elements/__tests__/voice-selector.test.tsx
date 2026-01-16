@@ -17,6 +17,7 @@ import {
   VoiceSelectorItem,
   VoiceSelectorList,
   VoiceSelectorName,
+  VoiceSelectorPreview,
   VoiceSelectorSeparator,
   VoiceSelectorShortcut,
   VoiceSelectorTrigger,
@@ -643,6 +644,97 @@ describe("VoiceSelectorShortcut", () => {
     );
 
     expect(screen.getByText("⌘K")).toBeInTheDocument();
+  });
+});
+
+describe("VoiceSelectorPreview", () => {
+  it("renders play button by default", () => {
+    render(
+      <VoiceSelector>
+        <VoiceSelectorPreview />
+      </VoiceSelector>
+    );
+
+    const button = screen.getByRole("button", { name: "Play preview" });
+    expect(button).toBeInTheDocument();
+  });
+
+  it("renders pause button when playing", () => {
+    render(
+      <VoiceSelector>
+        <VoiceSelectorPreview playing />
+      </VoiceSelector>
+    );
+
+    const button = screen.getByRole("button", { name: "Pause preview" });
+    expect(button).toBeInTheDocument();
+  });
+
+  it("is disabled when loading", () => {
+    render(
+      <VoiceSelector>
+        <VoiceSelectorPreview loading />
+      </VoiceSelector>
+    );
+
+    const button = screen.getByRole("button", { name: "Play preview" });
+    expect(button).toBeDisabled();
+  });
+
+  it("calls onPlay when clicked", async () => {
+    const onPlay = vi.fn();
+    const user = userEvent.setup();
+
+    render(
+      <VoiceSelector>
+        <VoiceSelectorPreview onPlay={onPlay} />
+      </VoiceSelector>
+    );
+
+    const button = screen.getByRole("button", { name: "Play preview" });
+    await user.click(button);
+
+    expect(onPlay).toHaveBeenCalled();
+  });
+
+  it("does not trigger item selection when clicked", async () => {
+    const onSelect = vi.fn();
+    const onPlay = vi.fn();
+    const user = userEvent.setup();
+
+    render(
+      <VoiceSelector defaultOpen>
+        <VoiceSelectorContent>
+          <VoiceSelectorList>
+            <VoiceSelectorItem onSelect={onSelect} value="voice-1">
+              <VoiceSelectorPreview onPlay={onPlay} />
+              Voice 1
+            </VoiceSelectorItem>
+          </VoiceSelectorList>
+        </VoiceSelectorContent>
+      </VoiceSelector>
+    );
+
+    const button = screen.getByRole("button", { name: "Play preview" });
+    await user.click(button);
+
+    await waitFor(() => {
+      expect(onPlay).toHaveBeenCalled();
+    });
+
+    // onSelect should not be called when clicking the preview button
+    expect(onSelect).not.toHaveBeenCalled();
+  });
+
+  it("applies custom className", () => {
+    render(
+      <VoiceSelector>
+        <VoiceSelectorPreview className="custom-class" />
+      </VoiceSelector>
+    );
+
+    const button = screen.getByRole("button", { name: "Play preview" });
+    expect(button).toHaveClass("custom-class");
   });
 });
 

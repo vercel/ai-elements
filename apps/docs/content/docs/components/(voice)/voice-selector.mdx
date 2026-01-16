@@ -19,6 +19,7 @@ The `VoiceSelector` component provides a flexible and composable interface for s
 - React Context API for accessing state in nested components
 - Searchable voice list with real-time filtering
 - Support for voice metadata with icons and emojis (gender icons, accent flags, age)
+- Voice preview button with play/pause/loading states
 - Voice grouping with separators and bullet dividers
 - Keyboard navigation support
 - Controlled and uncontrolled component patterns
@@ -393,6 +394,39 @@ Displays keyboard shortcuts for voice items.
     '...props': {
       description: 'Any other props are spread to the CommandShortcut component.',
       type: 'React.ComponentProps<typeof CommandShortcut>',
+    },
+  }}
+/>
+
+### `<VoiceSelectorPreview />`
+
+A button that allows users to preview/play a voice sample before selecting it. Shows play, pause, or loading icons based on state.
+
+<TypeTable
+  type={{
+    playing: {
+      description: 'Whether the voice is currently playing. Shows pause icon when true.',
+      type: 'boolean',
+      optional: true,
+    },
+    loading: {
+      description: 'Whether the voice preview is loading. Shows loading spinner and disables the button.',
+      type: 'boolean',
+      optional: true,
+    },
+    onPlay: {
+      description: 'Callback fired when the preview button is clicked.',
+      type: '() => void',
+      optional: true,
+    },
+    className: {
+      description: 'Additional CSS classes to apply.',
+      type: 'string',
+      optional: true,
+    },
+    '...props': {
+      description: 'Any other props are spread to the button element.',
+      type: 'Omit<React.ComponentProps<"button">, "children">',
     },
   }}
 />

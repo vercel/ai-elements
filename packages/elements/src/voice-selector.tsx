@@ -1,6 +1,7 @@
 "use client";
 
 import { useControllableState } from "@radix-ui/react-use-controllable-state";
+import { Button } from "@repo/shadcn-ui/components/ui/button";
 import {
   Command,
   CommandDialog,
@@ -21,9 +22,12 @@ import {
 import { cn } from "@repo/shadcn-ui/lib/utils";
 import {
   CircleSmallIcon,
+  LoaderCircleIcon,
   MarsIcon,
   MarsStrokeIcon,
   NonBinaryIcon,
+  PauseIcon,
+  PlayIcon,
   TransgenderIcon,
   VenusAndMarsIcon,
   VenusIcon,
@@ -426,3 +430,50 @@ export const VoiceSelectorBullet = ({
     &bull;
   </span>
 );
+
+export type VoiceSelectorPreviewProps = Omit<
+  ComponentProps<"button">,
+  "children"
+> & {
+  playing?: boolean;
+  loading?: boolean;
+  onPlay?: () => void;
+};
+
+export const VoiceSelectorPreview = ({
+  className,
+  playing,
+  loading,
+  onPlay,
+  onClick,
+  ...props
+}: VoiceSelectorPreviewProps) => {
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.stopPropagation();
+    onClick?.(event);
+    onPlay?.();
+  };
+
+  let icon = <PlayIcon className="size-3" />;
+
+  if (loading) {
+    icon = <LoaderCircleIcon className="size-3 animate-spin" />;
+  } else if (playing) {
+    icon = <PauseIcon className="size-3" />;
+  }
+
+  return (
+    <Button
+      aria-label={playing ? "Pause preview" : "Play preview"}
+      className={cn("size-6", className)}
+      disabled={loading}
+      onClick={handleClick}
+      size="icon-sm"
+      type="button"
+      variant="outline"
+      {...props}
+    >
+      {icon}
+    </Button>
+  );
+};
