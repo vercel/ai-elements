@@ -24,8 +24,8 @@ importers:
         specifier: ^4.0.17
         version: 4.0.17(msw@2.11.1(@types/node@25.0.9)(typescript@5.9.3))(vite@7.1.2(@types/node@25.0.9)(jiti@2.6.1)(lightningcss@1.30.2)(yaml@2.8.1))(vitest@4.0.17)
       turbo:
-        specifier: 2.7.4
-        version: 2.7.4
+        specifier: 2.7.5-canary.13
+        version: 2.7.5-canary.13
       typescript:
         specifier: 5.9.3
         version: 5.9.3
@@ -5903,38 +5903,38 @@ packages:
   tslib@2.8.1:
     resolution: {integrity: sha512-oJFu94HQb+KVduSUQL7wnpmqnfmLsOA/nAh6b6EH0wCEoK0/mPeXU6c3wKDV83MkOuHPRHtSXKKU99IBazS/2w==}
 
-  turbo-darwin-64@2.7.4:
-    resolution: {integrity: sha512-xDR30ltfkSsRfGzABBckvl1nz1cZ3ssTujvdj+TPwOweeDRvZ0e06t5DS0rmRBvyKpgGs42K/EK6Mn2qLlFY9A==}
+  turbo-darwin-64@2.7.5-canary.13:
+    resolution: {integrity: sha512-02ARhWQN1t+w3+xVztLUj2YKLvI5man82I7VR1SZ23ut2uvVLPs4mmit9+JeiG1Nx+m4SHTw4fkhn2wLFnnyDQ==}
     cpu: [x64]
     os: [darwin]
 
-  turbo-darwin-arm64@2.7.4:
-    resolution: {integrity: sha512-P7sjqXtOL/+nYWPvcDGWhi8wf8M8mZHHB8XEzw2VX7VJrS8IGHyJHGD1AYfDvhAEcr7pnk3gGifz3/xyhI655w==}
+  turbo-darwin-arm64@2.7.5-canary.13:
+    resolution: {integrity: sha512-mREI2bdO/KXgAyK9InKTxCuOmlVH//xXE1u9GNjW7AAtUCO34sSYBnNLvITQ3oSGDfdWrz6dRvUTNlV3uJ37vA==}
     cpu: [arm64]
     os: [darwin]
 
-  turbo-linux-64@2.7.4:
-    resolution: {integrity: sha512-GofFOxRO/IhG8BcPyMSSB3Y2+oKQotsaYbHxL9yD6JPb20/o35eo+zUSyazOtilAwDHnak5dorAJFoFU8MIg2A==}
+  turbo-linux-64@2.7.5-canary.13:
+    resolution: {integrity: sha512-kacWkr1pUnu3ivYLyJpVRN53hJrS/t0yQSZ7XifuzO4taeitvmFp2k/XulfuvBjhjeJM8yXt5jS72sPojRoZhQ==}
     cpu: [x64]
     os: [linux]
 
-  turbo-linux-arm64@2.7.4:
-    resolution: {integrity: sha512-+RQKgNjksVPxYAyAgmDV7w/1qj++qca+nSNTAOKGOfJiDtSvRKoci89oftJ6anGs00uamLKVEQ712TI/tfNAIw==}
+  turbo-linux-arm64@2.7.5-canary.13:
+    resolution: {integrity: sha512-f1r6ZPlyasEAPN7EOqqluSSxhMYDCxH01eVnbCjQyOpWghNvysHA0J6oOZ5BNIkQ7vAC9meQhizeJIEMqAdSWg==}
     cpu: [arm64]
     os: [linux]
 
-  turbo-windows-64@2.7.4:
-    resolution: {integrity: sha512-rfak1+g+ON3czs1mDYsCS4X74ZmK6gOgRQTXjDICtzvR4o61paqtgAYtNPofcVsMWeF4wvCajSeoAkkeAnQ1kg==}
+  turbo-windows-64@2.7.5-canary.13:
+    resolution: {integrity: sha512-B4TPaCcthPQLqwZ7md7GOC6ZDzNPNypFDncdmuw0m6QXKdY6yyVkD8yCKaNS4EYdVJCTI6OR1sF5AJDa6aNp3A==}
     cpu: [x64]
     os: [win32]
 
-  turbo-windows-arm64@2.7.4:
-    resolution: {integrity: sha512-1ZgBNjNRbDu/fPeqXuX9i26x3CJ/Y1gcwUpQ+Vp7kN9Un6RZ9kzs164f/knrjcu5E+szCRexVjRSJay1k5jApA==}
+  turbo-windows-arm64@2.7.5-canary.13:
+    resolution: {integrity: sha512-dK2YC4VZ1Z6Ycfoe7tqlQtcOVj5K559ktUgaeEtSZzKdV8i233D/AkAVH/fSAgEyWVGO5UtOxOZjZSAJCicAFA==}
     cpu: [arm64]
     os: [win32]
 
-  turbo@2.7.4:
-    resolution: {integrity: sha512-bkO4AddmDishzJB2ze7aYYPaejMoJVfS0XnaR6RCdXFOY8JGJfQE+l9fKiV7uDPa5Ut44gmOWJL3894CIMeH9g==}
+  turbo@2.7.5-canary.13:
+    resolution: {integrity: sha512-3/+jmPbUYkrEKhQfA4bYTbyu9hapGw7smZpuzCbtYIbwGHMwHxdmW28uhOeJVyJUmt6adIqMrhPqKFfuIMpCLw==}
     hasBin: true
 
   tw-animate-css@1.4.0:
@@ -12573,32 +12573,32 @@ snapshots:
 
   tslib@2.8.1: {}
 
-  turbo-darwin-64@2.7.4:
+  turbo-darwin-64@2.7.5-canary.13:
     optional: true
 
-  turbo-darwin-arm64@2.7.4:
+  turbo-darwin-arm64@2.7.5-canary.13:
     optional: true
 
-  turbo-linux-64@2.7.4:
+  turbo-linux-64@2.7.5-canary.13:
     optional: true
 
-  turbo-linux-arm64@2.7.4:
+  turbo-linux-arm64@2.7.5-canary.13:
     optional: true
 
-  turbo-windows-64@2.7.4:
+  turbo-windows-64@2.7.5-canary.13:
     optional: true
 
-  turbo-windows-arm64@2.7.4:
+  turbo-windows-arm64@2.7.5-canary.13:
     optional: true
 
-  turbo@2.7.4:
+  turbo@2.7.5-canary.13:
     optionalDependencies:
-      turbo-darwin-64: 2.7.4
-      turbo-darwin-arm64: 2.7.4
-      turbo-linux-64: 2.7.4
-      turbo-linux-arm64: 2.7.4
-      turbo-windows-64: 2.7.4
-      turbo-windows-arm64: 2.7.4
+      turbo-darwin-64: 2.7.5-canary.13
+      turbo-darwin-arm64: 2.7.5-canary.13
+      turbo-linux-64: 2.7.5-canary.13
+      turbo-linux-arm64: 2.7.5-canary.13
+      turbo-windows-64: 2.7.5-canary.13
+      turbo-windows-arm64: 2.7.5-canary.13
 
   tw-animate-css@1.4.0: {}
 
