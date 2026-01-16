@@ -963,6 +963,7 @@ export const PromptInputActionMenuItem = ({
 
 export type PromptInputSubmitProps = ComponentProps<typeof InputGroupButton> & {
   status?: ChatStatus;
+  onStop?: () => void;
 };
 
 export const PromptInputSubmit = ({
@@ -970,9 +971,13 @@ export const PromptInputSubmit = ({
   variant = "default",
   size = "icon-sm",
   status,
+  onStop,
+  onClick,
   children,
   ...props
 }: PromptInputSubmitProps) => {
+  const isGenerating = status === "submitted" || status === "streaming";
+
   let Icon = <CornerDownLeftIcon className="size-4" />;
 
   if (status === "submitted") {
@@ -983,12 +988,22 @@ export const PromptInputSubmit = ({
     Icon = <XIcon className="size-4" />;
   }
 
+  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    if (isGenerating && onStop) {
+      e.preventDefault();
+      onStop();
+      return;
+    }
+    onClick?.(e);
+  };
+
   return (
     <InputGroupButton
-      aria-label="Submit"
+      aria-label={isGenerating ? "Stop" : "Submit"}
       className={cn(className)}
+      onClick={handleClick}
       size={size}
-      type="submit"
+      type={isGenerating && onStop ? "button" : "submit"}
       variant={variant}
       {...props}
     >
