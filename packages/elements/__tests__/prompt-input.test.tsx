@@ -37,26 +37,34 @@ import {
 // Backwards-compatibility aliases for tests (these components were moved to attachment.tsx)
 const PromptInputAttachment = ({
   data,
+  onRemove,
 }: {
   data: AttachmentData;
+  onRemove?: () => void;
 }) => (
-  <Attachment data={data}>
+  <Attachment data={data} onRemove={onRemove}>
     <AttachmentPreview />
     <AttachmentInfo />
+    <AttachmentRemove label="Remove attachment" />
   </Attachment>
 );
 
 const PromptInputAttachments = ({
   children,
 }: {
-  children: (attachment: AttachmentData) => React.ReactNode;
+  children: (
+    attachment: AttachmentData,
+    onRemove: () => void
+  ) => React.ReactNode;
 }) => {
   const attachments = usePromptInputAttachments();
   if (!attachments.files.length) return null;
   return (
     <Attachments variant="inline">
       {attachments.files.map((file) => (
-        <React.Fragment key={file.id}>{children(file)}</React.Fragment>
+        <React.Fragment key={file.id}>
+          {children(file, () => attachments.remove(file.id))}
+        </React.Fragment>
       ))}
     </Attachments>
   );
@@ -64,26 +72,31 @@ const PromptInputAttachments = ({
 
 const PromptInputReferencedSource = ({
   data,
+  onRemove,
 }: {
   data: AttachmentData;
+  onRemove?: () => void;
 }) => (
-  <Attachment data={data}>
+  <Attachment data={data} onRemove={onRemove}>
     <AttachmentPreview />
     <AttachmentInfo />
+    <AttachmentRemove label="Remove referenced source" />
   </Attachment>
 );
 
 const PromptInputReferencedSources = ({
   children,
 }: {
-  children: (source: AttachmentData) => React.ReactNode;
+  children: (source: AttachmentData, onRemove: () => void) => React.ReactNode;
 }) => {
   const referencedSources = usePromptInputReferencedSources();
   if (!referencedSources.sources.length) return null;
   return (
     <Attachments variant="inline">
       {referencedSources.sources.map((source) => (
-        <React.Fragment key={source.id}>{children(source)}</React.Fragment>
+        <React.Fragment key={source.id}>
+          {children(source, () => referencedSources.remove(source.id))}
+        </React.Fragment>
       ))}
     </Attachments>
   );
@@ -1825,7 +1838,9 @@ describe("PromptInputAttachment", () => {
     render(
       <PromptInput onSubmit={onSubmit}>
         <PromptInputBody>
-          <PromptInputAttachment data={file} />
+          <Attachments variant="inline">
+            <PromptInputAttachment data={file} />
+          </Attachments>
         </PromptInputBody>
       </PromptInput>
     );
@@ -1873,8 +1888,12 @@ describe("PromptInputAttachment", () => {
             Add
           </button>
           <PromptInputAttachments>
-            {(attachment) => (
-              <PromptInputAttachment data={attachment} key={attachment.id} />
+            {(attachment, onRemove) => (
+              <PromptInputAttachment
+                data={attachment}
+                key={attachment.id}
+                onRemove={onRemove}
+              />
             )}
           </PromptInputAttachments>
         </>
@@ -2027,7 +2046,9 @@ describe("PromptInputReferencedSource", () => {
     render(
       <PromptInput onSubmit={onSubmit}>
         <PromptInputBody>
-          <PromptInputReferencedSource data={source} />
+          <Attachments variant="inline">
+            <PromptInputReferencedSource data={source} />
+          </Attachments>
         </PromptInputBody>
       </PromptInput>
     );
@@ -2049,7 +2070,9 @@ describe("PromptInputReferencedSource", () => {
     render(
       <PromptInput onSubmit={onSubmit}>
         <PromptInputBody>
-          <PromptInputReferencedSource data={source} />
+          <Attachments variant="inline">
+            <PromptInputReferencedSource data={source} />
+          </Attachments>
         </PromptInputBody>
       </PromptInput>
     );
@@ -2080,8 +2103,12 @@ describe("PromptInputReferencedSource", () => {
             Add
           </button>
           <PromptInputReferencedSources>
-            {(source) => (
-              <PromptInputReferencedSource data={source} key={source.id} />
+            {(source, onRemove) => (
+              <PromptInputReferencedSource
+                data={source}
+                key={source.id}
+                onRemove={onRemove}
+              />
             )}
           </PromptInputReferencedSources>
         </>
