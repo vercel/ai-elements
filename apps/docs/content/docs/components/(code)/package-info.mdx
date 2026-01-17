@@ -1,0 +1,107 @@
+---
+title: Package Info
+description: Display dependency information and version changes.
+path: elements/components/package-info
+---
+
+The `PackageInfo` component displays package dependency information including version changes and change type badges.
+
+<Preview path="package-info" />
+
+## Installation
+
+<ElementsInstaller path="package-info" />
+
+## Features
+
+- Version change display (current → new)
+- Color-coded change type badges
+- Dependencies list
+- Description support
+
+## Change Types
+
+| Type | Color | Use Case |
+|------|-------|----------|
+| `major` | Red | Breaking changes |
+| `minor` | Yellow | New features |
+| `patch` | Green | Bug fixes |
+| `added` | Blue | New dependency |
+| `removed` | Gray | Removed dependency |
+
+## Examples
+
+### Basic Usage
+
+```tsx
+<PackageInfo
+  name="react"
+  currentVersion="18.2.0"
+  newVersion="19.0.0"
+  changeType="major"
+/>
+```
+
+### With Dependencies
+
+```tsx
+<PackageInfo name="react" changeType="added">
+  <PackageInfoHeader>
+    <PackageInfoName />
+    <PackageInfoChangeType />
+  </PackageInfoHeader>
+  <PackageInfoContent>
+    <PackageInfoDependencies>
+      <PackageInfoDependency name="react-dom" version="^19.0.0" />
+    </PackageInfoDependencies>
+  </PackageInfoContent>
+</PackageInfo>
+```
+
+## Props
+
+### `<PackageInfo />`
+
+<TypeTable
+  type={{
+    name: {
+      description: 'Package name.',
+      type: 'string',
+    },
+    currentVersion: {
+      description: 'Current installed version.',
+      type: 'string',
+    },
+    newVersion: {
+      description: 'New version being installed.',
+      type: 'string',
+    },
+    changeType: {
+      description: 'Type of version change.',
+      type: '"major" | "minor" | "patch" | "added" | "removed"',
+    },
+    className: {
+      description: 'Additional CSS classes.',
+      type: 'string',
+    },
+  }}
+/>
+
+### `<PackageInfoDependency />`
+
+<TypeTable
+  type={{
+    name: {
+      description: 'Dependency name.',
+      type: 'string',
+    },
+    version: {
+      description: 'Dependency version.',
+      type: 'string',
+    },
+    className: {
+      description: 'Additional CSS classes.',
+      type: 'string',
+    },
+  }}
+/>
