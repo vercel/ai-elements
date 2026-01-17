@@ -1,0 +1,140 @@
+---
+title: Git Commit
+description: Display git commit information with hash, message, author, and file changes.
+path: elements/components/git-commit
+---
+
+The `GitCommit` component displays git commit details including hash, message, author, timestamp, and changed files.
+
+<Preview path="git-commit" />
+
+## Installation
+
+<ElementsInstaller path="git-commit" />
+
+## Features
+
+- Commit hash display with copy button
+- Author avatar with initials
+- Relative timestamp formatting
+- Collapsible file changes list
+- Color-coded file status (added/modified/deleted/renamed)
+- Line additions/deletions count
+
+## File Status
+
+| Status | Label | Color |
+|--------|-------|-------|
+| `added` | A | Green |
+| `modified` | M | Yellow |
+| `deleted` | D | Red |
+| `renamed` | R | Blue |
+
+## Examples
+
+### Basic Usage
+
+```tsx
+<GitCommit
+  hash="a1b2c3d4e5f6"
+  message="feat: Add new feature"
+  author="John Doe"
+  timestamp={new Date()}
+  files={[
+    { path: "src/index.ts", status: "added", additions: 50 }
+  ]}
+/>
+```
+
+### Custom Composition
+
+```tsx
+<GitCommit {...commit}>
+  <GitCommitHeader>
+    <GitCommitAuthor />
+    <GitCommitMessage />
+    <GitCommitActions>
+      <GitCommitCopyButton />
+    </GitCommitActions>
+  </GitCommitHeader>
+  <GitCommitContent>
+    <GitCommitFiles />
+  </GitCommitContent>
+</GitCommit>
+```
+
+## Props
+
+### `<GitCommit />`
+
+<TypeTable
+  type={{
+    hash: {
+      description: 'Full commit hash.',
+      type: 'string',
+    },
+    message: {
+      description: 'Commit message.',
+      type: 'string',
+    },
+    author: {
+      description: 'Author name.',
+      type: 'string',
+    },
+    timestamp: {
+      description: 'Commit timestamp.',
+      type: 'Date',
+    },
+    files: {
+      description: 'Array of changed files.',
+      type: 'GitCommitFile[]',
+    },
+    className: {
+      description: 'Additional CSS classes.',
+      type: 'string',
+    },
+  }}
+/>
+
+### `<GitCommitFile />`
+
+<TypeTable
+  type={{
+    path: {
+      description: 'File path.',
+      type: 'string',
+    },
+    status: {
+      description: 'Change status.',
+      type: '"added" | "modified" | "deleted" | "renamed"',
+    },
+    additions: {
+      description: 'Lines added.',
+      type: 'number',
+    },
+    deletions: {
+      description: 'Lines deleted.',
+      type: 'number',
+    },
+  }}
+/>
+
+### `<GitCommitCopyButton />`
+
+<TypeTable
+  type={{
+    onCopy: {
+      description: 'Callback after successful copy.',
+      type: '() => void',
+    },
+    onError: {
+      description: 'Callback if copying fails.',
+      type: '(error: Error) => void',
+    },
+    timeout: {
+      description: 'Duration to show copied state (ms).',
+      type: 'number',
+      default: '2000',
+    },
+  }}
+/>
