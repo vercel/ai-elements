@@ -11,7 +11,7 @@ import { createSystemPrompt } from "./utils";
 
 export const maxDuration = 800;
 
-interface RequestBody {
+type RequestBody = {
   messages: MyUIMessage[];
   currentRoute: string;
   pageContext?: {
@@ -19,7 +19,7 @@ interface RequestBody {
     url: string;
     content: string;
   };
-}
+};
 
 export async function POST(req: Request) {
   try {
@@ -83,19 +83,16 @@ User question: ${userQuestion}`,
       originalMessages: messages,
       execute: ({ writer }) => {
         const result = streamText({
-          model: "openai/gpt-5",
-          providerOptions: {
-            openai: {
-              reasoningEffort: "minimal",
-              reasoningSummary: "auto",
-              textVerbosity: "medium",
-              serviceTier: "priority",
-            },
-          },
+          model: "openai/gpt-4.1-mini",
           messages: convertToModelMessages(processedMessages),
           stopWhen: stepCountIs(10),
           tools: createTools(writer),
           system: createSystemPrompt(currentRoute),
+          prepareStep: ({ stepNumber }) => {
+            if (stepNumber === 0) {
+              return { toolChoice: { type: "tool", toolName: "search_docs" } };
+            }
+          },
         });
 
         writer.merge(result.toUIMessageStream());

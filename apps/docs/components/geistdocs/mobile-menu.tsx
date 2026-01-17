@@ -1,14 +1,19 @@
 "use client";
 
 import { Button } from "@repo/shadcn-ui/components/ui/button";
-import { useSidebar } from "fumadocs-ui/contexts/sidebar";
 import { MenuIcon } from "lucide-react";
+import { useSidebarContext } from "@/hooks/geistdocs/use-sidebar";
 
 export const MobileMenu = () => {
-  const { setOpen } = useSidebar();
+  const { isOpen, setIsOpen } = useSidebarContext();
 
   return (
-    <Button onClick={() => setOpen(true)} size="icon-sm" variant="ghost">
+    <Button
+      className="md:hidden"
+      onClick={() => setIsOpen(!isOpen)}
+      size="icon-sm"
+      variant="ghost"
+    >
       <MenuIcon className="size-4" />
     </Button>
   );

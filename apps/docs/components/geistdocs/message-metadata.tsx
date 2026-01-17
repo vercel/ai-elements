@@ -10,10 +10,10 @@ import { isToolUIPart } from "ai";
 import { BookmarkIcon } from "lucide-react";
 import type { MyUIMessage } from "@/app/api/chat/types";
 
-interface MessageMetadataProps {
+type MessageMetadataProps = {
   parts: MyUIMessage["parts"];
   inProgress: boolean;
-}
+};
 
 export const MessageMetadata = ({
   parts,
@@ -29,7 +29,8 @@ export const MessageMetadata = ({
   if (!lastPart) {
     return (
       <div className="flex items-center gap-2">
-        <Spinner /> {reasoning ? <Shimmer>Thinking...</Shimmer> : ""}
+        <Spinner />{" "}
+        {reasoning ? <Shimmer className="text-xs">Thinking...</Shimmer> : ""}
       </div>
     );
   }
