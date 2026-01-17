@@ -1,0 +1,186 @@
+---
+title: Agent
+description: A composable component for displaying AI agent configuration with model, instructions, tools, and output schema.
+path: elements/components/agent
+---
+
+The `Agent` component displays a collapsible interface for showing AI agent configuration details. It's designed to represent a configured `ToolLoopAgent` from the AI SDK, showing the agent's model, system instructions, available tools, and output schema.
+
+<Preview path="agent" />
+
+## Installation
+
+<ElementsInstaller path="agent" />
+
+## Usage with AI SDK
+
+Display an agent's configuration alongside your chat interface.
+
+```tsx title="app/page.tsx"
+'use client';
+
+import {
+  Agent,
+  AgentContent,
+  AgentHeader,
+  AgentInstructions,
+  AgentOutput,
+  AgentTool,
+  AgentTools,
+} from '@/components/ai-elements/agent';
+
+const outputSchema = `z.object({
+  sentiment: z.enum(['positive', 'negative', 'neutral']),
+  score: z.number(),
+  summary: z.string(),
+})`;
+
+export default function Page() {
+  return (
+    <Agent defaultOpen>
+      <AgentHeader name="Sentiment Analyzer" model="anthropic/claude-sonnet-4-5" />
+      <AgentContent>
+        <AgentInstructions>
+          Analyze the sentiment of the provided text and return a structured
+          analysis with sentiment classification, confidence score, and summary.
+        </AgentInstructions>
+        <AgentTools>
+          <AgentTool name="web_search" description="Search the web" />
+          <AgentTool name="read_url" description="Read and parse a URL" />
+        </AgentTools>
+        <AgentOutput schema={outputSchema} />
+      </AgentContent>
+    </Agent>
+  );
+}
+```
+
+## Features
+
+- Collapsible interface for showing/hiding agent details
+- Model badge in header
+- Instructions rendered as markdown
+- Tool badges with optional tooltip descriptions
+- Output schema display with syntax highlighting
+- Composable structure for flexible layouts
+- Accessible keyboard navigation
+
+## Props
+
+### `<Agent />`
+
+<TypeTable
+  type={{
+    open: {
+      description: 'Controlled open state.',
+      type: 'boolean',
+    },
+    defaultOpen: {
+      description: 'Default open state for uncontrolled usage.',
+      type: 'boolean',
+      default: 'false',
+    },
+    onOpenChange: {
+      description: 'Callback when open state changes.',
+      type: '(open: boolean) => void',
+    },
+    '...props': {
+      description: 'Any other props are spread to the root div.',
+      type: 'React.ComponentProps<"div">',
+    },
+  }}
+/>
+
+### `<AgentHeader />`
+
+<TypeTable
+  type={{
+    name: {
+      description: 'The name of the agent.',
+      type: 'string',
+      required: true,
+    },
+    model: {
+      description: 'The model identifier (e.g. "anthropic/claude-sonnet-4-5").',
+      type: 'string',
+    },
+    '...props': {
+      description: 'Any other props are spread to the CollapsibleTrigger.',
+      type: 'React.ComponentProps<typeof CollapsibleTrigger>',
+    },
+  }}
+/>
+
+### `<AgentContent />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any other props are spread to the CollapsibleContent.',
+      type: 'React.ComponentProps<typeof CollapsibleContent>',
+    },
+  }}
+/>
+
+### `<AgentInstructions />`
+
+<TypeTable
+  type={{
+    children: {
+      description: 'The instruction text (rendered as markdown).',
+      type: 'string',
+      required: true,
+    },
+    '...props': {
+      description: 'Any other props are spread to the container div.',
+      type: 'React.ComponentProps<"div">',
+    },
+  }}
+/>
+
+### `<AgentTools />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any other props are spread to the container div.',
+      type: 'React.ComponentProps<"div">',
+    },
+  }}
+/>
+
+### `<AgentTool />`
+
+<TypeTable
+  type={{
+    name: {
+      description: 'The name of the tool.',
+      type: 'string',
+      required: true,
+    },
+    description: {
+      description: 'Optional description shown in a tooltip.',
+      type: 'string',
+    },
+    '...props': {
+      description: 'Any other props are spread to the Badge component.',
+      type: 'React.ComponentProps<typeof Badge>',
+    },
+  }}
+/>
+
+### `<AgentOutput />`
+
+<TypeTable
+  type={{
+    schema: {
+      description: 'The output schema as a string (displayed with syntax highlighting).',
+      type: 'string',
+      required: true,
+    },
+    '...props': {
+      description: 'Any other props are spread to the container div.',
+      type: 'React.ComponentProps<"div">',
+    },
+  }}
+/>
