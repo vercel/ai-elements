@@ -1,0 +1,126 @@
+---
+title: Environment Variables
+description: Display environment variables with masking and copy functionality.
+path: elements/components/environment-variables
+---
+
+The `EnvironmentVariables` component displays environment variables with value masking, visibility toggle, and copy functionality.
+
+<Preview path="environment-variables" />
+
+## Installation
+
+<ElementsInstaller path="environment-variables" />
+
+## Features
+
+- Value masking by default
+- Toggle visibility switch
+- Copy individual values
+- Export format support (`export KEY="value"`)
+- Required badge indicator
+
+## Examples
+
+### Basic Usage
+
+```tsx
+<EnvironmentVariables>
+  <EnvironmentVariablesHeader>
+    <EnvironmentVariablesTitle />
+    <EnvironmentVariablesToggle />
+  </EnvironmentVariablesHeader>
+  <EnvironmentVariablesContent>
+    <EnvironmentVariable name="API_KEY" value="sk-123456" />
+  </EnvironmentVariablesContent>
+</EnvironmentVariables>
+```
+
+### With Required Badge
+
+```tsx
+<EnvironmentVariable name="DATABASE_URL" value="postgres://...">
+  <div className="flex items-center gap-2">
+    <EnvironmentVariableName />
+    <EnvironmentVariableRequired />
+  </div>
+  <EnvironmentVariableValue />
+</EnvironmentVariable>
+```
+
+### Copy as Export
+
+```tsx
+<EnvironmentVariableCopyButton copyFormat="export" />
+// Copies: export API_KEY="value"
+```
+
+## Props
+
+### `<EnvironmentVariables />`
+
+<TypeTable
+  type={{
+    showValues: {
+      description: 'Controlled visibility state.',
+      type: 'boolean',
+    },
+    defaultShowValues: {
+      description: 'Default visibility state.',
+      type: 'boolean',
+      default: 'false',
+    },
+    onShowValuesChange: {
+      description: 'Callback when visibility changes.',
+      type: '(show: boolean) => void',
+    },
+    className: {
+      description: 'Additional CSS classes.',
+      type: 'string',
+    },
+  }}
+/>
+
+### `<EnvironmentVariable />`
+
+<TypeTable
+  type={{
+    name: {
+      description: 'Variable name.',
+      type: 'string',
+    },
+    value: {
+      description: 'Variable value.',
+      type: 'string',
+    },
+    className: {
+      description: 'Additional CSS classes.',
+      type: 'string',
+    },
+  }}
+/>
+
+### `<EnvironmentVariableCopyButton />`
+
+<TypeTable
+  type={{
+    copyFormat: {
+      description: 'Format to copy.',
+      type: '"name" | "value" | "export"',
+      default: '"value"',
+    },
+    onCopy: {
+      description: 'Callback after successful copy.',
+      type: '() => void',
+    },
+    onError: {
+      description: 'Callback if copying fails.',
+      type: '(error: Error) => void',
+    },
+    timeout: {
+      description: 'Duration to show copied state (ms).',
+      type: 'number',
+      default: '2000',
+    },
+  }}
+/>
