@@ -12,6 +12,7 @@
     "examples/chatbot",
     "examples/v0",
     "examples/workflow",
+    "---Components---",
     "components/(chatbot)",
     "components/(code)",
     "components/(voice)",
