@@ -30,7 +30,7 @@ const getOctokit = async (): Promise<Octokit> => {
   return await app.getInstallationOctokit(data.id);
 };
 
-type RepositoryInfo = {
+interface RepositoryInfo {
   id: string;
   discussionCategories: {
     nodes: {
@@ -38,7 +38,7 @@ type RepositoryInfo = {
       name: string;
     }[];
   };
-};
+}
 
 const getFeedbackDestination = async () => {
   const octokit = await getOctokit();

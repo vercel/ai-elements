@@ -1,5 +1,8 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
+
+const QUERY_REGEX = /"query"/;
+
 import {
   Tool,
   ToolContent,
@@ -78,11 +81,7 @@ describe("ToolHeader", () => {
   it("shows awaiting approval status", () => {
     render(
       <Tool>
-        <ToolHeader
-          state="approval-requested"
-          title="test"
-          type="tool-test"
-        />
+        <ToolHeader state="approval-requested" title="test" type="tool-test" />
       </Tool>
     );
     expect(screen.getByText("Awaiting Approval")).toBeInTheDocument();
@@ -91,11 +90,7 @@ describe("ToolHeader", () => {
   it("shows responded status", () => {
     render(
       <Tool>
-        <ToolHeader
-          state="approval-responded"
-          title="test"
-          type="tool-test"
-        />
+        <ToolHeader state="approval-responded" title="test" type="tool-test" />
       </Tool>
     );
     expect(screen.getByText("Responded")).toBeInTheDocument();
@@ -104,11 +99,7 @@ describe("ToolHeader", () => {
   it("shows denied status", () => {
     render(
       <Tool>
-        <ToolHeader
-          state="output-denied"
-          title="test"
-          type="tool-test"
-        />
+        <ToolHeader state="output-denied" title="test" type="tool-test" />
       </Tool>
     );
     expect(screen.getByText("Denied")).toBeInTheDocument();
@@ -130,8 +121,8 @@ describe("ToolHeader with DynamicToolUIPart", () => {
       <Tool defaultOpen>
         <ToolHeader
           state="input-available"
-          type="dynamic-tool"
           toolName="web-search"
+          type="dynamic-tool"
         />
       </Tool>
     );
@@ -143,9 +134,9 @@ describe("ToolHeader with DynamicToolUIPart", () => {
       <Tool defaultOpen>
         <ToolHeader
           state="input-available"
-          type="dynamic-tool"
-          toolName="web-search"
           title="Custom Title"
+          toolName="web-search"
+          type="dynamic-tool"
         />
       </Tool>
     );
@@ -157,8 +148,8 @@ describe("ToolHeader with DynamicToolUIPart", () => {
       <Tool>
         <ToolHeader
           state="output-available"
-          type="dynamic-tool"
           toolName="search"
+          type="dynamic-tool"
         />
       </Tool>
     );
@@ -170,8 +161,8 @@ describe("ToolHeader with DynamicToolUIPart", () => {
       <Tool>
         <ToolHeader
           state="approval-requested"
-          type="dynamic-tool"
           toolName="delete-file"
+          type="dynamic-tool"
         />
       </Tool>
     );
@@ -204,7 +195,7 @@ describe("ToolInput", () => {
     );
     expect(screen.getByText("Parameters")).toBeInTheDocument();
     await waitFor(() => {
-      expect(screen.getAllByText(/"query"/)[0]).toBeInTheDocument();
+      expect(screen.getAllByText(QUERY_REGEX)[0]).toBeInTheDocument();
     });
   });
 

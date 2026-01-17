@@ -36,7 +36,6 @@ export const GET = async (
 
   return new ImageResponse(
     <div style={{ fontFamily: "Geist" }} tw="flex h-full w-full bg-black">
-      {/** biome-ignore lint/performance/noImgElement: "Required for Satori" */}
       <img
         alt="Vercel OpenGraph Background"
         height={628}

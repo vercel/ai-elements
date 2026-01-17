@@ -19,7 +19,7 @@ export type PersonaState =
   | "speaking"
   | "asleep";
 
-type PersonaProps = {
+interface PersonaProps {
   state: PersonaState;
   onLoad?: RiveParameters["onLoad"];
   onLoadError?: RiveParameters["onLoadError"];
@@ -29,7 +29,7 @@ type PersonaProps = {
   onStop?: RiveParameters["onStop"];
   className?: string;
   variant?: keyof typeof sources;
-};
+}
 
 // The state machine name is always 'default' for Elements AI visuals
 const stateMachine = "default";
@@ -126,11 +126,11 @@ const useTheme = (enabled: boolean) => {
   return theme;
 };
 
-type PersonaWithModelProps = {
+interface PersonaWithModelProps {
   rive: ReturnType<typeof useRive>["rive"];
   source: (typeof sources)[keyof typeof sources];
   children: React.ReactNode;
-};
+}
 
 const PersonaWithModel = memo(
   ({ rive, source, children }: PersonaWithModelProps) => {
@@ -158,9 +158,9 @@ const PersonaWithModel = memo(
   }
 );
 
-type PersonaWithoutModelProps = {
+interface PersonaWithoutModelProps {
   children: ReactNode;
-};
+}
 
 const PersonaWithoutModel = memo(
   ({ children }: PersonaWithoutModelProps) => children

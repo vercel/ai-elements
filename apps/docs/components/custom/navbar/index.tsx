@@ -5,14 +5,14 @@ import { Banner } from "./banner";
 import { ClientNavbar } from "./client-navbar";
 import { ElementsButton } from "./elements-button";
 
-export type NavPageItem = {
+export interface NavPageItem {
   href: string;
   tooltip: string;
   name: string;
   external?: boolean;
   shortened?: string;
   render?: () => React.ReactNode;
-};
+}
 
 export const PAGES: NavPageItem[] = [
   {
@@ -31,9 +31,9 @@ export const PAGES: NavPageItem[] = [
     name: "providers",
   },
   {
-    href: '/tools-registry',
-    tooltip: 'Tools Registry',
-    name: 'tools-registry',
+    href: "/tools-registry",
+    tooltip: "Tools Registry",
+    name: "tools-registry",
   },
   {
     href: "/playground",

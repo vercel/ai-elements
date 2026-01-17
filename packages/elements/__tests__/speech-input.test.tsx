@@ -28,15 +28,15 @@ class MockSpeechRecognition {
 
 // Mock console methods
 beforeEach(() => {
-  vi.spyOn(console, "warn").mockImplementation(() => {});
-  vi.spyOn(console, "error").mockImplementation(() => {});
+  vi.spyOn(console, "warn").mockImplementation(() => undefined);
+  vi.spyOn(console, "error").mockImplementation(() => undefined);
 
   // Reset window.SpeechRecognition
-  delete (window as any).SpeechRecognition;
-  delete (window as any).webkitSpeechRecognition;
+  (window as any).SpeechRecognition = undefined;
+  (window as any).webkitSpeechRecognition = undefined;
 
   // Reset MediaRecorder to ensure consistent test behavior
-  delete (window as any).MediaRecorder;
+  (window as any).MediaRecorder = undefined;
   // Also mock navigator.mediaDevices to be undefined
   Object.defineProperty(navigator, "mediaDevices", {
     value: undefined,
@@ -151,18 +151,14 @@ describe("SpeechInput - Speech Recognition", () => {
     const button = screen.getByRole("button");
 
     // Should not have animate-ping divs initially
-    expect(
-      container.querySelectorAll(".animate-ping").length
-    ).toBe(0);
+    expect(container.querySelectorAll(".animate-ping").length).toBe(0);
 
     await user.click(button);
 
     // Should have animate-ping divs when listening
     await waitFor(
       () => {
-        expect(
-          container.querySelectorAll(".animate-ping").length
-        ).toBe(3);
+        expect(container.querySelectorAll(".animate-ping").length).toBe(3);
       },
       { timeout: 3000 }
     );
@@ -205,7 +201,7 @@ describe("SpeechInput - Speech Recognition", () => {
             0: { transcript: "Hello world", confidence: 0.9 },
             isFinal: true,
             length: 1,
-            item: (index: number) => ({
+            item: (_index: number) => ({
               transcript: "Hello world",
               confidence: 0.9,
             }),
@@ -255,7 +251,10 @@ describe("SpeechInput - Speech Recognition", () => {
             0: { transcript: "Hello", confidence: 0.5 },
             isFinal: false,
             length: 1,
-            item: (index: number) => ({ transcript: "Hello", confidence: 0.5 }),
+            item: (_index: number) => ({
+              transcript: "Hello",
+              confidence: 0.5,
+            }),
           },
         },
       });
@@ -269,7 +268,7 @@ describe("SpeechInput - Speech Recognition", () => {
   it("handles speech recognition errors and logs them", async () => {
     const consoleErrorSpy = vi
       .spyOn(console, "error")
-      .mockImplementation(() => {});
+      .mockImplementation(() => undefined);
     let recognitionInstance: any = null;
 
     class TrackableMockSpeechRecognition extends MockSpeechRecognition {
@@ -345,7 +344,7 @@ describe("SpeechInput - Speech Recognition", () => {
             0: { transcript: "", confidence: 0.9 },
             isFinal: true,
             length: 1,
-            item: (index: number) => ({ transcript: "", confidence: 0.9 }),
+            item: (_index: number) => ({ transcript: "", confidence: 0.9 }),
           },
         },
       });
@@ -358,8 +357,8 @@ describe("SpeechInput - Speech Recognition", () => {
 
   it("does nothing when clicking button if recognition is not available", async () => {
     // No SpeechRecognition available
-    delete (window as any).SpeechRecognition;
-    delete (window as any).webkitSpeechRecognition;
+    (window as any).SpeechRecognition = undefined;
+    (window as any).webkitSpeechRecognition = undefined;
 
     render(<SpeechInput />);
 
@@ -420,8 +419,8 @@ describe("SpeechInput - MediaRecorder Fallback", () => {
     mediaRecorderInstances = [];
 
     // Remove SpeechRecognition to force MediaRecorder mode
-    delete (window as any).SpeechRecognition;
-    delete (window as any).webkitSpeechRecognition;
+    (window as any).SpeechRecognition = undefined;
+    (window as any).webkitSpeechRecognition = undefined;
 
     // Create mock track
     mockTrack = {
@@ -520,7 +519,9 @@ describe("SpeechInput - MediaRecorder Fallback", () => {
 
     // Simulate data available
     if (recorder.ondataavailable) {
-      recorder.ondataavailable({ data: new Blob(["test"], { type: "audio/webm" }) });
+      recorder.ondataavailable({
+        data: new Blob(["test"], { type: "audio/webm" }),
+      });
     }
 
     // Stop recording (second click)
@@ -531,7 +532,9 @@ describe("SpeechInput - MediaRecorder Fallback", () => {
     });
 
     await waitFor(() => {
-      expect(handleTranscriptionChange).toHaveBeenCalledWith("transcribed text");
+      expect(handleTranscriptionChange).toHaveBeenCalledWith(
+        "transcribed text"
+      );
     });
   });
 
@@ -558,7 +561,9 @@ describe("SpeechInput - MediaRecorder Fallback", () => {
 
     // Simulate data available
     if (recorder.ondataavailable) {
-      recorder.ondataavailable({ data: new Blob(["test"], { type: "audio/webm" }) });
+      recorder.ondataavailable({
+        data: new Blob(["test"], { type: "audio/webm" }),
+      });
     }
 
     // Stop recording
@@ -571,8 +576,12 @@ describe("SpeechInput - MediaRecorder Fallback", () => {
 
   it("handles transcription errors gracefully", async () => {
     const user = userEvent.setup();
-    const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
-    const handleAudioRecorded = vi.fn().mockRejectedValue(new Error("Transcription failed"));
+    const consoleErrorSpy = vi
+      .spyOn(console, "error")
+      .mockImplementation(() => undefined);
+    const handleAudioRecorded = vi
+      .fn()
+      .mockRejectedValue(new Error("Transcription failed"));
     const handleTranscriptionChange = vi.fn();
 
     render(
@@ -599,14 +608,19 @@ describe("SpeechInput - MediaRecorder Fallback", () => {
 
     // Simulate data available
     if (recorder.ondataavailable) {
-      recorder.ondataavailable({ data: new Blob(["test"], { type: "audio/webm" }) });
+      recorder.ondataavailable({
+        data: new Blob(["test"], { type: "audio/webm" }),
+      });
     }
 
     // Stop recording
     await user.click(button);
 
     await waitFor(() => {
-      expect(consoleErrorSpy).toHaveBeenCalledWith("Transcription error:", expect.any(Error));
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        "Transcription error:",
+        expect.any(Error)
+      );
     });
 
     // Transcription change should not be called on error

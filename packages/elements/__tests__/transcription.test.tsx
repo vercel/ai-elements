@@ -84,7 +84,9 @@ describe("Transcription", () => {
         </Transcription>
       );
 
-      const transcription = container.querySelector('[data-slot="transcription"]');
+      const transcription = container.querySelector(
+        '[data-slot="transcription"]'
+      );
       expect(transcription).toHaveClass("custom-transcription");
     });
 
@@ -101,7 +103,9 @@ describe("Transcription", () => {
         </Transcription>
       );
 
-      const transcription = container.querySelector('[data-slot="transcription"]');
+      const transcription = container.querySelector(
+        '[data-slot="transcription"]'
+      );
       expect(transcription).toHaveClass(
         "flex",
         "flex-wrap",
@@ -234,7 +238,11 @@ describe("Transcription", () => {
 
       // Simulate parent updating currentTime
       rerender(
-        <Transcription currentTime={2.5} onSeek={onSeek} segments={mockSegments}>
+        <Transcription
+          currentTime={2.5}
+          onSeek={onSeek}
+          segments={mockSegments}
+        >
           {(segment, index) => (
             <TranscriptionSegment
               index={index}
@@ -363,7 +371,7 @@ describe("Transcription", () => {
     });
 
     it("applies past styling when segment is past", () => {
-      const { container } = render(
+      render(
         <Transcription currentTime={3.5} segments={mockSegments}>
           {(segment, index) => (
             <TranscriptionSegment
@@ -380,7 +388,7 @@ describe("Transcription", () => {
     });
 
     it("applies future styling when segment is future", () => {
-      const { container } = render(
+      render(
         <Transcription currentTime={0.5} segments={mockSegments}>
           {(segment, index) => (
             <TranscriptionSegment
@@ -531,23 +539,18 @@ describe("Transcription", () => {
       );
 
       const buttons = screen.getAllByRole("button");
-      buttons.forEach((button) => {
+      for (const button of buttons) {
         expect(button).toHaveAttribute("type", "button");
-      });
+      }
     });
 
     it("throws error when used outside Transcription context", () => {
       const consoleSpy = vi
         .spyOn(console, "error")
-        .mockImplementation(() => {});
+        .mockImplementation(() => undefined);
 
       expect(() => {
-        render(
-          <TranscriptionSegment
-            index={0}
-            segment={mockSegments[0]}
-          />
-        );
+        render(<TranscriptionSegment index={0} segment={mockSegments[0]} />);
       }).toThrow("Transcription components must be used within Transcription");
 
       consoleSpy.mockRestore();
@@ -718,9 +721,7 @@ describe("Transcription", () => {
         <Transcription segments={mockSegments}>
           {(segment, index) => (
             <div key={index}>
-              <span data-testid={`time-${index}`}>
-                {segment.startSecond}s
-              </span>
+              <span data-testid={`time-${index}`}>{segment.startSecond}s</span>
               <span data-testid={`text-${index}`}>{segment.text}</span>
             </div>
           )}
@@ -746,7 +747,9 @@ describe("Transcription", () => {
         </Transcription>
       );
 
-      const transcription = container.querySelector('[data-slot="transcription"]');
+      const transcription = container.querySelector(
+        '[data-slot="transcription"]'
+      );
       expect(transcription).toBeInTheDocument();
       expect(transcription?.children.length).toBe(0);
     });

@@ -10,14 +10,14 @@ import { RSSButton } from "./rss-button";
 import { SearchButton } from "./search";
 import { ThemeToggle } from "./theme-toggle";
 
-type NavbarProps = {
+interface NavbarProps {
   children: ReactNode;
   items: {
     label: string;
     href: string;
   }[];
   suggestions: string[];
-};
+}
 
 export const Navbar = ({ children, items, suggestions }: NavbarProps) => (
   <header className="sticky top-0 z-40 h-16 w-full gap-6 border-b bg-sidebar">

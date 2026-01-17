@@ -1,6 +1,15 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
+
+const BOLD_REGEX = /Bold/;
+const NEXT_REGEX = /next/i;
+const PREVIOUS_REGEX = /previous/i;
+const TWO_OF_TWO_REGEX = /2 of 2/;
+const ONE_OF_TWO_REGEX = /1 of 2/;
+const ONE_OF_THREE_REGEX = /1 of 3/;
+const THREE_OF_THREE_REGEX = /3 of 3/;
+
 import {
   Message,
   MessageAction,
@@ -123,7 +132,7 @@ describe("MessageResponse", () => {
 
   it("renders markdown with formatting", () => {
     render(<MessageResponse>**Bold** text</MessageResponse>);
-    expect(screen.getByText(/Bold/)).toBeInTheDocument();
+    expect(screen.getByText(BOLD_REGEX)).toBeInTheDocument();
   });
 
   it("applies custom className", () => {
@@ -147,7 +156,7 @@ describe("MessageBranch", () => {
 
   it("throws error when components used outside MessageBranch provider", () => {
     // Suppress console.error for this test
-    const spy = vi.spyOn(console, "error").mockImplementation(() => {});
+    const spy = vi.spyOn(console, "error").mockImplementation(() => undefined);
 
     expect(() => render(<MessageBranchNext />)).toThrow(
       "MessageBranch components must be used within MessageBranch"
@@ -173,7 +182,7 @@ describe("MessageBranch", () => {
       </MessageBranch>
     );
 
-    const nextButton = screen.getByRole("button", { name: /next/i });
+    const nextButton = screen.getByRole("button", { name: NEXT_REGEX });
     await user.click(nextButton);
 
     expect(onBranchChange).toHaveBeenCalledWith(1);
@@ -241,7 +250,7 @@ describe("MessageBranchPrevious", () => {
     );
 
     expect(
-      screen.getByRole("button", { name: /previous/i })
+      screen.getByRole("button", { name: PREVIOUS_REGEX })
     ).toBeInTheDocument();
   });
 
@@ -260,13 +269,13 @@ describe("MessageBranchPrevious", () => {
     );
 
     // Should start at branch 2
-    expect(screen.getByText(/2 of 2/)).toBeInTheDocument();
+    expect(screen.getByText(TWO_OF_TWO_REGEX)).toBeInTheDocument();
 
-    const prevButton = screen.getByRole("button", { name: /previous/i });
+    const prevButton = screen.getByRole("button", { name: PREVIOUS_REGEX });
     await user.click(prevButton);
 
     // Should navigate to branch 1
-    expect(screen.getByText(/1 of 2/)).toBeInTheDocument();
+    expect(screen.getByText(ONE_OF_TWO_REGEX)).toBeInTheDocument();
   });
 
   it("wraps to last branch when clicking previous on first branch", async () => {
@@ -285,13 +294,13 @@ describe("MessageBranchPrevious", () => {
     );
 
     // Should start at branch 1
-    expect(screen.getByText(/1 of 3/)).toBeInTheDocument();
+    expect(screen.getByText(ONE_OF_THREE_REGEX)).toBeInTheDocument();
 
-    const prevButton = screen.getByRole("button", { name: /previous/i });
+    const prevButton = screen.getByRole("button", { name: PREVIOUS_REGEX });
     await user.click(prevButton);
 
     // Should wrap to branch 3
-    expect(screen.getByText(/3 of 3/)).toBeInTheDocument();
+    expect(screen.getByText(THREE_OF_THREE_REGEX)).toBeInTheDocument();
   });
 });
 
@@ -307,7 +316,9 @@ describe("MessageBranchNext", () => {
       </MessageBranch>
     );
 
-    expect(screen.getByRole("button", { name: /next/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: NEXT_REGEX })
+    ).toBeInTheDocument();
   });
 });
 
@@ -323,6 +334,6 @@ describe("MessageBranchPage", () => {
       </MessageBranch>
     );
 
-    expect(screen.getByText(/1 of 2/)).toBeInTheDocument();
+    expect(screen.getByText(ONE_OF_TWO_REGEX)).toBeInTheDocument();
   });
 });

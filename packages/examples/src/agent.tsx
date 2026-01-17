@@ -20,7 +20,10 @@ const Example = () => (
   <div className="space-y-4" style={{ minHeight: "500px" }}>
     {/* Research Assistant Agent */}
     <Agent defaultOpen>
-      <AgentHeader name="Research Assistant" model="anthropic/claude-sonnet-4-5" />
+      <AgentHeader
+        model="anthropic/claude-sonnet-4-5"
+        name="Research Assistant"
+      />
       <AgentContent>
         <AgentInstructions>
           You are a helpful research assistant. Your job is to search the web
@@ -29,13 +32,13 @@ const Example = () => (
         </AgentInstructions>
         <AgentTools>
           <AgentTool
-            name="web_search"
             description="Search the web for information"
+            name="web_search"
           />
-          <AgentTool name="read_url" description="Read and parse a URL" />
+          <AgentTool description="Read and parse a URL" name="read_url" />
           <AgentTool
-            name="summarize"
             description="Summarize text into key points"
+            name="summarize"
           />
         </AgentTools>
       </AgentContent>
@@ -43,7 +46,10 @@ const Example = () => (
 
     {/* Analysis Agent with Output Schema */}
     <Agent defaultOpen>
-      <AgentHeader name="Sentiment Analyzer" model="anthropic/claude-sonnet-4-5" />
+      <AgentHeader
+        model="anthropic/claude-sonnet-4-5"
+        name="Sentiment Analyzer"
+      />
       <AgentContent>
         <AgentInstructions>
           Analyze the sentiment of the provided text and return a structured
@@ -55,16 +61,16 @@ const Example = () => (
 
     {/* Code Assistant Agent */}
     <Agent>
-      <AgentHeader name="Code Assistant" model="openai/gpt-4o" />
+      <AgentHeader model="openai/gpt-4o" name="Code Assistant" />
       <AgentContent>
         <AgentInstructions>
           You help users write, review, and debug code. You can read files,
           write code, and run tests to verify your changes work correctly.
         </AgentInstructions>
         <AgentTools>
-          <AgentTool name="read_file" description="Read a file from disk" />
-          <AgentTool name="write_file" description="Write content to a file" />
-          <AgentTool name="run_tests" description="Execute test suite" />
+          <AgentTool description="Read a file from disk" name="read_file" />
+          <AgentTool description="Write content to a file" name="write_file" />
+          <AgentTool description="Execute test suite" name="run_tests" />
         </AgentTools>
       </AgentContent>
     </Agent>

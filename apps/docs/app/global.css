@@ -131,9 +131,22 @@
 }
 
 /* Patches for AI SDK custom nav */
-#nd-sidebar > div:first-child { @apply hidden; }
-#nd-toc { --fd-nav-height: 130px; }
-#nd-sidebar { @apply mt-[146px]!; }
-:root { --fd-layout-width: 1308px; --fd-page-width: 100%; }
-#nd-page > article { @apply pt-[76px]!; }
-#nd-tocnav { @apply top-[53px]!; }
+#nd-sidebar > div:first-child {
+  @apply hidden;
+}
+#nd-toc {
+  --fd-nav-height: 130px;
+}
+#nd-sidebar {
+  @apply mt-[146px]!;
+}
+:root {
+  --fd-layout-width: 1308px;
+  --fd-page-width: 100%;
+}
+#nd-page > article {
+  @apply pt-[76px]!;
+}
+#nd-tocnav {
+  @apply top-[53px]!;
+}

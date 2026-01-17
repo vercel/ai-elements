@@ -16,11 +16,11 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
 
-type FolderProps = {
+interface FolderProps {
   item: FolderType;
   level: number;
   children: ReactNode;
-};
+}
 
 export const Folder = ({ item, level, children }: FolderProps) => {
   const pathname = usePathname();
@@ -67,9 +67,9 @@ export const Folder = ({ item, level, children }: FolderProps) => {
   );
 };
 
-type ItemProps = {
+interface ItemProps {
   item: ItemType;
-};
+}
 
 export const Item = ({ item }: ItemProps) => {
   const pathname = usePathname();
@@ -91,9 +91,9 @@ export const Item = ({ item }: ItemProps) => {
   );
 };
 
-type SeparatorProps = {
+interface SeparatorProps {
   item: SeparatorType;
-};
+}
 
 export const Separator = ({ item }: SeparatorProps) => (
   <div className="mt-4 mb-2 flex items-center gap-2 first-child:mt-0">

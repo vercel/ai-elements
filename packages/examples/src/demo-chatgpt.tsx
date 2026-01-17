@@ -62,7 +62,7 @@ import { nanoid } from "nanoid";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 
-type MessageType = {
+interface MessageType {
   key: string;
   from: "user" | "assistant";
   sources?: { href: string; title: string }[];
@@ -85,7 +85,7 @@ type MessageType = {
   isReasoningComplete?: boolean;
   isContentComplete?: boolean;
   isReasoningStreaming?: boolean;
-};
+}
 
 const mockMessages: MessageType[] = [
   {
@@ -297,17 +297,17 @@ const Example = () => {
   const [text, setText] = useState<string>("");
   const [useWebSearch, setUseWebSearch] = useState<boolean>(false);
   const [useMicrophone, setUseMicrophone] = useState<boolean>(false);
-  const [status, setStatus] = useState<
+  const [_status, setStatus] = useState<
     "submitted" | "streaming" | "ready" | "error"
   >("ready");
   const [messages, setMessages] = useState<MessageType[]>([]);
-  const [streamingMessageId, setStreamingMessageId] = useState<string | null>(
+  const [_streamingMessageId, setStreamingMessageId] = useState<string | null>(
     null
   );
 
   const streamReasoning = async (
     messageKey: string,
-    versionId: string,
+    _versionId: string,
     reasoningContent: string
   ) => {
     const words = reasoningContent.split(" ");
@@ -391,6 +391,7 @@ const Example = () => {
     );
   };
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: streamContent and streamReasoning only use stable setMessages
   const streamMessageResponse = useCallback(
     async (
       messageKey: string,
@@ -439,7 +440,9 @@ const Example = () => {
 
       // Get the first version for streaming
       const firstVersion = message.versions[0];
-      if (!firstVersion) return;
+      if (!firstVersion) {
+        return;
+      }
 
       // Stream the response
       await streamMessageResponse(

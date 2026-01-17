@@ -29,12 +29,12 @@ import { Diff, DiffContent, type FileContents } from "./diff";
 
 type FileChangesStatus = "pending" | "accepted" | "rejected";
 
-type FileChangesContextType = {
+interface FileChangesContextType {
   oldFile: FileContents;
   newFile: FileContents;
   status: FileChangesStatus;
   onStatusChange?: (status: FileChangesStatus) => void;
-};
+}
 
 const FileChangesContext = createContext<FileChangesContextType | null>(null);
 
@@ -189,6 +189,8 @@ export const FileChangesActions = ({
   className,
   ...props
 }: FileChangesActionsProps) => (
+  // biome-ignore lint/a11y/noNoninteractiveElementInteractions: This wrapper needs to stop event propagation
+  // biome-ignore lint/a11y/noStaticElementInteractions: This wrapper needs to stop event propagation
   <div
     className={cn("flex items-center gap-0.5", className)}
     onClick={(e) => e.stopPropagation()}

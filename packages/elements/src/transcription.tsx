@@ -8,12 +8,12 @@ import { createContext, useContext } from "react";
 
 type TranscriptionSegment = TranscriptionResult["segments"][number];
 
-type TranscriptionContextValue = {
+interface TranscriptionContextValue {
   segments: TranscriptionSegment[];
   currentTime: number;
   onTimeUpdate: (time: number) => void;
   onSeek?: (time: number) => void;
-};
+}
 
 const TranscriptionContext = createContext<TranscriptionContextValue | null>(
   null

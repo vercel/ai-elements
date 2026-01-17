@@ -8,7 +8,6 @@ import {
 } from "@repo/shadcn-ui/components/ui/collapsible";
 import { cn } from "@repo/shadcn-ui/lib/utils";
 import type { DynamicToolUIPart, ToolUIPart } from "ai";
-import { getToolName } from "ai";
 import {
   CheckCircleIcon,
   ChevronDownIcon,

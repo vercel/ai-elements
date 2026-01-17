@@ -3,9 +3,9 @@
 import { MessageCircleIcon } from "lucide-react";
 import { useChatContext } from "@/hooks/geistdocs/use-chat";
 
-type AskAIProps = {
+interface AskAIProps {
   query: string;
-};
+}
 
 export const AskAI = ({ query }: AskAIProps) => {
   const { setIsOpen, setPrompt } = useChatContext();

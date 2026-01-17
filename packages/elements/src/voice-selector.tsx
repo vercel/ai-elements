@@ -35,12 +35,12 @@ import {
 import type { ComponentProps, ReactNode } from "react";
 import { createContext, useContext, useMemo } from "react";
 
-type VoiceSelectorContextValue = {
+interface VoiceSelectorContextValue {
   value: string | undefined;
   setValue: (value: string | undefined) => void;
   open: boolean;
   setOpen: (open: boolean) => void;
-};
+}
 
 const VoiceSelectorContext = createContext<VoiceSelectorContextValue | null>(
   null

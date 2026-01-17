@@ -23,8 +23,8 @@ vi.mock("@rive-app/react-webgl2", () => ({
 
 // Mock console methods
 beforeEach(() => {
-  vi.spyOn(console, "warn").mockImplementation(() => {});
-  vi.spyOn(console, "error").mockImplementation(() => {});
+  vi.spyOn(console, "warn").mockImplementation(() => undefined);
+  vi.spyOn(console, "error").mockImplementation(() => undefined);
 
   // Reset mocks
   mockUseRive.mockReset();
@@ -199,10 +199,16 @@ describe("Persona - State Management", () => {
     const mockThinkingInput = { value: false };
     const mockSpeakingInput = { value: false };
 
-    mockUseStateMachineInput.mockImplementation((rive, sm, input) => {
-      if (input === "listening") return mockListeningInput;
-      if (input === "thinking") return mockThinkingInput;
-      if (input === "speaking") return mockSpeakingInput;
+    mockUseStateMachineInput.mockImplementation((_rive, _sm, input) => {
+      if (input === "listening") {
+        return mockListeningInput;
+      }
+      if (input === "thinking") {
+        return mockThinkingInput;
+      }
+      if (input === "speaking") {
+        return mockSpeakingInput;
+      }
       return { value: false };
     });
 
@@ -220,10 +226,16 @@ describe("Persona - State Management", () => {
     const mockThinkingInput = { value: false };
     const mockSpeakingInput = { value: false };
 
-    mockUseStateMachineInput.mockImplementation((rive, sm, input) => {
-      if (input === "listening") return mockListeningInput;
-      if (input === "thinking") return mockThinkingInput;
-      if (input === "speaking") return mockSpeakingInput;
+    mockUseStateMachineInput.mockImplementation((_rive, _sm, input) => {
+      if (input === "listening") {
+        return mockListeningInput;
+      }
+      if (input === "thinking") {
+        return mockThinkingInput;
+      }
+      if (input === "speaking") {
+        return mockSpeakingInput;
+      }
       return { value: false };
     });
 
@@ -241,10 +253,16 @@ describe("Persona - State Management", () => {
     const mockThinkingInput = { value: false };
     const mockSpeakingInput = { value: false };
 
-    mockUseStateMachineInput.mockImplementation((rive, sm, input) => {
-      if (input === "listening") return mockListeningInput;
-      if (input === "thinking") return mockThinkingInput;
-      if (input === "speaking") return mockSpeakingInput;
+    mockUseStateMachineInput.mockImplementation((_rive, _sm, input) => {
+      if (input === "listening") {
+        return mockListeningInput;
+      }
+      if (input === "thinking") {
+        return mockThinkingInput;
+      }
+      if (input === "speaking") {
+        return mockSpeakingInput;
+      }
       return { value: false };
     });
 
@@ -262,10 +280,16 @@ describe("Persona - State Management", () => {
     const mockThinkingInput = { value: false };
     const mockSpeakingInput = { value: false };
 
-    mockUseStateMachineInput.mockImplementation((rive, sm, input) => {
-      if (input === "listening") return mockListeningInput;
-      if (input === "thinking") return mockThinkingInput;
-      if (input === "speaking") return mockSpeakingInput;
+    mockUseStateMachineInput.mockImplementation((_rive, _sm, input) => {
+      if (input === "listening") {
+        return mockListeningInput;
+      }
+      if (input === "thinking") {
+        return mockThinkingInput;
+      }
+      if (input === "speaking") {
+        return mockSpeakingInput;
+      }
       return { value: false };
     });
 
@@ -283,10 +307,16 @@ describe("Persona - State Management", () => {
     const mockThinkingInput = { value: false };
     const mockSpeakingInput = { value: false };
 
-    mockUseStateMachineInput.mockImplementation((rive, sm, input) => {
-      if (input === "listening") return mockListeningInput;
-      if (input === "thinking") return mockThinkingInput;
-      if (input === "speaking") return mockSpeakingInput;
+    mockUseStateMachineInput.mockImplementation((_rive, _sm, input) => {
+      if (input === "listening") {
+        return mockListeningInput;
+      }
+      if (input === "thinking") {
+        return mockThinkingInput;
+      }
+      if (input === "speaking") {
+        return mockSpeakingInput;
+      }
       return { value: false };
     });
 
@@ -304,10 +334,16 @@ describe("Persona - State Management", () => {
     const mockThinkingInput = { value: false };
     const mockSpeakingInput = { value: false };
 
-    mockUseStateMachineInput.mockImplementation((rive, sm, input) => {
-      if (input === "listening") return mockListeningInput;
-      if (input === "thinking") return mockThinkingInput;
-      if (input === "speaking") return mockSpeakingInput;
+    mockUseStateMachineInput.mockImplementation((_rive, _sm, input) => {
+      if (input === "listening") {
+        return mockListeningInput;
+      }
+      if (input === "thinking") {
+        return mockThinkingInput;
+      }
+      if (input === "speaking") {
+        return mockSpeakingInput;
+      }
       return { value: false };
     });
 
@@ -331,7 +367,7 @@ describe("Persona - State Management", () => {
     });
   });
 
-  it("handles null state machine inputs gracefully", async () => {
+  it("handles null state machine inputs gracefully", () => {
     mockUseStateMachineInput.mockReturnValue(null);
 
     // Should not throw an error
@@ -555,11 +591,19 @@ describe("Persona - Asleep State", () => {
     const mockSpeakingInput = { value: false };
     const mockAsleepInput = { value: false };
 
-    mockUseStateMachineInput.mockImplementation((rive, sm, input) => {
-      if (input === "listening") return mockListeningInput;
-      if (input === "thinking") return mockThinkingInput;
-      if (input === "speaking") return mockSpeakingInput;
-      if (input === "asleep") return mockAsleepInput;
+    mockUseStateMachineInput.mockImplementation((_rive, _sm, input) => {
+      if (input === "listening") {
+        return mockListeningInput;
+      }
+      if (input === "thinking") {
+        return mockThinkingInput;
+      }
+      if (input === "speaking") {
+        return mockSpeakingInput;
+      }
+      if (input === "asleep") {
+        return mockAsleepInput;
+      }
       return { value: false };
     });
 
@@ -626,7 +670,7 @@ describe("Persona - Dynamic Color", () => {
     expect(mockSetRgb).not.toHaveBeenCalled();
   });
 
-  it("does not set RGB when viewModelInstanceColor is null", async () => {
+  it("does not set RGB when viewModelInstanceColor is null", () => {
     mockUseViewModelInstanceColor.mockReturnValue(null);
 
     // Should not throw
@@ -655,10 +699,16 @@ describe("Persona - Integration", () => {
     const mockThinkingInput = { value: false };
     const mockSpeakingInput = { value: false };
 
-    mockUseStateMachineInput.mockImplementation((rive, sm, input) => {
-      if (input === "listening") return mockListeningInput;
-      if (input === "thinking") return mockThinkingInput;
-      if (input === "speaking") return mockSpeakingInput;
+    mockUseStateMachineInput.mockImplementation((_rive, _sm, input) => {
+      if (input === "listening") {
+        return mockListeningInput;
+      }
+      if (input === "thinking") {
+        return mockThinkingInput;
+      }
+      if (input === "speaking") {
+        return mockSpeakingInput;
+      }
       return { value: false };
     });
 
@@ -723,7 +773,7 @@ describe("Persona - Integration", () => {
       "command",
     ] as const;
 
-    variants.forEach((variant) => {
+    for (const variant of variants) {
       mockUseRive.mockClear();
       render(<Persona state="idle" variant={variant} />);
 
@@ -732,7 +782,7 @@ describe("Persona - Integration", () => {
           stateMachines: "default",
         })
       );
-    });
+    }
   });
 
   it("always sets autoplay to true", () => {
@@ -744,7 +794,7 @@ describe("Persona - Integration", () => {
       "asleep",
     ] as const;
 
-    states.forEach((state) => {
+    for (const state of states) {
       mockUseRive.mockClear();
       render(<Persona state={state} />);
 
@@ -753,6 +803,6 @@ describe("Persona - Integration", () => {
           autoplay: true,
         })
       );
-    });
+    }
   });
 });

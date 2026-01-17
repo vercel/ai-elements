@@ -67,7 +67,7 @@ The test suite includes:
   - Path aliases for imports
   - CSS handling
 
-- **styleMock.js** - Mock for CSS imports
+- **style-mock.js** - Mock for CSS imports
 
 ## Known Issues
 

@@ -50,8 +50,8 @@ const Example = () => {
     <div className="flex size-full flex-col items-center justify-center gap-4">
       <div className="flex gap-2">
         <SpeechInput
-          onTranscriptionChange={handleTranscriptionChange}
           onAudioRecorded={handleAudioRecorded}
+          onTranscriptionChange={handleTranscriptionChange}
           size="icon"
           variant="outline"
         />

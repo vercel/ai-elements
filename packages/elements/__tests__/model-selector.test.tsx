@@ -20,8 +20,8 @@ import {
 
 // Mock console.warn and console.error to suppress accessibility warnings in tests
 beforeEach(() => {
-  vi.spyOn(console, "warn").mockImplementation(() => {});
-  vi.spyOn(console, "error").mockImplementation(() => {});
+  vi.spyOn(console, "warn").mockImplementation(() => undefined);
+  vi.spyOn(console, "error").mockImplementation(() => undefined);
 });
 
 describe("ModelSelector", () => {
@@ -411,7 +411,7 @@ describe("ModelSelectorLogo", () => {
       "perplexity",
     ];
 
-    providers.forEach((provider) => {
+    for (const provider of providers) {
       const { unmount } = render(<ModelSelectorLogo provider={provider} />);
       const logo = screen.getByAltText(`${provider} logo`);
       expect(logo).toHaveAttribute(
@@ -419,7 +419,7 @@ describe("ModelSelectorLogo", () => {
         `https://models.dev/logos/${provider}.svg`
       );
       unmount();
-    });
+    }
   });
 
   it("supports custom string providers", () => {

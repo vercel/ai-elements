@@ -1,6 +1,14 @@
 "use client";
 
 import {
+  Attachment,
+  type AttachmentData,
+  AttachmentInfo,
+  AttachmentPreview,
+  AttachmentRemove,
+  Attachments,
+} from "@repo/elements/attachment";
+import {
   ModelSelector,
   ModelSelectorContent,
   ModelSelectorEmpty,
@@ -13,14 +21,6 @@ import {
   ModelSelectorName,
   ModelSelectorTrigger,
 } from "@repo/elements/model-selector";
-import {
-  Attachment,
-  AttachmentInfo,
-  AttachmentPreview,
-  AttachmentRemove,
-  Attachments,
-  type AttachmentData,
-} from "@repo/elements/attachment";
 import {
   PromptInput,
   PromptInputBody,
@@ -37,6 +37,7 @@ import {
   PromptInputHoverCard,
   PromptInputHoverCardContent,
   PromptInputHoverCardTrigger,
+  type PromptInputMessage,
   PromptInputProvider,
   PromptInputSubmit,
   PromptInputTab,
@@ -47,9 +48,9 @@ import {
   PromptInputTools,
   usePromptInputAttachments,
   usePromptInputReferencedSources,
-  type PromptInputMessage,
 } from "@repo/elements/prompt-input";
 import { Button } from "@repo/shadcn-ui/components/ui/button";
+import type { SourceDocumentUIPart } from "ai";
 import {
   AtSignIcon,
   CheckIcon,
@@ -58,8 +59,7 @@ import {
   ImageIcon,
   RulerIcon,
 } from "lucide-react";
-import { useRef, useState } from "react";
-import type { SourceDocumentUIPart } from "ai";
+import { useState } from "react";
 
 const models = [
   {
@@ -103,9 +103,27 @@ const SUBMITTING_TIMEOUT = 200;
 const STREAMING_TIMEOUT = 2000;
 
 const sampleSources: SourceDocumentUIPart[] = [
-  { type: "source-document", sourceId: "1", title: "prompt-input.tsx", filename: "packages/elements/src", mediaType: "text/plain" },
-  { type: "source-document", sourceId: "2", title: "queue.tsx", filename: "apps/test/app/examples", mediaType: "text/plain" },
-  { type: "source-document", sourceId: "3", title: "queue.tsx", filename: "packages/elements/src", mediaType: "text/plain" },
+  {
+    type: "source-document",
+    sourceId: "1",
+    title: "prompt-input.tsx",
+    filename: "packages/elements/src",
+    mediaType: "text/plain",
+  },
+  {
+    type: "source-document",
+    sourceId: "2",
+    title: "queue.tsx",
+    filename: "apps/test/app/examples",
+    mediaType: "text/plain",
+  },
+  {
+    type: "source-document",
+    sourceId: "3",
+    title: "queue.tsx",
+    filename: "packages/elements/src",
+    mediaType: "text/plain",
+  },
 ];
 
 const sampleTabs = {
@@ -386,7 +404,8 @@ const SampleFilesMenu = () => {
             .filter(
               (source) =>
                 !refs.sources.some(
-                  (s) => s.title === source.title && s.filename === source.filename
+                  (s) =>
+                    s.title === source.title && s.filename === source.filename
                 )
             )
             .map((source, index) => (

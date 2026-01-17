@@ -14,11 +14,11 @@ import {
 import { nanoid } from "nanoid";
 import { Fragment, useState } from "react";
 
-type MessageType = {
+interface MessageType {
   id: string;
   role: "user" | "assistant";
   content: string;
-};
+}
 
 const initialMessages: MessageType[] = [
   {

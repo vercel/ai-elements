@@ -314,7 +314,6 @@ describe("SandboxTabsTrigger", () => {
   });
 });
 
-
 describe("SandboxTabContent", () => {
   it("renders content for active tab", () => {
     render(

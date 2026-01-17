@@ -27,7 +27,7 @@ const newFile = { name: "test.ts", content: "const a = 2;\nconst b = 3;" };
 describe("FileChanges", () => {
   it("renders children", () => {
     render(
-      <FileChanges oldFile={oldFile} newFile={newFile}>
+      <FileChanges newFile={newFile} oldFile={oldFile}>
         <div>Content</div>
       </FileChanges>
     );
@@ -36,7 +36,7 @@ describe("FileChanges", () => {
 
   it("applies custom className", () => {
     const { container } = render(
-      <FileChanges className="custom" oldFile={oldFile} newFile={newFile}>
+      <FileChanges className="custom" newFile={newFile} oldFile={oldFile}>
         Test
       </FileChanges>
     );
@@ -45,7 +45,7 @@ describe("FileChanges", () => {
 
   it("is closed by default", () => {
     render(
-      <FileChanges oldFile={oldFile} newFile={newFile}>
+      <FileChanges newFile={newFile} oldFile={oldFile}>
         <FileChangesHeader>
           <FileChangesTitle />
         </FileChangesHeader>
@@ -57,7 +57,7 @@ describe("FileChanges", () => {
 
   it("can start open", () => {
     render(
-      <FileChanges defaultOpen oldFile={oldFile} newFile={newFile}>
+      <FileChanges defaultOpen newFile={newFile} oldFile={oldFile}>
         <FileChangesHeader>
           <FileChangesTitle />
         </FileChangesHeader>
@@ -71,7 +71,7 @@ describe("FileChanges", () => {
 describe("FileChangesHeader", () => {
   it("renders children", () => {
     render(
-      <FileChanges oldFile={oldFile} newFile={newFile}>
+      <FileChanges newFile={newFile} oldFile={oldFile}>
         <FileChangesHeader>Header content</FileChangesHeader>
       </FileChanges>
     );
@@ -82,7 +82,7 @@ describe("FileChangesHeader", () => {
     const user = userEvent.setup();
 
     render(
-      <FileChanges oldFile={oldFile} newFile={newFile}>
+      <FileChanges newFile={newFile} oldFile={oldFile}>
         <FileChangesHeader>
           <FileChangesTitle />
         </FileChangesHeader>
@@ -101,7 +101,7 @@ describe("FileChangesHeader", () => {
 describe("FileChangesIcon", () => {
   it("renders default file icon", () => {
     const { container } = render(
-      <FileChanges oldFile={oldFile} newFile={newFile}>
+      <FileChanges newFile={newFile} oldFile={oldFile}>
         <FileChangesIcon />
       </FileChanges>
     );
@@ -110,7 +110,7 @@ describe("FileChangesIcon", () => {
 
   it("renders custom icon", () => {
     render(
-      <FileChanges oldFile={oldFile} newFile={newFile}>
+      <FileChanges newFile={newFile} oldFile={oldFile}>
         <FileChangesIcon icon={<span data-testid="custom-icon">Icon</span>} />
       </FileChanges>
     );
@@ -121,7 +121,7 @@ describe("FileChangesIcon", () => {
 describe("FileChangesTitle", () => {
   it("renders filename from context", () => {
     render(
-      <FileChanges oldFile={oldFile} newFile={newFile}>
+      <FileChanges newFile={newFile} oldFile={oldFile}>
         <FileChangesTitle />
       </FileChanges>
     );
@@ -130,7 +130,7 @@ describe("FileChangesTitle", () => {
 
   it("renders custom children", () => {
     render(
-      <FileChanges oldFile={oldFile} newFile={newFile}>
+      <FileChanges newFile={newFile} oldFile={oldFile}>
         <FileChangesTitle>Custom title</FileChangesTitle>
       </FileChanges>
     );
@@ -138,7 +138,9 @@ describe("FileChangesTitle", () => {
   });
 
   it("throws when used outside FileChanges", () => {
-    const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
+    const consoleError = vi
+      .spyOn(console, "error")
+      .mockImplementation(() => undefined);
     expect(() => render(<FileChangesTitle />)).toThrow(
       "FileChanges components must be used within a <FileChanges> component"
     );
@@ -149,7 +151,7 @@ describe("FileChangesTitle", () => {
 describe("FileChangesStats", () => {
   it("calculates and displays stats", () => {
     render(
-      <FileChanges oldFile={oldFile} newFile={newFile}>
+      <FileChanges newFile={newFile} oldFile={oldFile}>
         <FileChangesStats />
       </FileChanges>
     );
@@ -159,7 +161,7 @@ describe("FileChangesStats", () => {
 
   it("applies custom className", () => {
     const { container } = render(
-      <FileChanges oldFile={oldFile} newFile={newFile}>
+      <FileChanges newFile={newFile} oldFile={oldFile}>
         <FileChangesStats className="custom" />
       </FileChanges>
     );
@@ -170,7 +172,7 @@ describe("FileChangesStats", () => {
 describe("FileChangesActions", () => {
   it("renders children", () => {
     render(
-      <FileChanges oldFile={oldFile} newFile={newFile}>
+      <FileChanges newFile={newFile} oldFile={oldFile}>
         <FileChangesActions>
           <button type="button">Action</button>
         </FileChangesActions>
@@ -184,10 +186,10 @@ describe("FileChangesActions", () => {
     const onClick = vi.fn();
 
     render(
-      <FileChanges oldFile={oldFile} newFile={newFile}>
+      <FileChanges newFile={newFile} oldFile={oldFile}>
         <FileChangesHeader>
           <FileChangesActions>
-            <button type="button" onClick={onClick}>
+            <button onClick={onClick} type="button">
               Action
             </button>
           </FileChangesActions>
@@ -206,7 +208,7 @@ describe("FileChangesActions", () => {
 describe("FileChangesMoreButton", () => {
   it("renders more button", () => {
     render(
-      <FileChanges oldFile={oldFile} newFile={newFile}>
+      <FileChanges newFile={newFile} oldFile={oldFile}>
         <FileChangesMoreButton />
       </FileChanges>
     );
@@ -215,7 +217,7 @@ describe("FileChangesMoreButton", () => {
 
   it("renders custom children", () => {
     render(
-      <FileChanges oldFile={oldFile} newFile={newFile}>
+      <FileChanges newFile={newFile} oldFile={oldFile}>
         <FileChangesMoreButton>Custom</FileChangesMoreButton>
       </FileChanges>
     );
@@ -230,7 +232,7 @@ describe("FileChangesCopyButton", () => {
 
   it("renders copy button", () => {
     render(
-      <FileChanges oldFile={oldFile} newFile={newFile}>
+      <FileChanges newFile={newFile} oldFile={oldFile}>
         <FileChangesCopyButton />
       </FileChanges>
     );
@@ -242,7 +244,7 @@ describe("FileChangesCopyButton", () => {
     const writeTextSpy = vi.spyOn(navigator.clipboard, "writeText");
 
     render(
-      <FileChanges oldFile={oldFile} newFile={newFile}>
+      <FileChanges newFile={newFile} oldFile={oldFile}>
         <FileChangesCopyButton />
       </FileChanges>
     );
@@ -256,7 +258,7 @@ describe("FileChangesCopyButton", () => {
     const user = userEvent.setup();
 
     render(
-      <FileChanges oldFile={oldFile} newFile={newFile}>
+      <FileChanges newFile={newFile} oldFile={oldFile}>
         <FileChangesCopyButton onCopy={onCopy} />
       </FileChanges>
     );
@@ -273,7 +275,7 @@ describe("FileChangesCopyButton", () => {
     vi.spyOn(navigator.clipboard, "writeText").mockRejectedValueOnce(error);
 
     render(
-      <FileChanges oldFile={oldFile} newFile={newFile}>
+      <FileChanges newFile={newFile} oldFile={oldFile}>
         <FileChangesCopyButton onError={onError} />
       </FileChanges>
     );
@@ -289,7 +291,7 @@ describe("FileChangesCopyButton", () => {
 describe("FileChangesRejectButton", () => {
   it("renders reject button", () => {
     render(
-      <FileChanges oldFile={oldFile} newFile={newFile}>
+      <FileChanges newFile={newFile} oldFile={oldFile}>
         <FileChangesRejectButton />
       </FileChanges>
     );
@@ -302,8 +304,8 @@ describe("FileChangesRejectButton", () => {
 
     render(
       <FileChanges
-        oldFile={oldFile}
         newFile={newFile}
+        oldFile={oldFile}
         onStatusChange={onStatusChange}
       >
         <FileChangesRejectButton />
@@ -319,7 +321,7 @@ describe("FileChangesRejectButton", () => {
     const user = userEvent.setup();
 
     render(
-      <FileChanges oldFile={oldFile} newFile={newFile}>
+      <FileChanges newFile={newFile} oldFile={oldFile}>
         <FileChangesRejectButton onReject={onReject} />
       </FileChanges>
     );
@@ -332,7 +334,7 @@ describe("FileChangesRejectButton", () => {
 describe("FileChangesAcceptButton", () => {
   it("renders accept button", () => {
     render(
-      <FileChanges oldFile={oldFile} newFile={newFile}>
+      <FileChanges newFile={newFile} oldFile={oldFile}>
         <FileChangesAcceptButton />
       </FileChanges>
     );
@@ -345,8 +347,8 @@ describe("FileChangesAcceptButton", () => {
 
     render(
       <FileChanges
-        oldFile={oldFile}
         newFile={newFile}
+        oldFile={oldFile}
         onStatusChange={onStatusChange}
       >
         <FileChangesAcceptButton />
@@ -362,7 +364,7 @@ describe("FileChangesAcceptButton", () => {
     const user = userEvent.setup();
 
     render(
-      <FileChanges oldFile={oldFile} newFile={newFile}>
+      <FileChanges newFile={newFile} oldFile={oldFile}>
         <FileChangesAcceptButton onAccept={onAccept} />
       </FileChanges>
     );
@@ -375,7 +377,7 @@ describe("FileChangesAcceptButton", () => {
 describe("FileChangesExpandButton", () => {
   it("renders expand button with chevron", () => {
     const { container } = render(
-      <FileChanges oldFile={oldFile} newFile={newFile}>
+      <FileChanges newFile={newFile} oldFile={oldFile}>
         <FileChangesExpandButton />
       </FileChanges>
     );
@@ -386,7 +388,7 @@ describe("FileChangesExpandButton", () => {
 describe("FileChangesContent", () => {
   it("renders diff content when open", () => {
     render(
-      <FileChanges defaultOpen oldFile={oldFile} newFile={newFile}>
+      <FileChanges defaultOpen newFile={newFile} oldFile={oldFile}>
         <FileChangesHeader>
           <FileChangesTitle />
         </FileChangesHeader>
@@ -398,7 +400,7 @@ describe("FileChangesContent", () => {
 
   it("applies custom className", () => {
     const { container } = render(
-      <FileChanges defaultOpen oldFile={oldFile} newFile={newFile}>
+      <FileChanges defaultOpen newFile={newFile} oldFile={oldFile}>
         <FileChangesContent className="custom" />
       </FileChanges>
     );

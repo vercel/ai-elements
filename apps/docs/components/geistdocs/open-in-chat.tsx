@@ -12,9 +12,9 @@ import {
 } from "@repo/elements/open-in-chat";
 import { ExternalLinkIcon } from "lucide-react";
 
-type OpenInChatProps = {
+interface OpenInChatProps {
   query: string;
-};
+}
 
 export const OpenInChat = ({ query }: OpenInChatProps) => (
   <OpenIn query={query}>

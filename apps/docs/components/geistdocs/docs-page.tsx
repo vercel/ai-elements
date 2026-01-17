@@ -24,9 +24,9 @@ const containerStyle = {
   "--fd-nav-height": "4rem",
 } as CSSProperties;
 
-type PageProps = {
+interface PageProps {
   slug: string[] | undefined;
-};
+}
 
 export const DocsPage = async ({ slug }: PageProps) => {
   const page = source.getPage(slug);

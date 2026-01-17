@@ -182,6 +182,7 @@ const Example = () => {
 
   return (
     <div className="flex flex-col gap-4">
+      {/* biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Demo component with complex rendering logic */}
       {messages.map((message) => (
         <Message from={message.from} key={message.key}>
           {message.versions?.length && message.versions.length > 1 ? (

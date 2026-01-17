@@ -3,6 +3,12 @@
 import type { UIMessage } from "@ai-sdk/react";
 import { useChat } from "@ai-sdk/react";
 import {
+  Attachment,
+  AttachmentPreview,
+  AttachmentRemove,
+  Attachments,
+} from "@repo/elements/attachment";
+import {
   Conversation,
   ConversationContent,
   ConversationScrollButton,
@@ -12,12 +18,6 @@ import {
   MessageContent,
   MessageResponse,
 } from "@repo/elements/message";
-import {
-  Attachment,
-  AttachmentPreview,
-  AttachmentRemove,
-  Attachments,
-} from "@repo/elements/attachment";
 import {
   PromptInput,
   PromptInputBody,
@@ -345,9 +345,9 @@ const ChatInner = ({ suggestions }: ChatProps) => {
   );
 };
 
-type ChatProps = {
+interface ChatProps {
   suggestions: string[];
-};
+}
 
 export const Chat = ({ suggestions }: ChatProps) => {
   const { isOpen, setIsOpen } = useChatContext();

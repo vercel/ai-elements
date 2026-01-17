@@ -9,9 +9,9 @@ import {
 import { useIsMobile } from "@repo/shadcn-ui/hooks/use-mobile";
 import Link from "next/link";
 
-type DesktopMenuProps = {
+interface DesktopMenuProps {
   items: { label: string; href: string }[];
-};
+}
 
 export const DesktopMenu = ({ items }: DesktopMenuProps) => {
   const isMobile = useIsMobile();

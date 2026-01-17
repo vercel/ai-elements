@@ -1,6 +1,12 @@
 "use client";
 
 import {
+  Attachment,
+  AttachmentPreview,
+  AttachmentRemove,
+  Attachments,
+} from "@repo/elements/attachment";
+import {
   Conversation,
   ConversationContent,
   ConversationScrollButton,
@@ -29,12 +35,6 @@ import {
   ModelSelectorName,
   ModelSelectorTrigger,
 } from "@repo/elements/model-selector";
-import {
-  Attachment,
-  AttachmentPreview,
-  AttachmentRemove,
-  Attachments,
-} from "@repo/elements/attachment";
 import {
   PromptInput,
   PromptInputActionAddAttachments,
@@ -69,7 +69,7 @@ import { nanoid } from "nanoid";
 import { useCallback, useState } from "react";
 import { toast } from "sonner";
 
-type MessageType = {
+interface MessageType {
   key: string;
   from: "user" | "assistant";
   sources?: { href: string; title: string }[];
@@ -89,7 +89,7 @@ type MessageType = {
     result: string | undefined;
     error: string | undefined;
   }[];
-};
+}
 
 const initialMessages: MessageType[] = [
   {
@@ -366,7 +366,7 @@ const Example = () => {
     "submitted" | "streaming" | "ready" | "error"
   >("ready");
   const [messages, setMessages] = useState<MessageType[]>(initialMessages);
-  const [streamingMessageId, setStreamingMessageId] = useState<string | null>(
+  const [_streamingMessageId, setStreamingMessageId] = useState<string | null>(
     null
   );
 

@@ -9,9 +9,9 @@ import {
 } from "@/components/geistdocs/code-block-tabs";
 import { CodeBlock } from "../geistdocs/code-block";
 
-type ElementsInstallerProps = {
+interface ElementsInstallerProps {
   path?: string;
-};
+}
 
 export const ElementsInstaller = async ({ path }: ElementsInstallerProps) => {
   let sourceCode = "";

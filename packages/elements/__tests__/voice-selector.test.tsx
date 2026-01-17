@@ -24,8 +24,8 @@ import {
 } from "../src/voice-selector";
 
 beforeEach(() => {
-  vi.spyOn(console, "warn").mockImplementation(() => {});
-  vi.spyOn(console, "error").mockImplementation(() => {});
+  vi.spyOn(console, "warn").mockImplementation(() => undefined);
+  vi.spyOn(console, "error").mockImplementation(() => undefined);
 });
 
 describe("VoiceSelector", () => {
@@ -112,12 +112,11 @@ describe("VoiceSelector", () => {
     });
   });
 
-  it("supports controlled open state", async () => {
+  it("supports controlled open state", () => {
     const onOpenChange = vi.fn();
-    const user = userEvent.setup();
 
     const { rerender } = render(
-      <VoiceSelector open={false} onOpenChange={onOpenChange}>
+      <VoiceSelector onOpenChange={onOpenChange} open={false}>
         <VoiceSelectorTrigger>Open</VoiceSelectorTrigger>
         <VoiceSelectorContent>
           <div>Dialog content</div>
@@ -128,7 +127,7 @@ describe("VoiceSelector", () => {
     expect(screen.queryByText("Dialog content")).not.toBeInTheDocument();
 
     rerender(
-      <VoiceSelector open={true} onOpenChange={onOpenChange}>
+      <VoiceSelector onOpenChange={onOpenChange} open={true}>
         <VoiceSelectorTrigger>Open</VoiceSelectorTrigger>
         <VoiceSelectorContent>
           <div>Dialog content</div>
@@ -140,7 +139,7 @@ describe("VoiceSelector", () => {
   });
 
   it("supports controlled value state", () => {
-    const TestComponent = ({ value }: { value: string }) => {
+    const TestComponent = ({ value: _value }: { value: string }) => {
       const { value: contextValue } = useVoiceSelector();
       return <div data-testid="value">{contextValue}</div>;
     };
@@ -155,7 +154,7 @@ describe("VoiceSelector", () => {
   });
 
   it("throws error when hook used outside provider", () => {
-    const spy = vi.spyOn(console, "error").mockImplementation(() => {});
+    const spy = vi.spyOn(console, "error").mockImplementation(() => undefined);
 
     const TestComponent = () => {
       useVoiceSelector();
@@ -512,7 +511,7 @@ describe("VoiceSelectorAccent", () => {
       { value: "greek", emoji: "🇬🇷" },
     ];
 
-    accents.forEach(({ value, emoji }) => {
+    for (const { value, emoji } of accents) {
       const { container } = render(
         <VoiceSelector>
           <VoiceSelectorAccent value={value} />
@@ -520,7 +519,7 @@ describe("VoiceSelectorAccent", () => {
       );
 
       expect(container.textContent).toContain(emoji);
-    });
+    }
   });
 });
 
@@ -650,8 +649,7 @@ describe("VoiceSelectorShortcut", () => {
         <VoiceSelectorContent>
           <VoiceSelectorList>
             <VoiceSelectorItem value="voice-1">
-              Voice 1
-              <VoiceSelectorShortcut>⌘K</VoiceSelectorShortcut>
+              Voice 1<VoiceSelectorShortcut>⌘K</VoiceSelectorShortcut>
             </VoiceSelectorItem>
           </VoiceSelectorList>
         </VoiceSelectorContent>
@@ -877,7 +875,10 @@ describe("Integration tests", () => {
       >
         <VoiceSelectorContent>
           <VoiceSelectorList>
-            <VoiceSelectorItem onSelect={() => onValueChange("nova")} value="nova">
+            <VoiceSelectorItem
+              onSelect={() => onValueChange("nova")}
+              value="nova"
+            >
               Nova
             </VoiceSelectorItem>
           </VoiceSelectorList>

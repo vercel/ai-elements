@@ -2,16 +2,18 @@ import { act, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import React from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+
+const DATA_PREFIX_REGEX = /^data:/;
+const BLOB_PREFIX_REGEX = /^blob:/;
+const SUBMIT_REGEX = /submit/i;
+
 import {
   Attachment,
-  AttachmentHoverCard,
-  AttachmentHoverCardContent,
-  AttachmentHoverCardTrigger,
+  type AttachmentData,
   AttachmentInfo,
   AttachmentPreview,
   AttachmentRemove,
   Attachments,
-  type AttachmentData,
 } from "../src/attachment";
 import {
   PromptInput,
@@ -58,7 +60,9 @@ const PromptInputAttachments = ({
   ) => React.ReactNode;
 }) => {
   const attachments = usePromptInputAttachments();
-  if (!attachments.files.length) return null;
+  if (!attachments.files.length) {
+    return null;
+  }
   return (
     <Attachments variant="inline">
       {attachments.files.map((file) => (
@@ -90,7 +94,9 @@ const PromptInputReferencedSources = ({
   children: (source: AttachmentData, onRemove: () => void) => React.ReactNode;
 }) => {
   const referencedSources = usePromptInputReferencedSources();
-  if (!referencedSources.sources.length) return null;
+  if (!referencedSources.sources.length) {
+    return null;
+  }
   return (
     <Attachments variant="inline">
       {referencedSources.sources.map((source) => (
@@ -105,7 +111,7 @@ const PromptInputReferencedSources = ({
 // Mock URL.createObjectURL and URL.revokeObjectURL for tests
 beforeEach(() => {
   window.URL.createObjectURL = vi.fn(
-    (blob) => `blob:mock-url-${Math.random()}`
+    (_blob) => `blob:mock-url-${Math.random()}`
   );
   window.URL.revokeObjectURL = vi.fn();
 
@@ -122,7 +128,7 @@ beforeEach(() => {
 
   // Mock FileReader
   window.FileReader = vi.fn(function (this: FileReader) {
-    this.readAsDataURL = vi.fn(function (this: FileReader, blob: Blob) {
+    this.readAsDataURL = vi.fn(function (this: FileReader, _blob: Blob) {
       // Simulate async file reading
       setTimeout(() => {
         this.result = "data:text/plain;base64,dGVzdCBjb250ZW50";
@@ -311,8 +317,8 @@ describe("PromptInput", () => {
     // Verify that the URL was converted from blob: to data:
     const [message] = onSubmit.mock.calls[0];
     expect(message.files).toHaveLength(1);
-    expect(message.files[0].url).toMatch(/^data:/);
-    expect(message.files[0].url).not.toMatch(/^blob:/);
+    expect(message.files[0].url).toMatch(DATA_PREFIX_REGEX);
+    expect(message.files[0].url).not.toMatch(BLOB_PREFIX_REGEX);
     expect(message.files[0].filename).toBe("test.txt");
   });
 
@@ -670,7 +676,7 @@ describe("PromptInputSubmit", () => {
         </PromptInputBody>
       </PromptInput>
     );
-    const button = screen.getByRole("button", { name: /submit/i });
+    const button = screen.getByRole("button", { name: SUBMIT_REGEX });
     expect(button).toHaveAttribute("type", "submit");
   });
 
@@ -741,7 +747,7 @@ describe("PromptInputSelect", () => {
 
 describe("PromptInputProvider", () => {
   it("provides context to children", async () => {
-    const onSubmit = vi.fn();
+    const _onSubmit = vi.fn();
     const { PromptInputProvider, usePromptInputController } = await import(
       "../src/prompt-input"
     );
@@ -779,7 +785,7 @@ describe("PromptInputProvider", () => {
     };
 
     // Suppress console.error for this test
-    const spy = vi.spyOn(console, "error").mockImplementation(() => {});
+    const spy = vi.spyOn(console, "error").mockImplementation(() => undefined);
 
     expect(() => render(<TestComponent />)).toThrow();
 
@@ -1498,10 +1504,7 @@ describe("File validation", () => {
     };
 
     render(
-      <PromptInput
-        accept="  image/*  ,  application/pdf  "
-        onSubmit={onSubmit}
-      >
+      <PromptInput accept="  image/*  ,  application/pdf  " onSubmit={onSubmit}>
         <PromptInputBody>
           <AttachmentConsumer />
           <PromptInputTextarea />
@@ -1785,7 +1788,7 @@ describe("Paste functionality", () => {
       ],
     };
 
-    await act(async () => {
+    await act(() => {
       textarea.dispatchEvent(pasteEvent);
     });
 
@@ -2191,7 +2194,7 @@ describe("PromptInputReferencedSources", () => {
     const onSubmit = vi.fn();
 
     const ReferencedSourceConsumer = () => {
-      const refs = usePromptInputReferencedSources();
+      const _refs = usePromptInputReferencedSources();
       return (
         <PromptInputReferencedSources data-testid="sources-container">
           {(source) => <div key={source.id}>{source.title}</div>}
@@ -2948,6 +2951,8 @@ describe("Integration tests", () => {
       screen.getByPlaceholderText("What would you like to know?")
     ).toBeInTheDocument();
     expect(screen.getByText("Model")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /submit/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: SUBMIT_REGEX })
+    ).toBeInTheDocument();
   });
 });

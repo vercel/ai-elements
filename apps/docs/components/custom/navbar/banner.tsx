@@ -5,7 +5,7 @@ export const Banner = () => (
   <div className="hidden tracking-[0.004em] md:sticky md:top-[57px] md:z-50 xl:block">
     <aside
       className={cn(
-        "-translate-y-px z-30 flex min-h-[40px] items-center justify-center gap-x-2 border-y py-2 text-[14px] leading-5",
+        "z-30 flex min-h-[40px] -translate-y-px items-center justify-center gap-x-2 border-y py-2 text-[14px] leading-5",
         "border-[oklch(91.58%_0.0473_245.11621922481282)]",
         "bg-[oklch(97.32%_0.0141_251.56)]",
         "text-[oklch(53.18%_0.2399_256.9900584162342)]",

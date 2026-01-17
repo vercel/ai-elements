@@ -15,10 +15,10 @@ import {
 } from "@/components/geistdocs/code-block-tabs";
 import { CodeBlock } from "../geistdocs/code-block";
 
-type ComponentPreviewProps = {
+interface ComponentPreviewProps {
   path: string;
   className?: string;
-};
+}
 
 export const Preview = async ({ path, className }: ComponentPreviewProps) => {
   const code = await readFile(

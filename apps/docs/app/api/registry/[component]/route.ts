@@ -222,10 +222,11 @@ const response: Registry = {
   items,
 };
 
-type RequestProps = {
+interface RequestProps {
   params: Promise<{ component: string }>;
-};
+}
 
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Registry route requires handling many component cases
 export const GET = async (_request: NextRequest, { params }: RequestProps) => {
   const { component } = await params;
   const parsedComponent = component.replace(".json", "");

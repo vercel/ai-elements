@@ -1,6 +1,12 @@
 "use client";
 
 import {
+  Attachment,
+  AttachmentPreview,
+  AttachmentRemove,
+  Attachments,
+} from "@repo/elements/attachment";
+import {
   ModelSelector,
   ModelSelectorContent,
   ModelSelectorEmpty,
@@ -13,12 +19,6 @@ import {
   ModelSelectorName,
   ModelSelectorTrigger,
 } from "@repo/elements/model-selector";
-import {
-  Attachment,
-  AttachmentPreview,
-  AttachmentRemove,
-  Attachments,
-} from "@repo/elements/attachment";
 import {
   PromptInput,
   PromptInputActionAddAttachments,

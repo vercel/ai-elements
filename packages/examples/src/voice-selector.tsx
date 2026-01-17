@@ -104,7 +104,9 @@ const Example = () => {
 
   const handlePreview = (voiceId: string) => {
     const voice = voices.find((v) => v.id === voiceId);
-    if (!voice) return;
+    if (!voice) {
+      return;
+    }
 
     // If clicking the same voice that's playing, pause it
     if (playingVoice === voiceId) {
@@ -177,8 +179,8 @@ const Example = () => {
               >
                 <VoiceSelectorPreview
                   loading={loadingVoice === voice.id}
-                  playing={playingVoice === voice.id}
                   onPlay={() => handlePreview(voice.id)}
+                  playing={playingVoice === voice.id}
                 />
                 <VoiceSelectorName>{voice.name}</VoiceSelectorName>
                 <VoiceSelectorDescription>

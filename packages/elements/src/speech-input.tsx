@@ -17,13 +17,13 @@ interface SpeechRecognition extends EventTarget {
   lang: string;
   start(): void;
   stop(): void;
-  onstart: ((this: SpeechRecognition, ev: Event) => any) | null;
-  onend: ((this: SpeechRecognition, ev: Event) => any) | null;
+  onstart: ((this: SpeechRecognition, ev: Event) => void) | null;
+  onend: ((this: SpeechRecognition, ev: Event) => void) | null;
   onresult:
-    | ((this: SpeechRecognition, ev: SpeechRecognitionEvent) => any)
+    | ((this: SpeechRecognition, ev: SpeechRecognitionEvent) => void)
     | null;
   onerror:
-    | ((this: SpeechRecognition, ev: SpeechRecognitionErrorEvent) => any)
+    | ((this: SpeechRecognition, ev: SpeechRecognitionErrorEvent) => void)
     | null;
 }
 
@@ -32,30 +32,29 @@ interface SpeechRecognitionEvent extends Event {
   resultIndex: number;
 }
 
-type SpeechRecognitionResultList = {
+interface SpeechRecognitionResultList {
   readonly length: number;
   item(index: number): SpeechRecognitionResult;
   [index: number]: SpeechRecognitionResult;
-};
+}
 
-type SpeechRecognitionResult = {
+interface SpeechRecognitionResult {
   readonly length: number;
   item(index: number): SpeechRecognitionAlternative;
   [index: number]: SpeechRecognitionAlternative;
   isFinal: boolean;
-};
+}
 
-type SpeechRecognitionAlternative = {
+interface SpeechRecognitionAlternative {
   transcript: string;
   confidence: number;
-};
+}
 
 interface SpeechRecognitionErrorEvent extends Event {
   error: string;
 }
 
 declare global {
-  // biome-ignore lint/style/useConsistentTypeDefinitions: We need to declare the SpeechRecognition interface
   interface Window {
     SpeechRecognition: {
       new (): SpeechRecognition;
@@ -255,13 +254,7 @@ export const SpeechInput = ({
         startMediaRecorder();
       }
     }
-  }, [
-    mode,
-    recognition,
-    isListening,
-    startMediaRecorder,
-    stopMediaRecorder,
-  ]);
+  }, [mode, recognition, isListening, startMediaRecorder, stopMediaRecorder]);
 
   // Determine if button should be disabled
   const isDisabled =
@@ -298,13 +291,9 @@ export const SpeechInput = ({
         onClick={toggleListening}
         {...props}
       >
-        {isProcessing ? (
-          <LoaderIcon className="size-4 animate-spin" />
-        ) : isListening ? (
-          <SquareIcon className="size-4" />
-        ) : (
-          <MicIcon className="size-4" />
-        )}
+        {isProcessing && <LoaderIcon className="size-4 animate-spin" />}
+        {!isProcessing && isListening && <SquareIcon className="size-4" />}
+        {!(isProcessing || isListening) && <MicIcon className="size-4" />}
       </Button>
     </div>
   );

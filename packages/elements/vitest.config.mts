@@ -27,7 +27,7 @@ export default defineConfig({
         "node_modules/",
         "__tests__/**",
         "**/*.config.{ts,js,mts}",
-        "**/styleMock.js",
+        "**/style-mock.js",
       ],
     },
   },
@@ -44,7 +44,7 @@ export default defineConfig({
       ),
       "katex/dist/katex.min.css": path.resolve(
         __dirname,
-        "./__tests__/styleMock.js"
+        "./__tests__/style-mock.js"
       ),
     },
   },

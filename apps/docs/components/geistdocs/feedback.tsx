@@ -41,15 +41,15 @@ const emotions = [
 
 type Emotion = (typeof emotions)[number]["name"];
 
-export type Feedback = {
+export interface Feedback {
   emotion: Emotion;
   url?: string;
   message: string;
-};
+}
 
-export type ActionResponse = {
+export interface ActionResponse {
   githubUrl: string;
-};
+}
 
 interface Result extends Feedback {
   response?: ActionResponse;

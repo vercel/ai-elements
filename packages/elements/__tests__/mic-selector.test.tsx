@@ -42,10 +42,12 @@ const mockDevices: MediaDeviceInfo[] = [
 const mockEnumerateDevices = vi.fn();
 const mockGetUserMedia = vi.fn();
 
+const MACBOOK_PRO_MIC_REGEX = /MacBook Pro Microphone/;
+
 beforeEach(() => {
-  vi.spyOn(console, "warn").mockImplementation(() => {});
-  vi.spyOn(console, "error").mockImplementation(() => {});
-  vi.spyOn(console, "log").mockImplementation(() => {});
+  vi.spyOn(console, "warn").mockImplementation(() => undefined);
+  vi.spyOn(console, "error").mockImplementation(() => undefined);
+  vi.spyOn(console, "log").mockImplementation(() => undefined);
 
   // Mock ResizeObserver as a proper class
   class ResizeObserverMock {
@@ -425,7 +427,7 @@ describe("useAudioDevices hook", () => {
 });
 
 describe("MicSelector", () => {
-  it("renders with default props", async () => {
+  it("renders with default props", () => {
     render(
       <MicSelector>
         <MicSelectorTrigger>
@@ -477,7 +479,9 @@ describe("MicSelector", () => {
     await user.click(screen.getByRole("button"));
 
     await waitFor(() => {
-      expect(screen.getByPlaceholderText("Search microphones...")).toBeInTheDocument();
+      expect(
+        screen.getByPlaceholderText("Search microphones...")
+      ).toBeInTheDocument();
     });
   });
 
@@ -485,7 +489,7 @@ describe("MicSelector", () => {
     const onValueChange = vi.fn();
 
     render(
-      <MicSelector value="device-1" onValueChange={onValueChange}>
+      <MicSelector onValueChange={onValueChange} value="device-1">
         <MicSelectorTrigger>
           <MicSelectorValue />
         </MicSelectorTrigger>
@@ -504,7 +508,7 @@ describe("MicSelector", () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByText(/MacBook Pro Microphone/)).toBeInTheDocument();
+      expect(screen.getByText(MACBOOK_PRO_MIC_REGEX)).toBeInTheDocument();
     });
   });
 
@@ -512,7 +516,7 @@ describe("MicSelector", () => {
     const onOpenChange = vi.fn();
 
     render(
-      <MicSelector open={true} onOpenChange={onOpenChange}>
+      <MicSelector onOpenChange={onOpenChange} open={true}>
         <MicSelectorTrigger>
           <MicSelectorValue />
         </MicSelectorTrigger>
@@ -532,7 +536,9 @@ describe("MicSelector", () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByPlaceholderText("Search microphones...")).toBeInTheDocument();
+      expect(
+        screen.getByPlaceholderText("Search microphones...")
+      ).toBeInTheDocument();
     });
   });
 
@@ -662,7 +668,9 @@ describe("MicSelectorInput", () => {
     await user.click(screen.getByRole("button"));
 
     await waitFor(() => {
-      expect(screen.getByPlaceholderText("Search microphones...")).toBeInTheDocument();
+      expect(
+        screen.getByPlaceholderText("Search microphones...")
+      ).toBeInTheDocument();
     });
   });
 
@@ -766,6 +774,8 @@ describe("MicSelectorValue", () => {
       </MicSelector>
     );
 
-    expect(screen.getByText("Select microphone...")).toHaveClass("custom-value");
+    expect(screen.getByText("Select microphone...")).toHaveClass(
+      "custom-value"
+    );
   });
 });

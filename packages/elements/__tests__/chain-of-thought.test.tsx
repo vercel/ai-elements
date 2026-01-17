@@ -20,7 +20,7 @@ describe("ChainOfThought", () => {
 
   it("throws error when component used outside provider", () => {
     // Suppress console.error for this test
-    const spy = vi.spyOn(console, "error").mockImplementation(() => {});
+    const spy = vi.spyOn(console, "error").mockImplementation(() => undefined);
 
     expect(() =>
       render(<ChainOfThoughtHeader>Test</ChainOfThoughtHeader>)

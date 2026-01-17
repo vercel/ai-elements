@@ -15,14 +15,14 @@ import { ThemeToggle } from "@/components/geistdocs/theme-toggle";
 import { CustomSearch } from "./custom-search";
 import { HomeLinks } from "./home-links";
 
-type NavPageItem = {
+interface NavPageItem {
   href: string;
   tooltip: string;
   name: string;
   external?: boolean;
   shortened?: string;
   render?: () => React.ReactNode;
-};
+}
 
 const LogoGithub = () => (
   <svg

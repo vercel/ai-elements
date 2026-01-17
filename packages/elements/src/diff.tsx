@@ -13,10 +13,10 @@ import {
   useState,
 } from "react";
 
-export type FileContents = {
+export interface FileContents {
   name: string;
   content: string;
-};
+}
 
 type DiffContextType =
   | {
@@ -116,6 +116,7 @@ export type DiffStatsProps = HTMLAttributes<HTMLDivElement>;
 export const DiffStats = ({ className, ...props }: DiffStatsProps) => {
   const context = useDiffContext();
 
+  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Diff stats calculation requires this complexity
   const stats = useMemo(() => {
     if (context.mode === "files") {
       const oldLines = context.oldFile.content.split("\n");
@@ -202,6 +203,7 @@ export const DiffCopyButton = ({
   const [isCopied, setIsCopied] = useState(false);
   const context = useDiffContext();
 
+  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Copy logic requires conditional handling
   const getContentToCopy = () => {
     if (context.mode === "patch") {
       return context.patch;

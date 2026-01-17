@@ -18,14 +18,14 @@ import {
 } from "react";
 import { toast } from "sonner";
 
-type CodeBlockProps = {
+interface CodeBlockProps {
   children: ReactNode;
   className?: string;
   icon?: ReactNode;
   style?: CSSProperties;
   tabIndex?: number;
   title?: string;
-};
+}
 
 export const CodeBlock = ({
   children,

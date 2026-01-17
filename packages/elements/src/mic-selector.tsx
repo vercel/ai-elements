@@ -29,7 +29,7 @@ import {
 
 const deviceIdRegex = /\(([\da-fA-F]{4}:[\da-fA-F]{4})\)$/;
 
-type MicSelectorContextType = {
+interface MicSelectorContextType {
   data: MediaDeviceInfo[];
   value: string | undefined;
   onValueChange?: (value: string) => void;
@@ -37,7 +37,7 @@ type MicSelectorContextType = {
   onOpenChange?: (open: boolean) => void;
   width: number;
   setWidth?: (width: number) => void;
-};
+}
 
 const MicSelectorContext = createContext<MicSelectorContextType>({
   data: [],

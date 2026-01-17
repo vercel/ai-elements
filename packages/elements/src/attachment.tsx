@@ -80,18 +80,18 @@ export const getAttachmentLabel = (data: AttachmentData): string => {
 // Contexts
 // ============================================================================
 
-type AttachmentsContextValue = {
+interface AttachmentsContextValue {
   variant: AttachmentVariant;
-};
+}
 
 const AttachmentsContext = createContext<AttachmentsContextValue | null>(null);
 
-type AttachmentContextValue = {
+interface AttachmentContextValue {
   data: AttachmentData;
   mediaCategory: AttachmentMediaCategory;
   onRemove?: () => void;
   variant: AttachmentVariant;
-};
+}
 
 const AttachmentContext = createContext<AttachmentContextValue | null>(null);
 

@@ -1,8 +1,8 @@
 import { SiGithub } from "@icons-pack/react-simple-icons";
 
-type EditSourceProps = {
+interface EditSourceProps {
   url: string | undefined;
-};
+}
 
 export const EditSource = ({ url }: EditSourceProps) =>
   url ? (

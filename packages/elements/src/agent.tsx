@@ -19,10 +19,10 @@ import { createContext, memo, useContext, useMemo } from "react";
 import { Streamdown } from "streamdown";
 import { CodeBlock } from "./code-block";
 
-type AgentContextValue = {
+interface AgentContextValue {
   isOpen: boolean;
   setIsOpen: (open: boolean) => void;
-};
+}
 
 const AgentContext = createContext<AgentContextValue | null>(null);
 
@@ -96,7 +96,7 @@ export const AgentHeader = memo(
           <BotIcon className="size-4 text-muted-foreground" />
           <span className="font-medium text-sm">{name}</span>
           {model && (
-            <Badge variant="secondary" className="font-mono text-xs">
+            <Badge className="font-mono text-xs" variant="secondary">
               {model}
             </Badge>
           )}

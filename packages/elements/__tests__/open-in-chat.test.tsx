@@ -1,5 +1,13 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
+
+const CHATGPT_REGEX = /ChatGPT/i;
+const CLAUDE_REGEX = /Claude/i;
+const T3_REGEX = /T3/i;
+const SCIRA_REGEX = /Scira/i;
+const V0_REGEX = /v0/i;
+const CURSOR_REGEX = /Cursor/i;
+
 import {
   OpenIn,
   OpenInChatGPT,
@@ -28,7 +36,7 @@ describe("OpenIn", () => {
 
   it("throws error when component used outside provider", () => {
     // Suppress console.error for this test
-    const spy = vi.spyOn(console, "error").mockImplementation(() => {});
+    const spy = vi.spyOn(console, "error").mockImplementation(() => undefined);
 
     expect(() => render(<OpenInChatGPT />)).toThrow(
       "OpenIn components must be used within an OpenIn provider"
@@ -53,7 +61,7 @@ describe("OpenInTrigger", () => {
     render(
       <OpenIn defaultOpen query="test">
         <OpenInTrigger>
-          <button>Custom trigger</button>
+          <button type="button">Custom trigger</button>
         </OpenInTrigger>
         <OpenInContent />
       </OpenIn>
@@ -122,7 +130,7 @@ describe("OpenInChatGPT", () => {
       </OpenIn>
     );
     expect(screen.getByText("Open in ChatGPT")).toBeInTheDocument();
-    const link = screen.getByRole("menuitem", { name: /ChatGPT/i });
+    const link = screen.getByRole("menuitem", { name: CHATGPT_REGEX });
     expect(link).toHaveAttribute(
       "href",
       expect.stringContaining("chatgpt.com")
@@ -141,7 +149,7 @@ describe("OpenInClaude", () => {
       </OpenIn>
     );
     expect(screen.getByText("Open in Claude")).toBeInTheDocument();
-    const link = screen.getByRole("menuitem", { name: /Claude/i });
+    const link = screen.getByRole("menuitem", { name: CLAUDE_REGEX });
     expect(link).toHaveAttribute("href", expect.stringContaining("claude.ai"));
   });
 });
@@ -156,7 +164,7 @@ describe("OpenInT3", () => {
       </OpenIn>
     );
     expect(screen.getByText("Open in T3 Chat")).toBeInTheDocument();
-    const link = screen.getByRole("menuitem", { name: /T3/i });
+    const link = screen.getByRole("menuitem", { name: T3_REGEX });
     expect(link).toHaveAttribute("href", expect.stringContaining("t3.chat"));
   });
 });
@@ -171,7 +179,7 @@ describe("OpenInScira", () => {
       </OpenIn>
     );
     expect(screen.getByText("Open in Scira")).toBeInTheDocument();
-    const link = screen.getByRole("menuitem", { name: /Scira/i });
+    const link = screen.getByRole("menuitem", { name: SCIRA_REGEX });
     expect(link).toHaveAttribute("href", expect.stringContaining("scira.ai"));
   });
 });
@@ -186,7 +194,7 @@ describe("OpenInv0", () => {
       </OpenIn>
     );
     expect(screen.getByText("Open in v0")).toBeInTheDocument();
-    const link = screen.getByRole("menuitem", { name: /v0/i });
+    const link = screen.getByRole("menuitem", { name: V0_REGEX });
     expect(link).toHaveAttribute("href", expect.stringContaining("v0.app"));
   });
 });
@@ -201,7 +209,7 @@ describe("OpenInCursor", () => {
       </OpenIn>
     );
     expect(screen.getByText("Open in Cursor")).toBeInTheDocument();
-    const link = screen.getByRole("menuitem", { name: /Cursor/i });
+    const link = screen.getByRole("menuitem", { name: CURSOR_REGEX });
     expect(link).toHaveAttribute("href", expect.stringContaining("cursor.com"));
     expect(link).toHaveAttribute("target", "_blank");
   });

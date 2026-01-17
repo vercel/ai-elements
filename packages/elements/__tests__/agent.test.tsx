@@ -24,7 +24,7 @@ describe("Agent", () => {
   });
 
   it("throws error when AgentHeader used outside provider", () => {
-    const spy = vi.spyOn(console, "error").mockImplementation(() => {});
+    const spy = vi.spyOn(console, "error").mockImplementation(() => undefined);
 
     expect(() => render(<AgentHeader name="Test" />)).toThrow(
       "Agent components must be used within Agent"
@@ -73,9 +73,7 @@ describe("Agent", () => {
     expect(onOpenChange).toHaveBeenCalled();
   });
 
-  it("supports controlled open state", async () => {
-    const user = userEvent.setup();
-
+  it("supports controlled open state", () => {
     const { rerender } = render(
       <Agent open={false}>
         <AgentHeader name="Test Agent" />
@@ -110,7 +108,7 @@ describe("AgentHeader", () => {
   it("renders model badge when provided", () => {
     render(
       <Agent>
-        <AgentHeader name="Test Agent" model="anthropic/claude-sonnet-4-5" />
+        <AgentHeader model="anthropic/claude-sonnet-4-5" name="Test Agent" />
       </Agent>
     );
 
@@ -201,14 +199,14 @@ describe("AgentInstructions", () => {
       <Agent defaultOpen>
         <AgentHeader name="Test Agent" />
         <AgentContent>
-          <AgentInstructions>
-            You are a helpful assistant.
-          </AgentInstructions>
+          <AgentInstructions>You are a helpful assistant.</AgentInstructions>
         </AgentContent>
       </Agent>
     );
 
-    expect(screen.getByText("You are a helpful assistant.")).toBeInTheDocument();
+    expect(
+      screen.getByText("You are a helpful assistant.")
+    ).toBeInTheDocument();
   });
 
   it("applies custom className", () => {
@@ -300,7 +298,7 @@ describe("AgentTool", () => {
           <AgentHeader name="Test Agent" />
           <AgentContent>
             <AgentTools>
-              <AgentTool name="search" description="Search the web" />
+              <AgentTool description="Search the web" name="search" />
             </AgentTools>
           </AgentContent>
         </Agent>
@@ -380,7 +378,7 @@ describe("AgentOutput", () => {
 });
 
 describe("Agent integration", () => {
-  it("renders complete agent configuration", async () => {
+  it("renders complete agent configuration", () => {
     const schema = `z.object({
   sentiment: z.enum(['positive', 'negative']),
   score: z.number(),
@@ -390,13 +388,13 @@ describe("Agent integration", () => {
       <TooltipProvider>
         <Agent defaultOpen>
           <AgentHeader
-            name="Sentiment Analyzer"
             model="anthropic/claude-sonnet-4-5"
+            name="Sentiment Analyzer"
           />
           <AgentContent>
             <AgentInstructions>Analyze sentiment of text.</AgentInstructions>
             <AgentTools>
-              <AgentTool name="analyze" description="Analyze text" />
+              <AgentTool description="Analyze text" name="analyze" />
             </AgentTools>
             <AgentOutput schema={schema} />
           </AgentContent>

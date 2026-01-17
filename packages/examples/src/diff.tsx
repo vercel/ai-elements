@@ -24,7 +24,7 @@ export const verbose = true;`,
 };
 
 const Example = () => (
-  <Diff mode="files" oldFile={oldFile} newFile={newFile}>
+  <Diff mode="files" newFile={newFile} oldFile={oldFile}>
     <DiffHeader>
       <div className="flex items-center gap-2">
         <DiffTitle />

@@ -12,7 +12,13 @@ import {
 } from "../src/diff";
 
 vi.mock("@pierre/diffs/react", () => ({
-  MultiFileDiff: ({ oldFile, newFile }: { oldFile: { name: string; contents: string }; newFile: { name: string; contents: string } }) => (
+  MultiFileDiff: ({
+    oldFile,
+    newFile,
+  }: {
+    oldFile: { name: string; contents: string };
+    newFile: { name: string; contents: string };
+  }) => (
     <div data-testid="multi-file-diff">
       <span>{oldFile.name}</span>
       <span>{newFile.name}</span>
@@ -35,7 +41,7 @@ const patch = `--- a/test.ts
 describe("Diff", () => {
   it("renders children", () => {
     render(
-      <Diff mode="files" oldFile={oldFile} newFile={newFile}>
+      <Diff mode="files" newFile={newFile} oldFile={oldFile}>
         <div>Content</div>
       </Diff>
     );
@@ -44,7 +50,7 @@ describe("Diff", () => {
 
   it("applies custom className", () => {
     const { container } = render(
-      <Diff className="custom" mode="files" oldFile={oldFile} newFile={newFile}>
+      <Diff className="custom" mode="files" newFile={newFile} oldFile={oldFile}>
         Test
       </Diff>
     );
@@ -64,7 +70,7 @@ describe("Diff", () => {
 describe("DiffHeader", () => {
   it("renders children", () => {
     render(
-      <Diff mode="files" oldFile={oldFile} newFile={newFile}>
+      <Diff mode="files" newFile={newFile} oldFile={oldFile}>
         <DiffHeader>Header content</DiffHeader>
       </Diff>
     );
@@ -73,7 +79,7 @@ describe("DiffHeader", () => {
 
   it("applies custom className", () => {
     const { container } = render(
-      <Diff mode="files" oldFile={oldFile} newFile={newFile}>
+      <Diff mode="files" newFile={newFile} oldFile={oldFile}>
         <DiffHeader className="custom">Header</DiffHeader>
       </Diff>
     );
@@ -84,7 +90,7 @@ describe("DiffHeader", () => {
 describe("DiffTitle", () => {
   it("renders filename from context", () => {
     render(
-      <Diff mode="files" oldFile={oldFile} newFile={newFile}>
+      <Diff mode="files" newFile={newFile} oldFile={oldFile}>
         <DiffTitle />
       </Diff>
     );
@@ -93,7 +99,7 @@ describe("DiffTitle", () => {
 
   it("renders custom children", () => {
     render(
-      <Diff mode="files" oldFile={oldFile} newFile={newFile}>
+      <Diff mode="files" newFile={newFile} oldFile={oldFile}>
         <DiffTitle>Custom title</DiffTitle>
       </Diff>
     );
@@ -101,7 +107,9 @@ describe("DiffTitle", () => {
   });
 
   it("throws when used outside Diff", () => {
-    const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
+    const consoleError = vi
+      .spyOn(console, "error")
+      .mockImplementation(() => undefined);
     expect(() => render(<DiffTitle />)).toThrow(
       "Diff components must be used within a <Diff> component"
     );
@@ -112,7 +120,7 @@ describe("DiffTitle", () => {
 describe("DiffStats", () => {
   it("calculates stats for files mode", () => {
     render(
-      <Diff mode="files" oldFile={oldFile} newFile={newFile}>
+      <Diff mode="files" newFile={newFile} oldFile={oldFile}>
         <DiffStats />
       </Diff>
     );
@@ -132,7 +140,7 @@ describe("DiffStats", () => {
 
   it("applies custom className", () => {
     const { container } = render(
-      <Diff mode="files" oldFile={oldFile} newFile={newFile}>
+      <Diff mode="files" newFile={newFile} oldFile={oldFile}>
         <DiffStats className="custom" />
       </Diff>
     );
@@ -143,7 +151,7 @@ describe("DiffStats", () => {
 describe("DiffActions", () => {
   it("renders children", () => {
     render(
-      <Diff mode="files" oldFile={oldFile} newFile={newFile}>
+      <Diff mode="files" newFile={newFile} oldFile={oldFile}>
         <DiffActions>
           <button type="button">Action</button>
         </DiffActions>
@@ -160,7 +168,7 @@ describe("DiffCopyButton", () => {
 
   it("renders copy button", () => {
     render(
-      <Diff mode="files" oldFile={oldFile} newFile={newFile}>
+      <Diff mode="files" newFile={newFile} oldFile={oldFile}>
         <DiffCopyButton />
       </Diff>
     );
@@ -172,7 +180,7 @@ describe("DiffCopyButton", () => {
     const writeTextSpy = vi.spyOn(navigator.clipboard, "writeText");
 
     render(
-      <Diff mode="files" oldFile={oldFile} newFile={newFile}>
+      <Diff mode="files" newFile={newFile} oldFile={oldFile}>
         <DiffCopyButton />
       </Diff>
     );
@@ -186,7 +194,7 @@ describe("DiffCopyButton", () => {
     const writeTextSpy = vi.spyOn(navigator.clipboard, "writeText");
 
     render(
-      <Diff mode="files" oldFile={oldFile} newFile={newFile}>
+      <Diff mode="files" newFile={newFile} oldFile={oldFile}>
         <DiffCopyButton copyTarget="old" />
       </Diff>
     );
@@ -214,7 +222,7 @@ describe("DiffCopyButton", () => {
     const user = userEvent.setup();
 
     render(
-      <Diff mode="files" oldFile={oldFile} newFile={newFile}>
+      <Diff mode="files" newFile={newFile} oldFile={oldFile}>
         <DiffCopyButton onCopy={onCopy} />
       </Diff>
     );
@@ -231,7 +239,7 @@ describe("DiffCopyButton", () => {
     vi.spyOn(navigator.clipboard, "writeText").mockRejectedValueOnce(error);
 
     render(
-      <Diff mode="files" oldFile={oldFile} newFile={newFile}>
+      <Diff mode="files" newFile={newFile} oldFile={oldFile}>
         <DiffCopyButton onError={onError} />
       </Diff>
     );
@@ -255,7 +263,7 @@ describe("DiffCopyButton", () => {
     });
 
     render(
-      <Diff mode="files" oldFile={oldFile} newFile={newFile}>
+      <Diff mode="files" newFile={newFile} oldFile={oldFile}>
         <DiffCopyButton onError={onError} />
       </Diff>
     );
@@ -279,7 +287,7 @@ describe("DiffCopyButton", () => {
 describe("DiffContent", () => {
   it("renders diff content for files mode", () => {
     render(
-      <Diff mode="files" oldFile={oldFile} newFile={newFile}>
+      <Diff mode="files" newFile={newFile} oldFile={oldFile}>
         <DiffContent />
       </Diff>
     );
@@ -297,7 +305,7 @@ describe("DiffContent", () => {
 
   it("applies maxHeight style", () => {
     const { container } = render(
-      <Diff mode="files" oldFile={oldFile} newFile={newFile}>
+      <Diff mode="files" newFile={newFile} oldFile={oldFile}>
         <DiffContent maxHeight={300} />
       </Diff>
     );
@@ -307,7 +315,7 @@ describe("DiffContent", () => {
 
   it("applies maxHeight as string", () => {
     const { container } = render(
-      <Diff mode="files" oldFile={oldFile} newFile={newFile}>
+      <Diff mode="files" newFile={newFile} oldFile={oldFile}>
         <DiffContent maxHeight="50vh" />
       </Diff>
     );
@@ -317,7 +325,7 @@ describe("DiffContent", () => {
 
   it("applies custom className", () => {
     const { container } = render(
-      <Diff mode="files" oldFile={oldFile} newFile={newFile}>
+      <Diff mode="files" newFile={newFile} oldFile={oldFile}>
         <DiffContent className="custom" />
       </Diff>
     );

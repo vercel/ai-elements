@@ -7,9 +7,9 @@ import { PageTOC, PageTOCItems } from "fumadocs-ui/layouts/docs/page";
 import type { ReactNode } from "react";
 import { useChatContext } from "@/hooks/geistdocs/use-chat";
 
-type TableOfContentsProps = {
+interface TableOfContentsProps {
   children: ReactNode;
-};
+}
 
 export const TableOfContents = ({ children }: TableOfContentsProps) => {
   const { isOpen } = useChatContext();

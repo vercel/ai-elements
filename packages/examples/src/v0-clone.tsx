@@ -19,10 +19,10 @@ import {
 import { nanoid } from "nanoid";
 import { useState } from "react";
 
-type Chat = {
+interface Chat {
   id: string;
   demo: string;
-};
+}
 
 export default function Home() {
   const [message, setMessage] = useState("");
