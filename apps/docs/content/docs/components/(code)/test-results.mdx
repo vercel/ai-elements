@@ -1,0 +1,160 @@
+---
+title: Test Results
+description: Display test suite results with pass/fail/skip status and error details.
+path: elements/components/test-results
+---
+
+The `TestResults` component displays test suite results including summary statistics, progress, individual tests, and error details.
+
+<Preview path="test-results" />
+
+## Installation
+
+<ElementsInstaller path="test-results" />
+
+## Features
+
+- Summary statistics (passed/failed/skipped)
+- Progress bar visualization
+- Collapsible test suites
+- Individual test status and duration
+- Error messages with stack traces
+- Color-coded status indicators
+
+## Status Colors
+
+| Status | Color | Use Case |
+|--------|-------|----------|
+| `passed` | Green | Test succeeded |
+| `failed` | Red | Test failed |
+| `skipped` | Yellow | Test skipped |
+| `running` | Blue (animated) | Test in progress |
+
+## Examples
+
+### Basic Usage
+
+```tsx
+<TestResults
+  summary={{
+    passed: 10,
+    failed: 2,
+    skipped: 1,
+    total: 13,
+    duration: 3500,
+  }}
+>
+  <TestResultsHeader>
+    <TestResultsSummary />
+    <TestResultsDuration />
+  </TestResultsHeader>
+</TestResults>
+```
+
+### With Test Suites
+
+```tsx
+<TestResults summary={summary}>
+  <TestResultsHeader>
+    <TestResultsSummary />
+  </TestResultsHeader>
+  <TestResultsContent>
+    <TestSuite name="Auth" status="passed">
+      <TestSuiteName />
+      <TestSuiteContent>
+        <Test name="should login" status="passed" duration={45} />
+      </TestSuiteContent>
+    </TestSuite>
+  </TestResultsContent>
+</TestResults>
+```
+
+### With Error Details
+
+```tsx
+<Test name="should update" status="failed" duration={85}>
+  <TestError>
+    <TestErrorMessage>Expected 200, got 500</TestErrorMessage>
+    <TestErrorStack>{stackTrace}</TestErrorStack>
+  </TestError>
+</Test>
+```
+
+## Props
+
+### `<TestResults />`
+
+<TypeTable
+  type={{
+    summary: {
+      description: 'Test results summary.',
+      type: '{ passed, failed, skipped, total, duration? }',
+    },
+    className: {
+      description: 'Additional CSS classes.',
+      type: 'string',
+    },
+  }}
+/>
+
+### `<TestSuite />`
+
+<TypeTable
+  type={{
+    name: {
+      description: 'Suite name.',
+      type: 'string',
+    },
+    status: {
+      description: 'Overall suite status.',
+      type: '"passed" | "failed" | "skipped" | "running"',
+    },
+    defaultOpen: {
+      description: 'Initially expanded.',
+      type: 'boolean',
+    },
+  }}
+/>
+
+### `<Test />`
+
+<TypeTable
+  type={{
+    name: {
+      description: 'Test name.',
+      type: 'string',
+    },
+    status: {
+      description: 'Test status.',
+      type: '"passed" | "failed" | "skipped" | "running"',
+    },
+    duration: {
+      description: 'Test duration in ms.',
+      type: 'number',
+    },
+  }}
+/>
+
+### Subcomponents
+
+**Results Level:**
+- `TestResultsHeader` - Header container
+- `TestResultsSummary` - Passed/failed/skipped badges
+- `TestResultsDuration` - Total duration
+- `TestResultsProgress` - Progress bar
+- `TestResultsContent` - Content container
+
+**Suite Level:**
+- `TestSuite` - Collapsible suite container
+- `TestSuiteName` - Suite name with expand trigger
+- `TestSuiteStats` - Suite statistics
+- `TestSuiteContent` - Suite tests container
+
+**Test Level:**
+- `Test` - Individual test container
+- `TestStatus` - Status icon
+- `TestName` - Test name
+- `TestDuration` - Test duration
+- `TestError` - Error container
+- `TestErrorMessage` - Error message
+- `TestErrorStack` - Stack trace
