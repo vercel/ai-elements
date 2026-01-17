@@ -1,20 +1,24 @@
 "use client";
 
 import {
+  EnvironmentVariable,
+  EnvironmentVariableCopyButton,
+  EnvironmentVariableName,
+  EnvironmentVariableRequired,
   EnvironmentVariables,
+  EnvironmentVariablesContent,
   EnvironmentVariablesHeader,
   EnvironmentVariablesTitle,
   EnvironmentVariablesToggle,
-  EnvironmentVariablesContent,
-  EnvironmentVariable,
-  EnvironmentVariableName,
   EnvironmentVariableValue,
-  EnvironmentVariableCopyButton,
-  EnvironmentVariableRequired,
 } from "@repo/elements/environment-variables";
 
 const variables = [
-  { name: "DATABASE_URL", value: "postgresql://localhost:5432/mydb", required: true },
+  {
+    name: "DATABASE_URL",
+    value: "postgresql://localhost:5432/mydb",
+    required: true,
+  },
   { name: "API_KEY", value: "sk-1234567890abcdef", required: true },
   { name: "NODE_ENV", value: "production", required: false },
   { name: "PORT", value: "3000", required: false },

@@ -22,11 +22,11 @@ import { emotions } from "@/app/actions/feedback/emotions";
 
 type Emotion = (typeof emotions)[number]["name"];
 
-export type Feedback = {
+export interface Feedback {
   emotion: Emotion;
   url?: string;
   message: string;
-};
+}
 
 export const Feedback = () => {
   const url = usePathname();

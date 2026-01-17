@@ -1,19 +1,18 @@
 import { render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 import {
   SchemaDisplay,
+  SchemaDisplayContent,
+  SchemaDisplayDescription,
+  SchemaDisplayExample,
   SchemaDisplayHeader,
   SchemaDisplayMethod,
-  SchemaDisplayPath,
-  SchemaDisplayDescription,
-  SchemaDisplayContent,
-  SchemaDisplayParameters,
   SchemaDisplayParameter,
+  SchemaDisplayParameters,
+  SchemaDisplayPath,
+  SchemaDisplayProperty,
   SchemaDisplayRequest,
   SchemaDisplayResponse,
-  SchemaDisplayProperty,
-  SchemaDisplayExample,
 } from "../src/schema-display";
 
 describe("SchemaDisplay", () => {
@@ -26,9 +25,9 @@ describe("SchemaDisplay", () => {
   it("renders description", () => {
     render(
       <SchemaDisplay
+        description="List all users"
         method="GET"
         path="/api/users"
-        description="List all users"
       />
     );
     expect(screen.getByText("List all users")).toBeInTheDocument();
@@ -36,7 +35,7 @@ describe("SchemaDisplay", () => {
 
   it("applies custom className", () => {
     const { container } = render(
-      <SchemaDisplay method="GET" path="/api/users" className="custom-class" />
+      <SchemaDisplay className="custom-class" method="GET" path="/api/users" />
     );
     expect(container.firstChild).toHaveClass("custom-class");
   });
@@ -86,16 +85,15 @@ describe("SchemaDisplayPath", () => {
 });
 
 describe("SchemaDisplayParameters", () => {
-  it("renders parameters", async () => {
-    const user = userEvent.setup();
+  it("renders parameters", () => {
     render(
       <SchemaDisplay
         method="GET"
-        path="/api/users"
         parameters={[
           { name: "page", type: "number", description: "Page number" },
           { name: "limit", type: "number", required: true },
         ]}
+        path="/api/users"
       >
         <SchemaDisplayContent>
           <SchemaDisplayParameters />
@@ -115,11 +113,11 @@ describe("SchemaDisplayParameters", () => {
     render(
       <SchemaDisplay
         method="GET"
-        path="/test"
         parameters={[
           { name: "a", type: "string" },
           { name: "b", type: "string" },
         ]}
+        path="/test"
       >
         <SchemaDisplayParameters />
       </SchemaDisplay>
@@ -133,10 +131,10 @@ describe("SchemaDisplayParameter", () => {
     render(
       <SchemaDisplay method="GET" path="/test">
         <SchemaDisplayParameter
-          name="userId"
-          type="string"
           location="path"
+          name="userId"
           required
+          type="string"
         />
       </SchemaDisplay>
     );
@@ -152,10 +150,10 @@ describe("SchemaDisplayProperty", () => {
     render(
       <SchemaDisplay method="GET" path="/test">
         <SchemaDisplayProperty
-          name="title"
-          type="string"
-          required
           description="The title"
+          name="title"
+          required
+          type="string"
         />
       </SchemaDisplay>
     );
@@ -165,17 +163,16 @@ describe("SchemaDisplayProperty", () => {
     expect(screen.getByText("The title")).toBeInTheDocument();
   });
 
-  it("renders nested properties", async () => {
-    const user = userEvent.setup();
+  it("renders nested properties", () => {
     render(
       <SchemaDisplay method="GET" path="/test">
         <SchemaDisplayProperty
           name="user"
-          type="object"
           properties={[
             { name: "id", type: "string" },
             { name: "name", type: "string" },
           ]}
+          type="object"
         />
       </SchemaDisplay>
     );
@@ -191,7 +188,7 @@ describe("SchemaDisplayExample", () => {
   it("renders example code", () => {
     render(
       <SchemaDisplay method="GET" path="/test">
-        <SchemaDisplayExample>{"{ \"id\": \"123\" }"}</SchemaDisplayExample>
+        <SchemaDisplayExample>{'{ "id": "123" }'}</SchemaDisplayExample>
       </SchemaDisplay>
     );
     expect(screen.getByText('{ "id": "123" }')).toBeInTheDocument();
@@ -202,10 +199,10 @@ describe("Composability", () => {
   it("renders full schema display", () => {
     render(
       <SchemaDisplay
-        method="POST"
-        path="/api/users/{userId}"
         description="Create a user"
+        method="POST"
         parameters={[{ name: "userId", type: "string", required: true }]}
+        path="/api/users/{userId}"
         requestBody={[{ name: "name", type: "string", required: true }]}
         responseBody={[{ name: "id", type: "string", required: true }]}
       >

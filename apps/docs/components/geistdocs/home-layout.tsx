@@ -3,10 +3,10 @@ import type { ComponentProps, CSSProperties, ReactNode } from "react";
 import { i18n } from "@/lib/geistdocs/i18n";
 import { Folder, Item, Separator, Sidebar } from "./sidebar";
 
-type HomeLayoutProps = {
+interface HomeLayoutProps {
   tree: ComponentProps<typeof FumadocsDocsLayout>["tree"];
   children: ReactNode;
-};
+}
 
 export const HomeLayout = ({ tree, children }: HomeLayoutProps) => (
   <FumadocsDocsLayout

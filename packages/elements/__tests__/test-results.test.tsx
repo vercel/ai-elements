@@ -2,23 +2,29 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 import {
-  TestResults,
-  TestResultsHeader,
-  TestResultsSummary,
-  TestResultsDuration,
-  TestResultsProgress,
-  TestResultsContent,
-  TestSuite,
-  TestSuiteName,
-  TestSuiteContent,
   Test,
-  TestStatus,
-  TestName,
   TestDuration,
   TestError,
   TestErrorMessage,
   TestErrorStack,
+  TestName,
+  TestResults,
+  TestResultsContent,
+  TestResultsDuration,
+  TestResultsHeader,
+  TestResultsProgress,
+  TestResultsSummary,
+  TestStatus,
+  TestSuite,
+  TestSuiteContent,
+  TestSuiteName,
 } from "../src/test-results";
+
+const PASSED_10_REGEX = /10 passed/;
+const FAILED_2_REGEX = /2 failed/;
+const SKIPPED_1_REGEX = /1 skipped/;
+const PASSED_2_REGEX = /2 passed/;
+const FAILED_1_REGEX = /1 failed/;
 
 describe("TestResults", () => {
   it("renders with summary", () => {
@@ -39,9 +45,9 @@ describe("TestResults", () => {
       </TestResults>
     );
 
-    expect(screen.getByText(/10 passed/)).toBeInTheDocument();
-    expect(screen.getByText(/2 failed/)).toBeInTheDocument();
-    expect(screen.getByText(/1 skipped/)).toBeInTheDocument();
+    expect(screen.getByText(PASSED_10_REGEX)).toBeInTheDocument();
+    expect(screen.getByText(FAILED_2_REGEX)).toBeInTheDocument();
+    expect(screen.getByText(SKIPPED_1_REGEX)).toBeInTheDocument();
     expect(screen.getByText("5.00s")).toBeInTheDocument();
   });
 
@@ -71,7 +77,9 @@ describe("TestResultsProgress", () => {
 describe("TestResultsDuration", () => {
   it("formats milliseconds", () => {
     render(
-      <TestResults summary={{ passed: 1, failed: 0, skipped: 0, total: 1, duration: 500 }}>
+      <TestResults
+        summary={{ passed: 1, failed: 0, skipped: 0, total: 1, duration: 500 }}
+      >
         <TestResultsDuration />
       </TestResults>
     );
@@ -80,7 +88,9 @@ describe("TestResultsDuration", () => {
 
   it("formats seconds", () => {
     render(
-      <TestResults summary={{ passed: 1, failed: 0, skipped: 0, total: 1, duration: 3500 }}>
+      <TestResults
+        summary={{ passed: 1, failed: 0, skipped: 0, total: 1, duration: 3500 }}
+      >
         <TestResultsDuration />
       </TestResults>
     );
@@ -142,7 +152,7 @@ describe("Test", () => {
     render(
       <TestResults>
         <TestResultsContent>
-          <Test name="test" status="passed" duration={42} />
+          <Test duration={42} name="test" status="passed" />
         </TestResultsContent>
       </TestResults>
     );
@@ -213,21 +223,23 @@ describe("TestError", () => {
 describe("Composability", () => {
   it("renders full test results structure", () => {
     render(
-      <TestResults summary={{ passed: 2, failed: 1, skipped: 0, total: 3, duration: 1000 }}>
+      <TestResults
+        summary={{ passed: 2, failed: 1, skipped: 0, total: 3, duration: 1000 }}
+      >
         <TestResultsHeader>
           <TestResultsSummary />
           <TestResultsDuration />
         </TestResultsHeader>
         <TestResultsContent>
-          <TestSuite name="Suite" status="failed" defaultOpen={true}>
+          <TestSuite defaultOpen={true} name="Suite" status="failed">
             <TestSuiteName />
             <TestSuiteContent>
-              <Test name="test 1" status="passed" duration={10}>
+              <Test duration={10} name="test 1" status="passed">
                 <TestStatus />
                 <TestName />
                 <TestDuration />
               </Test>
-              <Test name="test 2" status="failed" duration={20}>
+              <Test duration={20} name="test 2" status="failed">
                 <TestStatus />
                 <TestName />
                 <TestDuration />
@@ -241,8 +253,8 @@ describe("Composability", () => {
       </TestResults>
     );
 
-    expect(screen.getByText(/2 passed/)).toBeInTheDocument();
-    expect(screen.getByText(/1 failed/)).toBeInTheDocument();
+    expect(screen.getByText(PASSED_2_REGEX)).toBeInTheDocument();
+    expect(screen.getByText(FAILED_1_REGEX)).toBeInTheDocument();
     expect(screen.getByText("1.00s")).toBeInTheDocument();
     expect(screen.getByText("Suite")).toBeInTheDocument();
     expect(screen.getByText("test 1")).toBeInTheDocument();

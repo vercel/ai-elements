@@ -6,7 +6,6 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@repo/shadcn-ui/components/ui/collapsible";
-import { Progress } from "@repo/shadcn-ui/components/ui/progress";
 import { cn } from "@repo/shadcn-ui/lib/utils";
 import {
   CheckCircle2Icon,
@@ -53,16 +52,13 @@ export const TestResults = ({
       className={cn("rounded-lg border bg-background", className)}
       {...props}
     >
-      {children ?? (
-        <>
-          {summary && (
-            <TestResultsHeader>
-              <TestResultsSummary />
-              <TestResultsDuration />
-            </TestResultsHeader>
-          )}
-        </>
-      )}
+      {children ??
+        (summary && (
+          <TestResultsHeader>
+            <TestResultsSummary />
+            <TestResultsDuration />
+          </TestResultsHeader>
+        ))}
     </div>
   </TestResultsContext.Provider>
 );
@@ -94,23 +90,25 @@ export const TestResultsSummary = ({
 }: TestResultsSummaryProps) => {
   const { summary } = useContext(TestResultsContext);
 
-  if (!summary) return null;
+  if (!summary) {
+    return null;
+  }
 
   return (
     <div className={cn("flex items-center gap-3", className)} {...props}>
       {children ?? (
         <>
           <Badge
-            variant="secondary"
             className="gap-1 bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
+            variant="secondary"
           >
             <CheckCircle2Icon className="size-3" />
             {summary.passed} passed
           </Badge>
           {summary.failed > 0 && (
             <Badge
-              variant="secondary"
               className="gap-1 bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400"
+              variant="secondary"
             >
               <XCircleIcon className="size-3" />
               {summary.failed} failed
@@ -118,8 +116,8 @@ export const TestResultsSummary = ({
           )}
           {summary.skipped > 0 && (
             <Badge
-              variant="secondary"
               className="gap-1 bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400"
+              variant="secondary"
             >
               <CircleIcon className="size-3" />
               {summary.skipped} skipped
@@ -140,18 +138,19 @@ export const TestResultsDuration = ({
 }: TestResultsDurationProps) => {
   const { summary } = useContext(TestResultsContext);
 
-  if (!summary?.duration) return null;
+  if (!summary?.duration) {
+    return null;
+  }
 
   const formatDuration = (ms: number) => {
-    if (ms < 1000) return `${ms}ms`;
+    if (ms < 1000) {
+      return `${ms}ms`;
+    }
     return `${(ms / 1000).toFixed(2)}s`;
   };
 
   return (
-    <span
-      className={cn("text-muted-foreground text-sm", className)}
-      {...props}
-    >
+    <span className={cn("text-muted-foreground text-sm", className)} {...props}>
       {children ?? formatDuration(summary.duration)}
     </span>
   );
@@ -166,7 +165,9 @@ export const TestResultsProgress = ({
 }: TestResultsProgressProps) => {
   const { summary } = useContext(TestResultsContext);
 
-  if (!summary) return null;
+  if (!summary) {
+    return null;
+  }
 
   const passedPercent = (summary.passed / summary.total) * 100;
   const failedPercent = (summary.failed / summary.total) * 100;
@@ -186,7 +187,9 @@ export const TestResultsProgress = ({
             />
           </div>
           <div className="flex justify-between text-muted-foreground text-xs">
-            <span>{summary.passed}/{summary.total} tests passed</span>
+            <span>
+              {summary.passed}/{summary.total} tests passed
+            </span>
             <span>{passedPercent.toFixed(0)}%</span>
           </div>
         </>
@@ -202,7 +205,7 @@ export const TestResultsContent = ({
   children,
   ...props
 }: TestResultsContentProps) => (
-  <div className={cn("p-4 space-y-2", className)} {...props}>
+  <div className={cn("space-y-2 p-4", className)} {...props}>
     {children}
   </div>
 );
@@ -248,7 +251,7 @@ export const TestSuiteName = ({
   return (
     <CollapsibleTrigger
       className={cn(
-        "group flex w-full items-center gap-2 px-4 py-3 text-left hover:bg-muted/50 transition-colors",
+        "group flex w-full items-center gap-2 px-4 py-3 text-left transition-colors hover:bg-muted/50",
         className
       )}
       {...props}
@@ -281,13 +284,19 @@ export const TestSuiteStats = ({
     {children ?? (
       <>
         {passed > 0 && (
-          <span className="text-green-600 dark:text-green-400">{passed} passed</span>
+          <span className="text-green-600 dark:text-green-400">
+            {passed} passed
+          </span>
         )}
         {failed > 0 && (
-          <span className="text-red-600 dark:text-red-400">{failed} failed</span>
+          <span className="text-red-600 dark:text-red-400">
+            {failed} failed
+          </span>
         )}
         {skipped > 0 && (
-          <span className="text-yellow-600 dark:text-yellow-400">{skipped} skipped</span>
+          <span className="text-yellow-600 dark:text-yellow-400">
+            {skipped} skipped
+          </span>
         )}
       </>
     )}
@@ -333,10 +342,7 @@ export const Test = ({
 }: TestProps) => (
   <TestContext.Provider value={{ name, status, duration }}>
     <div
-      className={cn(
-        "flex items-center gap-2 px-4 py-2 text-sm",
-        className
-      )}
+      className={cn("flex items-center gap-2 px-4 py-2 text-sm", className)}
       {...props}
     >
       {children ?? (
@@ -380,7 +386,10 @@ export const TestStatus = ({
   const { status } = useContext(TestContext);
 
   return (
-    <span className={cn("shrink-0", statusStyles[status], className)} {...props}>
+    <span
+      className={cn("shrink-0", statusStyles[status], className)}
+      {...props}
+    >
       {children ?? statusIcons[status]}
     </span>
   );
@@ -388,11 +397,7 @@ export const TestStatus = ({
 
 export type TestNameProps = HTMLAttributes<HTMLSpanElement>;
 
-export const TestName = ({
-  className,
-  children,
-  ...props
-}: TestNameProps) => {
+export const TestName = ({ className, children, ...props }: TestNameProps) => {
   const { name } = useContext(TestContext);
 
   return (
@@ -411,11 +416,13 @@ export const TestDuration = ({
 }: TestDurationProps) => {
   const { duration } = useContext(TestContext);
 
-  if (duration === undefined) return null;
+  if (duration === undefined) {
+    return null;
+  }
 
   return (
     <span
-      className={cn("text-muted-foreground text-xs ml-auto", className)}
+      className={cn("ml-auto text-muted-foreground text-xs", className)}
       {...props}
     >
       {children ?? `${duration}ms`}
@@ -449,7 +456,10 @@ export const TestErrorMessage = ({
   ...props
 }: TestErrorMessageProps) => (
   <p
-    className={cn("font-medium text-red-700 text-sm dark:text-red-400", className)}
+    className={cn(
+      "font-medium text-red-700 text-sm dark:text-red-400",
+      className
+    )}
     {...props}
   >
     {children}
@@ -465,7 +475,7 @@ export const TestErrorStack = ({
 }: TestErrorStackProps) => (
   <pre
     className={cn(
-      "mt-2 overflow-auto text-red-600 text-xs dark:text-red-400 font-mono",
+      "mt-2 overflow-auto font-mono text-red-600 text-xs dark:text-red-400",
       className
     )}
     {...props}

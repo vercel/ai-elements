@@ -12,9 +12,9 @@ import {
 } from "@repo/elements/open-in-chat";
 import { ExternalLinkIcon } from "lucide-react";
 
-type OpenInChatProps = {
+interface OpenInChatProps {
   href: string;
-};
+}
 
 export const OpenInChat = ({ href }: OpenInChatProps) => {
   const protocol = process.env.NODE_ENV === "production" ? "https" : "http";

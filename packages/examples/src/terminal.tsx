@@ -1,16 +1,16 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import {
   Terminal,
-  TerminalHeader,
-  TerminalTitle,
-  TerminalStatus,
   TerminalActions,
-  TerminalCopyButton,
   TerminalClearButton,
   TerminalContent,
+  TerminalCopyButton,
+  TerminalHeader,
+  TerminalStatus,
+  TerminalTitle,
 } from "@repo/elements/terminal";
+import { useEffect, useState } from "react";
 
 const ansiOutput = `\x1b[32m✓\x1b[0m Compiled successfully in 1.2s
 
@@ -55,10 +55,10 @@ const Example = () => {
 
   return (
     <Terminal
-      output={output}
-      isStreaming={isStreaming}
       autoScroll={true}
+      isStreaming={isStreaming}
       onClear={handleClear}
+      output={output}
     >
       <TerminalHeader>
         <TerminalTitle>Build Output</TerminalTitle>

@@ -3,13 +3,13 @@ import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import {
   Terminal,
-  TerminalHeader,
-  TerminalTitle,
-  TerminalStatus,
   TerminalActions,
-  TerminalCopyButton,
   TerminalClearButton,
   TerminalContent,
+  TerminalCopyButton,
+  TerminalHeader,
+  TerminalStatus,
+  TerminalTitle,
 } from "../src/terminal";
 
 describe("Terminal", () => {
@@ -25,7 +25,7 @@ describe("Terminal", () => {
 
   it("applies custom className", () => {
     const { container } = render(
-      <Terminal output="" className="custom-class" />
+      <Terminal className="custom-class" output="" />
     );
     expect(container.firstChild).toHaveClass("custom-class");
   });
@@ -56,7 +56,7 @@ describe("TerminalHeader", () => {
 describe("TerminalStatus", () => {
   it("shows shimmer when streaming", () => {
     const { container } = render(
-      <Terminal output="" isStreaming={true}>
+      <Terminal isStreaming={true} output="">
         <TerminalHeader>
           <TerminalStatus />
         </TerminalHeader>
@@ -68,7 +68,7 @@ describe("TerminalStatus", () => {
 
   it("hides when not streaming", () => {
     const { container } = render(
-      <Terminal output="" isStreaming={false}>
+      <Terminal isStreaming={false} output="">
         <TerminalHeader>
           <TerminalStatus />
         </TerminalHeader>
@@ -130,7 +130,7 @@ describe("TerminalClearButton", () => {
     const user = userEvent.setup();
 
     render(
-      <Terminal output="test" onClear={onClear}>
+      <Terminal onClear={onClear} output="test">
         <TerminalHeader>
           <TerminalActions>
             <TerminalClearButton />
@@ -168,7 +168,7 @@ describe("TerminalContent", () => {
   });
 
   it("shows cursor when streaming", () => {
-    const { container } = render(<Terminal output="test" isStreaming={true} />);
+    const { container } = render(<Terminal isStreaming={true} output="test" />);
     expect(container.querySelector(".animate-pulse")).toBeInTheDocument();
   });
 });
@@ -177,7 +177,7 @@ describe("Composability", () => {
   it("renders with all subcomponents", () => {
     const onClear = vi.fn();
     render(
-      <Terminal output="Output text" isStreaming={false} onClear={onClear}>
+      <Terminal isStreaming={false} onClear={onClear} output="Output text">
         <TerminalHeader>
           <TerminalTitle>My Terminal</TerminalTitle>
           <TerminalActions>

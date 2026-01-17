@@ -2,12 +2,7 @@
 
 import { Badge } from "@repo/shadcn-ui/components/ui/badge";
 import { cn } from "@repo/shadcn-ui/lib/utils";
-import {
-  ArrowRightIcon,
-  MinusIcon,
-  PackageIcon,
-  PlusIcon,
-} from "lucide-react";
+import { ArrowRightIcon, MinusIcon, PackageIcon, PlusIcon } from "lucide-react";
 import { createContext, type HTMLAttributes, useContext } from "react";
 
 type ChangeType = "major" | "minor" | "patch" | "added" | "removed";
@@ -86,14 +81,15 @@ export const PackageInfoName = ({
   return (
     <div className={cn("flex items-center gap-2", className)} {...props}>
       <PackageIcon className="size-4 text-muted-foreground" />
-      <span className="font-mono font-medium text-sm">{children ?? name}</span>
+      <span className="font-medium font-mono text-sm">{children ?? name}</span>
     </div>
   );
 };
 
 const changeTypeStyles: Record<ChangeType, string> = {
   major: "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400",
-  minor: "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400",
+  minor:
+    "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400",
   patch: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400",
   added: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400",
   removed: "bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-400",
@@ -122,12 +118,12 @@ export const PackageInfoChangeType = ({
 
   return (
     <Badge
-      variant="secondary"
       className={cn(
         "gap-1 text-xs capitalize",
         changeTypeStyles[changeType],
         className
       )}
+      variant="secondary"
       {...props}
     >
       {changeTypeIcons[changeType]}
@@ -145,7 +141,7 @@ export const PackageInfoVersion = ({
 }: PackageInfoVersionProps) => {
   const { currentVersion, newVersion } = useContext(PackageInfoContext);
 
-  if (!currentVersion && !newVersion) {
+  if (!(currentVersion || newVersion)) {
     return null;
   }
 
@@ -164,7 +160,7 @@ export const PackageInfoVersion = ({
             <ArrowRightIcon className="size-3" />
           )}
           {newVersion && (
-            <span className="text-foreground font-medium">{newVersion}</span>
+            <span className="font-medium text-foreground">{newVersion}</span>
           )}
         </>
       )}
@@ -179,10 +175,7 @@ export const PackageInfoDescription = ({
   children,
   ...props
 }: PackageInfoDescriptionProps) => (
-  <p
-    className={cn("mt-2 text-muted-foreground text-sm", className)}
-    {...props}
-  >
+  <p className={cn("mt-2 text-muted-foreground text-sm", className)} {...props}>
     {children}
   </p>
 );
@@ -207,7 +200,7 @@ export const PackageInfoDependencies = ({
   ...props
 }: PackageInfoDependenciesProps) => (
   <div className={cn("space-y-2", className)} {...props}>
-    <span className="text-muted-foreground text-xs font-medium uppercase tracking-wide">
+    <span className="font-medium text-muted-foreground text-xs uppercase tracking-wide">
       Dependencies
     </span>
     <div className="space-y-1">{children}</div>
@@ -227,10 +220,7 @@ export const PackageInfoDependency = ({
   ...props
 }: PackageInfoDependencyProps) => (
   <div
-    className={cn(
-      "flex items-center justify-between text-sm",
-      className
-    )}
+    className={cn("flex items-center justify-between text-sm", className)}
     {...props}
   >
     {children ?? (

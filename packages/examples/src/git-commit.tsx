@@ -2,15 +2,15 @@
 
 import {
   GitCommit,
-  GitCommitHeader,
-  GitCommitHash,
-  GitCommitMessage,
-  GitCommitAuthor,
-  GitCommitTimestamp,
   GitCommitActions,
-  GitCommitCopyButton,
+  GitCommitAuthor,
   GitCommitContent,
+  GitCommitCopyButton,
   GitCommitFiles,
+  GitCommitHash,
+  GitCommitHeader,
+  GitCommitMessage,
+  GitCommitTimestamp,
 } from "@repo/elements/git-commit";
 
 const commits = [
@@ -20,9 +20,24 @@ const commits = [
     author: "John Doe",
     timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2), // 2 hours ago
     files: [
-      { path: "src/auth/login.tsx", status: "added" as const, additions: 150, deletions: 0 },
-      { path: "src/auth/logout.tsx", status: "added" as const, additions: 45, deletions: 0 },
-      { path: "src/lib/session.ts", status: "modified" as const, additions: 23, deletions: 8 },
+      {
+        path: "src/auth/login.tsx",
+        status: "added" as const,
+        additions: 150,
+        deletions: 0,
+      },
+      {
+        path: "src/auth/logout.tsx",
+        status: "added" as const,
+        additions: 45,
+        deletions: 0,
+      },
+      {
+        path: "src/lib/session.ts",
+        status: "modified" as const,
+        additions: 23,
+        deletions: 8,
+      },
     ],
   },
   {
@@ -31,7 +46,12 @@ const commits = [
     author: "Jane Smith",
     timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24), // 1 day ago
     files: [
-      { path: "src/hooks/useData.ts", status: "modified" as const, additions: 5, deletions: 12 },
+      {
+        path: "src/hooks/useData.ts",
+        status: "modified" as const,
+        additions: 5,
+        deletions: 12,
+      },
     ],
   },
   {
@@ -50,12 +70,12 @@ const Example = () => (
   <div className="flex flex-col gap-4">
     {commits.map((commit) => (
       <GitCommit
-        key={commit.hash}
-        hash={commit.hash}
-        message={commit.message}
         author={commit.author}
-        timestamp={commit.timestamp}
         files={commit.files}
+        hash={commit.hash}
+        key={commit.hash}
+        message={commit.message}
+        timestamp={commit.timestamp}
       >
         <GitCommitHeader>
           <div className="flex items-center gap-3">

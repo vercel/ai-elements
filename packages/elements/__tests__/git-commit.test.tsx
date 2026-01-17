@@ -3,17 +3,14 @@ import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import {
   GitCommit,
-  GitCommitHeader,
-  GitCommitHash,
-  GitCommitMessage,
-  GitCommitAuthor,
-  GitCommitTimestamp,
   GitCommitActions,
   GitCommitCopyButton,
-  GitCommitContent,
-  GitCommitFiles,
   GitCommitFile,
+  GitCommitHeader,
+  GitCommitMessage,
 } from "../src/git-commit";
+
+const FEAT_REGEX = /feat/i;
 
 const mockCommit = {
   hash: "a1b2c3d4e5f6g7h8i9j0",
@@ -21,8 +18,18 @@ const mockCommit = {
   author: "John Doe",
   timestamp: new Date("2024-01-15T10:00:00Z"),
   files: [
-    { path: "src/index.ts", status: "added" as const, additions: 10, deletions: 0 },
-    { path: "src/utils.ts", status: "modified" as const, additions: 5, deletions: 3 },
+    {
+      path: "src/index.ts",
+      status: "added" as const,
+      additions: 10,
+      deletions: 0,
+    },
+    {
+      path: "src/utils.ts",
+      status: "modified" as const,
+      additions: 5,
+      deletions: 3,
+    },
   ],
 };
 
@@ -139,10 +146,10 @@ describe("GitCommitFile", () => {
     render(
       <GitCommit {...mockCommit}>
         <GitCommitFile
-          path="src/test.ts"
-          status="modified"
           additions={10}
           deletions={5}
+          path="src/test.ts"
+          status="modified"
         />
       </GitCommit>
     );
@@ -157,7 +164,7 @@ describe("GitCommitFiles", () => {
     render(<GitCommit {...mockCommit} />);
 
     // Expand collapsible to show files
-    const trigger = screen.getByRole("button", { name: /feat/i });
+    const trigger = screen.getByRole("button", { name: FEAT_REGEX });
     await user.click(trigger);
 
     expect(screen.getByText("src/index.ts")).toBeInTheDocument();

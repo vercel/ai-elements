@@ -21,7 +21,7 @@ interface EnvironmentVariablesContextType {
 const EnvironmentVariablesContext =
   createContext<EnvironmentVariablesContextType>({
     showValues: false,
-    setShowValues: () => {},
+    setShowValues: () => undefined,
   });
 
 export type EnvironmentVariablesProps = HTMLAttributes<HTMLDivElement> & {
@@ -103,9 +103,9 @@ export const EnvironmentVariablesToggle = ({
         {showValues ? <EyeIcon size={14} /> : <EyeOffIcon size={14} />}
       </span>
       <Switch
+        aria-label="Toggle value visibility"
         checked={showValues}
         onCheckedChange={setShowValues}
-        aria-label="Toggle value visibility"
         {...props}
       />
     </div>
@@ -193,7 +193,9 @@ export const EnvironmentVariableValue = ({
   const { value } = useContext(EnvironmentVariableContext);
   const { showValues } = useContext(EnvironmentVariablesContext);
 
-  const displayValue = showValues ? value : "•".repeat(Math.min(value.length, 20));
+  const displayValue = showValues
+    ? value
+    : "•".repeat(Math.min(value.length, 20));
 
   return (
     <span
@@ -275,7 +277,7 @@ export const EnvironmentVariableRequired = ({
   children,
   ...props
 }: EnvironmentVariableRequiredProps) => (
-  <Badge variant="secondary" className={cn("text-xs", className)} {...props}>
+  <Badge className={cn("text-xs", className)} variant="secondary" {...props}>
     {children ?? "Required"}
   </Badge>
 );

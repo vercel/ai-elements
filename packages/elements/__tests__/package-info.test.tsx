@@ -2,14 +2,14 @@ import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import {
   PackageInfo,
-  PackageInfoHeader,
-  PackageInfoName,
-  PackageInfoVersion,
   PackageInfoChangeType,
-  PackageInfoDescription,
   PackageInfoContent,
   PackageInfoDependencies,
   PackageInfoDependency,
+  PackageInfoDescription,
+  PackageInfoHeader,
+  PackageInfoName,
+  PackageInfoVersion,
 } from "../src/package-info";
 
 describe("PackageInfo", () => {
@@ -20,20 +20,20 @@ describe("PackageInfo", () => {
 
   it("renders with version change", () => {
     render(
-      <PackageInfo name="react" currentVersion="18.0.0" newVersion="19.0.0" />
+      <PackageInfo currentVersion="18.0.0" name="react" newVersion="19.0.0" />
     );
     expect(screen.getByText("18.0.0")).toBeInTheDocument();
     expect(screen.getByText("19.0.0")).toBeInTheDocument();
   });
 
   it("renders with change type badge", () => {
-    render(<PackageInfo name="react" changeType="major" />);
+    render(<PackageInfo changeType="major" name="react" />);
     expect(screen.getByText("major")).toBeInTheDocument();
   });
 
   it("applies custom className", () => {
     const { container } = render(
-      <PackageInfo name="react" className="custom-class" />
+      <PackageInfo className="custom-class" name="react" />
     );
     expect(container.firstChild).toHaveClass("custom-class");
   });
@@ -42,7 +42,7 @@ describe("PackageInfo", () => {
 describe("PackageInfoChangeType", () => {
   it("renders major change type", () => {
     render(
-      <PackageInfo name="test" changeType="major">
+      <PackageInfo changeType="major" name="test">
         <PackageInfoChangeType />
       </PackageInfo>
     );
@@ -51,7 +51,7 @@ describe("PackageInfoChangeType", () => {
 
   it("renders minor change type", () => {
     render(
-      <PackageInfo name="test" changeType="minor">
+      <PackageInfo changeType="minor" name="test">
         <PackageInfoChangeType />
       </PackageInfo>
     );
@@ -60,7 +60,7 @@ describe("PackageInfoChangeType", () => {
 
   it("renders patch change type", () => {
     render(
-      <PackageInfo name="test" changeType="patch">
+      <PackageInfo changeType="patch" name="test">
         <PackageInfoChangeType />
       </PackageInfo>
     );
@@ -69,7 +69,7 @@ describe("PackageInfoChangeType", () => {
 
   it("renders added change type", () => {
     render(
-      <PackageInfo name="test" changeType="added">
+      <PackageInfo changeType="added" name="test">
         <PackageInfoChangeType />
       </PackageInfo>
     );
@@ -78,7 +78,7 @@ describe("PackageInfoChangeType", () => {
 
   it("renders removed change type", () => {
     render(
-      <PackageInfo name="test" changeType="removed">
+      <PackageInfo changeType="removed" name="test">
         <PackageInfoChangeType />
       </PackageInfo>
     );
@@ -118,7 +118,12 @@ describe("PackageInfoDependencies", () => {
 describe("Composability", () => {
   it("renders with custom children", () => {
     render(
-      <PackageInfo name="react" currentVersion="18.0.0" newVersion="19.0.0" changeType="major">
+      <PackageInfo
+        changeType="major"
+        currentVersion="18.0.0"
+        name="react"
+        newVersion="19.0.0"
+      >
         <PackageInfoHeader>
           <PackageInfoName />
           <PackageInfoChangeType />

@@ -18,10 +18,10 @@ import {
 import { useI18n } from "fumadocs-ui/contexts/i18n";
 import { useSearchContext } from "fumadocs-ui/contexts/search";
 
-type SearchButtonProps = {
+interface SearchButtonProps {
   className?: string;
   onClick?: () => void;
-};
+}
 
 export const SearchDialog = ({
   basePath,

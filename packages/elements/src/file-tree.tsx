@@ -1,6 +1,5 @@
 "use client";
 
-import { Button } from "@repo/shadcn-ui/components/ui/button";
 import {
   Collapsible,
   CollapsibleContent,
@@ -14,7 +13,6 @@ import {
   FolderOpenIcon,
 } from "lucide-react";
 import {
-  type ComponentProps,
   createContext,
   type HTMLAttributes,
   type ReactNode,
@@ -31,7 +29,7 @@ interface FileTreeContextType {
 
 const FileTreeContext = createContext<FileTreeContextType>({
   expandedPaths: new Set(),
-  togglePath: () => {},
+  togglePath: () => undefined,
 });
 
 export type FileTreeProps = HTMLAttributes<HTMLDivElement> & {
@@ -115,16 +113,21 @@ export const FileTreeFolder = ({
 
   return (
     <FileTreeFolderContext.Provider value={{ path, name, isExpanded }}>
-      <Collapsible open={isExpanded} onOpenChange={() => togglePath(path)}>
-        <div className={cn("", className)} role="treeitem" {...props}>
+      <Collapsible onOpenChange={() => togglePath(path)} open={isExpanded}>
+        <div
+          className={cn("", className)}
+          role="treeitem"
+          tabIndex={0}
+          {...props}
+        >
           <CollapsibleTrigger asChild>
             <button
-              type="button"
               className={cn(
-                "flex w-full items-center gap-1 rounded px-2 py-1 hover:bg-muted/50 transition-colors text-left",
+                "flex w-full items-center gap-1 rounded px-2 py-1 text-left transition-colors hover:bg-muted/50",
                 isSelected && "bg-muted"
               )}
               onClick={() => onSelect?.(path)}
+              type="button"
             >
               <ChevronRightIcon
                 className={cn(
@@ -182,12 +185,18 @@ export const FileTreeFile = ({
     <FileTreeFileContext.Provider value={{ path, name }}>
       <div
         className={cn(
-          "flex items-center gap-1 rounded px-2 py-1 hover:bg-muted/50 transition-colors cursor-pointer",
+          "flex cursor-pointer items-center gap-1 rounded px-2 py-1 transition-colors hover:bg-muted/50",
           isSelected && "bg-muted",
           className
         )}
-        role="treeitem"
         onClick={() => onSelect?.(path)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            onSelect?.(path);
+          }
+        }}
+        role="treeitem"
+        tabIndex={0}
         {...props}
       >
         {children ?? (
@@ -235,9 +244,13 @@ export const FileTreeActions = ({
   children,
   ...props
 }: FileTreeActionsProps) => (
+  // biome-ignore lint/a11y/noNoninteractiveElementInteractions: stopPropagation required for nested interactions
+  // biome-ignore lint/a11y/useSemanticElements: fieldset doesn't fit this UI pattern
   <div
     className={cn("ml-auto flex items-center gap-1", className)}
     onClick={(e) => e.stopPropagation()}
+    onKeyDown={(e) => e.stopPropagation()}
+    role="group"
     {...props}
   >
     {children}

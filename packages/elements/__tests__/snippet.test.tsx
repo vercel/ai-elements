@@ -25,7 +25,7 @@ describe("Snippet", () => {
 
   it("applies custom className", () => {
     const { container } = render(
-      <Snippet code="test" className="custom-class" />
+      <Snippet className="custom-class" code="test" />
     );
     expect(container.firstChild).toHaveClass("custom-class");
   });

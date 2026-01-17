@@ -2,12 +2,12 @@
 
 import {
   SchemaDisplay,
+  SchemaDisplayContent,
+  SchemaDisplayDescription,
   SchemaDisplayHeader,
   SchemaDisplayMethod,
-  SchemaDisplayPath,
-  SchemaDisplayDescription,
-  SchemaDisplayContent,
   SchemaDisplayParameters,
+  SchemaDisplayPath,
   SchemaDisplayRequest,
   SchemaDisplayResponse,
 } from "@repo/elements/schema-display";
@@ -15,9 +15,8 @@ import {
 const Example = () => (
   <div className="flex flex-col gap-4">
     <SchemaDisplay
-      method="POST"
-      path="/api/users/{userId}/posts"
       description="Create a new post for a specific user. Requires authentication."
+      method="POST"
       parameters={[
         {
           name: "userId",
@@ -34,6 +33,7 @@ const Example = () => (
           location: "query",
         },
       ]}
+      path="/api/users/{userId}/posts"
       requestBody={[
         {
           name: "title",
@@ -58,8 +58,16 @@ const Example = () => (
           type: "object",
           description: "Additional metadata",
           properties: [
-            { name: "seoTitle", type: "string", description: "SEO optimized title" },
-            { name: "seoDescription", type: "string", description: "Meta description" },
+            {
+              name: "seoTitle",
+              type: "string",
+              description: "SEO optimized title",
+            },
+            {
+              name: "seoDescription",
+              type: "string",
+              description: "Meta description",
+            },
           ],
         },
       ]}
@@ -67,7 +75,12 @@ const Example = () => (
         { name: "id", type: "string", required: true, description: "Post ID" },
         { name: "title", type: "string", required: true },
         { name: "content", type: "string", required: true },
-        { name: "createdAt", type: "string", required: true, description: "ISO 8601 timestamp" },
+        {
+          name: "createdAt",
+          type: "string",
+          required: true,
+          description: "ISO 8601 timestamp",
+        },
         {
           name: "author",
           type: "object",
@@ -95,22 +108,32 @@ const Example = () => (
     </SchemaDisplay>
 
     <SchemaDisplay
-      method="GET"
-      path="/api/users"
       description="List all users with pagination support."
+      method="GET"
       parameters={[
-        { name: "page", type: "number", description: "Page number", location: "query" },
-        { name: "limit", type: "number", description: "Items per page", location: "query" },
+        {
+          name: "page",
+          type: "number",
+          description: "Page number",
+          location: "query",
+        },
+        {
+          name: "limit",
+          type: "number",
+          description: "Items per page",
+          location: "query",
+        },
       ]}
+      path="/api/users"
     />
 
     <SchemaDisplay
-      method="DELETE"
-      path="/api/posts/{postId}"
       description="Delete a post permanently. This action cannot be undone."
+      method="DELETE"
       parameters={[
         { name: "postId", type: "string", required: true, location: "path" },
       ]}
+      path="/api/posts/{postId}"
     />
   </div>
 );

@@ -121,10 +121,10 @@ export const useChatPersistence = () => {
   };
 };
 
-type ChatProps = {
+interface ChatProps {
   basePath: string | undefined;
   suggestions: string[];
-};
+}
 
 const ChatInner = ({ basePath, suggestions }: ChatProps) => {
   const [isInitialized, setIsInitialized] = useState(false);

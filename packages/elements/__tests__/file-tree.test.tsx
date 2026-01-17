@@ -1,20 +1,13 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
-import {
-  FileTree,
-  FileTreeFolder,
-  FileTreeFile,
-  FileTreeIcon,
-  FileTreeName,
-  FileTreeActions,
-} from "../src/file-tree";
+import { FileTree, FileTreeFile, FileTreeFolder } from "../src/file-tree";
 
 describe("FileTree", () => {
   it("renders children", () => {
     render(
       <FileTree>
-        <FileTreeFile path="test.txt" name="test.txt" />
+        <FileTreeFile name="test.txt" path="test.txt" />
       </FileTree>
     );
     expect(screen.getByText("test.txt")).toBeInTheDocument();
@@ -23,7 +16,7 @@ describe("FileTree", () => {
   it("applies custom className", () => {
     const { container } = render(
       <FileTree className="custom-class">
-        <FileTreeFile path="test.txt" name="test.txt" />
+        <FileTreeFile name="test.txt" path="test.txt" />
       </FileTree>
     );
     expect(container.firstChild).toHaveClass("custom-class");
@@ -32,7 +25,7 @@ describe("FileTree", () => {
   it("has tree role", () => {
     render(
       <FileTree>
-        <FileTreeFile path="test.txt" name="test.txt" />
+        <FileTreeFile name="test.txt" path="test.txt" />
       </FileTree>
     );
     expect(screen.getByRole("tree")).toBeInTheDocument();
@@ -43,8 +36,8 @@ describe("FileTreeFolder", () => {
   it("renders folder name", () => {
     render(
       <FileTree>
-        <FileTreeFolder path="src" name="src">
-          <FileTreeFile path="src/index.ts" name="index.ts" />
+        <FileTreeFolder name="src" path="src">
+          <FileTreeFile name="index.ts" path="src/index.ts" />
         </FileTreeFolder>
       </FileTree>
     );
@@ -54,8 +47,8 @@ describe("FileTreeFolder", () => {
   it("expands when defaultExpanded contains path", () => {
     render(
       <FileTree defaultExpanded={new Set(["src"])}>
-        <FileTreeFolder path="src" name="src">
-          <FileTreeFile path="src/index.ts" name="index.ts" />
+        <FileTreeFolder name="src" path="src">
+          <FileTreeFile name="index.ts" path="src/index.ts" />
         </FileTreeFolder>
       </FileTree>
     );
@@ -66,8 +59,8 @@ describe("FileTreeFolder", () => {
     const user = userEvent.setup();
     render(
       <FileTree>
-        <FileTreeFolder path="src" name="src">
-          <FileTreeFile path="src/index.ts" name="index.ts" />
+        <FileTreeFolder name="src" path="src">
+          <FileTreeFile name="index.ts" path="src/index.ts" />
         </FileTreeFolder>
       </FileTree>
     );
@@ -88,8 +81,8 @@ describe("FileTreeFolder", () => {
 
     render(
       <FileTree onExpandedChange={onExpandedChange}>
-        <FileTreeFolder path="src" name="src">
-          <FileTreeFile path="src/index.ts" name="index.ts" />
+        <FileTreeFolder name="src" path="src">
+          <FileTreeFile name="index.ts" path="src/index.ts" />
         </FileTreeFolder>
       </FileTree>
     );
@@ -105,7 +98,7 @@ describe("FileTreeFile", () => {
   it("renders file name", () => {
     render(
       <FileTree>
-        <FileTreeFile path="test.txt" name="test.txt" />
+        <FileTreeFile name="test.txt" path="test.txt" />
       </FileTree>
     );
     expect(screen.getByText("test.txt")).toBeInTheDocument();
@@ -117,7 +110,7 @@ describe("FileTreeFile", () => {
 
     render(
       <FileTree onSelect={onSelect}>
-        <FileTreeFile path="test.txt" name="test.txt" />
+        <FileTreeFile name="test.txt" path="test.txt" />
       </FileTree>
     );
 
@@ -128,7 +121,7 @@ describe("FileTreeFile", () => {
   it("applies selected styling when selected", () => {
     render(
       <FileTree selectedPath="test.txt">
-        <FileTreeFile path="test.txt" name="test.txt" />
+        <FileTreeFile name="test.txt" path="test.txt" />
       </FileTree>
     );
 
@@ -140,9 +133,9 @@ describe("FileTreeFile", () => {
     render(
       <FileTree>
         <FileTreeFile
-          path="test.tsx"
-          name="test.tsx"
           icon={<span data-testid="custom-icon">📄</span>}
+          name="test.tsx"
+          path="test.tsx"
         />
       </FileTree>
     );
@@ -155,9 +148,9 @@ describe("Composability", () => {
     const user = userEvent.setup();
     render(
       <FileTree defaultExpanded={new Set(["src"])}>
-        <FileTreeFolder path="src" name="src">
-          <FileTreeFolder path="src/components" name="components">
-            <FileTreeFile path="src/components/Button.tsx" name="Button.tsx" />
+        <FileTreeFolder name="src" path="src">
+          <FileTreeFolder name="components" path="src/components">
+            <FileTreeFile name="Button.tsx" path="src/components/Button.tsx" />
           </FileTreeFolder>
         </FileTreeFolder>
       </FileTree>
@@ -166,8 +159,12 @@ describe("Composability", () => {
     expect(screen.getByText("components")).toBeInTheDocument();
 
     // Expand nested folder
-    const componentsFolderButton = screen.getByText("components").closest("button");
-    await user.click(componentsFolderButton!);
+    const componentsFolderButton = screen
+      .getByText("components")
+      .closest("button");
+    if (componentsFolderButton) {
+      await user.click(componentsFolderButton);
+    }
 
     expect(screen.getByText("Button.tsx")).toBeInTheDocument();
   });

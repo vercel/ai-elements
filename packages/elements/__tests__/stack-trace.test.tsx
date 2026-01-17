@@ -14,6 +14,11 @@ import {
   StackTraceHeader,
 } from "../src/stack-trace";
 
+const RENDER_WITH_HOOKS_REGEX = /renderWithHooks/;
+const BEGIN_WORK_REGEX = /beginWork/;
+const NODE_FS_REGEX = /node:fs/;
+const ASYNC_FETCH_DATA_REGEX = /async fetchData/;
+
 const sampleStackTrace = `TypeError: Cannot read properties of undefined (reading 'map')
     at UserList (/app/components/UserList.tsx:15:23)
     at renderWithHooks (node_modules/react-dom/cjs/react-dom.development.js:14985:18)
@@ -59,7 +64,7 @@ describe("StackTrace", () => {
 
   it("can start open", () => {
     const { container } = render(
-      <StackTrace trace={sampleStackTrace} defaultOpen>
+      <StackTrace defaultOpen trace={sampleStackTrace}>
         <StackTraceHeader />
         <StackTraceContent>
           <StackTraceFrames />
@@ -77,7 +82,7 @@ describe("StackTrace", () => {
     const user = userEvent.setup();
 
     render(
-      <StackTrace trace={sampleStackTrace} onOpenChange={onOpenChange}>
+      <StackTrace onOpenChange={onOpenChange} trace={sampleStackTrace}>
         <StackTraceHeader />
         <StackTraceContent>
           <StackTraceFrames />
@@ -93,7 +98,7 @@ describe("StackTrace", () => {
 
   it("applies custom className", () => {
     const { container } = render(
-      <StackTrace trace={sampleStackTrace} className="custom-class">
+      <StackTrace className="custom-class" trace={sampleStackTrace}>
         Content
       </StackTrace>
     );
@@ -182,7 +187,7 @@ describe("StackTraceErrorType", () => {
   });
 
   it("handles trace without error type", () => {
-    const traceWithoutType = `Something went wrong\n    at foo (/bar.js:1:1)`;
+    const traceWithoutType = "Something went wrong\n    at foo (/bar.js:1:1)";
 
     render(
       <StackTrace trace={traceWithoutType}>
@@ -239,7 +244,7 @@ describe("StackTraceActions", () => {
     render(
       <StackTrace trace={sampleStackTrace}>
         <StackTraceActions>
-          <button type="button" onClick={actionClick}>
+          <button onClick={actionClick} type="button">
             Action
           </button>
         </StackTraceActions>
@@ -363,7 +368,7 @@ describe("StackTraceExpandButton", () => {
 
   it("rotates when open", () => {
     const { container } = render(
-      <StackTrace trace={sampleStackTrace} defaultOpen>
+      <StackTrace defaultOpen trace={sampleStackTrace}>
         <StackTraceExpandButton />
       </StackTrace>
     );
@@ -387,7 +392,7 @@ describe("StackTraceExpandButton", () => {
 describe("StackTraceContent", () => {
   it("renders content when open", () => {
     render(
-      <StackTrace trace={sampleStackTrace} defaultOpen>
+      <StackTrace defaultOpen trace={sampleStackTrace}>
         <StackTraceContent>Content text</StackTraceContent>
       </StackTrace>
     );
@@ -407,20 +412,25 @@ describe("StackTraceContent", () => {
 
   it("applies maxHeight style", () => {
     const { container } = render(
-      <StackTrace trace={sampleStackTrace} defaultOpen>
+      <StackTrace defaultOpen trace={sampleStackTrace}>
         <StackTraceContent maxHeight={200}>Content</StackTraceContent>
       </StackTrace>
     );
 
-    const content = container.querySelector("[data-slot='collapsible-content']");
-    expect(content).toHaveAttribute("style", expect.stringContaining("max-height: 200px"));
+    const content = container.querySelector(
+      "[data-slot='collapsible-content']"
+    );
+    expect(content).toHaveAttribute(
+      "style",
+      expect.stringContaining("max-height: 200px")
+    );
   });
 });
 
 describe("StackTraceFrames", () => {
   it("renders stack frames", () => {
     const { container } = render(
-      <StackTrace trace={simpleStackTrace} defaultOpen>
+      <StackTrace defaultOpen trace={simpleStackTrace}>
         <StackTraceContent>
           <StackTraceFrames />
         </StackTraceContent>
@@ -434,7 +444,7 @@ describe("StackTraceFrames", () => {
 
   it("renders file paths with line numbers", () => {
     render(
-      <StackTrace trace={simpleStackTrace} defaultOpen>
+      <StackTrace defaultOpen trace={simpleStackTrace}>
         <StackTraceContent>
           <StackTraceFrames />
         </StackTraceContent>
@@ -446,7 +456,7 @@ describe("StackTraceFrames", () => {
 
   it("dims internal frames", () => {
     const { container } = render(
-      <StackTrace trace={sampleStackTrace} defaultOpen>
+      <StackTrace defaultOpen trace={sampleStackTrace}>
         <StackTraceContent>
           <StackTraceFrames />
         </StackTraceContent>
@@ -460,7 +470,7 @@ describe("StackTraceFrames", () => {
 
   it("hides internal frames when showInternalFrames is false", () => {
     const { container } = render(
-      <StackTrace trace={sampleStackTrace} defaultOpen>
+      <StackTrace defaultOpen trace={sampleStackTrace}>
         <StackTraceContent>
           <StackTraceFrames showInternalFrames={false} />
         </StackTraceContent>
@@ -470,8 +480,8 @@ describe("StackTraceFrames", () => {
     // Should only have 1 frame (UserList), not the node_modules frames
     const frames = container.querySelectorAll(".text-xs");
     expect(frames.length).toBe(1);
-    expect(screen.queryByText(/renderWithHooks/)).not.toBeInTheDocument();
-    expect(screen.queryByText(/beginWork/)).not.toBeInTheDocument();
+    expect(screen.queryByText(RENDER_WITH_HOOKS_REGEX)).not.toBeInTheDocument();
+    expect(screen.queryByText(BEGIN_WORK_REGEX)).not.toBeInTheDocument();
   });
 
   it("calls onFilePathClick when file path is clicked", async () => {
@@ -480,9 +490,9 @@ describe("StackTraceFrames", () => {
 
     render(
       <StackTrace
-        trace={simpleStackTrace}
         defaultOpen
         onFilePathClick={onFilePathClick}
+        trace={simpleStackTrace}
       >
         <StackTraceContent>
           <StackTraceFrames />
@@ -500,7 +510,7 @@ describe("StackTraceFrames", () => {
     const emptyTrace = "Error: test";
 
     render(
-      <StackTrace trace={emptyTrace} defaultOpen>
+      <StackTrace defaultOpen trace={emptyTrace}>
         <StackTraceContent>
           <StackTraceFrames />
         </StackTraceContent>
@@ -512,7 +522,7 @@ describe("StackTraceFrames", () => {
 
   it("handles node: internal paths", () => {
     render(
-      <StackTrace trace={nodeInternalTrace} defaultOpen>
+      <StackTrace defaultOpen trace={nodeInternalTrace}>
         <StackTraceContent>
           <StackTraceFrames showInternalFrames={false} />
         </StackTraceContent>
@@ -520,7 +530,7 @@ describe("StackTraceFrames", () => {
     );
 
     // node: paths should be hidden
-    expect(screen.queryByText(/node:fs/)).not.toBeInTheDocument();
+    expect(screen.queryByText(NODE_FS_REGEX)).not.toBeInTheDocument();
   });
 });
 
@@ -556,7 +566,7 @@ describe("Stack trace parsing", () => {
     at /src/index.ts:10:5`;
 
     render(
-      <StackTrace trace={traceWithoutFn} defaultOpen>
+      <StackTrace defaultOpen trace={traceWithoutFn}>
         <StackTraceContent>
           <StackTraceFrames />
         </StackTraceContent>
@@ -571,13 +581,13 @@ describe("Stack trace parsing", () => {
     at async fetchData (/src/api.ts:20:10)`;
 
     render(
-      <StackTrace trace={asyncTrace} defaultOpen>
+      <StackTrace defaultOpen trace={asyncTrace}>
         <StackTraceContent>
           <StackTraceFrames />
         </StackTraceContent>
       </StackTrace>
     );
 
-    expect(screen.getByText(/async fetchData/)).toBeInTheDocument();
+    expect(screen.getByText(ASYNC_FETCH_DATA_REGEX)).toBeInTheDocument();
   });
 });

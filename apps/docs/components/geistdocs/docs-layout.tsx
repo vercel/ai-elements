@@ -8,10 +8,10 @@ import {
 } from "@/components/geistdocs/sidebar";
 import { i18n } from "@/lib/geistdocs/i18n";
 
-type DocsLayoutProps = {
+interface DocsLayoutProps {
   tree: ComponentProps<typeof FumadocsDocsLayout>["tree"];
   children: ReactNode;
-};
+}
 
 export const DocsLayout = ({ tree, children }: DocsLayoutProps) => (
   <FumadocsDocsLayout

@@ -2,16 +2,15 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import {
+  EnvironmentVariable,
+  EnvironmentVariableCopyButton,
+  EnvironmentVariableName,
+  EnvironmentVariableRequired,
   EnvironmentVariables,
+  EnvironmentVariablesContent,
   EnvironmentVariablesHeader,
   EnvironmentVariablesTitle,
   EnvironmentVariablesToggle,
-  EnvironmentVariablesContent,
-  EnvironmentVariable,
-  EnvironmentVariableName,
-  EnvironmentVariableValue,
-  EnvironmentVariableCopyButton,
-  EnvironmentVariableRequired,
 } from "../src/environment-variables";
 
 describe("EnvironmentVariables", () => {

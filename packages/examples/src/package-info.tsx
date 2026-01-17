@@ -2,23 +2,23 @@
 
 import {
   PackageInfo,
-  PackageInfoHeader,
-  PackageInfoName,
-  PackageInfoVersion,
   PackageInfoChangeType,
-  PackageInfoDescription,
   PackageInfoContent,
   PackageInfoDependencies,
   PackageInfoDependency,
+  PackageInfoDescription,
+  PackageInfoHeader,
+  PackageInfoName,
+  PackageInfoVersion,
 } from "@repo/elements/package-info";
 
 const Example = () => (
   <div className="flex flex-col gap-4">
     <PackageInfo
-      name="react"
-      currentVersion="18.2.0"
-      newVersion="19.0.0"
       changeType="major"
+      currentVersion="18.2.0"
+      name="react"
+      newVersion="19.0.0"
     >
       <PackageInfoHeader>
         <PackageInfoName />
@@ -36,7 +36,7 @@ const Example = () => (
       </PackageInfoContent>
     </PackageInfo>
 
-    <PackageInfo name="lodash" changeType="added">
+    <PackageInfo changeType="added" name="lodash">
       <PackageInfoHeader>
         <PackageInfoName />
         <PackageInfoChangeType />
@@ -44,11 +44,7 @@ const Example = () => (
       <PackageInfoVersion />
     </PackageInfo>
 
-    <PackageInfo
-      name="moment"
-      currentVersion="2.29.4"
-      changeType="removed"
-    />
+    <PackageInfo changeType="removed" currentVersion="2.29.4" name="moment" />
   </div>
 );
 

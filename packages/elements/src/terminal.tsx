@@ -44,10 +44,12 @@ export const Terminal = ({
   children,
   ...props
 }: TerminalProps) => (
-  <TerminalContext.Provider value={{ output, isStreaming, autoScroll, onClear }}>
+  <TerminalContext.Provider
+    value={{ output, isStreaming, autoScroll, onClear }}
+  >
     <div
       className={cn(
-        "flex flex-col rounded-lg border bg-zinc-950 text-zinc-100 overflow-hidden",
+        "flex flex-col overflow-hidden rounded-lg border bg-zinc-950 text-zinc-100",
         className
       )}
       {...props}
@@ -80,7 +82,7 @@ export const TerminalHeader = ({
 }: TerminalHeaderProps) => (
   <div
     className={cn(
-      "flex items-center justify-between border-b border-zinc-800 px-4 py-2",
+      "flex items-center justify-between border-zinc-800 border-b px-4 py-2",
       className
     )}
     {...props}
@@ -97,7 +99,7 @@ export const TerminalTitle = ({
   ...props
 }: TerminalTitleProps) => (
   <div
-    className={cn("flex items-center gap-2 text-zinc-400 text-sm", className)}
+    className={cn("flex items-center gap-2 text-sm text-zinc-400", className)}
     {...props}
   >
     <TerminalIcon className="size-4" />
@@ -114,11 +116,13 @@ export const TerminalStatus = ({
 }: TerminalStatusProps) => {
   const { isStreaming } = useContext(TerminalContext);
 
-  if (!isStreaming) return null;
+  if (!isStreaming) {
+    return null;
+  }
 
   return (
     <div
-      className={cn("flex items-center gap-2 text-zinc-400 text-xs", className)}
+      className={cn("flex items-center gap-2 text-xs text-zinc-400", className)}
       {...props}
     >
       {children ?? <Shimmer className="w-16" />}
@@ -133,10 +137,7 @@ export const TerminalActions = ({
   children,
   ...props
 }: TerminalActionsProps) => (
-  <div
-    className={cn("flex items-center gap-1", className)}
-    {...props}
-  >
+  <div className={cn("flex items-center gap-1", className)} {...props}>
     {children}
   </div>
 );
@@ -179,7 +180,7 @@ export const TerminalCopyButton = ({
   return (
     <Button
       className={cn(
-        "size-7 shrink-0 text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800",
+        "size-7 shrink-0 text-zinc-400 hover:bg-zinc-800 hover:text-zinc-100",
         className
       )}
       onClick={copyToClipboard}
@@ -201,12 +202,14 @@ export const TerminalClearButton = ({
 }: TerminalClearButtonProps) => {
   const { onClear } = useContext(TerminalContext);
 
-  if (!onClear) return null;
+  if (!onClear) {
+    return null;
+  }
 
   return (
     <Button
       className={cn(
-        "size-7 shrink-0 text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800",
+        "size-7 shrink-0 text-zinc-400 hover:bg-zinc-800 hover:text-zinc-100",
         className
       )}
       onClick={onClear}
@@ -229,6 +232,7 @@ export const TerminalContent = ({
   const { output, isStreaming, autoScroll } = useContext(TerminalContext);
   const containerRef = useRef<HTMLDivElement>(null);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: output triggers auto-scroll when new content arrives
   useEffect(() => {
     if (autoScroll && containerRef.current) {
       containerRef.current.scrollTop = containerRef.current.scrollHeight;
@@ -237,18 +241,18 @@ export const TerminalContent = ({
 
   return (
     <div
-      ref={containerRef}
       className={cn(
-        "overflow-auto p-4 font-mono text-sm leading-relaxed max-h-96",
+        "max-h-96 overflow-auto p-4 font-mono text-sm leading-relaxed",
         className
       )}
+      ref={containerRef}
       {...props}
     >
       {children ?? (
         <pre className="whitespace-pre-wrap break-words">
           <Ansi>{output}</Ansi>
           {isStreaming && (
-            <span className="inline-block w-2 h-4 bg-zinc-100 animate-pulse ml-0.5" />
+            <span className="ml-0.5 inline-block h-4 w-2 animate-pulse bg-zinc-100" />
           )}
         </pre>
       )}

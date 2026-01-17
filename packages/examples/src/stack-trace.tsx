@@ -2,15 +2,15 @@
 
 import {
   StackTrace,
-  StackTraceHeader,
-  StackTraceError,
-  StackTraceErrorType,
-  StackTraceErrorMessage,
   StackTraceActions,
-  StackTraceCopyButton,
-  StackTraceExpandButton,
   StackTraceContent,
+  StackTraceCopyButton,
+  StackTraceError,
+  StackTraceErrorMessage,
+  StackTraceErrorType,
+  StackTraceExpandButton,
   StackTraceFrames,
+  StackTraceHeader,
 } from "@repo/elements/stack-trace";
 
 const sampleStackTrace = `TypeError: Cannot read properties of undefined (reading 'map')
@@ -27,11 +27,11 @@ const sampleStackTrace = `TypeError: Cannot read properties of undefined (readin
 
 const Example = () => (
   <StackTrace
-    trace={sampleStackTrace}
     defaultOpen
     onFilePathClick={(path, line, col) =>
       console.log(`Open file: ${path}:${line}:${col}`)
     }
+    trace={sampleStackTrace}
   >
     <StackTraceHeader>
       <StackTraceError>

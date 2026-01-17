@@ -14,6 +14,85 @@ const BASE_PATH = "/elements";
 
 const internationalizer = createI18nMiddleware(i18n);
 
+const needsBasePathCorrection = (pathname: string): boolean =>
+  pathname.startsWith("/") && !pathname.startsWith(BASE_PATH);
+
+const copyCookies = (
+  source: NextResponse,
+  target: NextResponse
+): NextResponse => {
+  for (const cookie of source.cookies.getAll()) {
+    target.cookies.set(cookie);
+  }
+  return target;
+};
+
+const handleRedirectResponse = (
+  response: NextResponse,
+  requestUrl: string
+): NextResponse | null => {
+  const location = response.headers.get("location");
+  if (!location) {
+    return null;
+  }
+
+  try {
+    const redirectUrl = new URL(location, requestUrl);
+    if (!needsBasePathCorrection(redirectUrl.pathname)) {
+      return null;
+    }
+
+    redirectUrl.pathname = `${BASE_PATH}${redirectUrl.pathname}`;
+    console.log(
+      "[Middleware] Correcting redirect from",
+      location,
+      "to",
+      redirectUrl.href
+    );
+
+    return copyCookies(response, NextResponse.redirect(redirectUrl));
+  } catch (error) {
+    console.error("Failed to parse redirect URL:", error);
+    return null;
+  }
+};
+
+const handleRewriteResponse = (response: NextResponse): NextResponse | null => {
+  const rewriteUrl = response.headers.get("x-middleware-rewrite");
+  if (!rewriteUrl) {
+    return null;
+  }
+
+  try {
+    const parsedRewriteUrl = new URL(rewriteUrl);
+    if (!needsBasePathCorrection(parsedRewriteUrl.pathname)) {
+      return null;
+    }
+
+    parsedRewriteUrl.pathname = `${BASE_PATH}${parsedRewriteUrl.pathname}`;
+    console.log(
+      "[Middleware] Correcting rewrite from",
+      rewriteUrl,
+      "to",
+      parsedRewriteUrl.href
+    );
+
+    const correctedResponse = NextResponse.rewrite(parsedRewriteUrl);
+    copyCookies(response, correctedResponse);
+
+    for (const [key, value] of response.headers.entries()) {
+      if (!key.startsWith("x-middleware-")) {
+        correctedResponse.headers.set(key, value);
+      }
+    }
+
+    return correctedResponse;
+  } catch (error) {
+    console.error("Failed to parse rewrite URL:", error);
+    return null;
+  }
+};
+
 /**
  * Wraps the fumadocs i18n middleware to fix basePath handling.
  * The fumadocs middleware doesn't account for Next.js basePath when constructing
@@ -31,95 +110,21 @@ const wrapI18nMiddleware = (
       Object.fromEntries(response.headers.entries())
     );
 
-    // Check if this is a redirect response
-    if (
-      response instanceof NextResponse &&
-      response.status >= 300 &&
-      response.status < 400
-    ) {
-      const location = response.headers.get("location");
+    if (!(response instanceof NextResponse)) {
+      return response;
+    }
 
-      if (location) {
-        try {
-          const redirectUrl = new URL(location, request.url);
-
-          // Check if the redirect URL is missing the basePath
-          // (i.e., it starts with / but not with /platforms)
-          if (
-            redirectUrl.pathname.startsWith("/") &&
-            !redirectUrl.pathname.startsWith(BASE_PATH)
-          ) {
-            // Add the basePath back to the redirect
-            redirectUrl.pathname = `${BASE_PATH}${redirectUrl.pathname}`;
-            console.log(
-              "[Middleware] Correcting redirect from",
-              location,
-              "to",
-              redirectUrl.href
-            );
-
-            // Create a new redirect response with the corrected URL
-            const correctedResponse = NextResponse.redirect(redirectUrl);
-
-            // Copy over any cookies from the original response
-            response.cookies.getAll().forEach((cookie) => {
-              correctedResponse.cookies.set(cookie);
-            });
-
-            return correctedResponse;
-          }
-        } catch (error) {
-          // If URL parsing fails, return the original response
-          console.error("Failed to parse redirect URL:", error);
-        }
+    const isRedirect = response.status >= 300 && response.status < 400;
+    if (isRedirect) {
+      const corrected = handleRedirectResponse(response, request.url);
+      if (corrected) {
+        return corrected;
       }
     }
 
-    // Check if this is a rewrite response
-    // Rewrites are identified by the x-middleware-rewrite header
-    if (response instanceof NextResponse) {
-      const rewriteUrl = response.headers.get("x-middleware-rewrite");
-
-      if (rewriteUrl) {
-        try {
-          const parsedRewriteUrl = new URL(rewriteUrl);
-
-          // Check if the rewrite URL is missing the basePath
-          if (
-            parsedRewriteUrl.pathname.startsWith("/") &&
-            !parsedRewriteUrl.pathname.startsWith(BASE_PATH)
-          ) {
-            // Add the basePath back to the rewrite
-            parsedRewriteUrl.pathname = `${BASE_PATH}${parsedRewriteUrl.pathname}`;
-            console.log(
-              "[Middleware] Correcting rewrite from",
-              rewriteUrl,
-              "to",
-              parsedRewriteUrl.href
-            );
-
-            // Create a new rewrite response with the corrected URL
-            const correctedResponse = NextResponse.rewrite(parsedRewriteUrl);
-
-            // Copy over any cookies from the original response
-            response.cookies.getAll().forEach((cookie) => {
-              correctedResponse.cookies.set(cookie);
-            });
-
-            // Copy over other headers
-            response.headers.forEach((value, key) => {
-              if (!key.startsWith("x-middleware-")) {
-                correctedResponse.headers.set(key, value);
-              }
-            });
-
-            return correctedResponse;
-          }
-        } catch (error) {
-          // If URL parsing fails, return the original response
-          console.error("Failed to parse rewrite URL:", error);
-        }
-      }
+    const correctedRewrite = handleRewriteResponse(response);
+    if (correctedRewrite) {
+      return correctedRewrite;
     }
 
     return response;

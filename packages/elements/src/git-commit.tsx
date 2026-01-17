@@ -8,13 +8,7 @@ import {
   CollapsibleTrigger,
 } from "@repo/shadcn-ui/components/ui/collapsible";
 import { cn } from "@repo/shadcn-ui/lib/utils";
-import {
-  CheckIcon,
-  ChevronDownIcon,
-  CopyIcon,
-  FileIcon,
-  GitCommitIcon,
-} from "lucide-react";
+import { CheckIcon, CopyIcon, FileIcon, GitCommitIcon } from "lucide-react";
 import {
   type ComponentProps,
   createContext,
@@ -63,7 +57,9 @@ export const GitCommit = ({
   children,
   ...props
 }: GitCommitProps) => (
-  <GitCommitContext.Provider value={{ hash, message, author, timestamp, files }}>
+  <GitCommitContext.Provider
+    value={{ hash, message, author, timestamp, files }}
+  >
     <Collapsible
       className={cn("rounded-lg border bg-background", className)}
       {...props}
@@ -106,7 +102,7 @@ export const GitCommitHeader = ({
 }: GitCommitHeaderProps) => (
   <CollapsibleTrigger
     className={cn(
-      "group flex w-full items-center justify-between gap-4 p-4 text-left hover:bg-muted/50 transition-colors",
+      "group flex w-full items-center justify-between gap-4 p-4 text-left transition-colors hover:bg-muted/50",
       className
     )}
     {...props}
@@ -126,10 +122,7 @@ export const GitCommitHash = ({
   const shortHash = hash.substring(0, 7);
 
   return (
-    <span
-      className={cn("font-mono text-xs", className)}
-      {...props}
-    >
+    <span className={cn("font-mono text-xs", className)} {...props}>
       <GitCommitIcon className="mr-1 inline-block size-3" />
       {children ?? shortHash}
     </span>
@@ -186,15 +179,17 @@ export const GitCommitTimestamp = ({
   ...props
 }: GitCommitTimestampProps) => {
   const { timestamp } = useContext(GitCommitContext);
-  const formatted = new Intl.RelativeTimeFormat("en", { numeric: "auto" }).format(
+  const formatted = new Intl.RelativeTimeFormat("en", {
+    numeric: "auto",
+  }).format(
     Math.round((timestamp.getTime() - Date.now()) / (1000 * 60 * 60 * 24)),
     "day"
   );
 
   return (
     <time
-      dateTime={timestamp.toISOString()}
       className={cn("text-xs", className)}
+      dateTime={timestamp.toISOString()}
       {...props}
     >
       {children ?? formatted}
@@ -209,9 +204,13 @@ export const GitCommitActions = ({
   children,
   ...props
 }: GitCommitActionsProps) => (
+  // biome-ignore lint/a11y/noNoninteractiveElementInteractions: stopPropagation required for nested interactions
+  // biome-ignore lint/a11y/useSemanticElements: fieldset doesn't fit this UI pattern
   <div
     className={cn("flex items-center gap-1", className)}
     onClick={(e) => e.stopPropagation()}
+    onKeyDown={(e) => e.stopPropagation()}
+    role="group"
     {...props}
   >
     {children}
@@ -273,10 +272,7 @@ export const GitCommitContent = ({
   children,
   ...props
 }: GitCommitContentProps) => (
-  <CollapsibleContent
-    className={cn("border-t", className)}
-    {...props}
-  >
+  <CollapsibleContent className={cn("border-t", className)} {...props}>
     <div className="p-4">{children}</div>
   </CollapsibleContent>
 );
@@ -312,8 +308,7 @@ const fileStatusLabels = {
   renamed: "R",
 };
 
-export type GitCommitFileProps = HTMLAttributes<HTMLDivElement> &
-  GitCommitFile;
+export type GitCommitFileProps = HTMLAttributes<HTMLDivElement> & GitCommitFile;
 
 export const GitCommitFile = ({
   path,
@@ -325,24 +320,29 @@ export const GitCommitFile = ({
 }: GitCommitFileProps) => (
   <div
     className={cn(
-      "flex items-center justify-between gap-2 rounded px-2 py-1 hover:bg-muted/50 text-sm",
+      "flex items-center justify-between gap-2 rounded px-2 py-1 text-sm hover:bg-muted/50",
       className
     )}
     {...props}
   >
-    <div className="flex items-center gap-2 min-w-0">
+    <div className="flex min-w-0 items-center gap-2">
       <span
-        className={cn("font-mono text-xs font-medium", fileStatusStyles[status])}
+        className={cn(
+          "font-medium font-mono text-xs",
+          fileStatusStyles[status]
+        )}
       >
         {fileStatusLabels[status]}
       </span>
       <FileIcon className="size-3.5 shrink-0 text-muted-foreground" />
-      <span className="font-mono text-xs truncate">{path}</span>
+      <span className="truncate font-mono text-xs">{path}</span>
     </div>
     {(additions !== undefined || deletions !== undefined) && (
-      <div className="flex items-center gap-1 text-xs font-mono shrink-0">
+      <div className="flex shrink-0 items-center gap-1 font-mono text-xs">
         {additions !== undefined && additions > 0 && (
-          <span className="text-green-600 dark:text-green-400">+{additions}</span>
+          <span className="text-green-600 dark:text-green-400">
+            +{additions}
+          </span>
         )}
         {deletions !== undefined && deletions > 0 && (
           <span className="text-red-600 dark:text-red-400">-{deletions}</span>

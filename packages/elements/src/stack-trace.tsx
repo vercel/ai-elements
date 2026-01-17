@@ -17,6 +17,12 @@ import {
 import type { ComponentProps } from "react";
 import { createContext, memo, useContext, useMemo, useState } from "react";
 
+// Regex patterns for parsing stack traces
+const STACK_FRAME_WITH_PARENS_REGEX = /^at\s+(.+?)\s+\((.+):(\d+):(\d+)\)$/;
+const STACK_FRAME_WITHOUT_FN_REGEX = /^at\s+(.+):(\d+):(\d+)$/;
+const ERROR_TYPE_REGEX = /^(\w+Error|Error):\s*(.*)$/;
+const AT_PREFIX_REGEX = /^at\s+/;
+
 interface StackFrame {
   raw: string;
   functionName: string | null;
@@ -38,11 +44,7 @@ interface StackTraceContextValue {
   raw: string;
   isOpen: boolean;
   setIsOpen: (open: boolean) => void;
-  onFilePathClick?: (
-    filePath: string,
-    line?: number,
-    column?: number
-  ) => void;
+  onFilePathClick?: (filePath: string, line?: number, column?: number) => void;
 }
 
 const StackTraceContext = createContext<StackTraceContextValue | null>(null);
@@ -59,9 +61,7 @@ const parseStackFrame = (line: string): StackFrame => {
   const trimmed = line.trim();
 
   // Pattern: at functionName (filePath:line:column)
-  const withParensMatch = trimmed.match(
-    /^at\s+(.+?)\s+\((.+):(\d+):(\d+)\)$/
-  );
+  const withParensMatch = trimmed.match(STACK_FRAME_WITH_PARENS_REGEX);
   if (withParensMatch) {
     const [, functionName, filePath, lineNum, colNum] = withParensMatch;
     const isInternal =
@@ -79,7 +79,7 @@ const parseStackFrame = (line: string): StackFrame => {
   }
 
   // Pattern: at filePath:line:column (no function name)
-  const withoutFnMatch = trimmed.match(/^at\s+(.+):(\d+):(\d+)$/);
+  const withoutFnMatch = trimmed.match(STACK_FRAME_WITHOUT_FN_REGEX);
   if (withoutFnMatch) {
     const [, filePath, lineNum, colNum] = withoutFnMatch;
     const isInternal =
@@ -124,7 +124,7 @@ const parseStackTrace = (trace: string): ParsedStackTrace => {
   let errorMessage = firstLine;
 
   // Try to extract error type from "ErrorType: message" format
-  const errorMatch = firstLine.match(/^(\w+Error|Error):\s*(.*)$/);
+  const errorMatch = firstLine.match(ERROR_TYPE_REGEX);
   if (errorMatch) {
     errorType = errorMatch[1];
     errorMessage = errorMatch[2] || "";
@@ -149,11 +149,7 @@ export type StackTraceProps = ComponentProps<"div"> & {
   open?: boolean;
   defaultOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
-  onFilePathClick?: (
-    filePath: string,
-    line?: number,
-    column?: number
-  ) => void;
+  onFilePathClick?: (filePath: string, line?: number, column?: number) => void;
 };
 
 export const StackTrace = memo(
@@ -229,7 +225,10 @@ export type StackTraceErrorProps = ComponentProps<"div">;
 export const StackTraceError = memo(
   ({ className, children, ...props }: StackTraceErrorProps) => (
     <div
-      className={cn("flex flex-1 items-center gap-2 overflow-hidden", className)}
+      className={cn(
+        "flex flex-1 items-center gap-2 overflow-hidden",
+        className
+      )}
       {...props}
     >
       <AlertTriangleIcon className="size-4 shrink-0 text-destructive" />
@@ -262,10 +261,7 @@ export const StackTraceErrorMessage = memo(
     const { trace } = useStackTrace();
 
     return (
-      <span
-        className={cn("truncate text-foreground", className)}
-        {...props}
-      >
+      <span className={cn("truncate text-foreground", className)} {...props}>
         {children ?? trace.errorMessage}
       </span>
     );
@@ -276,6 +272,8 @@ export type StackTraceActionsProps = ComponentProps<"div">;
 
 export const StackTraceActions = memo(
   ({ className, children, ...props }: StackTraceActionsProps) => (
+    // biome-ignore lint/a11y/noNoninteractiveElementInteractions: stopPropagation required for nested interactions
+    // biome-ignore lint/a11y/useSemanticElements: fieldset doesn't fit this UI pattern
     <div
       className={cn("flex shrink-0 items-center gap-1", className)}
       onClick={(e) => e.stopPropagation()}
@@ -284,6 +282,7 @@ export const StackTraceActions = memo(
           e.stopPropagation();
         }
       }}
+      role="group"
       {...props}
     >
       {children}
@@ -363,12 +362,19 @@ export const StackTraceExpandButton = memo(
   }
 );
 
-export type StackTraceContentProps = ComponentProps<typeof CollapsibleContent> & {
+export type StackTraceContentProps = ComponentProps<
+  typeof CollapsibleContent
+> & {
   maxHeight?: number;
 };
 
 export const StackTraceContent = memo(
-  ({ className, maxHeight = 400, children, ...props }: StackTraceContentProps) => {
+  ({
+    className,
+    maxHeight = 400,
+    children,
+    ...props
+  }: StackTraceContentProps) => {
     const { isOpen } = useStackTrace();
 
     return (
@@ -376,7 +382,7 @@ export const StackTraceContent = memo(
         <CollapsibleContent
           className={cn(
             "overflow-auto border-t bg-muted/30",
-            "data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:fade-in-0",
+            "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:animate-out data-[state=open]:animate-in",
             className
           )}
           style={{ maxHeight }}
@@ -406,16 +412,16 @@ export const StackTraceFrames = memo(
       : trace.frames.filter((f) => !f.isInternal);
 
     return (
-      <div className={cn("p-3 space-y-1", className)} {...props}>
+      <div className={cn("space-y-1 p-3", className)} {...props}>
         {framesToShow.map((frame, index) => (
           <div
-            key={`${frame.raw}-${index}`}
             className={cn(
               "text-xs",
               frame.isInternal
                 ? "text-muted-foreground/50"
                 : "text-foreground/90"
             )}
+            key={`${frame.raw}-${index}`}
           >
             <span className="text-muted-foreground">at </span>
             {frame.functionName && (
@@ -427,19 +433,21 @@ export const StackTraceFrames = memo(
               <>
                 <span className="text-muted-foreground">(</span>
                 <button
-                  type="button"
                   className={cn(
                     "underline decoration-dotted hover:text-primary",
                     onFilePathClick && "cursor-pointer"
                   )}
-                  onClick={() =>
-                    onFilePathClick?.(
-                      frame.filePath!,
-                      frame.lineNumber ?? undefined,
-                      frame.columnNumber ?? undefined
-                    )
-                  }
                   disabled={!onFilePathClick}
+                  onClick={() => {
+                    if (frame.filePath) {
+                      onFilePathClick?.(
+                        frame.filePath,
+                        frame.lineNumber ?? undefined,
+                        frame.columnNumber ?? undefined
+                      );
+                    }
+                  }}
+                  type="button"
                 >
                   {frame.filePath}
                   {frame.lineNumber !== null && `:${frame.lineNumber}`}
@@ -448,8 +456,8 @@ export const StackTraceFrames = memo(
                 <span className="text-muted-foreground">)</span>
               </>
             )}
-            {!frame.filePath && !frame.functionName && (
-              <span>{frame.raw.replace(/^at\s+/, "")}</span>
+            {!(frame.filePath || frame.functionName) && (
+              <span>{frame.raw.replace(AT_PREFIX_REGEX, "")}</span>
             )}
           </div>
         ))}
