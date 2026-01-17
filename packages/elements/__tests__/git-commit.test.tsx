@@ -68,17 +68,24 @@ describe("GitCommitCopyButton", () => {
 
     render(
       <GitCommit {...mockCommit}>
-        <GitCommitHeader>
-          <GitCommitMessage />
+        <div className="flex items-center justify-between gap-4 p-4">
+          <GitCommitHeader>
+            <GitCommitMessage />
+          </GitCommitHeader>
           <GitCommitActions>
             <GitCommitCopyButton />
           </GitCommitActions>
-        </GitCommitHeader>
+        </div>
       </GitCommit>
     );
 
-    const button = screen.getByRole("button");
-    await user.click(button);
+    const buttons = screen.getAllByRole("button");
+    const copyButton = buttons.find(
+      (btn) => btn.getAttribute("data-slot") === "button"
+    );
+    if (copyButton) {
+      await user.click(copyButton);
+    }
 
     expect(writeTextSpy).toHaveBeenCalledWith(mockCommit.hash);
   });
@@ -89,17 +96,24 @@ describe("GitCommitCopyButton", () => {
 
     render(
       <GitCommit {...mockCommit}>
-        <GitCommitHeader>
-          <GitCommitMessage />
+        <div className="flex items-center justify-between gap-4 p-4">
+          <GitCommitHeader>
+            <GitCommitMessage />
+          </GitCommitHeader>
           <GitCommitActions>
             <GitCommitCopyButton onCopy={onCopy} />
           </GitCommitActions>
-        </GitCommitHeader>
+        </div>
       </GitCommit>
     );
 
-    const button = screen.getByRole("button");
-    await user.click(button);
+    const buttons = screen.getAllByRole("button");
+    const copyButton = buttons.find(
+      (btn) => btn.getAttribute("data-slot") === "button"
+    );
+    if (copyButton) {
+      await user.click(copyButton);
+    }
 
     expect(onCopy).toHaveBeenCalled();
   });

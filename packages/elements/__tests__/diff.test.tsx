@@ -320,7 +320,8 @@ describe("DiffContent", () => {
       </Diff>
     );
     const content = container.querySelector(".overflow-auto");
-    expect(content).toHaveStyle({ maxHeight: "50vh" });
+    // Check inline style attribute since computed styles may convert viewport units
+    expect(content?.getAttribute("style")).toContain("max-height: 50vh");
   });
 
   it("applies custom className", () => {

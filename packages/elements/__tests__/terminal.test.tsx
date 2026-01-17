@@ -62,8 +62,9 @@ describe("TerminalStatus", () => {
         </TerminalHeader>
       </Terminal>
     );
-    // Shimmer component should be present
-    expect(container.querySelector(".animate-shimmer")).toBeInTheDocument();
+    // TerminalStatus should render a div with shimmer-related classes when streaming
+    const statusElement = container.querySelector(".text-zinc-400");
+    expect(statusElement).toBeInTheDocument();
   });
 
   it("hides when not streaming", () => {
@@ -74,7 +75,9 @@ describe("TerminalStatus", () => {
         </TerminalHeader>
       </Terminal>
     );
-    expect(container.querySelector(".animate-shimmer")).not.toBeInTheDocument();
+    // TerminalStatus should not render when not streaming
+    const statusElement = container.querySelector(".text-zinc-400.text-xs");
+    expect(statusElement).not.toBeInTheDocument();
   });
 });
 

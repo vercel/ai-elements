@@ -31,12 +31,16 @@ beforeEach(() => {
   vi.spyOn(console, "warn").mockImplementation(() => undefined);
   vi.spyOn(console, "error").mockImplementation(() => undefined);
 
-  // Reset window.SpeechRecognition
-  (window as any).SpeechRecognition = undefined;
-  (window as any).webkitSpeechRecognition = undefined;
+  // Reset window.SpeechRecognition - delete properties instead of setting to undefined
+  // because `in` operator checks property existence, not value
+  // biome-ignore lint/performance/noDelete: delete required for `in` operator check
+  delete (window as any).SpeechRecognition;
+  // biome-ignore lint/performance/noDelete: delete required for `in` operator check
+  delete (window as any).webkitSpeechRecognition;
 
   // Reset MediaRecorder to ensure consistent test behavior
-  (window as any).MediaRecorder = undefined;
+  // biome-ignore lint/performance/noDelete: delete required for `in` operator check
+  delete (window as any).MediaRecorder;
   // Also mock navigator.mediaDevices to be undefined
   Object.defineProperty(navigator, "mediaDevices", {
     value: undefined,
@@ -356,9 +360,11 @@ describe("SpeechInput - Speech Recognition", () => {
   });
 
   it("does nothing when clicking button if recognition is not available", async () => {
-    // No SpeechRecognition available
-    (window as any).SpeechRecognition = undefined;
-    (window as any).webkitSpeechRecognition = undefined;
+    // No SpeechRecognition available - delete properties to ensure `in` check fails
+    // biome-ignore lint/performance/noDelete: delete required for `in` operator check
+    delete (window as any).SpeechRecognition;
+    // biome-ignore lint/performance/noDelete: delete required for `in` operator check
+    delete (window as any).webkitSpeechRecognition;
 
     render(<SpeechInput />);
 
@@ -418,9 +424,11 @@ describe("SpeechInput - MediaRecorder Fallback", () => {
   beforeEach(() => {
     mediaRecorderInstances = [];
 
-    // Remove SpeechRecognition to force MediaRecorder mode
-    (window as any).SpeechRecognition = undefined;
-    (window as any).webkitSpeechRecognition = undefined;
+    // Remove SpeechRecognition to force MediaRecorder mode - delete properties
+    // biome-ignore lint/performance/noDelete: delete required for `in` operator check
+    delete (window as any).SpeechRecognition;
+    // biome-ignore lint/performance/noDelete: delete required for `in` operator check
+    delete (window as any).webkitSpeechRecognition;
 
     // Create mock track
     mockTrack = {
