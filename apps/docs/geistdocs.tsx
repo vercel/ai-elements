@@ -6,7 +6,7 @@ export const Logo = () => (
 
 export const github = {
   owner: "vercel",
-  repo: "ai-element",
+  repo: "ai-elements",
 };
 
 export const nav = [
