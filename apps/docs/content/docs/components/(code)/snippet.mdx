@@ -1,0 +1,116 @@
+---
+title: Snippet
+description: Lightweight inline code display for markdown and chat interfaces.
+path: elements/components/snippet
+---
+
+The `Snippet` component provides a lightweight way to display inline code snippets with optional syntax highlighting and copy functionality. Simpler than CodeBlock, it's designed for brief code references in text.
+
+<Preview path="snippet" />
+
+## Installation
+
+<ElementsInstaller path="snippet" />
+
+## Features
+
+- Inline mode for embedding in text
+- Block mode with syntax highlighting
+- Optional copy button
+- Compact design for chat/markdown
+
+## Examples
+
+### Inline Code
+
+Use the `inline` prop for embedding code within text.
+
+```tsx
+<span>Use the <Snippet code="useState" inline /> hook.</span>
+```
+
+### With Syntax Highlighting
+
+Provide a `language` prop for syntax highlighting.
+
+```tsx
+<Snippet code="npm install package" language="bash">
+  <SnippetCopyButton />
+</Snippet>
+```
+
+### Without Language
+
+When no language is provided, code renders as plain text.
+
+```tsx
+<Snippet code="git clone repo">
+  <SnippetCopyButton />
+</Snippet>
+```
+
+## Props
+
+### `<Snippet />`
+
+<TypeTable
+  type={{
+    code: {
+      description: 'The code content to display.',
+      type: 'string',
+    },
+    language: {
+      description: 'Optional programming language for syntax highlighting.',
+      type: 'BundledLanguage',
+    },
+    inline: {
+      description: 'Render as inline code element.',
+      type: 'boolean',
+      default: 'false',
+    },
+    children: {
+      description: 'Child elements like SnippetCopyButton.',
+      type: 'React.ReactNode',
+    },
+    className: {
+      description: 'Additional CSS classes.',
+      type: 'string',
+    },
+    '...props': {
+      description: 'Spread to the root element.',
+      type: 'React.HTMLAttributes<HTMLElement>',
+    },
+  }}
+/>
+
+### `<SnippetCopyButton />`
+
+<TypeTable
+  type={{
+    onCopy: {
+      description: 'Callback fired after a successful copy.',
+      type: '() => void',
+    },
+    onError: {
+      description: 'Callback fired if copying fails.',
+      type: '(error: Error) => void',
+    },
+    timeout: {
+      description: 'How long to show the copied state (ms).',
+      type: 'number',
+      default: '2000',
+    },
+    children: {
+      description: 'Custom button content.',
+      type: 'React.ReactNode',
+    },
+    className: {
+      description: 'Additional CSS classes.',
+      type: 'string',
+    },
+    '...props': {
+      description: 'Spread to the Button component.',
+      type: 'React.ComponentProps<typeof Button>',
+    },
+  }}
+/>
