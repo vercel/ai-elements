@@ -1,5 +1,5 @@
 ---
-"ai-elements": patch
+"ai-elements": minor
 ---
 
-Added Sandbox componet
+Added Sandbox component

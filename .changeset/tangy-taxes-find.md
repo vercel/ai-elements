@@ -1,5 +1,5 @@
 ---
-"ai-elements": patch
+"ai-elements": minor
 ---
 
 Create FileChanges component
