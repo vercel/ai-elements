@@ -131,8 +131,9 @@ describe("AgentTool", () => {
     const trigger = screen.getByText("Search the web for information");
     await user.click(trigger);
 
+    // Zod schemas serialize to internal structure with _def and typeName
     await waitFor(() => {
-      expect(screen.getByText(/"query"/)).toBeInTheDocument();
+      expect(screen.getByText(/"ZodObject"/)).toBeInTheDocument();
     });
   });
 

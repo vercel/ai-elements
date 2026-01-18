@@ -17,7 +17,7 @@ export default defineConfig({
     include: ["__tests__/**/*.test.{ts,tsx}"],
     server: {
       deps: {
-        inline: ["streamdown", "katex"],
+        inline: ["streamdown", "katex", "motion", "cmdk"],
       },
     },
     coverage: {

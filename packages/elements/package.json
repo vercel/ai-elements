@@ -33,6 +33,7 @@
   },
   "devDependencies": {
     "@ai-sdk/react": "^3.0.41",
+    "zod": "^3.25.64",
     "@repo/typescript-config": "workspace:*",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.1",
