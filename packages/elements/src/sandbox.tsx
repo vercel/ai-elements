@@ -15,14 +15,16 @@ import { cn } from "@repo/shadcn-ui/lib/utils";
 import type { ToolUIPart } from "ai";
 import { ChevronDownIcon, Code } from "lucide-react";
 import type { ComponentProps } from "react";
-import { CodeBlock, CodeBlockCopyButton } from "./code-block";
 import { getStatusBadge } from "./tool";
 
 export type SandboxRootProps = ComponentProps<typeof Collapsible>;
 
 export const Sandbox = ({ className, ...props }: SandboxRootProps) => (
   <Collapsible
-    className={cn("not-prose group mb-4 w-full rounded-md border", className)}
+    className={cn(
+      "not-prose group mb-4 w-full overflow-hidden rounded-md border",
+      className
+    )}
     defaultOpen
     {...props}
   />
@@ -74,7 +76,7 @@ export const SandboxContent = ({
 export type SandboxTabsProps = ComponentProps<typeof Tabs>;
 
 export const SandboxTabs = ({ className, ...props }: SandboxTabsProps) => (
-  <Tabs className={cn("w-full", className)} {...props} />
+  <Tabs className={cn("w-full gap-0", className)} {...props} />
 );
 
 export type SandboxTabsBarProps = ComponentProps<"div">;
@@ -126,29 +128,4 @@ export const SandboxTabContent = ({
   ...props
 }: SandboxTabContentProps) => (
   <TabsContent className={cn("mt-0 text-sm", className)} {...props} />
-);
-
-export type SandboxCodeProps = ComponentProps<typeof CodeBlock>;
-
-export const SandboxCode = ({ className, ...props }: SandboxCodeProps) => (
-  <CodeBlock className={cn("border-0", className)} {...props}>
-    <CodeBlockCopyButton
-      className="opacity-0 transition-opacity duration-200 group-hover:opacity-100"
-      size="sm"
-    />
-  </CodeBlock>
-);
-
-export type SandboxOutputProps = Omit<
-  ComponentProps<typeof CodeBlock>,
-  "language"
->;
-
-export const SandboxOutput = ({ className, ...props }: SandboxOutputProps) => (
-  <CodeBlock className={cn("border-0", className)} language="log" {...props}>
-    <CodeBlockCopyButton
-      className="opacity-0 transition-opacity duration-200 group-hover:opacity-100"
-      size="sm"
-    />
-  </CodeBlock>
 );

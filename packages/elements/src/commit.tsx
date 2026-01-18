@@ -57,38 +57,12 @@ export const Commit = ({
   children,
   ...props
 }: CommitProps) => (
-  <CommitContext.Provider
-    value={{ hash, message, author, timestamp, files }}
-  >
+  <CommitContext.Provider value={{ hash, message, author, timestamp, files }}>
     <Collapsible
       className={cn("rounded-lg border bg-background", className)}
       {...props}
     >
-      {children ?? (
-        <>
-          <CommitHeader>
-            <div className="flex items-center gap-3">
-              <CommitAuthor />
-              <div className="flex flex-col">
-                <CommitMessage />
-                <div className="flex items-center gap-2 text-muted-foreground text-xs">
-                  <CommitHash />
-                  <span>•</span>
-                  <CommitTimestamp />
-                </div>
-              </div>
-            </div>
-            <CommitActions>
-              <CommitCopyButton />
-            </CommitActions>
-          </CommitHeader>
-          {files && files.length > 0 && (
-            <CommitContent>
-              <CommitFiles />
-            </CommitContent>
-          )}
-        </>
-      )}
+      {children}
     </Collapsible>
   </CommitContext.Provider>
 );

@@ -1,17 +1,28 @@
 "use client";
 
+import { CodeBlock, CodeBlockCopyButton } from "@repo/elements/code-block";
 import {
   Sandbox,
-  SandboxCode,
   SandboxContent,
   SandboxHeader,
-  SandboxOutput,
   SandboxTabContent,
   SandboxTabs,
   SandboxTabsBar,
   SandboxTabsList,
   SandboxTabsTrigger,
 } from "@repo/elements/sandbox";
+import {
+  StackTrace,
+  StackTraceActions,
+  StackTraceContent,
+  StackTraceCopyButton,
+  StackTraceError,
+  StackTraceErrorMessage,
+  StackTraceErrorType,
+  StackTraceExpandButton,
+  StackTraceFrames,
+  StackTraceHeader,
+} from "@repo/elements/stack-trace";
 import { Button } from "@repo/shadcn-ui/components/ui/button";
 import type { ToolUIPart } from "ai";
 import { useState } from "react";
@@ -40,12 +51,12 @@ const outputs: Record<ToolUIPart["state"], string | undefined> = {
   "input-available": undefined,
   "output-available": `Found 15 prime numbers up to 50:
 [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47]`,
-  "output-error": `Traceback (most recent call last):
-  File "primes.py", line 15, in <module>
-    primes = calculate_primes(50)
-  File "primes.py", line 4, in calculate_primes
-    sieve = [True] * (limit + 1)
-TypeError: can only concatenate str (not "int") to str`,
+  "output-error": `TypeError: Cannot read properties of undefined (reading 'map')
+    at calculatePrimes (/src/utils/primes.ts:15:23)
+    at runCalculation (/src/components/Calculator.tsx:42:12)
+    at onClick (/src/components/Button.tsx:18:5)
+    at HTMLButtonElement.dispatch (node_modules/react-dom/cjs/react-dom.development.js:3456:9)
+    at node_modules/react-dom/cjs/react-dom.development.js:4245:12`,
 };
 
 const states: ToolUIPart["state"][] = [
@@ -84,15 +95,52 @@ const Example = () => {
               </SandboxTabsList>
             </SandboxTabsBar>
             <SandboxTabContent value="code">
-              <SandboxCode
+              <CodeBlock
+                className="border-0"
                 code={
                   state === "input-streaming" ? "# Generating code..." : code
                 }
                 language="python"
-              />
+              >
+                <CodeBlockCopyButton
+                  className="opacity-0 transition-opacity duration-200 group-hover:opacity-100"
+                  size="sm"
+                />
+              </CodeBlock>
             </SandboxTabContent>
             <SandboxTabContent value="output">
-              <SandboxOutput code={outputs[state] ?? ""} />
+              {state === "output-error" ? (
+                <StackTrace
+                  className="rounded-none border-0"
+                  defaultOpen
+                  trace={outputs[state] ?? ""}
+                >
+                  <StackTraceHeader>
+                    <StackTraceError>
+                      <StackTraceErrorType />
+                      <StackTraceErrorMessage />
+                    </StackTraceError>
+                    <StackTraceActions>
+                      <StackTraceCopyButton />
+                      <StackTraceExpandButton />
+                    </StackTraceActions>
+                  </StackTraceHeader>
+                  <StackTraceContent>
+                    <StackTraceFrames />
+                  </StackTraceContent>
+                </StackTrace>
+              ) : (
+                <CodeBlock
+                  className="border-0"
+                  code={outputs[state] ?? ""}
+                  language="log"
+                >
+                  <CodeBlockCopyButton
+                    className="opacity-0 transition-opacity duration-200 group-hover:opacity-100"
+                    size="sm"
+                  />
+                </CodeBlock>
+              )}
             </SandboxTabContent>
           </SandboxTabs>
         </SandboxContent>
