@@ -20,16 +20,6 @@ The `EnvironmentVariables` component displays environment variables with value m
 - Export format support (`export KEY="value"`)
 - Required badge indicator
 
-## Examples
-
-### Basic Usage
-
-<Preview path="environment-variables-basic" />
-
-### With Required Badge
-
-<Preview path="environment-variables-required" />
-
 ## Props
 
 ### `<EnvironmentVariables />`
@@ -49,9 +39,58 @@ The `EnvironmentVariables` component displays environment variables with value m
       description: 'Callback when visibility changes.',
       type: '(show: boolean) => void',
     },
-    className: {
-      description: 'Additional CSS classes.',
-      type: 'string',
+    '...props': {
+      description: 'Spread to the container div.',
+      type: 'React.HTMLAttributes<HTMLDivElement>',
+    },
+  }}
+/>
+
+### `<EnvironmentVariablesHeader />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Spread to the header div.',
+      type: 'React.HTMLAttributes<HTMLDivElement>',
+    },
+  }}
+/>
+
+### `<EnvironmentVariablesTitle />`
+
+<TypeTable
+  type={{
+    children: {
+      description: 'Custom title text.',
+      type: 'React.ReactNode',
+      default: '"Environment Variables"',
+    },
+    '...props': {
+      description: 'Spread to the h3 element.',
+      type: 'React.HTMLAttributes<HTMLHeadingElement>',
+    },
+  }}
+/>
+
+### `<EnvironmentVariablesToggle />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Spread to the Switch component.',
+      type: 'React.ComponentProps<typeof Switch>',
+    },
+  }}
+/>
+
+### `<EnvironmentVariablesContent />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Spread to the content div.',
+      type: 'React.HTMLAttributes<HTMLDivElement>',
     },
   }}
 />
@@ -63,14 +102,57 @@ The `EnvironmentVariables` component displays environment variables with value m
     name: {
       description: 'Variable name.',
       type: 'string',
+      required: true,
     },
     value: {
       description: 'Variable value.',
       type: 'string',
+      required: true,
     },
-    className: {
-      description: 'Additional CSS classes.',
-      type: 'string',
+    '...props': {
+      description: 'Spread to the row div.',
+      type: 'React.HTMLAttributes<HTMLDivElement>',
+    },
+  }}
+/>
+
+### `<EnvironmentVariableGroup />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Spread to the group div.',
+      type: 'React.HTMLAttributes<HTMLDivElement>',
+    },
+  }}
+/>
+
+### `<EnvironmentVariableName />`
+
+<TypeTable
+  type={{
+    children: {
+      description: 'Custom name content. Defaults to the name from context.',
+      type: 'React.ReactNode',
+    },
+    '...props': {
+      description: 'Spread to the span element.',
+      type: 'React.HTMLAttributes<HTMLSpanElement>',
+    },
+  }}
+/>
+
+### `<EnvironmentVariableValue />`
+
+<TypeTable
+  type={{
+    children: {
+      description: 'Custom value content. Defaults to the masked/unmasked value from context.',
+      type: 'React.ReactNode',
+    },
+    '...props': {
+      description: 'Spread to the span element.',
+      type: 'React.HTMLAttributes<HTMLSpanElement>',
     },
   }}
 />
@@ -96,6 +178,26 @@ The `EnvironmentVariables` component displays environment variables with value m
       description: 'Duration to show copied state (ms).',
       type: 'number',
       default: '2000',
+    },
+    '...props': {
+      description: 'Spread to the Button component.',
+      type: 'React.ComponentProps<typeof Button>',
+    },
+  }}
+/>
+
+### `<EnvironmentVariableRequired />`
+
+<TypeTable
+  type={{
+    children: {
+      description: 'Custom badge text.',
+      type: 'React.ReactNode',
+      default: '"Required"',
+    },
+    '...props': {
+      description: 'Spread to the Badge component.',
+      type: 'React.ComponentProps<typeof Badge>',
     },
   }}
 />

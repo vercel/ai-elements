@@ -29,16 +29,6 @@ The `PackageInfo` component displays package dependency information including ve
 | `added` | Blue | New dependency |
 | `removed` | Gray | Removed dependency |
 
-## Examples
-
-### Basic Usage
-
-<Preview path="package-info-basic" />
-
-### With Dependencies
-
-<Preview path="package-info-dependencies" />
-
 ## Props
 
 ### `<PackageInfo />`
@@ -48,6 +38,7 @@ The `PackageInfo` component displays package dependency information including ve
     name: {
       description: 'Package name.',
       type: 'string',
+      required: true,
     },
     currentVersion: {
       description: 'Current installed version.',
@@ -61,9 +52,98 @@ The `PackageInfo` component displays package dependency information including ve
       description: 'Type of version change.',
       type: '"major" | "minor" | "patch" | "added" | "removed"',
     },
-    className: {
-      description: 'Additional CSS classes.',
-      type: 'string',
+    '...props': {
+      description: 'Spread to the container div.',
+      type: 'React.HTMLAttributes<HTMLDivElement>',
+    },
+  }}
+/>
+
+### `<PackageInfoHeader />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Spread to the header div.',
+      type: 'React.HTMLAttributes<HTMLDivElement>',
+    },
+  }}
+/>
+
+### `<PackageInfoName />`
+
+<TypeTable
+  type={{
+    children: {
+      description: 'Custom name content. Defaults to the name from context.',
+      type: 'React.ReactNode',
+    },
+    '...props': {
+      description: 'Spread to the container div.',
+      type: 'React.HTMLAttributes<HTMLDivElement>',
+    },
+  }}
+/>
+
+### `<PackageInfoChangeType />`
+
+<TypeTable
+  type={{
+    children: {
+      description: 'Custom change type label. Defaults to the changeType from context.',
+      type: 'React.ReactNode',
+    },
+    '...props': {
+      description: 'Spread to the Badge component.',
+      type: 'React.HTMLAttributes<HTMLDivElement>',
+    },
+  }}
+/>
+
+### `<PackageInfoVersion />`
+
+<TypeTable
+  type={{
+    children: {
+      description: 'Custom version content. Defaults to version transition display.',
+      type: 'React.ReactNode',
+    },
+    '...props': {
+      description: 'Spread to the container div.',
+      type: 'React.HTMLAttributes<HTMLDivElement>',
+    },
+  }}
+/>
+
+### `<PackageInfoDescription />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Spread to the p element.',
+      type: 'React.HTMLAttributes<HTMLParagraphElement>',
+    },
+  }}
+/>
+
+### `<PackageInfoContent />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Spread to the container div.',
+      type: 'React.HTMLAttributes<HTMLDivElement>',
+    },
+  }}
+/>
+
+### `<PackageInfoDependencies />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Spread to the container div.',
+      type: 'React.HTMLAttributes<HTMLDivElement>',
     },
   }}
 />
@@ -75,14 +155,15 @@ The `PackageInfo` component displays package dependency information including ve
     name: {
       description: 'Dependency name.',
       type: 'string',
+      required: true,
     },
     version: {
       description: 'Dependency version.',
       type: 'string',
     },
-    className: {
-      description: 'Additional CSS classes.',
-      type: 'string',
+    '...props': {
+      description: 'Spread to the row div.',
+      type: 'React.HTMLAttributes<HTMLDivElement>',
     },
   }}
 />

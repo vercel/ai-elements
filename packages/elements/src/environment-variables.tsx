@@ -167,6 +167,18 @@ export const EnvironmentVariable = ({
   </EnvironmentVariableContext.Provider>
 );
 
+export type EnvironmentVariableGroupProps = HTMLAttributes<HTMLDivElement>;
+
+export const EnvironmentVariableGroup = ({
+  className,
+  children,
+  ...props
+}: EnvironmentVariableGroupProps) => (
+  <div className={cn("flex items-center gap-2", className)} {...props}>
+    {children}
+  </div>
+);
+
 export type EnvironmentVariableNameProps = HTMLAttributes<HTMLSpanElement>;
 
 export const EnvironmentVariableName = ({

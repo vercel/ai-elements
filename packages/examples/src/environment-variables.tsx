@@ -3,6 +3,7 @@
 import {
   EnvironmentVariable,
   EnvironmentVariableCopyButton,
+  EnvironmentVariableGroup,
   EnvironmentVariableName,
   EnvironmentVariableRequired,
   EnvironmentVariables,
@@ -37,17 +38,17 @@ const Example = () => (
           name={variable.name}
           value={variable.value}
         >
-          <div className="flex items-center gap-2">
+          <EnvironmentVariableGroup>
             <EnvironmentVariableName />
             {variable.required && <EnvironmentVariableRequired />}
-          </div>
-          <div className="flex items-center gap-2">
+          </EnvironmentVariableGroup>
+          <EnvironmentVariableGroup>
             <EnvironmentVariableValue />
             <EnvironmentVariableCopyButton
               copyFormat="export"
               onCopy={() => console.log("Copied!")}
             />
-          </div>
+          </EnvironmentVariableGroup>
         </EnvironmentVariable>
       ))}
     </EnvironmentVariablesContent>

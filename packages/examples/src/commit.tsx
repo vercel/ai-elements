@@ -4,101 +4,90 @@ import {
   Commit,
   CommitActions,
   CommitAuthor,
+  CommitAuthorAvatar,
   CommitContent,
   CommitCopyButton,
+  CommitFile,
+  CommitFileAdditions,
+  CommitFileChanges,
+  CommitFileDeletions,
+  CommitFileIcon,
+  CommitFileInfo,
+  CommitFilePath,
+  CommitFileStatus,
   CommitFiles,
   CommitHash,
   CommitHeader,
+  CommitInfo,
   CommitMessage,
+  CommitMetadata,
+  CommitSeparator,
   CommitTimestamp,
 } from "@repo/elements/commit";
 
-const commits = [
+const hash = "a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0";
+const timestamp = new Date(Date.now() - 1000 * 60 * 60 * 2);
+
+const files = [
   {
-    hash: "a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0",
-    message: "feat: Add user authentication flow",
-    author: "John Doe",
-    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2), // 2 hours ago
-    files: [
-      {
-        path: "src/auth/login.tsx",
-        status: "added" as const,
-        additions: 150,
-        deletions: 0,
-      },
-      {
-        path: "src/auth/logout.tsx",
-        status: "added" as const,
-        additions: 45,
-        deletions: 0,
-      },
-      {
-        path: "src/lib/session.ts",
-        status: "modified" as const,
-        additions: 23,
-        deletions: 8,
-      },
-    ],
+    path: "src/auth/login.tsx",
+    status: "added" as const,
+    additions: 150,
+    deletions: 0,
   },
   {
-    hash: "b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1",
-    message: "fix: Resolve memory leak in useEffect",
-    author: "Jane Smith",
-    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24), // 1 day ago
-    files: [
-      {
-        path: "src/hooks/useData.ts",
-        status: "modified" as const,
-        additions: 5,
-        deletions: 12,
-      },
-    ],
+    path: "src/auth/logout.tsx",
+    status: "added" as const,
+    additions: 45,
+    deletions: 0,
   },
   {
-    hash: "c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2",
-    message: "refactor: Rename config files",
-    author: "Bob Wilson",
-    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24 * 3), // 3 days ago
-    files: [
-      { path: "config/old-settings.json", status: "deleted" as const },
-      { path: "config/settings.json", status: "added" as const },
-    ],
+    path: "src/lib/session.ts",
+    status: "modified" as const,
+    additions: 23,
+    deletions: 8,
   },
 ];
 
 const Example = () => (
-  <div className="flex flex-col gap-4">
-    {commits.map((commit) => (
-      <Commit
-        author={commit.author}
-        files={commit.files}
-        hash={commit.hash}
-        key={commit.hash}
-        message={commit.message}
-        timestamp={commit.timestamp}
-      >
-        <CommitHeader>
-          <div className="flex items-center gap-3">
-            <CommitAuthor />
-            <div className="flex flex-col">
-              <CommitMessage />
-              <div className="flex items-center gap-2 text-muted-foreground text-xs">
-                <CommitHash />
-                <span>•</span>
-                <CommitTimestamp />
-              </div>
-            </div>
-          </div>
-          <CommitActions>
-            <CommitCopyButton onCopy={() => console.log("Copied hash!")} />
-          </CommitActions>
-        </CommitHeader>
-        <CommitContent>
-          <CommitFiles />
-        </CommitContent>
-      </Commit>
-    ))}
-  </div>
+  <Commit>
+    <CommitHeader>
+      <CommitAuthor>
+        <CommitAuthorAvatar initials="HB" />
+      </CommitAuthor>
+      <CommitInfo>
+        <CommitMessage>feat: Add user authentication flow</CommitMessage>
+        <CommitMetadata>
+          <CommitHash>{hash.substring(0, 7)}</CommitHash>
+          <CommitSeparator />
+          <CommitTimestamp date={timestamp} />
+        </CommitMetadata>
+      </CommitInfo>
+      <CommitActions>
+        <CommitCopyButton
+          hash={hash}
+          onCopy={() => console.log("Copied hash!")}
+        />
+      </CommitActions>
+    </CommitHeader>
+    <CommitContent>
+      <CommitFiles>
+        {files.map((file) => (
+          <CommitFile key={file.path}>
+            <CommitFileInfo>
+              <CommitFileStatus status={file.status} />
+              <CommitFileIcon />
+              <CommitFilePath>{file.path}</CommitFilePath>
+            </CommitFileInfo>
+            <CommitFileChanges>
+              <CommitFileAdditions count={file.additions} />
+              <CommitFileDeletions count={file.deletions} />
+            </CommitFileChanges>
+          </CommitFile>
+        ))}
+      </CommitFiles>
+    </CommitContent>
+  </Commit>
 );
 
 export default Example;
