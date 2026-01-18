@@ -4,7 +4,7 @@ description: Provides syntax highlighting, line numbers, and copy to clipboard f
 path: elements/components/code-block
 ---
 
-The `CodeBlock` component provides syntax highlighting, line numbers, and copy to clipboard functionality for code blocks.
+The `CodeBlock` component provides syntax highlighting, line numbers, and copy to clipboard functionality for code blocks. It's fully composable, allowing you to customize the header, actions, and content.
 
 <Preview path="code-block" />
 
@@ -12,124 +12,59 @@ The `CodeBlock` component provides syntax highlighting, line numbers, and copy t
 
 <ElementsInstaller path="code-block" />
 
-## Usage with AI SDK
+## Usage
 
-Build a simple code generation tool using the [`experimental_useObject`](https://ai-sdk.dev/docs/reference/ai-sdk-ui/use-object) hook.
+The CodeBlock is fully composable. Here's a basic example:
 
-Add the following component to your frontend:
-
-```tsx title="app/page.tsx"
-'use client';
-
-import { experimental_useObject as useObject } from '@ai-sdk/react';
-import { codeBlockSchema } from '@/app/api/codegen/route';
-import {
-  Input,
-  PromptInputTextarea,
-  PromptInputSubmit,
-} from '@/components/ai-elements/prompt-input';
+```tsx
 import {
   CodeBlock,
+  CodeBlockActions,
   CodeBlockCopyButton,
+  CodeBlockFilename,
+  CodeBlockHeader,
+  CodeBlockTitle,
 } from '@/components/ai-elements/code-block';
-import { useState } from 'react';
+import { FileIcon } from 'lucide-react';
 
-export default function Page() {
-  const [input, setInput] = useState('');
-  const { object, submit, isLoading } = useObject({
-    api: '/api/codegen',
-    schema: codeBlockSchema,
-  });
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (input.trim()) {
-      submit(input);
-    }
-  };
-
-  return (
-    <div className="max-w-4xl mx-auto p-6 relative size-full rounded-lg border h-[600px]">
-      <div className="flex flex-col h-full">
-        <div className="flex-1 overflow-auto mb-4">
-          {object?.code && object?.language && (
-            <CodeBlock
-              code={object.code}
-              language={object.language}
-              showLineNumbers={true}
-            >
-              <CodeBlockCopyButton />
-            </CodeBlock>
-          )}
-        </div>
-
-        <Input
-          onSubmit={handleSubmit}
-          className="mt-4 w-full max-w-2xl mx-auto relative"
-        >
-          <PromptInputTextarea
-            value={input}
-            placeholder="Generate a React todolist component"
-            onChange={(e) => setInput(e.currentTarget.value)}
-            className="pr-12"
-          />
-          <PromptInputSubmit
-            status={isLoading ? 'streaming' : 'ready'}
-            disabled={!input.trim()}
-            className="absolute bottom-1 right-1"
-          />
-        </Input>
-      </div>
-    </div>
-  );
-}
-```
-
-Add the following route to your backend:
-
-```tsx title="api/codegen/route.ts"
-import { streamObject } from 'ai';
-import { z } from 'zod';
-
-export const codeBlockSchema = z.object({
-  language: z.string(),
-  filename: z.string(),
-  code: z.string(),
-});
-// Allow streaming responses up to 30 seconds
-export const maxDuration = 30;
-
-export async function POST(req: Request) {
-  const context = await req.json();
-
-  const result = streamObject({
-    model: 'openai/gpt-4o',
-    schema: codeBlockSchema,
-    prompt:
-      `You are a helpful coding assistant. Only generate code, no markdown formatting or backticks, or text.` +
-      context,
-  });
-
-  return result.toTextStreamResponse();
-}
+export const Example = () => (
+  <CodeBlock code={code} language="typescript">
+    <CodeBlockHeader>
+      <CodeBlockTitle>
+        <FileIcon size={14} />
+        <CodeBlockFilename>example.ts</CodeBlockFilename>
+      </CodeBlockTitle>
+      <CodeBlockActions>
+        <CodeBlockCopyButton />
+      </CodeBlockActions>
+    </CodeBlockHeader>
+  </CodeBlock>
+);
 ```
 
 ## Features
 
-- Syntax highlighting with shiki
+- Syntax highlighting with Shiki
 - Line numbers (optional)
 - Copy to clipboard functionality
-- Automatic light/dark theme switching
-- Customizable styles
+- Automatic light/dark theme switching via CSS variables
+- Language selector for multi-language examples
+- Fully composable architecture
 - Accessible design
 
 ## Examples
 
 ### Dark Mode
 
-To use the `CodeBlock` component in dark mode, you can wrap it in a `div` with the `dark` class.
+To use the `CodeBlock` component in dark mode, wrap it in a `div` with the `dark` class.
 
 <Preview path="code-block-dark" />
+
+### Language Selector
+
+Add a language selector to switch between different code implementations:
+
+<Preview path="code-block" />
 
 ## Props
 
@@ -143,7 +78,7 @@ To use the `CodeBlock` component in dark mode, you can wrap it in a `div` with t
     },
     language: {
       description: 'The programming language for syntax highlighting.',
-      type: 'string',
+      type: 'BundledLanguage',
     },
     showLineNumbers: {
       description: 'Whether to show line numbers.',
@@ -151,16 +86,80 @@ To use the `CodeBlock` component in dark mode, you can wrap it in a `div` with t
       default: 'false',
     },
     children: {
-      description: 'Child elements (like CodeBlockCopyButton) positioned in the top-right corner.',
+      description: 'Child elements like CodeBlockHeader.',
       type: 'React.ReactNode',
     },
     className: {
-      description: 'Additional CSS classes to apply to the root container.',
+      description: 'Additional CSS classes.',
       type: 'string',
     },
-    '...props': {
-      description: 'Any other props are spread to the root div.',
-      type: 'React.HTMLAttributes<HTMLDivElement>',
+  }}
+/>
+
+### `<CodeBlockHeader />`
+
+Container for the header row. Uses flexbox with `justify-between`.
+
+<TypeTable
+  type={{
+    children: {
+      description: 'Header content (CodeBlockTitle, CodeBlockActions, etc.).',
+      type: 'React.ReactNode',
+    },
+    className: {
+      description: 'Additional CSS classes.',
+      type: 'string',
+    },
+  }}
+/>
+
+### `<CodeBlockTitle />`
+
+Left-aligned container for icon and filename. Uses flexbox with `gap-2`.
+
+<TypeTable
+  type={{
+    children: {
+      description: 'Title content (icon, CodeBlockFilename, etc.).',
+      type: 'React.ReactNode',
+    },
+    className: {
+      description: 'Additional CSS classes.',
+      type: 'string',
+    },
+  }}
+/>
+
+### `<CodeBlockFilename />`
+
+Displays the filename in monospace font.
+
+<TypeTable
+  type={{
+    children: {
+      description: 'The filename to display.',
+      type: 'React.ReactNode',
+    },
+    className: {
+      description: 'Additional CSS classes.',
+      type: 'string',
+    },
+  }}
+/>
+
+### `<CodeBlockActions />`
+
+Right-aligned container for action buttons. Uses flexbox with `gap-2`.
+
+<TypeTable
+  type={{
+    children: {
+      description: 'Action buttons (CodeBlockCopyButton, CodeBlockLanguageSelector, etc.).',
+      type: 'React.ReactNode',
+    },
+    className: {
+      description: 'Additional CSS classes.',
+      type: 'string',
     },
   }}
 />
@@ -187,12 +186,84 @@ To use the `CodeBlock` component in dark mode, you can wrap it in a `div` with t
       type: 'React.ReactNode',
     },
     className: {
-      description: 'Additional CSS classes to apply to the button.',
+      description: 'Additional CSS classes.',
       type: 'string',
     },
-    '...props': {
-      description: 'Any other props are spread to the underlying shadcn/ui Button component.',
-      type: 'React.ComponentProps<typeof Button>',
+  }}
+/>
+
+### `<CodeBlockLanguageSelector />`
+
+Wrapper for the language selector. Extends shadcn/ui Select.
+
+<TypeTable
+  type={{
+    value: {
+      description: 'The currently selected language.',
+      type: 'string',
+    },
+    onValueChange: {
+      description: 'Callback when the language changes.',
+      type: '(value: string) => void',
+    },
+    children: {
+      description: 'Selector components (Trigger, Content, Items).',
+      type: 'React.ReactNode',
+    },
+  }}
+/>
+
+### `<CodeBlockLanguageSelectorTrigger />`
+
+Trigger button for the language selector dropdown. Pre-styled for code block header.
+
+### `<CodeBlockLanguageSelectorValue />`
+
+Displays the selected language value.
+
+### `<CodeBlockLanguageSelectorContent />`
+
+Dropdown content container. Defaults to `align="end"`.
+
+### `<CodeBlockLanguageSelectorItem />`
+
+Individual language option in the dropdown.
+
+<TypeTable
+  type={{
+    value: {
+      description: 'The language value.',
+      type: 'string',
+    },
+    children: {
+      description: 'The display label.',
+      type: 'React.ReactNode',
+    },
+  }}
+/>
+
+### `<CodeBlockContainer />`
+
+Low-level container component with performance optimizations (`contentVisibility`). Used internally by CodeBlock.
+
+### `<CodeBlockContent />`
+
+Low-level component that handles syntax highlighting. Used internally by CodeBlock, but can be used directly for custom layouts.
+
+<TypeTable
+  type={{
+    code: {
+      description: 'The code content to display.',
+      type: 'string',
+    },
+    language: {
+      description: 'The programming language for syntax highlighting.',
+      type: 'BundledLanguage',
+    },
+    showLineNumbers: {
+      description: 'Whether to show line numbers.',
+      type: 'boolean',
+      default: 'false',
     },
   }}
 />
