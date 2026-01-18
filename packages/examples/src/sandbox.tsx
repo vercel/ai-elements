@@ -103,7 +103,7 @@ const Example = () => {
                 language="python"
               >
                 <CodeBlockCopyButton
-                  className="opacity-0 transition-opacity duration-200 group-hover:opacity-100"
+                  className="absolute top-2 right-2 opacity-0 transition-opacity duration-200 group-hover:opacity-100"
                   size="sm"
                 />
               </CodeBlock>
@@ -136,7 +136,7 @@ const Example = () => {
                   language="log"
                 >
                   <CodeBlockCopyButton
-                    className="opacity-0 transition-opacity duration-200 group-hover:opacity-100"
+                    className="absolute top-2 right-2 opacity-0 transition-opacity duration-200 group-hover:opacity-100"
                     size="sm"
                   />
                 </CodeBlock>
