@@ -11,7 +11,7 @@ import {
   Attachments,
   getAttachmentLabel,
   getMediaCategory,
-} from "@repo/elements/attachment";
+} from "@repo/elements/attachments";
 import { nanoid } from "nanoid";
 import { useState } from "react";
 

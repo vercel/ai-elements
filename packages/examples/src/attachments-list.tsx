@@ -2,10 +2,11 @@
 
 import {
   Attachment,
+  AttachmentInfo,
   AttachmentPreview,
   AttachmentRemove,
   Attachments,
-} from "@repo/elements/attachment";
+} from "@repo/elements/attachments";
 import { nanoid } from "nanoid";
 import { useState } from "react";
 
@@ -20,23 +21,31 @@ const initialAttachments = [
   {
     id: nanoid(),
     type: "file" as const,
-    url: "https://images.unsplash.com/photo-1682687220742-aba13b6e50ba?w=400&h=400&fit=crop",
-    mediaType: "image/jpeg",
-    filename: "ocean-sunset.jpg",
-  },
-  {
-    id: nanoid(),
-    type: "file" as const,
     url: "",
     mediaType: "application/pdf",
-    filename: "document.pdf",
+    filename: "quarterly-report-2024.pdf",
   },
   {
     id: nanoid(),
     type: "file" as const,
     url: "",
     mediaType: "video/mp4",
-    filename: "video.mp4",
+    filename: "product-demo.mp4",
+  },
+  {
+    id: nanoid(),
+    type: "source-document" as const,
+    title: "API Documentation",
+    url: "https://docs.example.com/api",
+    mediaType: "text/html",
+    filename: "api-reference",
+  },
+  {
+    id: nanoid(),
+    type: "file" as const,
+    url: "",
+    mediaType: "audio/mpeg",
+    filename: "meeting-recording.mp3",
   },
 ];
 
@@ -49,7 +58,7 @@ const Example = () => {
 
   return (
     <div className="flex items-center justify-center p-8">
-      <Attachments variant="grid">
+      <Attachments className="w-full max-w-md" variant="list">
         {attachments.map((attachment) => (
           <Attachment
             data={attachment}
@@ -57,6 +66,7 @@ const Example = () => {
             onRemove={() => handleRemove(attachment.id)}
           >
             <AttachmentPreview />
+            <AttachmentInfo showMediaType />
             <AttachmentRemove />
           </Attachment>
         ))}

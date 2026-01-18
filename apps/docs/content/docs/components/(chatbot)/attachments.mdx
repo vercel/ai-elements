@@ -1,16 +1,16 @@
 ---
-title: Attachment
+title: Attachments
 description: A flexible, composable attachment component for displaying files, images, videos, audio, and source documents.
-path: elements/components/attachment
+path: elements/components/attachments
 ---
 
 The `Attachment` component provides a unified way to display file attachments and source documents with multiple layout variants.
 
-<Preview path="attachment" />
+<Preview path="attachments" />
 
 ## Installation
 
-<ElementsInstaller path="attachment" />
+<ElementsInstaller path="attachments" />
 
 ## Usage with AI SDK
 
@@ -25,7 +25,7 @@ import {
   AttachmentPreview,
   AttachmentInfo,
   AttachmentRemove,
-} from '@/components/ai-elements/attachment';
+} from '@/components/ai-elements/attachments';
 import type { FileUIPart } from 'ai';
 
 interface MessageProps {
@@ -68,19 +68,19 @@ export default MessageAttachments;
 
 Best for displaying attachments in messages with visual thumbnails.
 
-<Preview path="attachment" />
+<Preview path="attachments" />
 
 ### Inline Variant
 
 Best for compact badge-style display in input areas with hover previews.
 
-<Preview path="attachment-inline" />
+<Preview path="attachments-inline" />
 
 ### List Variant
 
 Best for file lists with full metadata display.
 
-<Preview path="attachment-list" />
+<Preview path="attachments-list" />
 
 ## Props
 
@@ -258,7 +258,7 @@ Empty state component when no attachments are present.
 Returns the media category for an attachment.
 
 ```tsx
-import { getMediaCategory } from '@/components/ai-elements/attachment';
+import { getMediaCategory } from '@/components/ai-elements/attachments';
 
 const category = getMediaCategory(attachment);
 // Returns: "image" | "video" | "audio" | "document" | "source" | "unknown"
@@ -269,7 +269,7 @@ const category = getMediaCategory(attachment);
 Returns the display label for an attachment.
 
 ```tsx
-import { getAttachmentLabel } from '@/components/ai-elements/attachment';
+import { getAttachmentLabel } from '@/components/ai-elements/attachments';
 
 const label = getAttachmentLabel(attachment);
 // Returns filename or fallback like "Image" or "Attachment"

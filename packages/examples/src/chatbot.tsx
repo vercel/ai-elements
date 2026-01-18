@@ -5,7 +5,7 @@ import {
   AttachmentPreview,
   AttachmentRemove,
   Attachments,
-} from "@repo/elements/attachment";
+} from "@repo/elements/attachments";
 import {
   Conversation,
   ConversationContent,
