@@ -1,5 +1,6 @@
 "use client";
 
+import { MultiFileDiff } from "@pierre/diffs/react";
 import { Button } from "@repo/shadcn-ui/components/ui/button";
 import {
   Collapsible,
@@ -25,7 +26,11 @@ import {
   useMemo,
   useState,
 } from "react";
-import { Diff, DiffContent, type FileContents } from "./diff";
+
+export interface FileContents {
+  name: string;
+  content: string;
+}
 
 type FileChangesStatus = "pending" | "accepted" | "rejected";
 
@@ -365,6 +370,12 @@ export const FileChangesContent = ({
 }: FileChangesContentProps) => {
   const { oldFile, newFile } = useFileChangesContext();
 
+  const containerStyle = maxHeight
+    ? {
+        maxHeight: typeof maxHeight === "number" ? `${maxHeight}px` : maxHeight,
+      }
+    : undefined;
+
   return (
     <CollapsibleContent
       className={cn(
@@ -373,9 +384,28 @@ export const FileChangesContent = ({
       )}
       {...props}
     >
-      <Diff mode="files" newFile={newFile} oldFile={oldFile}>
-        <DiffContent maxHeight={maxHeight} showLineNumbers={showLineNumbers} />
-      </Diff>
+      <div className="overflow-auto" style={containerStyle}>
+        <div className="dark:hidden">
+          <MultiFileDiff
+            newFile={{ name: newFile.name, contents: newFile.content }}
+            oldFile={{ name: oldFile.name, contents: oldFile.content }}
+            options={{
+              disableLineNumbers: !showLineNumbers,
+              theme: "github-light",
+            }}
+          />
+        </div>
+        <div className="hidden dark:block">
+          <MultiFileDiff
+            newFile={{ name: newFile.name, contents: newFile.content }}
+            oldFile={{ name: oldFile.name, contents: oldFile.content }}
+            options={{
+              disableLineNumbers: !showLineNumbers,
+              theme: "github-dark",
+            }}
+          />
+        </div>
+      </div>
     </CollapsibleContent>
   );
 };
