@@ -31,16 +31,15 @@ The Sandbox component integrates with the AI SDK's tool state to show code gener
 import type { ToolUIPart } from "ai";
 import {
   Sandbox,
-  SandboxCode,
   SandboxContent,
   SandboxHeader,
-  SandboxOutput,
   SandboxTabContent,
   SandboxTabs,
   SandboxTabsBar,
   SandboxTabsList,
   SandboxTabsTrigger,
 } from "@/components/ai-elements/sandbox";
+import { CodeBlock } from "@/components/ai-elements/code-block";
 
 type CodeSandboxProps = {
   toolPart: ToolUIPart;
@@ -65,10 +64,10 @@ export const CodeSandbox = ({ toolPart }: CodeSandboxProps) => {
             </SandboxTabsList>
           </SandboxTabsBar>
           <SandboxTabContent value="code">
-            <SandboxCode code={code} language="tsx" />
+            <CodeBlock code={code} language="tsx" />
           </SandboxTabContent>
           <SandboxTabContent value="output">
-            <SandboxOutput code={output} />
+            <CodeBlock code={output} language="log" />
           </SandboxTabContent>
         </SandboxTabs>
       </SandboxContent>
@@ -183,30 +182,3 @@ export const CodeSandbox = ({ toolPart }: CodeSandboxProps) => {
   }}
 />
 
-### `<SandboxCode />`
-
-Renders a syntax-highlighted code block with a built-in copy button.
-
-<TypeTable
-  type={{
-    "...props": {
-      description:
-        "Any other props are spread to the underlying CodeBlock component.",
-      type: "React.ComponentProps<typeof CodeBlock>",
-    },
-  }}
-/>
-
-### `<SandboxOutput />`
-
-Renders output with log syntax highlighting and a built-in copy button.
-
-<TypeTable
-  type={{
-    "...props": {
-      description:
-        "Any other props (except language) are spread to the underlying CodeBlock component. Language is set to 'log'.",
-      type: "Omit<React.ComponentProps<typeof CodeBlock>, 'language'>",
-    },
-  }}
-/>

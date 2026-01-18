@@ -99,26 +99,171 @@ The `TestResults` component displays test suite results including summary statis
   }}
 />
 
-### Subcomponents
+### `<TestResultsHeader />`
 
-**Results Level:**
-- `TestResultsHeader` - Header container
-- `TestResultsSummary` - Passed/failed/skipped badges
-- `TestResultsDuration` - Total duration
-- `TestResultsProgress` - Progress bar
-- `TestResultsContent` - Content container
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any other props are spread to the div element.',
+      type: 'React.HTMLAttributes<HTMLDivElement>',
+    },
+  }}
+/>
 
-**Suite Level:**
-- `TestSuite` - Collapsible suite container
-- `TestSuiteName` - Suite name with expand trigger
-- `TestSuiteStats` - Suite statistics
-- `TestSuiteContent` - Suite tests container
+### `<TestResultsSummary />`
 
-**Test Level:**
-- `Test` - Individual test container
-- `TestStatus` - Status icon
-- `TestName` - Test name
-- `TestDuration` - Test duration
-- `TestError` - Error container
-- `TestErrorMessage` - Error message
-- `TestErrorStack` - Stack trace
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any other props are spread to the div element.',
+      type: 'React.HTMLAttributes<HTMLDivElement>',
+    },
+  }}
+/>
+
+### `<TestResultsDuration />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any other props are spread to the span element.',
+      type: 'React.HTMLAttributes<HTMLSpanElement>',
+    },
+  }}
+/>
+
+### `<TestResultsProgress />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any other props are spread to the div element.',
+      type: 'React.HTMLAttributes<HTMLDivElement>',
+    },
+  }}
+/>
+
+### `<TestResultsContent />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any other props are spread to the div element.',
+      type: 'React.HTMLAttributes<HTMLDivElement>',
+    },
+  }}
+/>
+
+### `<TestSuiteName />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any other props are spread to the CollapsibleTrigger component.',
+      type: 'React.ComponentProps<typeof CollapsibleTrigger>',
+    },
+  }}
+/>
+
+### `<TestSuiteStats />`
+
+<TypeTable
+  type={{
+    passed: {
+      description: 'Number of passed tests.',
+      type: 'number',
+      default: '0',
+    },
+    failed: {
+      description: 'Number of failed tests.',
+      type: 'number',
+      default: '0',
+    },
+    skipped: {
+      description: 'Number of skipped tests.',
+      type: 'number',
+      default: '0',
+    },
+    '...props': {
+      description: 'Any other props are spread to the div element.',
+      type: 'React.HTMLAttributes<HTMLDivElement>',
+    },
+  }}
+/>
+
+### `<TestSuiteContent />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any other props are spread to the CollapsibleContent component.',
+      type: 'React.ComponentProps<typeof CollapsibleContent>',
+    },
+  }}
+/>
+
+### `<TestStatus />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any other props are spread to the span element.',
+      type: 'React.HTMLAttributes<HTMLSpanElement>',
+    },
+  }}
+/>
+
+### `<TestName />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any other props are spread to the span element.',
+      type: 'React.HTMLAttributes<HTMLSpanElement>',
+    },
+  }}
+/>
+
+### `<TestDuration />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any other props are spread to the span element.',
+      type: 'React.HTMLAttributes<HTMLSpanElement>',
+    },
+  }}
+/>
+
+### `<TestError />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any other props are spread to the div element.',
+      type: 'React.HTMLAttributes<HTMLDivElement>',
+    },
+  }}
+/>
+
+### `<TestErrorMessage />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any other props are spread to the p element.',
+      type: 'React.HTMLAttributes<HTMLParagraphElement>',
+    },
+  }}
+/>
+
+### `<TestErrorStack />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any other props are spread to the pre element.',
+      type: 'React.HTMLAttributes<HTMLPreElement>',
+    },
+  }}
+/>

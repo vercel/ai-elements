@@ -51,6 +51,11 @@ The `ModelSelector` component provides a searchable command palette interface fo
 
 <TypeTable
   type={{
+    title: {
+      description: 'Accessible title for the dialog (rendered in sr-only).',
+      type: 'ReactNode',
+      default: '"Model Selector"',
+    },
     '...props': {
       description: 'Any other props are spread to the underlying DialogContent component.',
       type: 'React.ComponentProps<typeof DialogContent>',

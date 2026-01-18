@@ -197,10 +197,11 @@ export async function POST(req: Request) {
     count: {
       description: 'The number of sources to display in the trigger.',
       type: 'number',
+      required: true,
     },
     '...props': {
-      description: 'Any other props are spread to the trigger button.',
-      type: 'React.ButtonHTMLAttributes<HTMLButtonElement>',
+      description: 'Any other props are spread to the CollapsibleTrigger component.',
+      type: 'React.ComponentProps<typeof CollapsibleTrigger>',
     },
   }}
 />

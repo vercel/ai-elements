@@ -225,13 +225,23 @@ Shows a tool that encountered an error during execution. Opens by default to dis
 
 <TypeTable
   type={{
+    title: {
+      description: 'Custom title to display instead of the derived tool name.',
+      type: 'string',
+    },
     type: {
       description: 'The type/name of the tool.',
-      type: 'ToolUIPart["type"]',
+      type: 'ToolUIPart["type"] | DynamicToolUIPart["type"]',
+      required: true,
     },
     state: {
       description: 'The current state of the tool (input-streaming, input-available, output-available, or output-error).',
-      type: 'ToolUIPart["state"]',
+      type: 'ToolUIPart["state"] | DynamicToolUIPart["state"]',
+      required: true,
+    },
+    toolName: {
+      description: 'Required when type is "dynamic-tool" to specify the tool name.',
+      type: 'string',
     },
     className: {
       description: 'Additional CSS classes to apply to the header.',
@@ -288,3 +298,35 @@ Shows a tool that encountered an error during execution. Opens by default to dis
     },
   }}
 />
+
+## Type Exports
+
+### `ToolPart`
+
+Union type representing both static and dynamic tool UI parts.
+
+```tsx
+type ToolPart = ToolUIPart | DynamicToolUIPart;
+```
+
+## Utilities
+
+### `getStatusBadge`
+
+Returns a Badge component with icon and label based on tool state.
+
+```tsx
+import { getStatusBadge } from '@/components/ai-elements/tool';
+
+// Returns a Badge with appropriate icon and label
+const badge = getStatusBadge('output-available');
+```
+
+Supported states:
+- `input-streaming` - "Pending"
+- `input-available` - "Running"
+- `approval-requested` - "Awaiting Approval"
+- `approval-responded` - "Responded"
+- `output-available` - "Completed"
+- `output-error` - "Error"
+- `output-denied` - "Denied"

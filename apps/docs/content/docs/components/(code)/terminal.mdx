@@ -97,12 +97,68 @@ The Terminal uses `ansi-to-react` to parse ANSI escape codes:
   }}
 />
 
-### Subcomponents
+### `<TerminalHeader />`
 
-- `TerminalHeader` - Header container
-- `TerminalTitle` - Title with terminal icon
-- `TerminalStatus` - Shows Shimmer when streaming
-- `TerminalActions` - Action buttons container
-- `TerminalCopyButton` - Copy output button
-- `TerminalClearButton` - Clear output button
-- `TerminalContent` - Main output area with ANSI parsing
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any other props are spread to the div element.',
+      type: 'React.HTMLAttributes<HTMLDivElement>',
+    },
+  }}
+/>
+
+### `<TerminalTitle />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any other props are spread to the div element.',
+      type: 'React.HTMLAttributes<HTMLDivElement>',
+    },
+  }}
+/>
+
+### `<TerminalStatus />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any other props are spread to the div element.',
+      type: 'React.HTMLAttributes<HTMLDivElement>',
+    },
+  }}
+/>
+
+### `<TerminalActions />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any other props are spread to the div element.',
+      type: 'React.HTMLAttributes<HTMLDivElement>',
+    },
+  }}
+/>
+
+### `<TerminalClearButton />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any other props are spread to the Button component.',
+      type: 'React.ComponentProps<typeof Button>',
+    },
+  }}
+/>
+
+### `<TerminalContent />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any other props are spread to the div element.',
+      type: 'React.HTMLAttributes<HTMLDivElement>',
+    },
+  }}
+/>

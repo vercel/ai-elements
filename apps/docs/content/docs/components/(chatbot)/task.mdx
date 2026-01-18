@@ -193,6 +193,11 @@ export async function POST(req: Request) {
 
 <TypeTable
   type={{
+    defaultOpen: {
+      description: 'Whether the task is open by default.',
+      type: 'boolean',
+      default: 'true',
+    },
     '...props': {
       description: 'Any other props are spread to the root Collapsible component.',
       type: 'React.ComponentProps<typeof Collapsible>',
@@ -207,6 +212,7 @@ export async function POST(req: Request) {
     title: {
       description: 'The title of the task that will be displayed in the trigger.',
       type: 'string',
+      required: true,
     },
     '...props': {
       description: 'Any other props are spread to the CollapsibleTrigger component.',

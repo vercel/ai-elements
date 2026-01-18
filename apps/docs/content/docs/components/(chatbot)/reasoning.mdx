@@ -158,6 +158,24 @@ export async function POST(req: Request) {
     isStreaming: {
       description: 'Whether the reasoning is currently streaming (auto-opens and closes the panel).',
       type: 'boolean',
+      default: 'false',
+    },
+    open: {
+      description: 'Controlled open state.',
+      type: 'boolean',
+    },
+    defaultOpen: {
+      description: 'Default open state when uncontrolled.',
+      type: 'boolean',
+      default: 'true',
+    },
+    onOpenChange: {
+      description: 'Callback when open state changes.',
+      type: '(open: boolean) => void',
+    },
+    duration: {
+      description: 'Duration in seconds to display (can be controlled externally).',
+      type: 'number',
     },
     '...props': {
       description: 'Any other props are spread to the underlying Collapsible component.',
@@ -170,11 +188,6 @@ export async function POST(req: Request) {
 
 <TypeTable
   type={{
-    title: {
-      description: 'Optional title to display in the trigger.',
-      type: 'string',
-      default: '"Reasoning"',
-    },
     getThinkingMessage: {
       description: 'Optional function to customize the thinking message. Receives isStreaming and duration parameters.',
       type: '(isStreaming: boolean, duration?: number) => ReactNode',
@@ -190,9 +203,47 @@ export async function POST(req: Request) {
 
 <TypeTable
   type={{
+    children: {
+      description: 'The reasoning text to display (rendered via Streamdown).',
+      type: 'string',
+      required: true,
+    },
     '...props': {
       description: 'Any other props are spread to the underlying CollapsibleContent component.',
       type: 'React.ComponentProps<typeof CollapsibleContent>',
+    },
+  }}
+/>
+
+## Hooks
+
+### `useReasoning`
+
+Access the reasoning context from child components.
+
+```tsx
+const { isStreaming, isOpen, setIsOpen, duration } = useReasoning();
+```
+
+Returns:
+
+<TypeTable
+  type={{
+    isStreaming: {
+      description: 'Whether reasoning is currently streaming.',
+      type: 'boolean',
+    },
+    isOpen: {
+      description: 'Whether the reasoning panel is open.',
+      type: 'boolean',
+    },
+    setIsOpen: {
+      description: 'Function to set the open state.',
+      type: '(open: boolean) => void',
+    },
+    duration: {
+      description: 'Duration in seconds (undefined while streaming).',
+      type: 'number | undefined',
     },
   }}
 />

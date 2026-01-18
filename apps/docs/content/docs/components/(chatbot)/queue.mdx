@@ -230,3 +230,43 @@ The `Queue` component provides a flexible system for displaying lists of message
     },
   }}
 />
+
+## Type Exports
+
+### `QueueMessagePart`
+
+Interface for message parts within queue messages.
+
+```tsx
+interface QueueMessagePart {
+  type: string;
+  text?: string;
+  url?: string;
+  filename?: string;
+  mediaType?: string;
+}
+```
+
+### `QueueMessage`
+
+Interface for queue message items.
+
+```tsx
+interface QueueMessage {
+  id: string;
+  parts: QueueMessagePart[];
+}
+```
+
+### `QueueTodo`
+
+Interface for todo items in the queue.
+
+```tsx
+interface QueueTodo {
+  id: string;
+  title: string;
+  description?: string;
+  status?: "pending" | "completed";
+}
+```

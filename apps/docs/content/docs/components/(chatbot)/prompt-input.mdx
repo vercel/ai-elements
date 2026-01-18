@@ -735,3 +735,17 @@ const attachments = useProviderAttachments();
 
 // Same interface as usePromptInputAttachments
 ```
+
+### `usePromptInputReferencedSources`
+
+Access referenced sources context within a PromptInput.
+
+```tsx
+const sources = usePromptInputReferencedSources();
+
+// Available methods:
+sources.sources // Array of current referenced sources
+sources.add(sources) // Add new source(s)
+sources.remove(id) // Remove a source by ID
+sources.clear() // Clear all sources
+```
