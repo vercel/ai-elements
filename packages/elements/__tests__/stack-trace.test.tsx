@@ -81,7 +81,7 @@ describe("StackTrace", () => {
     const onOpenChange = vi.fn();
     const user = userEvent.setup();
 
-    render(
+    const { container } = render(
       <StackTrace onOpenChange={onOpenChange} trace={sampleStackTrace}>
         <StackTraceHeader />
         <StackTraceContent>
@@ -90,8 +90,9 @@ describe("StackTrace", () => {
       </StackTrace>
     );
 
-    const trigger = screen.getByRole("button");
-    await user.click(trigger);
+    const trigger = container.querySelector("[data-slot='collapsible-trigger']");
+    expect(trigger).toBeInTheDocument();
+    await user.click(trigger as Element);
 
     expect(onOpenChange).toHaveBeenCalledWith(true);
   });
@@ -109,13 +110,14 @@ describe("StackTrace", () => {
 
 describe("StackTraceHeader", () => {
   it("renders as clickable trigger", () => {
-    render(
+    const { container } = render(
       <StackTrace trace={sampleStackTrace}>
         <StackTraceHeader>Header Content</StackTraceHeader>
       </StackTrace>
     );
 
-    expect(screen.getByRole("button")).toBeInTheDocument();
+    const trigger = container.querySelector("[data-slot='collapsible-trigger']");
+    expect(trigger).toBeInTheDocument();
     expect(screen.getByText("Header Content")).toBeInTheDocument();
   });
 
@@ -135,7 +137,9 @@ describe("StackTraceHeader", () => {
     const framesContainer = container.querySelector(".space-y-1");
     expect(framesContainer).not.toBeInTheDocument();
 
-    await user.click(screen.getByRole("button"));
+    const trigger = container.querySelector("[data-slot='collapsible-trigger']");
+    expect(trigger).toBeInTheDocument();
+    await user.click(trigger as Element);
 
     // Now frames container should be visible
     const visibleFrames = container.querySelector(".space-y-1");

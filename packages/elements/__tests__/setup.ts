@@ -20,6 +20,13 @@ failOnConsole({
   shouldFailOnWarn: true,
   shouldFailOnError: true,
   shouldFailOnLog: true,
+  silenceMessage: (message) => {
+    // Silence React 18 deprecation warnings from Radix UI dependencies
+    if (message.includes("ReactDOM.render is deprecated since React 18")) {
+      return true;
+    }
+    return false;
+  },
 });
 
 // Cleanup after each test

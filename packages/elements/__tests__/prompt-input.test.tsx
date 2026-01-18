@@ -14,7 +14,7 @@ import {
   AttachmentPreview,
   AttachmentRemove,
   Attachments,
-} from "../src/attachment";
+} from "../src/attachments";
 import {
   PromptInput,
   PromptInputActionAddAttachments,

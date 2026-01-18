@@ -3,10 +3,8 @@ import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import {
   Sandbox,
-  SandboxCode,
   SandboxContent,
   SandboxHeader,
-  SandboxOutput,
   SandboxTabContent,
   SandboxTabs,
   SandboxTabsBar,
@@ -355,198 +353,10 @@ describe("SandboxTabContent", () => {
   });
 });
 
-describe("SandboxCode", () => {
-  it("renders code block", async () => {
-    const { container } = render(
-      <Sandbox defaultOpen>
-        <SandboxContent>
-          <SandboxTabs defaultValue="code">
-            <SandboxTabsBar>
-              <SandboxTabsList>
-                <SandboxTabsTrigger value="code">Code</SandboxTabsTrigger>
-              </SandboxTabsList>
-            </SandboxTabsBar>
-            <SandboxTabContent value="code">
-              <SandboxCode code="console.log('hello');" language="javascript" />
-            </SandboxTabContent>
-          </SandboxTabs>
-        </SandboxContent>
-      </Sandbox>
-    );
-    await waitFor(() => {
-      expect(container.textContent).toContain("console");
-    });
-  });
-
-  it("includes copy button", () => {
-    render(
-      <Sandbox defaultOpen>
-        <SandboxContent>
-          <SandboxTabs defaultValue="code">
-            <SandboxTabsBar>
-              <SandboxTabsList>
-                <SandboxTabsTrigger value="code">Code</SandboxTabsTrigger>
-              </SandboxTabsList>
-            </SandboxTabsBar>
-            <SandboxTabContent value="code">
-              <SandboxCode code="const x = 1;" language="javascript" />
-            </SandboxTabContent>
-          </SandboxTabs>
-        </SandboxContent>
-      </Sandbox>
-    );
-    expect(screen.getByRole("button")).toBeInTheDocument();
-  });
-
-  it("copies code to clipboard", async () => {
-    const user = userEvent.setup();
-    const writeTextSpy = vi.spyOn(navigator.clipboard, "writeText");
-
-    render(
-      <Sandbox defaultOpen>
-        <SandboxContent>
-          <SandboxTabs defaultValue="code">
-            <SandboxTabsBar>
-              <SandboxTabsList>
-                <SandboxTabsTrigger value="code">Code</SandboxTabsTrigger>
-              </SandboxTabsList>
-            </SandboxTabsBar>
-            <SandboxTabContent value="code">
-              <SandboxCode code="const x = 1;" language="javascript" />
-            </SandboxTabContent>
-          </SandboxTabs>
-        </SandboxContent>
-      </Sandbox>
-    );
-
-    const copyButton = screen.getByRole("button");
-    await user.click(copyButton);
-    expect(writeTextSpy).toHaveBeenCalledWith("const x = 1;");
-  });
-
-  it("applies custom className", async () => {
-    const { container } = render(
-      <Sandbox defaultOpen>
-        <SandboxContent>
-          <SandboxTabs defaultValue="code">
-            <SandboxTabsBar>
-              <SandboxTabsList>
-                <SandboxTabsTrigger value="code">Code</SandboxTabsTrigger>
-              </SandboxTabsList>
-            </SandboxTabsBar>
-            <SandboxTabContent value="code">
-              <SandboxCode
-                className="custom-code"
-                code="test"
-                language="javascript"
-              />
-            </SandboxTabContent>
-          </SandboxTabs>
-        </SandboxContent>
-      </Sandbox>
-    );
-    await waitFor(() => {
-      expect(container.querySelector(".custom-code")).toBeInTheDocument();
-    });
-  });
-});
-
-describe("SandboxOutput", () => {
-  it("renders output as log language", async () => {
-    const { container } = render(
-      <Sandbox defaultOpen>
-        <SandboxContent>
-          <SandboxTabs defaultValue="output">
-            <SandboxTabsBar>
-              <SandboxTabsList>
-                <SandboxTabsTrigger value="output">Output</SandboxTabsTrigger>
-              </SandboxTabsList>
-            </SandboxTabsBar>
-            <SandboxTabContent value="output">
-              <SandboxOutput code="Hello, World!" />
-            </SandboxTabContent>
-          </SandboxTabs>
-        </SandboxContent>
-      </Sandbox>
-    );
-    await waitFor(() => {
-      expect(container.textContent).toContain("Hello, World!");
-    });
-  });
-
-  it("includes copy button", () => {
-    render(
-      <Sandbox defaultOpen>
-        <SandboxContent>
-          <SandboxTabs defaultValue="output">
-            <SandboxTabsBar>
-              <SandboxTabsList>
-                <SandboxTabsTrigger value="output">Output</SandboxTabsTrigger>
-              </SandboxTabsList>
-            </SandboxTabsBar>
-            <SandboxTabContent value="output">
-              <SandboxOutput code="Output text" />
-            </SandboxTabContent>
-          </SandboxTabs>
-        </SandboxContent>
-      </Sandbox>
-    );
-    expect(screen.getByRole("button")).toBeInTheDocument();
-  });
-
-  it("copies output to clipboard", async () => {
-    const user = userEvent.setup();
-    const writeTextSpy = vi.spyOn(navigator.clipboard, "writeText");
-
-    render(
-      <Sandbox defaultOpen>
-        <SandboxContent>
-          <SandboxTabs defaultValue="output">
-            <SandboxTabsBar>
-              <SandboxTabsList>
-                <SandboxTabsTrigger value="output">Output</SandboxTabsTrigger>
-              </SandboxTabsList>
-            </SandboxTabsBar>
-            <SandboxTabContent value="output">
-              <SandboxOutput code="Output text" />
-            </SandboxTabContent>
-          </SandboxTabs>
-        </SandboxContent>
-      </Sandbox>
-    );
-
-    const copyButton = screen.getByRole("button");
-    await user.click(copyButton);
-    expect(writeTextSpy).toHaveBeenCalledWith("Output text");
-  });
-
-  it("applies custom className", async () => {
-    const { container } = render(
-      <Sandbox defaultOpen>
-        <SandboxContent>
-          <SandboxTabs defaultValue="output">
-            <SandboxTabsBar>
-              <SandboxTabsList>
-                <SandboxTabsTrigger value="output">Output</SandboxTabsTrigger>
-              </SandboxTabsList>
-            </SandboxTabsBar>
-            <SandboxTabContent value="output">
-              <SandboxOutput className="custom-output" code="test" />
-            </SandboxTabContent>
-          </SandboxTabs>
-        </SandboxContent>
-      </Sandbox>
-    );
-    await waitFor(() => {
-      expect(container.querySelector(".custom-output")).toBeInTheDocument();
-    });
-  });
-});
-
 describe("Sandbox integration", () => {
-  it("renders complete sandbox with code and output tabs", async () => {
+  it("renders complete sandbox with tabs", async () => {
     const user = userEvent.setup();
-    const { container } = render(
+    render(
       <Sandbox defaultOpen>
         <SandboxHeader state="output-available" title="Python Sandbox" />
         <SandboxContent>
@@ -557,12 +367,8 @@ describe("Sandbox integration", () => {
                 <SandboxTabsTrigger value="output">Output</SandboxTabsTrigger>
               </SandboxTabsList>
             </SandboxTabsBar>
-            <SandboxTabContent value="code">
-              <SandboxCode code="print('Hello')" language="python" />
-            </SandboxTabContent>
-            <SandboxTabContent value="output">
-              <SandboxOutput code="Hello" />
-            </SandboxTabContent>
+            <SandboxTabContent value="code">Code content</SandboxTabContent>
+            <SandboxTabContent value="output">Output content</SandboxTabContent>
           </SandboxTabs>
         </SandboxContent>
       </Sandbox>
@@ -576,16 +382,9 @@ describe("Sandbox integration", () => {
     expect(screen.getByText("Code")).toBeInTheDocument();
     expect(screen.getByText("Output")).toBeInTheDocument();
 
-    // Check code content
-    await waitFor(() => {
-      expect(container.textContent).toContain("print");
-    });
-
     // Switch to output
     await user.click(screen.getByText("Output"));
-    await waitFor(() => {
-      expect(container.textContent).toContain("Hello");
-    });
+    expect(screen.getByText("Output content")).toBeInTheDocument();
   });
 
   it("can be controlled externally", async () => {

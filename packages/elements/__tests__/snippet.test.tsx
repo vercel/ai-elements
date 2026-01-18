@@ -1,31 +1,23 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
-import { Snippet, SnippetCopyButton } from "../src/snippet";
+import { Snippet, SnippetCopyButton, SnippetInput } from "../src/snippet";
 
 describe("Snippet", () => {
-  it("renders inline code", () => {
-    render(<Snippet code="useState" inline />);
-    expect(screen.getByText("useState")).toBeInTheDocument();
-  });
-
-  it("renders block code without language", () => {
-    render(<Snippet code="npm install" />);
-    expect(screen.getByText("npm install")).toBeInTheDocument();
-  });
-
-  it("renders code with syntax highlighting", async () => {
-    const { container } = render(
-      <Snippet code="const x = 1" language="javascript" />
+  it("renders code via SnippetInput", () => {
+    render(
+      <Snippet code="npm install">
+        <SnippetInput />
+      </Snippet>
     );
-    await waitFor(() => {
-      expect(container.textContent).toContain("const");
-    });
+    expect(screen.getByDisplayValue("npm install")).toBeInTheDocument();
   });
 
   it("applies custom className", () => {
     const { container } = render(
-      <Snippet className="custom-class" code="test" />
+      <Snippet className="custom-class" code="test">
+        <SnippetInput />
+      </Snippet>
     );
     expect(container.firstChild).toHaveClass("custom-class");
   });
