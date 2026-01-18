@@ -66,24 +66,22 @@ export const GitCommit = ({
     >
       {children ?? (
         <>
-          <div className="flex items-center justify-between gap-4 p-4">
-            <GitCommitHeader>
-              <div className="flex items-center gap-3">
-                <GitCommitAuthor />
-                <div className="flex flex-col">
-                  <GitCommitMessage />
-                  <div className="flex items-center gap-2 text-muted-foreground text-xs">
-                    <GitCommitHash />
-                    <span>•</span>
-                    <GitCommitTimestamp />
-                  </div>
+          <GitCommitHeader>
+            <div className="flex items-center gap-3">
+              <GitCommitAuthor />
+              <div className="flex flex-col">
+                <GitCommitMessage />
+                <div className="flex items-center gap-2 text-muted-foreground text-xs">
+                  <GitCommitHash />
+                  <span>•</span>
+                  <GitCommitTimestamp />
                 </div>
               </div>
-            </GitCommitHeader>
+            </div>
             <GitCommitActions>
               <GitCommitCopyButton />
             </GitCommitActions>
-          </div>
+          </GitCommitHeader>
           {files && files.length > 0 && (
             <GitCommitContent>
               <GitCommitFiles />
@@ -102,14 +100,16 @@ export const GitCommitHeader = ({
   children,
   ...props
 }: GitCommitHeaderProps) => (
-  <CollapsibleTrigger
-    className={cn(
-      "group flex flex-1 items-center gap-3 text-left transition-colors hover:opacity-80",
-      className
-    )}
-    {...props}
-  >
-    {children}
+  <CollapsibleTrigger asChild>
+    <div
+      className={cn(
+        "group flex cursor-pointer items-center justify-between gap-4 p-4 text-left transition-colors hover:opacity-80",
+        className
+      )}
+      {...props}
+    >
+      {children}
+    </div>
   </CollapsibleTrigger>
 );
 
