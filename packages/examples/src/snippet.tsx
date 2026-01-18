@@ -1,28 +1,23 @@
 "use client";
 
-import { Snippet, SnippetCopyButton } from "@repo/elements/snippet";
+import {
+  Snippet,
+  SnippetAddon,
+  SnippetCopyButton,
+  SnippetInput,
+  SnippetText,
+} from "@repo/elements/snippet";
 
 const Example = () => (
-  <div className="flex flex-col gap-4">
-    <div className="flex items-center gap-2">
-      <span>Run</span>
-      <Snippet code="npm install @repo/elements" language="bash">
+  <div className="flex size-full items-center justify-center p-4">
+    <Snippet className="max-w-sm" code="npx ai-elements add snippet">
+      <SnippetAddon className="pl-1">
+        <SnippetText>$</SnippetText>
+      </SnippetAddon>
+      <SnippetInput />
+      <SnippetAddon align="inline-end" className="pr-2">
         <SnippetCopyButton />
-      </Snippet>
-      <span>to install.</span>
-    </div>
-
-    <div>
-      <span>Use the </span>
-      <Snippet code="useState" inline />
-      <span> hook for state management.</span>
-    </div>
-
-    <Snippet code="git clone https://github.com/example/repo.git">
-      <SnippetCopyButton
-        onCopy={() => console.log("Copied!")}
-        onError={(error) => console.error(error)}
-      />
+      </SnippetAddon>
     </Snippet>
   </div>
 );

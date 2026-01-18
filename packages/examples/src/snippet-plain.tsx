@@ -1,10 +1,18 @@
 "use client";
 
-import { Snippet, SnippetCopyButton } from "@repo/elements/snippet";
+import {
+  Snippet,
+  SnippetAddon,
+  SnippetCopyButton,
+  SnippetInput,
+} from "@repo/elements/snippet";
 
 const Example = () => (
   <Snippet code="git clone https://github.com/user/repo">
-    <SnippetCopyButton />
+    <SnippetInput />
+    <SnippetAddon align="inline-end">
+      <SnippetCopyButton />
+    </SnippetAddon>
   </Snippet>
 );
 

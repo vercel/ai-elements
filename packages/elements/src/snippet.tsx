@@ -1,18 +1,22 @@
 "use client";
 
-import { Button } from "@repo/shadcn-ui/components/ui/button";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupButton,
+  InputGroupInput,
+  InputGroupText,
+} from "@repo/shadcn-ui/components/ui/input-group";
 import { cn } from "@repo/shadcn-ui/lib/utils";
 import { CheckIcon, CopyIcon } from "lucide-react";
 import {
   type ComponentProps,
   createContext,
-  type HTMLAttributes,
   useContext,
   useEffect,
   useRef,
   useState,
 } from "react";
-import { type BundledLanguage, codeToHtml } from "shiki";
 
 interface SnippetContextType {
   code: string;
@@ -22,105 +26,57 @@ const SnippetContext = createContext<SnippetContextType>({
   code: "",
 });
 
-export type SnippetProps = HTMLAttributes<HTMLElement> & {
+export type SnippetProps = ComponentProps<typeof InputGroup> & {
   code: string;
-  language?: BundledLanguage;
-  inline?: boolean;
 };
 
 export const Snippet = ({
   code,
-  language,
-  inline = false,
   className,
   children,
   ...props
-}: SnippetProps) => {
-  const [html, setHtml] = useState<string>("");
-  const [darkHtml, setDarkHtml] = useState<string>("");
-  const mounted = useRef(false);
+}: SnippetProps) => (
+  <SnippetContext.Provider value={{ code }}>
+    <InputGroup className={cn("font-mono", className)} {...props}>
+      {children}
+    </InputGroup>
+  </SnippetContext.Provider>
+);
 
-  useEffect(() => {
-    if (!language) {
-      return;
-    }
+export type SnippetAddonProps = ComponentProps<typeof InputGroupAddon>;
 
-    Promise.all([
-      codeToHtml(code, { lang: language, theme: "one-light" }),
-      codeToHtml(code, { lang: language, theme: "one-dark-pro" }),
-    ]).then(([light, dark]) => {
-      if (!mounted.current) {
-        setHtml(light);
-        setDarkHtml(dark);
-        mounted.current = true;
-      }
-    });
+export const SnippetAddon = (props: SnippetAddonProps) => (
+  <InputGroupAddon {...props} />
+);
 
-    return () => {
-      mounted.current = false;
-    };
-  }, [code, language]);
+export type SnippetTextProps = ComponentProps<typeof InputGroupText>;
 
-  if (inline) {
-    return (
-      <SnippetContext.Provider value={{ code }}>
-        <code
-          className={cn(
-            "rounded bg-muted px-1.5 py-0.5 font-mono text-sm",
-            className
-          )}
-          {...props}
-        >
-          {code}
-          {children}
-        </code>
-      </SnippetContext.Provider>
-    );
-  }
+export const SnippetText = ({ className, ...props }: SnippetTextProps) => (
+  <InputGroupText
+    className={cn("pl-2 font-normal text-muted-foreground", className)}
+    {...props}
+  />
+);
 
-  if (!language) {
-    return (
-      <SnippetContext.Provider value={{ code }}>
-        <div
-          className={cn(
-            "group relative inline-flex items-center gap-2 rounded-md border bg-background px-3 py-1.5 font-mono text-sm",
-            className
-          )}
-          {...props}
-        >
-          <code>{code}</code>
-          {children}
-        </div>
-      </SnippetContext.Provider>
-    );
-  }
+export type SnippetInputProps = Omit<
+  ComponentProps<typeof InputGroupInput>,
+  "readOnly" | "value"
+>;
+
+export const SnippetInput = ({ className, ...props }: SnippetInputProps) => {
+  const { code } = useContext(SnippetContext);
 
   return (
-    <SnippetContext.Provider value={{ code }}>
-      <div
-        className={cn(
-          "group relative inline-flex items-center gap-2 rounded-md border bg-background px-3 py-1.5 font-mono text-sm",
-          className
-        )}
-        {...props}
-      >
-        <div
-          className="dark:hidden [&>pre]:m-0 [&>pre]:bg-transparent! [&>pre]:p-0 [&_code]:text-sm"
-          // biome-ignore lint/security/noDangerouslySetInnerHtml: "needed for syntax highlighting"
-          dangerouslySetInnerHTML={{ __html: html }}
-        />
-        <div
-          className="hidden dark:block [&>pre]:m-0 [&>pre]:bg-transparent! [&>pre]:p-0 [&_code]:text-sm"
-          // biome-ignore lint/security/noDangerouslySetInnerHtml: "needed for syntax highlighting"
-          dangerouslySetInnerHTML={{ __html: darkHtml }}
-        />
-        {children}
-      </div>
-    </SnippetContext.Provider>
+    <InputGroupInput
+      className={cn("text-foreground", className)}
+      readOnly
+      value={code}
+      {...props}
+    />
   );
 };
 
-export type SnippetCopyButtonProps = ComponentProps<typeof Button> & {
+export type SnippetCopyButtonProps = ComponentProps<typeof InputGroupButton> & {
   onCopy?: () => void;
   onError?: (error: Error) => void;
   timeout?: number;
@@ -135,6 +91,7 @@ export const SnippetCopyButton = ({
   ...props
 }: SnippetCopyButtonProps) => {
   const [isCopied, setIsCopied] = useState(false);
+  const timeoutRef = useRef<number>(0);
   const { code } = useContext(SnippetContext);
 
   const copyToClipboard = async () => {
@@ -144,26 +101,39 @@ export const SnippetCopyButton = ({
     }
 
     try {
-      await navigator.clipboard.writeText(code);
-      setIsCopied(true);
-      onCopy?.();
-      setTimeout(() => setIsCopied(false), timeout);
+      if (!isCopied) {
+        await navigator.clipboard.writeText(code);
+        setIsCopied(true);
+        onCopy?.();
+        timeoutRef.current = window.setTimeout(
+          () => setIsCopied(false),
+          timeout
+        );
+      }
     } catch (error) {
       onError?.(error as Error);
     }
   };
 
+  useEffect(
+    () => () => {
+      window.clearTimeout(timeoutRef.current);
+    },
+    []
+  );
+
   const Icon = isCopied ? CheckIcon : CopyIcon;
 
   return (
-    <Button
-      className={cn("size-6 shrink-0", className)}
+    <InputGroupButton
+      aria-label="Copy"
+      className={className}
       onClick={copyToClipboard}
-      size="icon"
-      variant="ghost"
+      size="icon-sm"
+      title="Copy"
       {...props}
     >
-      {children ?? <Icon size={12} />}
-    </Button>
+      {children ?? <Icon className="size-3.5" size={14} />}
+    </InputGroupButton>
   );
 };

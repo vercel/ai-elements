@@ -1,10 +1,10 @@
 ---
 title: Snippet
-description: Lightweight inline code display for markdown and chat interfaces.
+description: Lightweight inline code display for terminal commands and short code references.
 path: elements/components/snippet
 ---
 
-The `Snippet` component provides a lightweight way to display inline code snippets with optional syntax highlighting and copy functionality. Simpler than CodeBlock, it's designed for brief code references in text.
+The `Snippet` component provides a lightweight way to display terminal commands and short code snippets with copy functionality. Built on top of InputGroup, it's designed for brief code references in text.
 
 <Preview path="snippet" />
 
@@ -14,22 +14,14 @@ The `Snippet` component provides a lightweight way to display inline code snippe
 
 ## Features
 
-- Inline mode for embedding in text
-- Block mode with syntax highlighting
-- Optional copy button
+- Composable architecture with InputGroup
+- Optional prefix text (e.g., `$` for terminal commands)
+- Built-in copy button
 - Compact design for chat/markdown
 
 ## Examples
 
-### Inline Code
-
-<Preview path="snippet-inline" />
-
-### With Syntax Highlighting
-
-<Preview path="snippet-highlighted" />
-
-### Without Language
+### Without Prefix
 
 <Preview path="snippet-plain" />
 
@@ -42,27 +34,48 @@ The `Snippet` component provides a lightweight way to display inline code snippe
     code: {
       description: 'The code content to display.',
       type: 'string',
-    },
-    language: {
-      description: 'Optional programming language for syntax highlighting.',
-      type: 'BundledLanguage',
-    },
-    inline: {
-      description: 'Render as inline code element.',
-      type: 'boolean',
-      default: 'false',
+      required: true,
     },
     children: {
-      description: 'Child elements like SnippetCopyButton.',
+      description: 'Child elements like SnippetAddon, SnippetInput, etc.',
       type: 'React.ReactNode',
     },
-    className: {
-      description: 'Additional CSS classes.',
-      type: 'string',
-    },
     '...props': {
-      description: 'Spread to the root element.',
-      type: 'React.HTMLAttributes<HTMLElement>',
+      description: 'Spread to the InputGroup component.',
+      type: 'React.ComponentProps<typeof InputGroup>',
+    },
+  }}
+/>
+
+### `<SnippetAddon />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Spread to the InputGroupAddon component.',
+      type: 'React.ComponentProps<typeof InputGroupAddon>',
+    },
+  }}
+/>
+
+### `<SnippetText />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Spread to the InputGroupText component.',
+      type: 'React.ComponentProps<typeof InputGroupText>',
+    },
+  }}
+/>
+
+### `<SnippetInput />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Spread to the InputGroupInput component. Value and readOnly are set automatically.',
+      type: 'Omit<React.ComponentProps<typeof InputGroupInput>, "readOnly" | "value">',
     },
   }}
 />
@@ -88,13 +101,9 @@ The `Snippet` component provides a lightweight way to display inline code snippe
       description: 'Custom button content.',
       type: 'React.ReactNode',
     },
-    className: {
-      description: 'Additional CSS classes.',
-      type: 'string',
-    },
     '...props': {
-      description: 'Spread to the Button component.',
-      type: 'React.ComponentProps<typeof Button>',
+      description: 'Spread to the InputGroupButton component.',
+      type: 'React.ComponentProps<typeof InputGroupButton>',
     },
   }}
 />
