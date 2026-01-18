@@ -12,7 +12,6 @@
     "./*": "./src/*.tsx"
   },
   "dependencies": {
-    "@pierre/diffs": "^1.0.6",
     "ansi-to-react": "^6.1.1",
     "@radix-ui/react-use-controllable-state": "^1.2.2",
     "@repo/shadcn-ui": "workspace:*",
