@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
 import { Terminal } from "@repo/elements/terminal";
+import { useState } from "react";
 
 const initialOutput = `\x1b[36m$\x1b[0m npm run build
 Building project...
@@ -11,7 +11,7 @@ Building project...
 const Example = () => {
   const [output, setOutput] = useState(initialOutput);
 
-  return <Terminal output={output} onClear={() => setOutput("")} />;
+  return <Terminal onClear={() => setOutput("")} output={output} />;
 };
 
 export default Example;

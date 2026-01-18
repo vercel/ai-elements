@@ -8,12 +8,12 @@ import {
 
 const Example = () => (
   <FileTree defaultExpanded={new Set(["src", "src/components"])}>
-    <FileTreeFolder path="src" name="src">
-      <FileTreeFolder path="src/components" name="components">
-        <FileTreeFile path="src/components/button.tsx" name="button.tsx" />
-        <FileTreeFile path="src/components/input.tsx" name="input.tsx" />
+    <FileTreeFolder name="src" path="src">
+      <FileTreeFolder name="components" path="src/components">
+        <FileTreeFile name="button.tsx" path="src/components/button.tsx" />
+        <FileTreeFile name="input.tsx" path="src/components/input.tsx" />
       </FileTreeFolder>
-      <FileTreeFile path="src/index.ts" name="index.ts" />
+      <FileTreeFile name="index.ts" path="src/index.ts" />
     </FileTreeFolder>
   </FileTree>
 );

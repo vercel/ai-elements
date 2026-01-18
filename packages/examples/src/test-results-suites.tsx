@@ -28,9 +28,9 @@ const Example = () => (
       <TestSuite name="Auth" status="passed">
         <TestSuiteName />
         <TestSuiteContent>
-          <Test name="should login" status="passed" duration={45} />
-          <Test name="should logout" status="passed" duration={32} />
-          <Test name="should refresh token" status="passed" duration={73} />
+          <Test duration={45} name="should login" status="passed" />
+          <Test duration={32} name="should logout" status="passed" />
+          <Test duration={73} name="should refresh token" status="passed" />
         </TestSuiteContent>
       </TestSuite>
     </TestResultsContent>

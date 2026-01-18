@@ -21,7 +21,7 @@ const errorString = `TypeError: Cannot read properties of undefined (reading 'ma
     at beginWork (node_modules/react-dom/cjs/react-dom.development.js:19049:16)`;
 
 const Example = () => (
-  <StackTrace trace={errorString} defaultOpen>
+  <StackTrace defaultOpen trace={errorString}>
     <StackTraceHeader>
       <StackTraceError>
         <StackTraceErrorType />

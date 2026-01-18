@@ -90,7 +90,9 @@ describe("StackTrace", () => {
       </StackTrace>
     );
 
-    const trigger = container.querySelector("[data-slot='collapsible-trigger']");
+    const trigger = container.querySelector(
+      "[data-slot='collapsible-trigger']"
+    );
     expect(trigger).toBeInTheDocument();
     await user.click(trigger as Element);
 
@@ -116,7 +118,9 @@ describe("StackTraceHeader", () => {
       </StackTrace>
     );
 
-    const trigger = container.querySelector("[data-slot='collapsible-trigger']");
+    const trigger = container.querySelector(
+      "[data-slot='collapsible-trigger']"
+    );
     expect(trigger).toBeInTheDocument();
     expect(screen.getByText("Header Content")).toBeInTheDocument();
   });
@@ -137,7 +141,9 @@ describe("StackTraceHeader", () => {
     const framesContainer = container.querySelector(".space-y-1");
     expect(framesContainer).not.toBeInTheDocument();
 
-    const trigger = container.querySelector("[data-slot='collapsible-trigger']");
+    const trigger = container.querySelector(
+      "[data-slot='collapsible-trigger']"
+    );
     expect(trigger).toBeInTheDocument();
     await user.click(trigger as Element);
 

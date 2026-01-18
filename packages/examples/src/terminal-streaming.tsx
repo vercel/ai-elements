@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { Terminal } from "@repo/elements/terminal";
+import { useEffect, useState } from "react";
 
 const lines = [
   "\x1b[36m$\x1b[0m npm install",
@@ -32,7 +32,7 @@ const Example = () => {
     return () => clearInterval(interval);
   }, []);
 
-  return <Terminal output={output} isStreaming={isStreaming} autoScroll />;
+  return <Terminal autoScroll isStreaming={isStreaming} output={output} />;
 };
 
 export default Example;

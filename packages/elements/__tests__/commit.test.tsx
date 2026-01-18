@@ -12,14 +12,12 @@ import {
   CommitFileDeletions,
   CommitFileInfo,
   CommitFilePath,
-  CommitFiles,
   CommitFileStatus,
+  CommitFiles,
   CommitHeader,
   CommitInfo,
   CommitMessage,
 } from "../src/commit";
-
-const FEAT_REGEX = /feat/i;
 
 const mockCommit = {
   hash: "a1b2c3d4e5f6g7h8i9j0",
@@ -62,7 +60,9 @@ describe("Commit", () => {
   });
 
   it("applies custom className", () => {
-    const { container } = render(<Commit className="custom-class">Test</Commit>);
+    const { container } = render(
+      <Commit className="custom-class">Test</Commit>
+    );
     expect(container.firstChild).toHaveClass("custom-class");
   });
 });
@@ -192,7 +192,9 @@ describe("CommitFiles", () => {
     );
 
     // Expand collapsible to show files
-    const trigger = container.querySelector("[data-slot='collapsible-trigger']");
+    const trigger = container.querySelector(
+      "[data-slot='collapsible-trigger']"
+    );
     expect(trigger).toBeInTheDocument();
     await user.click(trigger as Element);
 

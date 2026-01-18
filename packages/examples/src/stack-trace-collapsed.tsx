@@ -19,7 +19,7 @@ const errorString = `TypeError: Cannot read properties of undefined (reading 'ma
     at mountIndeterminateComponent (node_modules/react-dom/cjs/react-dom.development.js:17811:13)`;
 
 const Example = () => (
-  <StackTrace trace={errorString} defaultOpen={false}>
+  <StackTrace defaultOpen={false} trace={errorString}>
     <StackTraceHeader>
       <StackTraceError>
         <StackTraceErrorType />

@@ -32,11 +32,11 @@ const Example = () => (
       <TestResultsSummary />
     </TestResultsHeader>
     <TestResultsContent>
-      <TestSuite name="API" status="failed" defaultOpen>
+      <TestSuite defaultOpen name="API" status="failed">
         <TestSuiteName />
         <TestSuiteContent>
-          <Test name="should fetch data" status="passed" duration={45} />
-          <Test name="should update" status="failed" duration={85}>
+          <Test duration={45} name="should fetch data" status="passed" />
+          <Test duration={85} name="should update" status="failed">
             <TestError>
               <TestErrorMessage>Expected 200, got 500</TestErrorMessage>
               <TestErrorStack>{stackTrace}</TestErrorStack>
