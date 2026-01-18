@@ -2,6 +2,7 @@
 
 import { Toaster } from "@repo/shadcn-ui/components/ui/sonner";
 import { TooltipProvider } from "@repo/shadcn-ui/components/ui/tooltip";
+import { useIsMobile } from "@repo/shadcn-ui/hooks/use-mobile";
 import { cn } from "@repo/shadcn-ui/lib/utils";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
@@ -9,7 +10,6 @@ import type { SharedProps } from "fumadocs-ui/contexts/search";
 import { RootProvider } from "fumadocs-ui/provider/next";
 import { type ComponentProps, useCallback } from "react";
 import { useChatContext } from "@/hooks/geistdocs/use-chat";
-import { useIsMobile } from "@/hooks/use-mobile";
 import { i18n, i18nProvider } from "@/lib/geistdocs/i18n";
 import { SearchDialog } from "./search";
 
