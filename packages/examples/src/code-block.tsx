@@ -81,8 +81,8 @@ const Example = () => {
         </CodeBlockTitle>
         <CodeBlockActions>
           <CodeBlockLanguageSelector
-            value={language}
             onValueChange={(value) => setLanguage(value as Language)}
+            value={language}
           >
             <CodeBlockLanguageSelectorTrigger>
               <CodeBlockLanguageSelectorValue />

@@ -25,10 +25,74 @@ import {
 import {
   type BundledLanguage,
   type BundledTheme,
+  createHighlighter,
   type HighlighterGeneric,
   type ThemedToken,
-  createHighlighter,
 } from "shiki";
+
+// Shiki uses bitflags for font styles: 1=italic, 2=bold, 4=underline
+// biome-ignore lint/suspicious/noBitwiseOperators: shiki bitflag check
+const isItalic = (fontStyle: number | undefined) => fontStyle && fontStyle & 1;
+// biome-ignore lint/suspicious/noBitwiseOperators: shiki bitflag check
+const isBold = (fontStyle: number | undefined) => fontStyle && fontStyle & 2;
+const isUnderline = (fontStyle: number | undefined) =>
+  // biome-ignore lint/suspicious/noBitwiseOperators: shiki bitflag check
+  fontStyle && fontStyle & 4;
+
+// Transform tokens to include pre-computed keys to avoid noArrayIndexKey lint
+interface KeyedToken {
+  token: ThemedToken;
+  key: string;
+}
+interface KeyedLine {
+  tokens: KeyedToken[];
+  key: string;
+}
+
+const addKeysToTokens = (lines: ThemedToken[][]): KeyedLine[] =>
+  lines.map((line, lineIdx) => ({
+    key: `line-${lineIdx}`,
+    tokens: line.map((token, tokenIdx) => ({
+      token,
+      key: `line-${lineIdx}-${tokenIdx}`,
+    })),
+  }));
+
+// Token rendering component
+const TokenSpan = ({ token }: { token: ThemedToken }) => (
+  <span
+    className="dark:!bg-[var(--shiki-dark-bg)] dark:!text-[var(--shiki-dark)]"
+    style={
+      {
+        color: token.color,
+        backgroundColor: token.bgColor,
+        ...token.htmlStyle,
+        fontStyle: isItalic(token.fontStyle) ? "italic" : undefined,
+        fontWeight: isBold(token.fontStyle) ? "bold" : undefined,
+        textDecoration: isUnderline(token.fontStyle) ? "underline" : undefined,
+      } as CSSProperties
+    }
+  >
+    {token.content}
+  </span>
+);
+
+// Line rendering component
+const LineSpan = ({
+  keyedLine,
+  showLineNumbers,
+}: {
+  keyedLine: KeyedLine;
+  showLineNumbers: boolean;
+}) => (
+  <span className={showLineNumbers ? LINE_NUMBER_CLASSES : "block"}>
+    {keyedLine.tokens.length === 0
+      ? "\n"
+      : keyedLine.tokens.map(({ token, key }) => (
+          <TokenSpan key={key} token={token} />
+        ))}
+  </span>
+);
 
 // Types
 type CodeBlockProps = HTMLAttributes<HTMLDivElement> & {
@@ -197,10 +261,15 @@ const CodeBlockBody = memo(
       [tokenized.bg, tokenized.fg]
     );
 
+    const keyedLines = useMemo(
+      () => addKeysToTokens(tokenized.tokens),
+      [tokenized.tokens]
+    );
+
     return (
       <pre
         className={cn(
-          "m-0 p-4 text-sm dark:!bg-[var(--shiki-dark-bg)] dark:!text-[var(--shiki-dark)]",
+          "dark:!bg-[var(--shiki-dark-bg)] dark:!text-[var(--shiki-dark)] m-0 p-4 text-sm",
           className
         )}
         style={preStyle}
@@ -211,41 +280,12 @@ const CodeBlockBody = memo(
             showLineNumbers && "[counter-increment:line_0] [counter-reset:line]"
           )}
         >
-          {tokenized.tokens.map((line, lineIndex) => (
-            <span
-              key={lineIndex}
-              className={showLineNumbers ? LINE_NUMBER_CLASSES : "block"}
-            >
-              {line.length === 0
-                ? "\n"
-                : line.map((token, tokenIndex) => (
-                    <span
-                      key={tokenIndex}
-                      className="dark:!bg-[var(--shiki-dark-bg)] dark:!text-[var(--shiki-dark)]"
-                      style={
-                        {
-                          color: token.color,
-                          backgroundColor: token.bgColor,
-                          ...token.htmlStyle,
-                          fontStyle:
-                            token.fontStyle && token.fontStyle & 1
-                              ? "italic"
-                              : undefined,
-                          fontWeight:
-                            token.fontStyle && token.fontStyle & 2
-                              ? "bold"
-                              : undefined,
-                          textDecoration:
-                            token.fontStyle && token.fontStyle & 4
-                              ? "underline"
-                              : undefined,
-                        } as CSSProperties
-                      }
-                    >
-                      {token.content}
-                    </span>
-                  ))}
-            </span>
+          {keyedLines.map((keyedLine) => (
+            <LineSpan
+              key={keyedLine.key}
+              keyedLine={keyedLine}
+              showLineNumbers={showLineNumbers}
+            />
           ))}
         </code>
       </pre>
@@ -351,7 +391,7 @@ export const CodeBlockContent = ({
 
   return (
     <div className="relative overflow-auto">
-      <CodeBlockBody tokenized={tokenized} showLineNumbers={showLineNumbers} />
+      <CodeBlockBody showLineNumbers={showLineNumbers} tokenized={tokenized} />
     </div>
   );
 };
@@ -365,7 +405,7 @@ export const CodeBlock = ({
   ...props
 }: CodeBlockProps) => (
   <CodeBlockContext.Provider value={{ code }}>
-    <CodeBlockContainer language={language} className={className} {...props}>
+    <CodeBlockContainer className={className} language={language} {...props}>
       {children}
       <CodeBlockContent
         code={code}
@@ -452,11 +492,11 @@ export const CodeBlockLanguageSelectorTrigger = ({
   ...props
 }: CodeBlockLanguageSelectorTriggerProps) => (
   <SelectTrigger
-    size="sm"
     className={cn(
       "h-7 border-none bg-transparent px-2 text-xs shadow-none",
       className
     )}
+    size="sm"
     {...props}
   />
 );

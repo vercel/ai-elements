@@ -19,6 +19,8 @@ const mockTool = {
   }),
 };
 
+const ZOD_OBJECT_REGEX = /"ZodObject"/;
+
 describe("Agent", () => {
   it("renders children", () => {
     render(<Agent>Content</Agent>);
@@ -78,9 +80,7 @@ describe("AgentInstructions", () => {
   });
 
   it("renders instructions content", () => {
-    render(
-      <AgentInstructions>You are a helpful assistant.</AgentInstructions>
-    );
+    render(<AgentInstructions>You are a helpful assistant.</AgentInstructions>);
     expect(
       screen.getByText("You are a helpful assistant.")
     ).toBeInTheDocument();
@@ -133,7 +133,7 @@ describe("AgentTool", () => {
 
     // Zod schemas serialize to internal structure with _def and typeName
     await waitFor(() => {
-      expect(screen.getByText(/"ZodObject"/)).toBeInTheDocument();
+      expect(screen.getByText(ZOD_OBJECT_REGEX)).toBeInTheDocument();
     });
   });
 
@@ -199,7 +199,7 @@ describe("AgentOutput", () => {
 });
 
 describe("Agent integration", () => {
-  it("renders complete agent configuration", async () => {
+  it("renders complete agent configuration", () => {
     const schema = `z.object({
   sentiment: z.enum(['positive', 'negative']),
   score: z.number(),
