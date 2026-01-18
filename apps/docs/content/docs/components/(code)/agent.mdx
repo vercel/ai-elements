@@ -4,7 +4,7 @@ description: A composable component for displaying AI agent configuration with m
 path: elements/components/agent
 ---
 
-The `Agent` component displays a collapsible interface for showing AI agent configuration details. It's designed to represent a configured `ToolLoopAgent` from the AI SDK, showing the agent's model, system instructions, available tools, and output schema.
+The `Agent` component displays an interface for showing AI agent configuration details. It's designed to represent a configured agent from the AI SDK, showing the agent's model, system instructions, available tools (with expandable input schemas), and output schema.
 
 <Preview path="agent" />
 
@@ -14,11 +14,13 @@ The `Agent` component displays a collapsible interface for showing AI agent conf
 
 ## Usage with AI SDK
 
-Display an agent's configuration alongside your chat interface.
+Display an agent's configuration alongside your chat interface. Tools are displayed in an accordion where clicking the description expands to show the input schema.
 
 ```tsx title="app/page.tsx"
 'use client';
 
+import { tool } from 'ai';
+import { z } from 'zod';
 import {
   Agent,
   AgentContent,
@@ -29,6 +31,20 @@ import {
   AgentTools,
 } from '@/components/ai-elements/agent';
 
+const webSearch = tool({
+  description: 'Search the web for information',
+  inputSchema: z.object({
+    query: z.string().describe('The search query'),
+  }),
+});
+
+const readUrl = tool({
+  description: 'Read and parse content from a URL',
+  inputSchema: z.object({
+    url: z.string().url().describe('The URL to read'),
+  }),
+});
+
 const outputSchema = `z.object({
   sentiment: z.enum(['positive', 'negative', 'neutral']),
   score: z.number(),
@@ -37,7 +53,7 @@ const outputSchema = `z.object({
 
 export default function Page() {
   return (
-    <Agent defaultOpen>
+    <Agent>
       <AgentHeader name="Sentiment Analyzer" model="anthropic/claude-sonnet-4-5" />
       <AgentContent>
         <AgentInstructions>
@@ -45,8 +61,8 @@ export default function Page() {
           analysis with sentiment classification, confidence score, and summary.
         </AgentInstructions>
         <AgentTools>
-          <AgentTool name="web_search" description="Search the web" />
-          <AgentTool name="read_url" description="Read and parse a URL" />
+          <AgentTool tool={webSearch} value="web_search" />
+          <AgentTool tool={readUrl} value="read_url" />
         </AgentTools>
         <AgentOutput schema={outputSchema} />
       </AgentContent>
@@ -57,13 +73,12 @@ export default function Page() {
 
 ## Features
 
-- Collapsible interface for showing/hiding agent details
 - Model badge in header
 - Instructions rendered as markdown
-- Tool badges with optional tooltip descriptions
+- Tools displayed as accordion items with expandable input schemas
 - Output schema display with syntax highlighting
 - Composable structure for flexible layouts
-- Accessible keyboard navigation
+- Works with AI SDK `Tool` type
 
 ## Props
 
@@ -71,21 +86,8 @@ export default function Page() {
 
 <TypeTable
   type={{
-    open: {
-      description: 'Controlled open state.',
-      type: 'boolean',
-    },
-    defaultOpen: {
-      description: 'Default open state for uncontrolled usage.',
-      type: 'boolean',
-      default: 'false',
-    },
-    onOpenChange: {
-      description: 'Callback when open state changes.',
-      type: '(open: boolean) => void',
-    },
     '...props': {
-      description: 'Any other props are spread to the root div.',
+      description: 'Any props are spread to the root div.',
       type: 'React.ComponentProps<"div">',
     },
   }}
@@ -105,8 +107,8 @@ export default function Page() {
       type: 'string',
     },
     '...props': {
-      description: 'Any other props are spread to the CollapsibleTrigger.',
-      type: 'React.ComponentProps<typeof CollapsibleTrigger>',
+      description: 'Any other props are spread to the container div.',
+      type: 'React.ComponentProps<"div">',
     },
   }}
 />
@@ -116,8 +118,8 @@ export default function Page() {
 <TypeTable
   type={{
     '...props': {
-      description: 'Any other props are spread to the CollapsibleContent.',
-      type: 'React.ComponentProps<typeof CollapsibleContent>',
+      description: 'Any other props are spread to the container div.',
+      type: 'React.ComponentProps<"div">',
     },
   }}
 />
@@ -143,8 +145,8 @@ export default function Page() {
 <TypeTable
   type={{
     '...props': {
-      description: 'Any other props are spread to the container div.',
-      type: 'React.ComponentProps<"div">',
+      description: 'Any other props are spread to the Accordion component.',
+      type: 'React.ComponentProps<typeof Accordion>',
     },
   }}
 />
@@ -153,18 +155,19 @@ export default function Page() {
 
 <TypeTable
   type={{
-    name: {
-      description: 'The name of the tool.',
+    tool: {
+      description: 'The tool object from the AI SDK containing description and inputSchema.',
+      type: 'Tool',
+      required: true,
+    },
+    value: {
+      description: 'Unique identifier for the accordion item.',
       type: 'string',
       required: true,
     },
-    description: {
-      description: 'Optional description shown in a tooltip.',
-      type: 'string',
-    },
     '...props': {
-      description: 'Any other props are spread to the Badge component.',
-      type: 'React.ComponentProps<typeof Badge>',
+      description: 'Any other props are spread to the AccordionItem component.',
+      type: 'React.ComponentProps<typeof AccordionItem>',
     },
   }}
 />

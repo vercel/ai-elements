@@ -1,129 +1,61 @@
 "use client";
 
-import { useControllableState } from "@radix-ui/react-use-controllable-state";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@repo/shadcn-ui/components/ui/accordion";
 import { Badge } from "@repo/shadcn-ui/components/ui/badge";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@repo/shadcn-ui/components/ui/collapsible";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@repo/shadcn-ui/components/ui/tooltip";
 import { cn } from "@repo/shadcn-ui/lib/utils";
-import { BotIcon, ChevronDownIcon } from "lucide-react";
+import type { Tool } from "ai";
+import { BotIcon } from "lucide-react";
 import type { ComponentProps } from "react";
-import { createContext, memo, useContext, useMemo } from "react";
+import { memo } from "react";
 import { Streamdown } from "streamdown";
 import { CodeBlock } from "./code-block";
 
-interface AgentContextValue {
-  isOpen: boolean;
-  setIsOpen: (open: boolean) => void;
-}
+export type AgentProps = ComponentProps<"div">;
 
-const AgentContext = createContext<AgentContextValue | null>(null);
+export const Agent = memo(({ className, ...props }: AgentProps) => (
+  <div
+    className={cn("not-prose w-full rounded-md border", className)}
+    {...props}
+  />
+));
 
-const useAgent = () => {
-  const context = useContext(AgentContext);
-  if (!context) {
-    throw new Error("Agent components must be used within Agent");
-  }
-  return context;
-};
-
-export type AgentProps = ComponentProps<"div"> & {
-  open?: boolean;
-  defaultOpen?: boolean;
-  onOpenChange?: (open: boolean) => void;
-};
-
-export const Agent = memo(
-  ({
-    className,
-    open,
-    defaultOpen = false,
-    onOpenChange,
-    children,
-    ...props
-  }: AgentProps) => {
-    const [isOpen, setIsOpen] = useControllableState({
-      prop: open,
-      defaultProp: defaultOpen,
-      onChange: onOpenChange,
-    });
-
-    const agentContext = useMemo(
-      () => ({ isOpen, setIsOpen }),
-      [isOpen, setIsOpen]
-    );
-
-    return (
-      <AgentContext.Provider value={agentContext}>
-        <Collapsible
-          className={cn("not-prose w-full rounded-md border", className)}
-          onOpenChange={setIsOpen}
-          open={isOpen}
-          {...props}
-        >
-          {children}
-        </Collapsible>
-      </AgentContext.Provider>
-    );
-  }
-);
-
-export type AgentHeaderProps = ComponentProps<typeof CollapsibleTrigger> & {
+export type AgentHeaderProps = ComponentProps<"div"> & {
   name: string;
   model?: string;
 };
 
 export const AgentHeader = memo(
-  ({ className, name, model, ...props }: AgentHeaderProps) => {
-    const { isOpen } = useAgent();
-
-    return (
-      <CollapsibleTrigger
-        className={cn(
-          "flex w-full items-center justify-between gap-4 p-3",
-          className
-        )}
-        {...props}
-      >
-        <div className="flex items-center gap-2">
-          <BotIcon className="size-4 text-muted-foreground" />
-          <span className="font-medium text-sm">{name}</span>
-          {model && (
-            <Badge className="font-mono text-xs" variant="secondary">
-              {model}
-            </Badge>
-          )}
-        </div>
-        <ChevronDownIcon
-          className={cn(
-            "size-4 text-muted-foreground transition-transform",
-            isOpen && "rotate-180"
-          )}
-        />
-      </CollapsibleTrigger>
-    );
-  }
-);
-
-export type AgentContentProps = ComponentProps<typeof CollapsibleContent>;
-
-export const AgentContent = memo(
-  ({ className, ...props }: AgentContentProps) => (
-    <CollapsibleContent
+  ({ className, name, model, ...props }: AgentHeaderProps) => (
+    <div
       className={cn(
-        "space-y-4 p-4 pt-0",
-        "data-[state=closed]:fade-out-0 data-[state=closed]:slide-out-to-top-2 data-[state=open]:slide-in-from-top-2 text-popover-foreground outline-none data-[state=closed]:animate-out data-[state=open]:animate-in",
+        "flex w-full items-center justify-between gap-4 p-3",
         className
       )}
       {...props}
-    />
+    >
+      <div className="flex items-center gap-2">
+        <BotIcon className="size-4 text-muted-foreground" />
+        <span className="font-medium text-sm">{name}</span>
+        {model && (
+          <Badge className="font-mono text-xs" variant="secondary">
+            {model}
+          </Badge>
+        )}
+      </div>
+    </div>
+  )
+);
+
+export type AgentContentProps = ComponentProps<"div">;
+
+export const AgentContent = memo(
+  ({ className, ...props }: AgentContentProps) => (
+    <div className={cn("space-y-4 p-4 pt-0", className)} {...props} />
   )
 );
 
@@ -144,44 +76,42 @@ export const AgentInstructions = memo(
   )
 );
 
-export type AgentToolsProps = ComponentProps<"div">;
+export type AgentToolsProps = ComponentProps<typeof Accordion>;
 
-export const AgentTools = memo(
-  ({ className, children, ...props }: AgentToolsProps) => (
-    <div className={cn("space-y-2", className)} {...props}>
-      <span className="font-medium text-muted-foreground text-sm">Tools</span>
-      <div className="flex flex-wrap gap-2">{children}</div>
-    </div>
-  )
-);
+export const AgentTools = memo(({ className, ...props }: AgentToolsProps) => (
+  <div className={cn("space-y-2", className)}>
+    <span className="font-medium text-muted-foreground text-sm">Tools</span>
+    <Accordion className="rounded-md border" type="multiple" {...props} />
+  </div>
+));
 
-export type AgentToolProps = ComponentProps<typeof Badge> & {
-  name: string;
-  description?: string;
+export type AgentToolProps = ComponentProps<typeof AccordionItem> & {
+  tool: Tool;
 };
 
 export const AgentTool = memo(
-  ({ className, name, description, ...props }: AgentToolProps) => {
-    const badge = (
-      <Badge
-        className={cn("gap-1 px-2 py-0.5 font-normal text-xs", className)}
-        variant="secondary"
+  ({ className, tool, value, ...props }: AgentToolProps) => {
+    const schema =
+      "jsonSchema" in tool && tool.jsonSchema
+        ? tool.jsonSchema
+        : tool.inputSchema;
+
+    return (
+      <AccordionItem
+        className={cn("border-b last:border-b-0", className)}
+        value={value}
         {...props}
       >
-        {name}
-      </Badge>
+        <AccordionTrigger className="px-3 py-2 text-sm hover:no-underline">
+          {tool.description ?? "No description"}
+        </AccordionTrigger>
+        <AccordionContent className="px-3 pb-3">
+          <div className="rounded-md bg-muted/50">
+            <CodeBlock code={JSON.stringify(schema, null, 2)} language="json" />
+          </div>
+        </AccordionContent>
+      </AccordionItem>
     );
-
-    if (description) {
-      return (
-        <Tooltip>
-          <TooltipTrigger asChild>{badge}</TooltipTrigger>
-          <TooltipContent>{description}</TooltipContent>
-        </Tooltip>
-      );
-    }
-
-    return badge;
   }
 );
 
