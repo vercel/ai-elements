@@ -1,17 +1,17 @@
 "use client";
 
 import {
-  GitCommit,
-  GitCommitActions,
-  GitCommitAuthor,
-  GitCommitContent,
-  GitCommitCopyButton,
-  GitCommitFiles,
-  GitCommitHash,
-  GitCommitHeader,
-  GitCommitMessage,
-  GitCommitTimestamp,
-} from "@repo/elements/git-commit";
+  Commit,
+  CommitActions,
+  CommitAuthor,
+  CommitContent,
+  CommitCopyButton,
+  CommitFiles,
+  CommitHash,
+  CommitHeader,
+  CommitMessage,
+  CommitTimestamp,
+} from "@repo/elements/commit";
 
 const commits = [
   {
@@ -69,7 +69,7 @@ const commits = [
 const Example = () => (
   <div className="flex flex-col gap-4">
     {commits.map((commit) => (
-      <GitCommit
+      <Commit
         author={commit.author}
         files={commit.files}
         hash={commit.hash}
@@ -77,26 +77,26 @@ const Example = () => (
         message={commit.message}
         timestamp={commit.timestamp}
       >
-        <GitCommitHeader>
+        <CommitHeader>
           <div className="flex items-center gap-3">
-            <GitCommitAuthor />
+            <CommitAuthor />
             <div className="flex flex-col">
-              <GitCommitMessage />
+              <CommitMessage />
               <div className="flex items-center gap-2 text-muted-foreground text-xs">
-                <GitCommitHash />
+                <CommitHash />
                 <span>•</span>
-                <GitCommitTimestamp />
+                <CommitTimestamp />
               </div>
             </div>
           </div>
-          <GitCommitActions>
-            <GitCommitCopyButton onCopy={() => console.log("Copied hash!")} />
-          </GitCommitActions>
-        </GitCommitHeader>
-        <GitCommitContent>
-          <GitCommitFiles />
-        </GitCommitContent>
-      </GitCommit>
+          <CommitActions>
+            <CommitCopyButton onCopy={() => console.log("Copied hash!")} />
+          </CommitActions>
+        </CommitHeader>
+        <CommitContent>
+          <CommitFiles />
+        </CommitContent>
+      </Commit>
     ))}
   </div>
 );

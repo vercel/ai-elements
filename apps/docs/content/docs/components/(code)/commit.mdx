@@ -1,16 +1,16 @@
 ---
-title: Git Commit
-description: Display git commit information with hash, message, author, and file changes.
-path: elements/components/git-commit
+title: Commit
+description: Display commit information with hash, message, author, and file changes.
+path: elements/components/commit
 ---
 
-The `GitCommit` component displays git commit details including hash, message, author, timestamp, and changed files.
+The `Commit` component displays commit details including hash, message, author, timestamp, and changed files.
 
-<Preview path="git-commit" />
+<Preview path="commit" />
 
 ## Installation
 
-<ElementsInstaller path="git-commit" />
+<ElementsInstaller path="commit" />
 
 ## Features
 
@@ -35,7 +35,7 @@ The `GitCommit` component displays git commit details including hash, message, a
 ### Basic Usage
 
 ```tsx
-<GitCommit
+<Commit
   hash="a1b2c3d4e5f6"
   message="feat: Add new feature"
   author="John Doe"
@@ -49,23 +49,23 @@ The `GitCommit` component displays git commit details including hash, message, a
 ### Custom Composition
 
 ```tsx
-<GitCommit {...commit}>
-  <GitCommitHeader>
-    <GitCommitAuthor />
-    <GitCommitMessage />
-    <GitCommitActions>
-      <GitCommitCopyButton />
-    </GitCommitActions>
-  </GitCommitHeader>
-  <GitCommitContent>
-    <GitCommitFiles />
-  </GitCommitContent>
-</GitCommit>
+<Commit {...commit}>
+  <CommitHeader>
+    <CommitAuthor />
+    <CommitMessage />
+    <CommitActions>
+      <CommitCopyButton />
+    </CommitActions>
+  </CommitHeader>
+  <CommitContent>
+    <CommitFiles />
+  </CommitContent>
+</Commit>
 ```
 
 ## Props
 
-### `<GitCommit />`
+### `<Commit />`
 
 <TypeTable
   type={{
@@ -87,7 +87,7 @@ The `GitCommit` component displays git commit details including hash, message, a
     },
     files: {
       description: 'Array of changed files.',
-      type: 'GitCommitFile[]',
+      type: 'CommitFile[]',
     },
     className: {
       description: 'Additional CSS classes.',
@@ -96,7 +96,7 @@ The `GitCommit` component displays git commit details including hash, message, a
   }}
 />
 
-### `<GitCommitFile />`
+### `<CommitFile />`
 
 <TypeTable
   type={{
@@ -119,7 +119,7 @@ The `GitCommit` component displays git commit details including hash, message, a
   }}
 />
 
-### `<GitCommitCopyButton />`
+### `<CommitCopyButton />`
 
 <TypeTable
   type={{

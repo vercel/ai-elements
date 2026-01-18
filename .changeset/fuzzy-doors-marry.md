@@ -2,4 +2,4 @@
 "ai-elements": minor
 ---
 
-Create GitCommit component for displaying commit info.
+Create Commit component for displaying commit info.

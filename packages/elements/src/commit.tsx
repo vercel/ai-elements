@@ -17,37 +17,37 @@ import {
   useState,
 } from "react";
 
-interface GitCommitFile {
+interface CommitFile {
   path: string;
   status: "added" | "modified" | "deleted" | "renamed";
   additions?: number;
   deletions?: number;
 }
 
-interface GitCommitContextType {
+interface CommitContextType {
   hash: string;
   message: string;
   author: string;
   timestamp: Date;
-  files?: GitCommitFile[];
+  files?: CommitFile[];
 }
 
-const GitCommitContext = createContext<GitCommitContextType>({
+const CommitContext = createContext<CommitContextType>({
   hash: "",
   message: "",
   author: "",
   timestamp: new Date(),
 });
 
-export type GitCommitProps = ComponentProps<typeof Collapsible> & {
+export type CommitProps = ComponentProps<typeof Collapsible> & {
   hash: string;
   message: string;
   author: string;
   timestamp: Date;
-  files?: GitCommitFile[];
+  files?: CommitFile[];
 };
 
-export const GitCommit = ({
+export const Commit = ({
   hash,
   message,
   author,
@@ -56,8 +56,8 @@ export const GitCommit = ({
   className,
   children,
   ...props
-}: GitCommitProps) => (
-  <GitCommitContext.Provider
+}: CommitProps) => (
+  <CommitContext.Provider
     value={{ hash, message, author, timestamp, files }}
   >
     <Collapsible
@@ -66,40 +66,40 @@ export const GitCommit = ({
     >
       {children ?? (
         <>
-          <GitCommitHeader>
+          <CommitHeader>
             <div className="flex items-center gap-3">
-              <GitCommitAuthor />
+              <CommitAuthor />
               <div className="flex flex-col">
-                <GitCommitMessage />
+                <CommitMessage />
                 <div className="flex items-center gap-2 text-muted-foreground text-xs">
-                  <GitCommitHash />
+                  <CommitHash />
                   <span>•</span>
-                  <GitCommitTimestamp />
+                  <CommitTimestamp />
                 </div>
               </div>
             </div>
-            <GitCommitActions>
-              <GitCommitCopyButton />
-            </GitCommitActions>
-          </GitCommitHeader>
+            <CommitActions>
+              <CommitCopyButton />
+            </CommitActions>
+          </CommitHeader>
           {files && files.length > 0 && (
-            <GitCommitContent>
-              <GitCommitFiles />
-            </GitCommitContent>
+            <CommitContent>
+              <CommitFiles />
+            </CommitContent>
           )}
         </>
       )}
     </Collapsible>
-  </GitCommitContext.Provider>
+  </CommitContext.Provider>
 );
 
-export type GitCommitHeaderProps = ComponentProps<typeof CollapsibleTrigger>;
+export type CommitHeaderProps = ComponentProps<typeof CollapsibleTrigger>;
 
-export const GitCommitHeader = ({
+export const CommitHeader = ({
   className,
   children,
   ...props
-}: GitCommitHeaderProps) => (
+}: CommitHeaderProps) => (
   <CollapsibleTrigger asChild>
     <div
       className={cn(
@@ -113,14 +113,14 @@ export const GitCommitHeader = ({
   </CollapsibleTrigger>
 );
 
-export type GitCommitHashProps = HTMLAttributes<HTMLSpanElement>;
+export type CommitHashProps = HTMLAttributes<HTMLSpanElement>;
 
-export const GitCommitHash = ({
+export const CommitHash = ({
   className,
   children,
   ...props
-}: GitCommitHashProps) => {
-  const { hash } = useContext(GitCommitContext);
+}: CommitHashProps) => {
+  const { hash } = useContext(CommitContext);
   const shortHash = hash.substring(0, 7);
 
   return (
@@ -131,14 +131,14 @@ export const GitCommitHash = ({
   );
 };
 
-export type GitCommitMessageProps = HTMLAttributes<HTMLSpanElement>;
+export type CommitMessageProps = HTMLAttributes<HTMLSpanElement>;
 
-export const GitCommitMessage = ({
+export const CommitMessage = ({
   className,
   children,
   ...props
-}: GitCommitMessageProps) => {
-  const { message } = useContext(GitCommitContext);
+}: CommitMessageProps) => {
+  const { message } = useContext(CommitContext);
 
   return (
     <span className={cn("font-medium text-sm", className)} {...props}>
@@ -147,14 +147,14 @@ export const GitCommitMessage = ({
   );
 };
 
-export type GitCommitAuthorProps = HTMLAttributes<HTMLDivElement>;
+export type CommitAuthorProps = HTMLAttributes<HTMLDivElement>;
 
-export const GitCommitAuthor = ({
+export const CommitAuthor = ({
   className,
   children,
   ...props
-}: GitCommitAuthorProps) => {
-  const { author } = useContext(GitCommitContext);
+}: CommitAuthorProps) => {
+  const { author } = useContext(CommitContext);
   const initials = author
     .split(" ")
     .map((n) => n[0])
@@ -173,14 +173,14 @@ export const GitCommitAuthor = ({
   );
 };
 
-export type GitCommitTimestampProps = HTMLAttributes<HTMLTimeElement>;
+export type CommitTimestampProps = HTMLAttributes<HTMLTimeElement>;
 
-export const GitCommitTimestamp = ({
+export const CommitTimestamp = ({
   className,
   children,
   ...props
-}: GitCommitTimestampProps) => {
-  const { timestamp } = useContext(GitCommitContext);
+}: CommitTimestampProps) => {
+  const { timestamp } = useContext(CommitContext);
   const formatted = new Intl.RelativeTimeFormat("en", {
     numeric: "auto",
   }).format(
@@ -199,13 +199,13 @@ export const GitCommitTimestamp = ({
   );
 };
 
-export type GitCommitActionsProps = HTMLAttributes<HTMLDivElement>;
+export type CommitActionsProps = HTMLAttributes<HTMLDivElement>;
 
-export const GitCommitActions = ({
+export const CommitActions = ({
   className,
   children,
   ...props
-}: GitCommitActionsProps) => (
+}: CommitActionsProps) => (
   // biome-ignore lint/a11y/noNoninteractiveElementInteractions: stopPropagation required for nested interactions
   // biome-ignore lint/a11y/useSemanticElements: fieldset doesn't fit this UI pattern
   <div
@@ -219,22 +219,22 @@ export const GitCommitActions = ({
   </div>
 );
 
-export type GitCommitCopyButtonProps = ComponentProps<typeof Button> & {
+export type CommitCopyButtonProps = ComponentProps<typeof Button> & {
   onCopy?: () => void;
   onError?: (error: Error) => void;
   timeout?: number;
 };
 
-export const GitCommitCopyButton = ({
+export const CommitCopyButton = ({
   onCopy,
   onError,
   timeout = 2000,
   children,
   className,
   ...props
-}: GitCommitCopyButtonProps) => {
+}: CommitCopyButtonProps) => {
   const [isCopied, setIsCopied] = useState(false);
-  const { hash } = useContext(GitCommitContext);
+  const { hash } = useContext(CommitContext);
 
   const copyToClipboard = async () => {
     if (typeof window === "undefined" || !navigator?.clipboard?.writeText) {
@@ -267,31 +267,31 @@ export const GitCommitCopyButton = ({
   );
 };
 
-export type GitCommitContentProps = ComponentProps<typeof CollapsibleContent>;
+export type CommitContentProps = ComponentProps<typeof CollapsibleContent>;
 
-export const GitCommitContent = ({
+export const CommitContent = ({
   className,
   children,
   ...props
-}: GitCommitContentProps) => (
+}: CommitContentProps) => (
   <CollapsibleContent className={cn("border-t", className)} {...props}>
     <div className="p-4">{children}</div>
   </CollapsibleContent>
 );
 
-export type GitCommitFilesProps = HTMLAttributes<HTMLDivElement>;
+export type CommitFilesProps = HTMLAttributes<HTMLDivElement>;
 
-export const GitCommitFiles = ({
+export const CommitFiles = ({
   className,
   children,
   ...props
-}: GitCommitFilesProps) => {
-  const { files } = useContext(GitCommitContext);
+}: CommitFilesProps) => {
+  const { files } = useContext(CommitContext);
 
   return (
     <div className={cn("space-y-1", className)} {...props}>
       {children ??
-        files?.map((file) => <GitCommitFile key={file.path} {...file} />)}
+        files?.map((file) => <CommitFile key={file.path} {...file} />)}
     </div>
   );
 };
@@ -310,16 +310,16 @@ const fileStatusLabels = {
   renamed: "R",
 };
 
-export type GitCommitFileProps = HTMLAttributes<HTMLDivElement> & GitCommitFile;
+export type CommitFileProps = HTMLAttributes<HTMLDivElement> & CommitFile;
 
-export const GitCommitFile = ({
+export const CommitFile = ({
   path,
   status,
   additions,
   deletions,
   className,
   ...props
-}: GitCommitFileProps) => (
+}: CommitFileProps) => (
   <div
     className={cn(
       "flex items-center justify-between gap-2 rounded px-2 py-1 text-sm hover:bg-muted/50",
