@@ -25,49 +25,15 @@ The `FileTree` component displays a hierarchical file system structure with expa
 
 ### Basic Usage
 
-```tsx
-<FileTree>
-  <FileTreeFolder path="src" name="src">
-    <FileTreeFile path="src/index.ts" name="index.ts" />
-  </FileTreeFolder>
-  <FileTreeFile path="package.json" name="package.json" />
-</FileTree>
-```
+<Preview path="file-tree-basic" />
 
 ### With Selection
 
-```tsx
-const [selectedPath, setSelectedPath] = useState<string>();
-
-<FileTree
-  selectedPath={selectedPath}
-  onSelect={setSelectedPath}
->
-  <FileTreeFile path="app.tsx" name="app.tsx" />
-</FileTree>
-```
+<Preview path="file-tree-selection" />
 
 ### Default Expanded
 
-```tsx
-<FileTree defaultExpanded={new Set(["src", "src/components"])}>
-  <FileTreeFolder path="src" name="src">
-    <FileTreeFolder path="src/components" name="components">
-      <FileTreeFile path="src/components/button.tsx" name="button.tsx" />
-    </FileTreeFolder>
-  </FileTreeFolder>
-</FileTree>
-```
-
-### Custom Icons
-
-```tsx
-<FileTreeFile
-  path="config.json"
-  name="config.json"
-  icon={<SettingsIcon className="size-4" />}
-/>
-```
+<Preview path="file-tree-expanded" />
 
 ## Props
 

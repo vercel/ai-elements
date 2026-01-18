@@ -24,36 +24,11 @@ The `EnvironmentVariables` component displays environment variables with value m
 
 ### Basic Usage
 
-```tsx
-<EnvironmentVariables>
-  <EnvironmentVariablesHeader>
-    <EnvironmentVariablesTitle />
-    <EnvironmentVariablesToggle />
-  </EnvironmentVariablesHeader>
-  <EnvironmentVariablesContent>
-    <EnvironmentVariable name="API_KEY" value="sk-123456" />
-  </EnvironmentVariablesContent>
-</EnvironmentVariables>
-```
+<Preview path="environment-variables-basic" />
 
 ### With Required Badge
 
-```tsx
-<EnvironmentVariable name="DATABASE_URL" value="postgres://...">
-  <div className="flex items-center gap-2">
-    <EnvironmentVariableName />
-    <EnvironmentVariableRequired />
-  </div>
-  <EnvironmentVariableValue />
-</EnvironmentVariable>
-```
-
-### Copy as Export
-
-```tsx
-<EnvironmentVariableCopyButton copyFormat="export" />
-// Copies: export API_KEY="value"
-```
+<Preview path="environment-variables-required" />
 
 ## Props
 

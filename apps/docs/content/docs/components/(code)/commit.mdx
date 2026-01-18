@@ -34,34 +34,11 @@ The `Commit` component displays commit details including hash, message, author, 
 
 ### Basic Usage
 
-```tsx
-<Commit
-  hash="a1b2c3d4e5f6"
-  message="feat: Add new feature"
-  author="John Doe"
-  timestamp={new Date()}
-  files={[
-    { path: "src/index.ts", status: "added", additions: 50 }
-  ]}
-/>
-```
+<Preview path="commit-basic" />
 
 ### Custom Composition
 
-```tsx
-<Commit {...commit}>
-  <CommitHeader>
-    <CommitAuthor />
-    <CommitMessage />
-    <CommitActions>
-      <CommitCopyButton />
-    </CommitActions>
-  </CommitHeader>
-  <CommitContent>
-    <CommitFiles />
-  </CommitContent>
-</Commit>
-```
+<Preview path="commit-custom" />
 
 ## Props
 

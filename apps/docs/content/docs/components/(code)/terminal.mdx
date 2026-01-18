@@ -36,47 +36,15 @@ The Terminal uses `ansi-to-react` to parse ANSI escape codes:
 
 ### Basic Usage
 
-```tsx
-<Terminal output="npm install complete" />
-```
+<Preview path="terminal-basic" />
 
 ### Streaming Mode
 
-```tsx
-const [output, setOutput] = useState("");
-const [isStreaming, setIsStreaming] = useState(true);
-
-<Terminal
-  output={output}
-  isStreaming={isStreaming}
-  autoScroll={true}
-/>
-```
+<Preview path="terminal-streaming" />
 
 ### With Clear Button
 
-```tsx
-<Terminal
-  output={output}
-  onClear={() => setOutput("")}
-/>
-```
-
-### Custom Composition
-
-```tsx
-<Terminal output={output} isStreaming={isStreaming}>
-  <TerminalHeader>
-    <TerminalTitle>Build Output</TerminalTitle>
-    <TerminalActions>
-      <TerminalStatus />
-      <TerminalCopyButton />
-      <TerminalClearButton />
-    </TerminalActions>
-  </TerminalHeader>
-  <TerminalContent />
-</Terminal>
-```
+<Preview path="terminal-clear" />
 
 ## Props
 

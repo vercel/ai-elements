@@ -34,51 +34,15 @@ The `TestResults` component displays test suite results including summary statis
 
 ### Basic Usage
 
-```tsx
-<TestResults
-  summary={{
-    passed: 10,
-    failed: 2,
-    skipped: 1,
-    total: 13,
-    duration: 3500,
-  }}
->
-  <TestResultsHeader>
-    <TestResultsSummary />
-    <TestResultsDuration />
-  </TestResultsHeader>
-</TestResults>
-```
+<Preview path="test-results-basic" />
 
 ### With Test Suites
 
-```tsx
-<TestResults summary={summary}>
-  <TestResultsHeader>
-    <TestResultsSummary />
-  </TestResultsHeader>
-  <TestResultsContent>
-    <TestSuite name="Auth" status="passed">
-      <TestSuiteName />
-      <TestSuiteContent>
-        <Test name="should login" status="passed" duration={45} />
-      </TestSuiteContent>
-    </TestSuite>
-  </TestResultsContent>
-</TestResults>
-```
+<Preview path="test-results-suites" />
 
 ### With Error Details
 
-```tsx
-<Test name="should update" status="failed" duration={85}>
-  <TestError>
-    <TestErrorMessage>Expected 200, got 500</TestErrorMessage>
-    <TestErrorStack>{stackTrace}</TestErrorStack>
-  </TestError>
-</Test>
-```
+<Preview path="test-results-errors" />
 
 ## Props
 

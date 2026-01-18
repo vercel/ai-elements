@@ -23,31 +23,15 @@ The `Snippet` component provides a lightweight way to display inline code snippe
 
 ### Inline Code
 
-Use the `inline` prop for embedding code within text.
-
-```tsx
-<span>Use the <Snippet code="useState" inline /> hook.</span>
-```
+<Preview path="snippet-inline" />
 
 ### With Syntax Highlighting
 
-Provide a `language` prop for syntax highlighting.
-
-```tsx
-<Snippet code="npm install package" language="bash">
-  <SnippetCopyButton />
-</Snippet>
-```
+<Preview path="snippet-highlighted" />
 
 ### Without Language
 
-When no language is provided, code renders as plain text.
-
-```tsx
-<Snippet code="git clone repo">
-  <SnippetCopyButton />
-</Snippet>
-```
+<Preview path="snippet-plain" />
 
 ## Props
 

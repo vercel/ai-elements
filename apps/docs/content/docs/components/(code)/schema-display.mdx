@@ -35,58 +35,19 @@ The `SchemaDisplay` component visualizes REST API endpoints with HTTP methods, p
 
 ### Basic Usage
 
-```tsx
-<SchemaDisplay
-  method="GET"
-  path="/api/users"
-  description="List all users"
-/>
-```
+<Preview path="schema-display-basic" />
 
 ### With Parameters
 
-```tsx
-<SchemaDisplay
-  method="GET"
-  path="/api/users/{userId}"
-  parameters={[
-    { name: "userId", type: "string", required: true, location: "path" },
-    { name: "include", type: "string", location: "query" },
-  ]}
-/>
-```
+<Preview path="schema-display-params" />
 
 ### With Request/Response Bodies
 
-```tsx
-<SchemaDisplay
-  method="POST"
-  path="/api/posts"
-  requestBody={[
-    { name: "title", type: "string", required: true },
-    { name: "content", type: "string", required: true },
-  ]}
-  responseBody={[
-    { name: "id", type: "string", required: true },
-    { name: "createdAt", type: "string", required: true },
-  ]}
-/>
-```
+<Preview path="schema-display-body" />
 
 ### Nested Properties
 
-```tsx
-requestBody={[
-  {
-    name: "author",
-    type: "object",
-    properties: [
-      { name: "id", type: "string" },
-      { name: "name", type: "string" },
-    ],
-  },
-]}
-```
+<Preview path="schema-display-nested" />
 
 ## Props
 

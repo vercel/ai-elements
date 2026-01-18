@@ -127,76 +127,11 @@ export async function POST(req: Request) {
 
 ### Collapsed by Default
 
-Render the stack trace collapsed initially:
-
-```tsx
-<StackTrace trace={errorString} defaultOpen={false}>
-  <StackTraceHeader>
-    <StackTraceError>
-      <StackTraceErrorType />
-      <StackTraceErrorMessage />
-    </StackTraceError>
-    <StackTraceActions>
-      <StackTraceCopyButton />
-      <StackTraceExpandButton />
-    </StackTraceActions>
-  </StackTraceHeader>
-  <StackTraceContent>
-    <StackTraceFrames />
-  </StackTraceContent>
-</StackTrace>
-```
-
-### With File Path Click Handler
-
-Handle clicks on file paths to open in editor:
-
-```tsx
-<StackTrace
-  trace={errorString}
-  onFilePathClick={(path, line, column) => {
-    // Open file in VS Code
-    window.open(`vscode://file/${path}:${line}:${column}`);
-  }}
->
-  {/* ... */}
-</StackTrace>
-```
+<Preview path="stack-trace-collapsed" />
 
 ### Hide Internal Frames
 
-Filter out node_modules and internal frames:
-
-```tsx
-<StackTrace trace={errorString}>
-  <StackTraceHeader>
-    <StackTraceError>
-      <StackTraceErrorType />
-      <StackTraceErrorMessage />
-    </StackTraceError>
-    <StackTraceExpandButton />
-  </StackTraceHeader>
-  <StackTraceContent>
-    <StackTraceFrames showInternalFrames={false} />
-  </StackTraceContent>
-</StackTrace>
-```
-
-### Controlled Open State
-
-Control the open state externally:
-
-```tsx
-const [isOpen, setIsOpen] = useState(false);
-
-<StackTrace
-  trace={errorString}
-  open={isOpen}
-  onOpenChange={setIsOpen}
->
-  {/* ... */}
-</StackTrace>
-```
+<Preview path="stack-trace-no-internal" />
 
 ## Props
 
