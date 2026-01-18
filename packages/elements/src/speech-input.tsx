@@ -69,6 +69,7 @@ type SpeechInputMode = "speech-recognition" | "media-recorder" | "none";
 
 export type SpeechInputProps = ComponentProps<typeof Button> & {
   onTranscriptionChange?: (text: string) => void;
+  preferWebSpeechApi?: boolean;
   /**
    * Callback for when audio is recorded using MediaRecorder fallback.
    * This is called in browsers that don't support the Web Speech API (Firefox, Safari).
@@ -79,12 +80,12 @@ export type SpeechInputProps = ComponentProps<typeof Button> & {
   lang?: string;
 };
 
-const detectSpeechInputMode = (): SpeechInputMode => {
+const detectSpeechInputMode = (preferWebSpeechApi: boolean): SpeechInputMode => {
   if (typeof window === "undefined") {
     return "none";
   }
 
-  if ("SpeechRecognition" in window || "webkitSpeechRecognition" in window) {
+  if (preferWebSpeechApi && ("SpeechRecognition" in window || "webkitSpeechRecognition" in window)) {
     return "speech-recognition";
   }
 
@@ -99,6 +100,7 @@ export const SpeechInput = ({
   className,
   onTranscriptionChange,
   onAudioRecorded,
+  preferWebSpeechApi = true,
   lang = "en-US",
   ...props
 }: SpeechInputProps) => {
@@ -114,8 +116,8 @@ export const SpeechInput = ({
 
   // Detect mode on mount
   useEffect(() => {
-    setMode(detectSpeechInputMode());
-  }, []);
+    setMode(detectSpeechInputMode(preferWebSpeechApi));
+  }, [preferWebSpeechApi]);
 
   // Initialize Speech Recognition when mode is speech-recognition
   useEffect(() => {
