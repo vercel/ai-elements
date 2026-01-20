@@ -28,8 +28,8 @@ jobs:
       - name: Install Dependencies
         run: pnpm i
 
-      - name: Build Docs
-        run: pnpm build --filter docs
+      - name: Build Packages and Docs
+        run: pnpm build --filter ai-elements --filter docs
 
   test:
     name: Run Tests (Node.js ${{ matrix.node-version }})
@@ -53,9 +53,6 @@ jobs:
 
       - name: Install Dependencies
         run: pnpm i
-
-      - name: Build Packages
-        run: pnpm build --filter ai-elements
 
       - name: Install Playwright Browsers
         run: pnpm --filter @repo/elements exec playwright install --with-deps chromium
