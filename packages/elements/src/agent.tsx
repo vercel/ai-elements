@@ -12,7 +12,6 @@ import type { Tool } from "ai";
 import { BotIcon } from "lucide-react";
 import type { ComponentProps } from "react";
 import { memo } from "react";
-import { Streamdown } from "streamdown";
 import { CodeBlock } from "./code-block";
 
 export type AgentProps = ComponentProps<"div">;
@@ -70,7 +69,7 @@ export const AgentInstructions = memo(
         Instructions
       </span>
       <div className="rounded-md bg-muted/50 p-3 text-muted-foreground text-sm">
-        <Streamdown>{children}</Streamdown>
+        <p>{children}</p>
       </div>
     </div>
   )

@@ -7,6 +7,10 @@ import {
   CollapsibleTrigger,
 } from "@repo/shadcn-ui/components/ui/collapsible";
 import { cn } from "@repo/shadcn-ui/lib/utils";
+import { cjk } from "@streamdown/cjk";
+import { code } from "@streamdown/code";
+import { math } from "@streamdown/math";
+import { mermaid } from "@streamdown/mermaid";
 import { BrainIcon, ChevronDownIcon } from "lucide-react";
 import type { ComponentProps, ReactNode } from "react";
 import { createContext, memo, useContext, useEffect, useState } from "react";
@@ -177,7 +181,9 @@ export const ReasoningContent = memo(
       )}
       {...props}
     >
-      <Streamdown {...props}>{children}</Streamdown>
+      <Streamdown components={{ code, mermaid, math, cjk }} {...props}>
+        {children}
+      </Streamdown>
     </CollapsibleContent>
   )
 );

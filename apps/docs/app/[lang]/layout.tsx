@@ -6,6 +6,7 @@ import { Footer } from "@/components/geistdocs/footer";
 import { GeistdocsProvider } from "@/components/geistdocs/provider";
 import { basePath } from "@/geistdocs";
 import { mono, sans } from "@/lib/geistdocs/fonts";
+import "katex/dist/katex.min.css";
 
 const Layout = async ({ children, params }: LayoutProps<"/[lang]">) => {
   const { lang } = await params;
