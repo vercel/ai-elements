@@ -154,7 +154,7 @@ export async function POST(req: Request) {
     model: 'perplexity/sonar',
     system:
       'You are a helpful assistant. Keep your responses short (< 100 words) unless you are asked for more details. ALWAYS USE SEARCH.',
-    messages: convertToModelMessages(messages),
+    messages: await convertToModelMessages(messages),
   });
 
   return result.toUIMessageStreamResponse({

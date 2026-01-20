@@ -219,7 +219,7 @@ export async function POST(req: Request) {
 
   const result = streamText({
     model: webSearch ? 'perplexity/sonar' : model,
-    messages: convertToModelMessages(messages),
+    messages: await convertToModelMessages(messages),
   });
 
   return result.toUIMessageStreamResponse();

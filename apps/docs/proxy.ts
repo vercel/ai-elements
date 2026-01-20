@@ -101,9 +101,14 @@ const handleRewriteResponse = (response: NextResponse): NextResponse | null => {
 const wrapI18nMiddleware = (
   middleware: ReturnType<typeof createI18nMiddleware>
 ) => {
-  return (request: NextRequest, context: NextFetchEvent) => {
+  return async (request: NextRequest, context: NextFetchEvent) => {
     console.log("[Middleware] Request path:", request.nextUrl.pathname);
-    const response = middleware(request, context);
+    const response = await middleware(request, context);
+
+    if (!response) {
+      return null;
+    }
+
     console.log("[Middleware] Response status:", response.status);
     console.log(
       "[Middleware] Response headers:",

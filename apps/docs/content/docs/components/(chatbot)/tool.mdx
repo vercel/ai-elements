@@ -128,7 +128,7 @@ export async function POST(req: Request) {
 
   const result = streamText({
     model: 'openai/gpt-4o',
-    messages: convertToModelMessages(messages),
+    messages: await convertToModelMessages(messages),
     tools: {
       fetch_weather_data: {
         description: 'Fetch weather information for a specific location',

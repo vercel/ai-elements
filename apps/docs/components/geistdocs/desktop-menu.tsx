@@ -6,10 +6,10 @@ import {
   NavigationMenuLink,
   NavigationMenuList,
 } from "@repo/shadcn-ui/components/ui/navigation-menu";
+import { useIsMobile } from "@repo/shadcn-ui/hooks/use-mobile";
 import { cn } from "@repo/shadcn-ui/lib/utils";
 import DynamicLink from "fumadocs-core/dynamic-link";
 import { ExternalLinkIcon } from "lucide-react";
-import { useIsMobile } from "@/hooks/use-mobile";
 
 interface DesktopMenuProps {
   items: { label: string; href: string }[];

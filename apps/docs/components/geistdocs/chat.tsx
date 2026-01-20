@@ -38,6 +38,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@repo/shadcn-ui/components/ui/tooltip";
+import { useIsMobile } from "@repo/shadcn-ui/hooks/use-mobile";
 import { cn } from "@repo/shadcn-ui/lib/utils";
 import { DefaultChatTransport } from "ai";
 import { useLiveQuery } from "dexie-react-hooks";
@@ -49,7 +50,6 @@ import { toast } from "sonner";
 import { defaultRehypePlugins } from "streamdown";
 import type { MyUIMessage } from "@/app/api/chat/types";
 import { useChatContext } from "@/hooks/geistdocs/use-chat";
-import { useIsMobile } from "@/hooks/use-mobile";
 import { db } from "@/lib/geistdocs/db";
 import { CopyChat } from "./copy-chat";
 import { MessageMetadata } from "./message-metadata";

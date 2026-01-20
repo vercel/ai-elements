@@ -448,13 +448,19 @@ export const GET = async (_request: NextRequest, { params }: RequestProps) => {
   const itemResponse: RegistryItem = {
     $schema: "https://ui.shadcn.com/schema/registry-item.json",
     name: item.name,
-    type: item.type,
+    type: item.type as Exclude<
+      RegistryItem["type"],
+      "registry:base" | "registry:font"
+    >,
     title: item.title,
     description: item.description,
     files: [
       {
         path: file.path,
-        type: file.type as RegistryItem["type"],
+        type: file.type as Exclude<
+          RegistryItem["type"],
+          "registry:base" | "registry:font"
+        >,
         content: file.content,
         target: `components/ai-elements/${item.name}.tsx`,
       },
