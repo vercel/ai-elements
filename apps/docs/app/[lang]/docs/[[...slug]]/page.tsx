@@ -20,7 +20,7 @@ import { OpenInChat } from "@/components/geistdocs/open-in-chat";
 import { ScrollTop } from "@/components/geistdocs/scroll-top";
 import { getLLMText, getPageImage, source } from "@/lib/geistdocs/source";
 
-const Page = async ({ params }: PageProps<"/[lang]/[[...slug]]">) => {
+const Page = async ({ params }: PageProps<"/[lang]/docs/[[...slug]]">) => {
   const { slug, lang } = await params;
   const page = source.getPage(slug, lang);
 
@@ -72,7 +72,7 @@ export const generateStaticParams = () => source.generateParams();
 
 export const generateMetadata = async ({
   params,
-}: PageProps<"/[lang]/[[...slug]]">) => {
+}: PageProps<"/[lang]/docs/[[...slug]]">) => {
   const { slug, lang } = await params;
   const page = source.getPage(slug, lang);
 
