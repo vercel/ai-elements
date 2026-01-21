@@ -7,7 +7,9 @@ path: elements/components/node
 The `Node` component provides a composable, Card-based node for React Flow canvases. It includes support for connection handles, structured layouts, and consistent styling using shadcn/ui components.
 
 <Callout>
-  The Node component is designed to be used with the [Canvas](/elements/components/canvas) component. See the [Workflow](/elements/examples/workflow) demo for a full example.
+  The Node component is designed to be used with the
+  [Canvas](/components/canvas) component. See the [Workflow](/examples/workflow)
+  demo for a full example.
 </Callout>
 
 ## Installation
@@ -32,16 +34,18 @@ The `Node` component provides a composable, Card-based node for React Flow canva
 <TypeTable
   type={{
     handles: {
-      description: 'Configuration for connection handles. Target renders on the left, source on the right.',
-      type: '{ target: boolean; source: boolean; }',
+      description:
+        "Configuration for connection handles. Target renders on the left, source on the right.",
+      type: "{ target: boolean; source: boolean; }",
     },
     className: {
-      description: 'Additional CSS classes to apply to the node.',
-      type: 'string',
+      description: "Additional CSS classes to apply to the node.",
+      type: "string",
     },
-    '...props': {
-      description: 'Any other props are spread to the underlying Card component.',
-      type: 'ComponentProps<typeof Card>',
+    "...props": {
+      description:
+        "Any other props are spread to the underlying Card component.",
+      type: "ComponentProps<typeof Card>",
     },
   }}
 />
@@ -51,12 +55,13 @@ The `Node` component provides a composable, Card-based node for React Flow canva
 <TypeTable
   type={{
     className: {
-      description: 'Additional CSS classes to apply to the header.',
-      type: 'string',
+      description: "Additional CSS classes to apply to the header.",
+      type: "string",
     },
-    '...props': {
-      description: 'Any other props are spread to the underlying CardHeader component.',
-      type: 'ComponentProps<typeof CardHeader>',
+    "...props": {
+      description:
+        "Any other props are spread to the underlying CardHeader component.",
+      type: "ComponentProps<typeof CardHeader>",
     },
   }}
 />
@@ -65,9 +70,10 @@ The `Node` component provides a composable, Card-based node for React Flow canva
 
 <TypeTable
   type={{
-    '...props': {
-      description: 'Any other props are spread to the underlying CardTitle component.',
-      type: 'ComponentProps<typeof CardTitle>',
+    "...props": {
+      description:
+        "Any other props are spread to the underlying CardTitle component.",
+      type: "ComponentProps<typeof CardTitle>",
     },
   }}
 />
@@ -76,9 +82,10 @@ The `Node` component provides a composable, Card-based node for React Flow canva
 
 <TypeTable
   type={{
-    '...props': {
-      description: 'Any other props are spread to the underlying CardDescription component.',
-      type: 'ComponentProps<typeof CardDescription>',
+    "...props": {
+      description:
+        "Any other props are spread to the underlying CardDescription component.",
+      type: "ComponentProps<typeof CardDescription>",
     },
   }}
 />
@@ -87,9 +94,10 @@ The `Node` component provides a composable, Card-based node for React Flow canva
 
 <TypeTable
   type={{
-    '...props': {
-      description: 'Any other props are spread to the underlying CardAction component.',
-      type: 'ComponentProps<typeof CardAction>',
+    "...props": {
+      description:
+        "Any other props are spread to the underlying CardAction component.",
+      type: "ComponentProps<typeof CardAction>",
     },
   }}
 />
@@ -99,12 +107,13 @@ The `Node` component provides a composable, Card-based node for React Flow canva
 <TypeTable
   type={{
     className: {
-      description: 'Additional CSS classes to apply to the content.',
-      type: 'string',
+      description: "Additional CSS classes to apply to the content.",
+      type: "string",
     },
-    '...props': {
-      description: 'Any other props are spread to the underlying CardContent component.',
-      type: 'ComponentProps<typeof CardContent>',
+    "...props": {
+      description:
+        "Any other props are spread to the underlying CardContent component.",
+      type: "ComponentProps<typeof CardContent>",
     },
   }}
 />
@@ -114,12 +123,13 @@ The `Node` component provides a composable, Card-based node for React Flow canva
 <TypeTable
   type={{
     className: {
-      description: 'Additional CSS classes to apply to the footer.',
-      type: 'string',
+      description: "Additional CSS classes to apply to the footer.",
+      type: "string",
     },
-    '...props': {
-      description: 'Any other props are spread to the underlying CardFooter component.',
-      type: 'ComponentProps<typeof CardFooter>',
+    "...props": {
+      description:
+        "Any other props are spread to the underlying CardFooter component.",
+      type: "ComponentProps<typeof CardFooter>",
     },
   }}
 />

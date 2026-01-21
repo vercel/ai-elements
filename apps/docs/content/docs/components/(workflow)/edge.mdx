@@ -7,7 +7,9 @@ path: elements/components/edge
 The `Edge` component provides two pre-styled edge types for React Flow canvases: `Temporary` for dashed temporary connections and `Animated` for connections with animated indicators.
 
 <Callout>
-  The Edge component is designed to be used with the [Canvas](/elements/components/canvas) component. See the [Workflow](/elements/examples/workflow) demo for a full example.
+  The Edge component is designed to be used with the
+  [Canvas](/components/canvas) component. See the [Workflow](/examples/workflow)
+  demo for a full example.
 </Callout>
 
 ## Installation
@@ -42,48 +44,48 @@ Both edge types accept standard React Flow `EdgeProps`:
 <TypeTable
   type={{
     id: {
-      description: 'Unique identifier for the edge.',
-      type: 'string',
+      description: "Unique identifier for the edge.",
+      type: "string",
     },
     source: {
-      description: 'ID of the source node.',
-      type: 'string',
+      description: "ID of the source node.",
+      type: "string",
     },
     target: {
-      description: 'ID of the target node.',
-      type: 'string',
+      description: "ID of the target node.",
+      type: "string",
     },
     sourceX: {
-      description: 'X coordinate of the source handle (Temporary only).',
-      type: 'number',
+      description: "X coordinate of the source handle (Temporary only).",
+      type: "number",
     },
     sourceY: {
-      description: 'Y coordinate of the source handle (Temporary only).',
-      type: 'number',
+      description: "Y coordinate of the source handle (Temporary only).",
+      type: "number",
     },
     targetX: {
-      description: 'X coordinate of the target handle (Temporary only).',
-      type: 'number',
+      description: "X coordinate of the target handle (Temporary only).",
+      type: "number",
     },
     targetY: {
-      description: 'Y coordinate of the target handle (Temporary only).',
-      type: 'number',
+      description: "Y coordinate of the target handle (Temporary only).",
+      type: "number",
     },
     sourcePosition: {
-      description: 'Position of the source handle (Left, Right, Top, Bottom).',
-      type: 'Position',
+      description: "Position of the source handle (Left, Right, Top, Bottom).",
+      type: "Position",
     },
     targetPosition: {
-      description: 'Position of the target handle (Left, Right, Top, Bottom).',
-      type: 'Position',
+      description: "Position of the target handle (Left, Right, Top, Bottom).",
+      type: "Position",
     },
     markerEnd: {
-      description: 'SVG marker ID for the edge end (Animated only).',
-      type: 'string',
+      description: "SVG marker ID for the edge end (Animated only).",
+      type: "string",
     },
     style: {
-      description: 'Custom styles for the edge (Animated only).',
-      type: 'React.CSSProperties',
+      description: "Custom styles for the edge (Animated only).",
+      type: "React.CSSProperties",
     },
   }}
 />
