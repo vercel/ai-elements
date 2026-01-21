@@ -1,3 +1,9 @@
+import Agent from "@repo/examples/agent";
+import ChainOfThought from "@repo/examples/chain-of-thought";
+import Persona from "@repo/examples/persona-obsidian";
+import Plan from "@repo/examples/plan";
+import PromptInput from "@repo/examples/prompt-input-cursor";
+import Queue from "@repo/examples/queue";
 import { Button } from "@repo/shadcn-ui/components/ui/button";
 import DynamicLink from "fumadocs-core/dynamic-link";
 import type { Metadata } from "next";
@@ -9,9 +15,9 @@ import { OneTwoSection } from "./components/one-two-section";
 import { Templates } from "./components/templates";
 import { TextGridSection } from "./components/text-grid-section";
 
-const title = "Geistdocs";
+const title = "AI Elements";
 const description =
-  "A Vercel documentation template built with Next.js and Fumadocs. Designed for spinning up documentation sites quickly and consistently.";
+  "A component library and custom registry built on top of shadcn/ui to help you build AI-native applications faster.";
 
 export const metadata: Metadata = {
   title,
@@ -60,19 +66,45 @@ const textGridSection = [
 const HomePage = () => (
   <div className="container mx-auto max-w-5xl">
     <Hero
-      badge="Geistdocs is now in beta"
+      badge="AI Elements v2 is now live!"
       description={description}
       title={title}
     >
       <div className="mx-auto inline-flex w-fit items-center gap-3">
         <Button asChild className="px-4" size="lg">
-          <DynamicLink href="/[lang]/docs/getting-started">
-            Get Started
+          <DynamicLink href="/[lang]/components">
+            Explore Components
           </DynamicLink>
         </Button>
-        <Installer command="npx @vercel/geistdocs init" />
+        <Installer command="npx ai-elements" />
       </div>
     </Hero>
+
+    <div className="grid grid-cols-2 items-start gap-4">
+      <div className="grid gap-4">
+        <div className="rounded-lg border bg-background p-4">
+          <Queue />
+        </div>
+        <div className="rounded-lg border bg-background p-4">
+          <PromptInput />
+        </div>
+        <div className="rounded-lg border bg-background p-4">
+          <Persona />
+        </div>
+        <div className="rounded-lg border bg-background p-4">
+          <Plan />
+        </div>
+      </div>
+      <div className="grid gap-4">
+        <div className="rounded-lg border bg-background p-4">
+          <ChainOfThought />
+        </div>
+        <div className="rounded-lg border bg-background p-4">
+          <Agent />
+        </div>
+      </div>
+    </div>
+
     <div className="grid divide-y border-y sm:border-x">
       <TextGridSection data={textGridSection} />
       <CenteredSection
