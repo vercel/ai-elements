@@ -34,18 +34,18 @@ const config = {
   redirects() {
     return [
       {
-        source: "/elements/overview",
-        destination: "/elements",
-        permanent: true,
-      },
-      {
         source: "/overview",
         destination: "/",
         permanent: true,
       },
       {
-        source: "/elements/components/chatbot",
-        destination: "/elements/examples/chatbot",
+        source: "/components",
+        destination: "/components/chain-of-thought",
+        permanent: true,
+      },
+      {
+        source: "/components/chatbot",
+        destination: "/examples/chatbot",
         permanent: true,
       },
     ];
