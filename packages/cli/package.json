@@ -9,5 +9,13 @@
     "index.js",
     "README.md",
     "LICENSE"
-  ]
+  ],
+  "homepage": "https://ai-sdk.dev/elements",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vercel/ai-elements.git",
+    "directory": "packages/cli"
+  },
+  "author": "Hayden Bleasel <hayden.bleasel@vercel.com>",
+  "license": "Apache-2.0"
 }
