@@ -3,23 +3,3 @@
 
 @source "../**/*.{ts,tsx,mdx}";
 @source "../node_modules/@repo/*/**/*.{ts,tsx}";
-
-/* Patches for AI SDK custom nav */
-#nd-sidebar > div:first-child {
-  @apply hidden;
-}
-#nd-toc {
-  --fd-nav-height: 130px;
-}
-#nd-sidebar {
-  @apply mt-[146px]!;
-}
-#nd-docs-layout {
-  @apply xl:w-[1308px] xl:mx-auto!;
-}
-#nd-page > article {
-  @apply pt-[76px]!;
-}
-#nd-tocnav {
-  @apply top-[53px]!;
-}
