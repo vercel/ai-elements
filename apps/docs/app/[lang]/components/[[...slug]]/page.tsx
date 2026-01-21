@@ -18,11 +18,17 @@ import { Feedback } from "@/components/geistdocs/feedback";
 import { getMDXComponents } from "@/components/geistdocs/mdx-components";
 import { OpenInChat } from "@/components/geistdocs/open-in-chat";
 import { ScrollTop } from "@/components/geistdocs/scroll-top";
-import { docsSource, getLLMText, getPageImage } from "@/lib/geistdocs/source";
+import {
+  componentsSource,
+  getLLMText,
+  getPageImage,
+} from "@/lib/geistdocs/source";
 
-const Page = async ({ params }: PageProps<"/[lang]/docs/[[...slug]]">) => {
+const Page = async ({
+  params,
+}: PageProps<"/[lang]/components/[[...slug]]">) => {
   const { slug, lang } = await params;
-  const page = docsSource.getPage(slug, lang);
+  const page = componentsSource.getPage(slug, lang);
 
   if (!page) {
     notFound();
@@ -55,7 +61,7 @@ const Page = async ({ params }: PageProps<"/[lang]/docs/[[...slug]]">) => {
       <DocsBody>
         <MDX
           components={getMDXComponents({
-            a: createRelativeLink(docsSource, page),
+            a: createRelativeLink(componentsSource, page),
 
             // Add your custom components here
             Preview,
@@ -68,13 +74,13 @@ const Page = async ({ params }: PageProps<"/[lang]/docs/[[...slug]]">) => {
   );
 };
 
-export const generateStaticParams = () => docsSource.generateParams();
+export const generateStaticParams = () => componentsSource.generateParams();
 
 export const generateMetadata = async ({
   params,
-}: PageProps<"/[lang]/docs/[[...slug]]">) => {
+}: PageProps<"/[lang]/components/[[...slug]]">) => {
   const { slug, lang } = await params;
-  const page = docsSource.getPage(slug, lang);
+  const page = componentsSource.getPage(slug, lang);
 
   if (!page) {
     notFound();
