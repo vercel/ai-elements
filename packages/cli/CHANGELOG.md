@@ -1,5 +1,36 @@
 # ai-elements
 
+## 1.8.0
+
+### Minor Changes
+
+- 2dd23cf: Attachments
+- cc59f4d: Create Snippet component for lightweight inline code display.
+- fa00d46: Create PackageInfo component for dependency version changes.
+- 97c6e47: Create Commit component for displaying commit info.
+- d444778: Create StackTrace component
+- 1ac4397: Create Agent UI
+- e51d04a: Upgrade CodeBlock
+- ea591fc: Create Terminal component with ANSI color support.
+- 84f15f6: Create FileTree component for hierarchical file display.
+- f7b04e6: Create SchemaDisplay component for API endpoint visualization.
+- 9876e51: Create TestResults component for test suite visualization.
+- 04242be: Added Sandbox component
+
+### Patch Changes
+
+- 3dfde7c: fix(elements): adjust model selector outline
+- f1a7c74: Environment Variables component
+- 8791981: Enhance PromptInput with SourceDocument functionality
+- d1ab925: fix: aliases.components isn't respected in components.json
+- d00f490: allow passing onKeyDown prop to PromptInputTextarea
+- 8a4a6fe: Add VoiceSelectorPreview
+- 6231366: Added missing `group` class to Tool's Collapsible wrapper to enable chevron rotation animation on open/close
+- 3c7fee4: Fix button transparency in dark mode for scrollToBottom
+- 0679825: Make the Tool component work with DynamicToolUIPart
+- 1bc771d: fix: able to add more than one file when maxFiles is 1 and multiple is false in PromptInput
+- 045453d: Added `onStop` prop to the `PromptInputSubmit` component.
+
 ## 1.6.3
 
 ### Patch Changes
