@@ -26,6 +26,19 @@ export const examplesSource = loader({
   plugins: [lucideIconsPlugin()],
 });
 
+export const source = loader({
+  i18n,
+  baseUrl: "/",
+  source: {
+    files: [
+      ...docs.toFumadocsSource().files,
+      ...components.toFumadocsSource().files,
+      ...examples.toFumadocsSource().files,
+    ],
+  },
+  plugins: [lucideIconsPlugin()],
+});
+
 export const getPageImage = (
   page: InferPageType<
     typeof docsSource | typeof componentsSource | typeof examplesSource

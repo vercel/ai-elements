@@ -40,8 +40,13 @@ const config = {
         permanent: true,
       },
       {
+        source: "/examples",
+        destination: "/examples/chatbot",
+        permanent: true,
+      },
+      {
         source: "/components",
-        destination: "/components/chain-of-thought",
+        destination: "/components/attachments",
         permanent: true,
       },
       {
