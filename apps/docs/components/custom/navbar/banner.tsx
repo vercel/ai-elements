@@ -39,7 +39,7 @@ export const Banner = () => (
               />
             </svg>
           </div>
-          <p>AI SDK 6 is in Beta.</p>
+          <p>AI SDK 6 is now available.</p>
         </div>
         <div className="ml-6 md:ml-0">
           <a
@@ -48,7 +48,7 @@ export const Banner = () => (
               "text-[oklch(26.67%_0.1099_254.34)]",
               "dark:text-white"
             )}
-            href="/docs/introduction/announcing-ai-sdk-6-beta"
+            href="https://vercel.com/blog/ai-sdk-6"
             rel="noopener"
             style={
               {
@@ -59,7 +59,7 @@ export const Banner = () => (
             }
             target="_blank"
           >
-            Learn more
+            Read announcement
           </a>
         </div>
       </div>
