@@ -14,42 +14,42 @@ The `Conversation` component wraps messages and automatically scrolls to the bot
 
 ## Usage with AI SDK
 
-Build a simple conversational UI with `Conversation` and [`PromptInput`](/elements/components/prompt-input):
+Build a simple conversational UI with `Conversation` and [`PromptInput`](/components/prompt-input):
 
 Add the following component to your frontend:
 
 ```tsx title="app/page.tsx"
-'use client';
+"use client";
 
 import {
   Conversation,
   ConversationContent,
   ConversationEmptyState,
   ConversationScrollButton,
-} from '@/components/ai-elements/conversation';
-import { 
-  Message, 
+} from "@/components/ai-elements/conversation";
+import {
+  Message,
   MessageContent,
   MessageResponse,
-} from '@/components/ai-elements/message';
+} from "@/components/ai-elements/message";
 import {
   Input,
   PromptInputTextarea,
   PromptInputSubmit,
-} from '@/components/ai-elements/prompt-input';
-import { MessageSquare } from 'lucide-react';
-import { useState } from 'react';
-import { useChat } from '@ai-sdk/react';
+} from "@/components/ai-elements/prompt-input";
+import { MessageSquare } from "lucide-react";
+import { useState } from "react";
+import { useChat } from "@ai-sdk/react";
 
 const ConversationDemo = () => {
-  const [input, setInput] = useState('');
+  const [input, setInput] = useState("");
   const { messages, sendMessage, status } = useChat();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (input.trim()) {
       sendMessage({ text: input });
-      setInput('');
+      setInput("");
     }
   };
 
@@ -70,7 +70,7 @@ const ConversationDemo = () => {
                   <MessageContent>
                     {message.parts.map((part, i) => {
                       switch (part.type) {
-                        case 'text': // we don't use any reasoning or tool calls in this example
+                        case "text": // we don't use any reasoning or tool calls in this example
                           return (
                             <MessageResponse key={`${message.id}-${i}`}>
                               {part.text}
@@ -99,7 +99,7 @@ const ConversationDemo = () => {
             className="pr-12"
           />
           <PromptInputSubmit
-            status={status === 'streaming' ? 'streaming' : 'ready'}
+            status={status === "streaming" ? "streaming" : "ready"}
             disabled={!input.trim()}
             className="absolute bottom-1 right-1"
           />
@@ -115,7 +115,7 @@ export default ConversationDemo;
 Add the following route to your backend:
 
 ```tsx title="api/chat/route.ts"
-import { streamText, UIMessage, convertToModelMessages } from 'ai';
+import { streamText, UIMessage, convertToModelMessages } from "ai";
 
 // Allow streaming responses up to 30 seconds
 export const maxDuration = 30;
@@ -124,7 +124,7 @@ export async function POST(req: Request) {
   const { messages }: { messages: UIMessage[] } = await req.json();
 
   const result = streamText({
-    model: 'openai/gpt-4o',
+    model: "openai/gpt-4o",
     messages: await convertToModelMessages(messages),
   });
 
@@ -150,19 +150,21 @@ export async function POST(req: Request) {
 <TypeTable
   type={{
     contextRef: {
-      description: 'Optional ref to access the StickToBottom context object.',
-      type: 'React.Ref<StickToBottomContext>',
+      description: "Optional ref to access the StickToBottom context object.",
+      type: "React.Ref<StickToBottomContext>",
     },
     instance: {
-      description: 'Optional instance for controlling the StickToBottom component.',
-      type: 'StickToBottomInstance',
+      description:
+        "Optional instance for controlling the StickToBottom component.",
+      type: "StickToBottomInstance",
     },
     children: {
-      description: 'Render prop or ReactNode for custom rendering with context.',
-      type: '((context: StickToBottomContext) => ReactNode) | ReactNode',
+      description:
+        "Render prop or ReactNode for custom rendering with context.",
+      type: "((context: StickToBottomContext) => ReactNode) | ReactNode",
     },
-    '...props': {
-      description: 'Any other props are spread to the root div.',
+    "...props": {
+      description: "Any other props are spread to the root div.",
       type: 'Omit<React.HTMLAttributes<HTMLDivElement>, "children">',
     },
   }}
@@ -173,11 +175,12 @@ export async function POST(req: Request) {
 <TypeTable
   type={{
     children: {
-      description: 'Render prop or ReactNode for custom rendering with context.',
-      type: '((context: StickToBottomContext) => ReactNode) | ReactNode',
+      description:
+        "Render prop or ReactNode for custom rendering with context.",
+      type: "((context: StickToBottomContext) => ReactNode) | ReactNode",
     },
-    '...props': {
-      description: 'Any other props are spread to the root div.',
+    "...props": {
+      description: "Any other props are spread to the root div.",
       type: 'Omit<React.HTMLAttributes<HTMLDivElement>, "children">',
     },
   }}
@@ -188,25 +191,25 @@ export async function POST(req: Request) {
 <TypeTable
   type={{
     title: {
-      description: 'The title text to display.',
-      type: 'string',
+      description: "The title text to display.",
+      type: "string",
       default: '"No messages yet"',
     },
     description: {
-      description: 'The description text to display.',
-      type: 'string',
+      description: "The description text to display.",
+      type: "string",
       default: '"Start a conversation to see messages here"',
     },
     icon: {
-      description: 'Optional icon to display above the text.',
-      type: 'React.ReactNode',
+      description: "Optional icon to display above the text.",
+      type: "React.ReactNode",
     },
     children: {
-      description: 'Optional additional content to render below the text.',
-      type: 'React.ReactNode',
+      description: "Optional additional content to render below the text.",
+      type: "React.ReactNode",
     },
-    '...props': {
-      description: 'Any other props are spread to the root div.',
+    "...props": {
+      description: "Any other props are spread to the root div.",
       type: 'ComponentProps<"div">',
     },
   }}
@@ -216,9 +219,10 @@ export async function POST(req: Request) {
 
 <TypeTable
   type={{
-    '...props': {
-      description: 'Any other props are spread to the underlying shadcn/ui Button component.',
-      type: 'ComponentProps<typeof Button>',
+    "...props": {
+      description:
+        "Any other props are spread to the underlying shadcn/ui Button component.",
+      type: "ComponentProps<typeof Button>",
     },
   }}
 />

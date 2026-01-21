@@ -7,7 +7,9 @@ path: elements/components/canvas
 The `Canvas` component provides a React Flow-based canvas for building interactive node-based interfaces. It comes pre-configured with sensible defaults for AI applications, including panning, zooming, and selection behaviors.
 
 <Callout>
-  The Canvas component is designed to be used with the [Node](/elements/components/node) and [Edge](/elements/components/edge) components. See the [Workflow](/elements/examples/workflow) demo for a full example.
+  The Canvas component is designed to be used with the [Node](/components/node)
+  and [Edge](/components/edge) components. See the
+  [Workflow](/examples/workflow) demo for a full example.
 </Callout>
 
 ## Installation
@@ -33,12 +35,13 @@ The `Canvas` component provides a React Flow-based canvas for building interacti
 <TypeTable
   type={{
     children: {
-      description: 'Child components like Background, Controls, or MiniMap.',
-      type: 'ReactNode',
+      description: "Child components like Background, Controls, or MiniMap.",
+      type: "ReactNode",
     },
-    '...props': {
-      description: 'Any other React Flow props like nodes, edges, nodeTypes, edgeTypes, onNodesChange, etc.',
-      type: 'ReactFlowProps',
+    "...props": {
+      description:
+        "Any other React Flow props like nodes, edges, nodeTypes, edgeTypes, onNodesChange, etc.",
+      type: "ReactFlowProps",
     },
   }}
 />

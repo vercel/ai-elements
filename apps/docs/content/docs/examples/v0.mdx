@@ -40,29 +40,29 @@ In your `app/page.tsx`, replace the code with the file below.
 Here, we use `Conversation` to wrap the conversation code, and the `WebPreview` component to render the URL returned from the v0 API.
 
 ```tsx title="app/page.tsx"
-'use client';
+"use client";
 
-import { useState } from 'react';
+import { useState } from "react";
 
 import {
   PromptInput,
   type PromptInputMessage,
   PromptInputSubmit,
   PromptInputTextarea,
-} from '@/components/ai-elements/prompt-input';
-import { Message, MessageContent } from '@/components/ai-elements/message';
+} from "@/components/ai-elements/prompt-input";
+import { Message, MessageContent } from "@/components/ai-elements/message";
 import {
   Conversation,
   ConversationContent,
-} from '@/components/ai-elements/conversation';
+} from "@/components/ai-elements/conversation";
 import {
   WebPreview,
   WebPreviewNavigation,
   WebPreviewUrl,
   WebPreviewBody,
-} from '@/components/ai-elements/web-preview';
-import { Loader } from '@/components/ai-elements/loader';
-import { Suggestions, Suggestion } from '@/components/ai-elements/suggestion';
+} from "@/components/ai-elements/web-preview";
+import { Loader } from "@/components/ai-elements/loader";
+import { Suggestions, Suggestion } from "@/components/ai-elements/suggestion";
 
 interface Chat {
   id: string;
@@ -70,12 +70,12 @@ interface Chat {
 }
 
 export default function Home() {
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState("");
   const [currentChat, setCurrentChat] = useState<Chat | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [chatHistory, setChatHistory] = useState<
     Array<{
-      type: 'user' | 'assistant';
+      type: "user" | "assistant";
       content: string;
     }>
   >([]);
@@ -83,20 +83,20 @@ export default function Home() {
   const handleSendMessage = async (promptMessage: PromptInputMessage) => {
     const hasText = Boolean(promptMessage.text);
     const hasAttachments = Boolean(promptMessage.files?.length);
-    
+
     if (!(hasText || hasAttachments) || isLoading) return;
 
-    const userMessage = promptMessage.text?.trim() || 'Sent with attachments';
-    setMessage('');
+    const userMessage = promptMessage.text?.trim() || "Sent with attachments";
+    setMessage("");
     setIsLoading(true);
 
-    setChatHistory((prev) => [...prev, { type: 'user', content: userMessage }]);
+    setChatHistory((prev) => [...prev, { type: "user", content: userMessage }]);
 
     try {
-      const response = await fetch('/api/chat', {
-        method: 'POST',
+      const response = await fetch("/api/chat", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           message: userMessage,
@@ -105,7 +105,7 @@ export default function Home() {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to create chat');
+        throw new Error("Failed to create chat");
       }
 
       const chat: Chat = await response.json();
@@ -114,18 +114,18 @@ export default function Home() {
       setChatHistory((prev) => [
         ...prev,
         {
-          type: 'assistant',
-          content: 'Generated new app preview. Check the preview panel!',
+          type: "assistant",
+          content: "Generated new app preview. Check the preview panel!",
         },
       ]);
     } catch (error) {
-      console.error('Error:', error);
+      console.error("Error:", error);
       setChatHistory((prev) => [
         ...prev,
         {
-          type: 'assistant',
+          type: "assistant",
           content:
-            'Sorry, there was an error creating your app. Please try again.',
+            "Sorry, there was an error creating your app. Please try again.",
         },
       ]);
     } finally {
@@ -178,17 +178,17 @@ export default function Home() {
             <Suggestions>
               <Suggestion
                 onClick={() =>
-                  setMessage('Create a responsive navbar with Tailwind CSS')
+                  setMessage("Create a responsive navbar with Tailwind CSS")
                 }
                 suggestion="Create a responsive navbar with Tailwind CSS"
               />
               <Suggestion
-                onClick={() => setMessage('Build a todo app with React')}
+                onClick={() => setMessage("Build a todo app with React")}
                 suggestion="Build a todo app with React"
               />
               <Suggestion
                 onClick={() =>
-                  setMessage('Make a landing page for a coffee shop')
+                  setMessage("Make a landing page for a coffee shop")
                 }
                 suggestion="Make a landing page for a coffee shop"
               />
@@ -207,7 +207,7 @@ export default function Home() {
               <PromptInputSubmit
                 className="absolute bottom-1 right-1"
                 disabled={!message}
-                status={isLoading ? 'streaming' : 'ready'}
+                status={isLoading ? "streaming" : "ready"}
               />
             </PromptInput>
           </div>
@@ -271,8 +271,8 @@ export const WebPreviewNavigation = ({
 Create a new route handler `app/api/chat/route.ts` and paste in the following code. We use the v0 SDK to manage chats.
 
 ```ts title="app/api/chat/route.ts"
-import { NextRequest, NextResponse } from 'next/server';
-import { v0 } from 'v0-sdk';
+import { NextRequest, NextResponse } from "next/server";
+import { v0 } from "v0-sdk";
 
 export async function POST(request: NextRequest) {
   try {
@@ -280,7 +280,7 @@ export async function POST(request: NextRequest) {
 
     if (!message) {
       return NextResponse.json(
-        { error: 'Message is required' },
+        { error: "Message is required" },
         { status: 400 },
       );
     }
@@ -305,9 +305,9 @@ export async function POST(request: NextRequest) {
       demo: chat.demo,
     });
   } catch (error) {
-    console.error('V0 API Error:', error);
+    console.error("V0 API Error:", error);
     return NextResponse.json(
-      { error: 'Failed to process request' },
+      { error: "Failed to process request" },
       { status: 500 },
     );
   }
@@ -316,4 +316,4 @@ export async function POST(request: NextRequest) {
 
 To start your server, run `pnpm dev`, navigate to `localhost:3000` and try building an app!
 
-You now have a working v0 clone you can build off of! Feel free to explore the [v0 Platform API](https://v0.dev/docs/api/platform) and components like [`Reasoning`](/elements/components/reasoning) and [`Task`](/elements/components/task) to extend your app, or view the other examples.
+You now have a working v0 clone you can build off of! Feel free to explore the [v0 Platform API](https://v0.dev/docs/api/platform) and components like [`Reasoning`](/components/reasoning) and [`Task`](/components/task) to extend your app, or view the other examples.
