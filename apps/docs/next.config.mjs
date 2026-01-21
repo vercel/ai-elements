@@ -6,8 +6,6 @@ const withMDX = createMDX();
 const config = {
   reactStrictMode: true,
 
-  basePath: "/elements",
-
   images: {
     remotePatterns: [
       {
@@ -20,12 +18,12 @@ const config = {
   rewrites() {
     return [
       {
-        source: "/elements/docs/:path*.mdx",
-        destination: "/elements/llms.mdx/:path*",
+        source: "/docs/:path*.mdx",
+        destination: "/llms.mdx/:path*",
       },
       {
-        source: "/elements/docs/:path*.md",
-        destination: "/elements/llms.mdx/:path*",
+        source: "/docs/:path*.md",
+        destination: "/llms.mdx/:path*",
       },
     ];
   },

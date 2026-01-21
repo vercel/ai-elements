@@ -36,7 +36,7 @@ const targetUrls = components
   .map((component) =>
     new URL(
       `${component}.json`,
-      "https://ai-sdk.dev/elements/api/registry/"
+      "https://elements.ai-sdk.dev/api/registry/"
     ).toString()
   )
   .join(" ");

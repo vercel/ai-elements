@@ -38,4 +38,4 @@ export const translations = {
   },
 };
 
-export const basePath: string | undefined = "/elements";
+export const basePath: string | undefined = undefined;
