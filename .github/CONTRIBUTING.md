@@ -180,10 +180,8 @@ When reporting issues:
 
 - Open an issue for questions about contributing
 - Check existing issues and discussions
-- Review the documentation at [ai-sdk.dev/elements](https://ai-sdk.dev/elements)
+- Review the documentation at [ai-sdk.dev/elements](https://elements.ai-sdk.dev)
 - Reach out to maintainers if you need guidance
-
-
 
 ## Code of Conduct
 
