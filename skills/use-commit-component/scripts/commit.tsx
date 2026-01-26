@@ -23,7 +23,7 @@ import {
   CommitMetadata,
   CommitSeparator,
   CommitTimestamp,
-} from "@repo/elements/commit";
+} from "@/components/ai-elements/commit";
 
 const hash = "a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0";
 const timestamp = new Date(Date.now() - 1000 * 60 * 60 * 2);

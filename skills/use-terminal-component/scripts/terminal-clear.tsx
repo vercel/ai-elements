@@ -1,6 +1,6 @@
 "use client";
 
-import { Terminal } from "@repo/elements/terminal";
+import { Terminal } from "@/components/ai-elements/terminal";
 import { useState } from "react";
 
 const initialOutput = `\x1b[36m$\x1b[0m npm run build

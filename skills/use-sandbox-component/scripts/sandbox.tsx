@@ -1,6 +1,6 @@
 "use client";
 
-import { CodeBlock, CodeBlockCopyButton } from "@repo/elements/code-block";
+import { CodeBlock, CodeBlockCopyButton } from "@/components/ai-elements/code-block";
 import {
   Sandbox,
   SandboxContent,
@@ -10,7 +10,7 @@ import {
   SandboxTabsBar,
   SandboxTabsList,
   SandboxTabsTrigger,
-} from "@repo/elements/sandbox";
+} from "@/components/ai-elements/sandbox";
 import {
   StackTrace,
   StackTraceActions,
@@ -22,8 +22,8 @@ import {
   StackTraceExpandButton,
   StackTraceFrames,
   StackTraceHeader,
-} from "@repo/elements/stack-trace";
-import { Button } from "@repo/shadcn-ui/components/ui/button";
+} from "@/components/ai-elements/stack-trace";
+import { Button } from "@/components/ui/button";
 import type { ToolUIPart } from "ai";
 import { useState } from "react";
 

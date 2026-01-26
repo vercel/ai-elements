@@ -8,7 +8,7 @@ import {
   AgentOutput,
   AgentTool,
   AgentTools,
-} from "@repo/elements/agent";
+} from "@/components/ai-elements/agent";
 import { z } from "zod";
 
 const webSearchTool = {

@@ -7,7 +7,7 @@ import {
   CodeBlockFilename,
   CodeBlockHeader,
   CodeBlockTitle,
-} from "@repo/elements/code-block";
+} from "@/components/ai-elements/code-block";
 import { FileIcon } from "lucide-react";
 
 const code = `function MyComponent(props) {

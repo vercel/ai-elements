@@ -5,7 +5,7 @@ import {
   AttachmentPreview,
   AttachmentRemove,
   Attachments,
-} from "@repo/elements/attachments";
+} from "@/components/ai-elements/attachments";
 import {
   ModelSelector,
   ModelSelectorContent,
@@ -18,7 +18,7 @@ import {
   ModelSelectorLogoGroup,
   ModelSelectorName,
   ModelSelectorTrigger,
-} from "@repo/elements/model-selector";
+} from "@/components/ai-elements/model-selector";
 import {
   PromptInput,
   PromptInputActionAddAttachments,
@@ -35,9 +35,9 @@ import {
   PromptInputTools,
   usePromptInputAttachments,
   usePromptInputController,
-} from "@repo/elements/prompt-input";
-import { Button } from "@repo/shadcn-ui/components/ui/button";
-import { ButtonGroup } from "@repo/shadcn-ui/components/ui/button-group";
+} from "@/components/ai-elements/prompt-input";
+import { Button } from "@/components/ui/button";
+import { ButtonGroup } from "@/components/ui/button-group";
 import { CheckIcon, GlobeIcon } from "lucide-react";
 import { useState } from "react";
 

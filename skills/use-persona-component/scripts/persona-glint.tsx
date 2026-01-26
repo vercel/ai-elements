@@ -1,13 +1,13 @@
 "use client";
 
-import { Persona, type PersonaState } from "@repo/elements/persona";
-import { Button } from "@repo/shadcn-ui/components/ui/button";
-import { ButtonGroup } from "@repo/shadcn-ui/components/ui/button-group";
+import { Persona, type PersonaState } from "@/components/ai-elements/persona";
+import { Button } from "@/components/ui/button";
+import { ButtonGroup } from "@/components/ui/button-group";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@repo/shadcn-ui/components/ui/tooltip";
+} from "@/components/ui/tooltip";
 import {
   BrainIcon,
   CircleIcon,

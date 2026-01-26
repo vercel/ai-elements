@@ -10,7 +10,7 @@ import {
   SchemaDisplayPath,
   SchemaDisplayRequest,
   SchemaDisplayResponse,
-} from "@repo/elements/schema-display";
+} from "@/components/ai-elements/schema-display";
 
 const Example = () => (
   <SchemaDisplay

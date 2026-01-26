@@ -12,7 +12,7 @@ import {
   CodeBlockLanguageSelectorTrigger,
   CodeBlockLanguageSelectorValue,
   CodeBlockTitle,
-} from "@repo/elements/code-block";
+} from "@/components/ai-elements/code-block";
 import { FileIcon } from "lucide-react";
 import { useState } from "react";
 import type { BundledLanguage } from "shiki";

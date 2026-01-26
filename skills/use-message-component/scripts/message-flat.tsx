@@ -1,6 +1,6 @@
 "use client";
 
-import { Message, MessageContent } from "@repo/elements/message";
+import { Message, MessageContent } from "@/components/ai-elements/message";
 import { nanoid } from "nanoid";
 
 const messages: {

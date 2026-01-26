@@ -12,7 +12,7 @@ import {
   AudioPlayerTimeDisplay,
   AudioPlayerTimeRange,
   AudioPlayerVolumeRange,
-} from "@repo/elements/audio-player";
+} from "@/components/ai-elements/audio-player";
 
 const Example = () => (
   <div className="flex size-full items-center justify-center">

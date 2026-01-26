@@ -4,7 +4,7 @@ import {
   FileTree,
   FileTreeFile,
   FileTreeFolder,
-} from "@repo/elements/file-tree";
+} from "@/components/ai-elements/file-tree";
 
 const Example = () => (
   <FileTree>

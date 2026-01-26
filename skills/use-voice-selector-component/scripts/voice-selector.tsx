@@ -15,8 +15,8 @@ import {
   VoiceSelectorName,
   VoiceSelectorPreview,
   VoiceSelectorTrigger,
-} from "@repo/elements/voice-selector";
-import { Button } from "@repo/shadcn-ui/components/ui/button";
+} from "@/components/ai-elements/voice-selector";
+import { Button } from "@/components/ui/button";
 import { type ComponentProps, useRef, useState } from "react";
 
 const voices: {

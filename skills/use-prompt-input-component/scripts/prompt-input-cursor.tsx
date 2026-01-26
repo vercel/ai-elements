@@ -7,7 +7,7 @@ import {
   AttachmentPreview,
   AttachmentRemove,
   Attachments,
-} from "@repo/elements/attachments";
+} from "@/components/ai-elements/attachments";
 import {
   ModelSelector,
   ModelSelectorContent,
@@ -20,7 +20,7 @@ import {
   ModelSelectorLogoGroup,
   ModelSelectorName,
   ModelSelectorTrigger,
-} from "@repo/elements/model-selector";
+} from "@/components/ai-elements/model-selector";
 import {
   PromptInput,
   PromptInputBody,
@@ -48,8 +48,8 @@ import {
   PromptInputTools,
   usePromptInputAttachments,
   usePromptInputReferencedSources,
-} from "@repo/elements/prompt-input";
-import { Button } from "@repo/shadcn-ui/components/ui/button";
+} from "@/components/ai-elements/prompt-input";
+import { Button } from "@/components/ui/button";
 import type { SourceDocumentUIPart } from "ai";
 import {
   AtSignIcon,

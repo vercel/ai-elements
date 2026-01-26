@@ -5,7 +5,7 @@ import {
   Sources,
   SourcesContent,
   SourcesTrigger,
-} from "@repo/elements/sources";
+} from "@/components/ai-elements/sources";
 import { ChevronDownIcon, ExternalLinkIcon } from "lucide-react";
 
 const sources = [

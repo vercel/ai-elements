@@ -1,6 +1,6 @@
 "use client";
 
-import { Loader } from "@repo/elements/loader";
+import { Loader } from "@/components/ai-elements/loader";
 
 const Example = () => (
   <div className="grid grid-cols-2 gap-6 p-8 md:grid-cols-4">

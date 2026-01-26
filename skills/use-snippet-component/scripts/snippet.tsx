@@ -6,7 +6,7 @@ import {
   SnippetCopyButton,
   SnippetInput,
   SnippetText,
-} from "@repo/elements/snippet";
+} from "@/components/ai-elements/snippet";
 
 const Example = () => (
   <div className="flex size-full items-center justify-center p-4">

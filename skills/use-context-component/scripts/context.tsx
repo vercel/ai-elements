@@ -11,7 +11,7 @@ import {
   ContextOutputUsage,
   ContextReasoningUsage,
   ContextTrigger,
-} from "@repo/elements/context";
+} from "@/components/ai-elements/context";
 
 const Example = () => (
   <div className="flex items-center justify-center p-8">

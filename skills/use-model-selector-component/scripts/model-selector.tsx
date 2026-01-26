@@ -12,8 +12,8 @@ import {
   ModelSelectorLogoGroup,
   ModelSelectorName,
   ModelSelectorTrigger,
-} from "@repo/elements/model-selector";
-import { Button } from "@repo/shadcn-ui/components/ui/button";
+} from "@/components/ai-elements/model-selector";
+import { Button } from "@/components/ui/button";
 import { CheckIcon } from "lucide-react";
 import { useState } from "react";
 

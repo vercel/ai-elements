@@ -3,7 +3,7 @@
 import {
   Transcription,
   TranscriptionSegment,
-} from "@repo/elements/transcription";
+} from "@/components/ai-elements/transcription";
 import type { Experimental_TranscriptionResult as TranscriptionResult } from "ai";
 import { useRef, useState } from "react";
 

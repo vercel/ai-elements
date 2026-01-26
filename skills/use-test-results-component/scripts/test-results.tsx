@@ -14,7 +14,7 @@ import {
   TestSuite,
   TestSuiteContent,
   TestSuiteName,
-} from "@repo/elements/test-results";
+} from "@/components/ai-elements/test-results";
 
 const Example = () => (
   <TestResults

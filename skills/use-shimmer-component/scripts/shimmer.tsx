@@ -1,6 +1,6 @@
 "use client";
 
-import { Shimmer } from "@repo/elements/shimmer";
+import { Shimmer } from "@/components/ai-elements/shimmer";
 
 const Example = () => (
   <div className="flex flex-col items-center justify-center gap-4 p-8">

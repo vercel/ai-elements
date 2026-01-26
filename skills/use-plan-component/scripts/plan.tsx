@@ -9,8 +9,8 @@ import {
   PlanHeader,
   PlanTitle,
   PlanTrigger,
-} from "@repo/elements/plan";
-import { Button } from "@repo/shadcn-ui/components/ui/button";
+} from "@/components/ai-elements/plan";
+import { Button } from "@/components/ui/button";
 import { FileText } from "lucide-react";
 
 const Example = () => (

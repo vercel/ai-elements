@@ -11,7 +11,7 @@ import {
   StackTraceExpandButton,
   StackTraceFrames,
   StackTraceHeader,
-} from "@repo/elements/stack-trace";
+} from "@/components/ai-elements/stack-trace";
 
 const sampleStackTrace = `TypeError: Cannot read properties of undefined (reading 'map')
     at UserList (/app/components/UserList.tsx:15:23)

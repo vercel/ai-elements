@@ -12,7 +12,7 @@ import {
   AudioPlayerTimeDisplay,
   AudioPlayerTimeRange,
   AudioPlayerVolumeRange,
-} from "@repo/elements/audio-player";
+} from "@/components/ai-elements/audio-player";
 import type { Experimental_SpeechResult as SpeechResult } from "ai";
 import { useEffect, useState } from "react";
 

@@ -5,7 +5,7 @@ import {
   TestResultsDuration,
   TestResultsHeader,
   TestResultsSummary,
-} from "@repo/elements/test-results";
+} from "@/components/ai-elements/test-results";
 
 const Example = () => (
   <TestResults

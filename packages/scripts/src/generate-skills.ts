@@ -1,5 +1,5 @@
 import { existsSync, mkdirSync, rmSync } from 'node:fs';
-import { copyFile, readFile, readdir, writeFile } from 'node:fs/promises';
+import { readFile, readdir, writeFile } from 'node:fs/promises';
 import { basename, join } from 'node:path';
 import matter from 'gray-matter';
 
@@ -156,7 +156,11 @@ const processComponent = async (mdxPath: string): Promise<void> => {
   if (examples.length > 0) {
     mkdirSync(scriptsDir, { recursive: true });
     for (const example of examples) {
-      await copyFile(join(EXAMPLES_DIR, example), join(scriptsDir, example));
+      const exampleContent = await readFile(join(EXAMPLES_DIR, example), 'utf-8');
+      const transformedContent = exampleContent
+        .replace(/@repo\/shadcn-ui\//g, '@/')
+        .replace(/@repo\/elements\//g, '@/components/ai-elements/');
+      await writeFile(join(scriptsDir, example), transformedContent);
     }
   }
 

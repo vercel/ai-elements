@@ -18,7 +18,7 @@ import {
   QueueSectionLabel,
   QueueSectionTrigger,
   type QueueTodo,
-} from "@repo/elements/queue";
+} from "@/components/ai-elements/queue";
 import { ArrowUp, Trash2 } from "lucide-react";
 import { useState } from "react";
 

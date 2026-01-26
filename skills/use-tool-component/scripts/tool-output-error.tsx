@@ -6,7 +6,7 @@ import {
   ToolHeader,
   ToolInput,
   ToolOutput,
-} from "@repo/elements/tool";
+} from "@/components/ai-elements/tool";
 import type { ToolUIPart } from "ai";
 
 const toolCall: ToolUIPart = {

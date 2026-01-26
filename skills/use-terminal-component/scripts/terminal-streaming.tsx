@@ -1,6 +1,6 @@
 "use client";
 
-import { Terminal } from "@repo/elements/terminal";
+import { Terminal } from "@/components/ai-elements/terminal";
 import { useEffect, useState } from "react";
 
 const lines = [

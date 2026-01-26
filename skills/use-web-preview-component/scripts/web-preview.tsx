@@ -7,7 +7,7 @@ import {
   WebPreviewNavigation,
   WebPreviewNavigationButton,
   WebPreviewUrl,
-} from "@repo/elements/web-preview";
+} from "@/components/ai-elements/web-preview";
 import {
   ArrowLeftIcon,
   ArrowRightIcon,

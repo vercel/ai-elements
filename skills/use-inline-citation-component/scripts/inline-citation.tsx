@@ -14,7 +14,7 @@ import {
   InlineCitationCarouselPrev,
   InlineCitationSource,
   InlineCitationText,
-} from "@repo/elements/inline-citation";
+} from "@/components/ai-elements/inline-citation";
 
 const citation = {
   text: "The technology continues to evolve rapidly, with new breakthroughs being announced regularly",

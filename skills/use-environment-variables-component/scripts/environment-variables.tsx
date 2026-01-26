@@ -12,7 +12,7 @@ import {
   EnvironmentVariablesTitle,
   EnvironmentVariablesToggle,
   EnvironmentVariableValue,
-} from "@repo/elements/environment-variables";
+} from "@/components/ai-elements/environment-variables";
 
 const variables = [
   {

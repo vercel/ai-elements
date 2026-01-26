@@ -1,6 +1,6 @@
 "use client";
 
-import { Suggestion, Suggestions } from "@repo/elements/suggestion";
+import { Suggestion, Suggestions } from "@/components/ai-elements/suggestion";
 
 const suggestions = [
   "What are the latest trends in AI?",

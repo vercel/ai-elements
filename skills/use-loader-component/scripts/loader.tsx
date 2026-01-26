@@ -1,6 +1,6 @@
 "use client";
 
-import { Loader } from "@repo/elements/loader";
+import { Loader } from "@/components/ai-elements/loader";
 
 const Example = () => (
   <div className="flex items-center justify-center p-8">

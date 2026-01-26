@@ -9,7 +9,7 @@ import {
   TerminalHeader,
   TerminalStatus,
   TerminalTitle,
-} from "@repo/elements/terminal";
+} from "@/components/ai-elements/terminal";
 import { useEffect, useState } from "react";
 
 const ansiOutput = `\x1b[32m✓\x1b[0m Compiled successfully in 1.2s

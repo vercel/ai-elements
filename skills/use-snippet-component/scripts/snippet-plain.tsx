@@ -5,7 +5,7 @@ import {
   SnippetAddon,
   SnippetCopyButton,
   SnippetInput,
-} from "@repo/elements/snippet";
+} from "@/components/ai-elements/snippet";
 
 const Example = () => (
   <Snippet code="git clone https://github.com/user/repo">

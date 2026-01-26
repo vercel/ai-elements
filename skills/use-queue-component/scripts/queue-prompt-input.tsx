@@ -5,7 +5,7 @@ import {
   AttachmentPreview,
   AttachmentRemove,
   Attachments,
-} from "@repo/elements/attachments";
+} from "@/components/ai-elements/attachments";
 import {
   ModelSelector,
   ModelSelectorContent,
@@ -18,7 +18,7 @@ import {
   ModelSelectorLogoGroup,
   ModelSelectorName,
   ModelSelectorTrigger,
-} from "@repo/elements/model-selector";
+} from "@/components/ai-elements/model-selector";
 import {
   PromptInput,
   PromptInputActionAddAttachments,
@@ -34,7 +34,7 @@ import {
   PromptInputTextarea,
   PromptInputTools,
   usePromptInputAttachments,
-} from "@repo/elements/prompt-input";
+} from "@/components/ai-elements/prompt-input";
 import {
   Queue,
   QueueItem,
@@ -46,7 +46,7 @@ import {
   QueueSection,
   QueueSectionContent,
   type QueueTodo,
-} from "@repo/elements/queue";
+} from "@/components/ai-elements/queue";
 import { CheckIcon, GlobeIcon, Trash2 } from "lucide-react";
 import { useRef, useState } from "react";
 

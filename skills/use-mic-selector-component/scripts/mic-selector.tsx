@@ -10,7 +10,7 @@ import {
   MicSelectorList,
   MicSelectorTrigger,
   MicSelectorValue,
-} from "@repo/elements/mic-selector";
+} from "@/components/ai-elements/mic-selector";
 
 const Example = () => (
   <div className="flex size-full flex-col items-center justify-center gap-4">

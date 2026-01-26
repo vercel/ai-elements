@@ -1,6 +1,6 @@
 "use client";
 
-import { SpeechInput } from "@repo/elements/speech-input";
+import { SpeechInput } from "@/components/ai-elements/speech-input";
 import { useState } from "react";
 
 const Example = () => {

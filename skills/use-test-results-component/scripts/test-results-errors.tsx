@@ -12,7 +12,7 @@ import {
   TestSuite,
   TestSuiteContent,
   TestSuiteName,
-} from "@repo/elements/test-results";
+} from "@/components/ai-elements/test-results";
 
 const stackTrace = `    at Object.<anonymous> (/app/src/api.test.ts:45:12)
     at Module._compile (node:internal/modules/cjs/loader:1369:14)
