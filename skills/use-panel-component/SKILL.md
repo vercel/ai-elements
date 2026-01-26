@@ -1,64 +1,36 @@
 ---
 name: Using the Panel component from AI Elements
-description: How to use the Panel component to display floating panels within xyflow/react diagrams.
+description: A styled panel component for React Flow-based canvases to position custom UI elements.
 ---
 
-# Panel Component
+The `Panel` component provides a positioned container for custom UI elements on React Flow canvases. It includes modern card styling with backdrop blur and flexible positioning options.
 
-A styled wrapper around the xyflow Panel primitive for displaying floating panels within xyflow/react diagrams. Provides consistent styling with rounded borders and card-like appearance.
+<Callout>
+  The Panel component is designed to be used with the [Canvas](/elements/components/canvas) component. See the [Workflow](/elements/examples/workflow) demo for a full example.
+</Callout>
 
-## Import
+## Installation
 
-```tsx
-import { Panel } from "@repo/elements/panel";
+```bash
+npx ai-elements@latest add panel
 ```
 
-## Sub-components
+## Features
 
-| Component | Purpose |
-|-----------|---------|
-| `Panel` | Styled xyflow Panel with card styling |
+- Flexible positioning (top-left, top-right, bottom-left, bottom-right, top-center, bottom-center)
+- Rounded pill design with backdrop blur
+- Theme-aware card background
+- Flexbox layout for easy content alignment
+- Subtle drop shadow for depth
+- Full TypeScript support
+- Compatible with React Flow's panel system
 
-## Basic Usage
-
-```tsx
-import { Panel } from "@repo/elements/panel";
-import { ReactFlow } from "@xyflow/react";
-
-const FlowWithPanel = () => (
-  <ReactFlow nodes={nodes} edges={edges}>
-    <Panel position="top-left">
-      <div className="p-2">
-        <h3 className="font-semibold">Controls</h3>
-        <button>Zoom In</button>
-        <button>Zoom Out</button>
-      </div>
-    </Panel>
-  </ReactFlow>
-);
-```
-
-## Props Reference
+## Props
 
 ### `<Panel />`
+
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `position` | `"top-left" \| "top-center" \| "top-right" \| "bottom-left" \| "bottom-center" \| "bottom-right"` | - | Position of the panel |
-| `className` | `string` | - | Additional CSS classes |
-| `children` | `ReactNode` | - | Panel content |
-
-All props from `@xyflow/react` Panel component are also supported.
-
-## Styling
-
-The Panel component comes with default styling:
-- `m-4` - Margin around the panel
-- `overflow-hidden` - Clips overflow content
-- `rounded-md` - Rounded corners
-- `border` - Border styling
-- `bg-card` - Card background color
-- `p-1` - Internal padding
-
-## Examples
-
-See `scripts/` folder for complete working examples.
+| `position` | `unknown` | - | Position of the panel on the canvas. |
+| `className` | `string` | - | Additional CSS classes to apply to the panel. |
+| `...props` | `ComponentProps<typeof Panel>` | - | Any other props from @xyflow/react Panel component. |

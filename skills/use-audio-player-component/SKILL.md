@@ -1,146 +1,135 @@
 ---
-name: Using the AudioPlayer component from AI Elements
-description: How to use the AudioPlayer component to play audio with controls for AI speech synthesis results.
+name: Using the Audio Player component from AI Elements
+description: A composable audio player component built on media-chrome, with shadcn styling and flexible controls.
 ---
 
-# AudioPlayer Component
+The `AudioPlayer` component provides a flexible and customizable audio playback interface built on top of media-chrome. It features a composable architecture that allows you to build audio experiences with custom controls, metadata display, and seamless integration with AI-generated audio content.
 
-The AudioPlayer component provides a full-featured audio player with play/pause, seek, volume, and time display controls. It integrates with the Vercel AI SDK's speech synthesis results and supports both base64-encoded audio data and remote URLs.
 
-## Import
 
-```tsx
-import {
-  AudioPlayer,
-  AudioPlayerElement,
-  AudioPlayerControlBar,
-  AudioPlayerPlayButton,
-  AudioPlayerSeekBackwardButton,
-  AudioPlayerSeekForwardButton,
-  AudioPlayerTimeDisplay,
-  AudioPlayerTimeRange,
-  AudioPlayerDurationDisplay,
-  AudioPlayerMuteButton,
-  AudioPlayerVolumeRange,
-} from "@repo/elements/audio-player";
+## Installation
+
+```bash
+npx ai-elements@latest add audio-player
 ```
 
-## Sub-components
+## Features
 
-| Component | Purpose |
-|-----------|---------|
-| `AudioPlayer` | Root container with media controller |
-| `AudioPlayerElement` | The audio element (supports base64 or URL) |
-| `AudioPlayerControlBar` | Container for control buttons |
-| `AudioPlayerPlayButton` | Play/pause toggle button |
-| `AudioPlayerSeekBackwardButton` | Seek backward button |
-| `AudioPlayerSeekForwardButton` | Seek forward button |
-| `AudioPlayerTimeDisplay` | Current playback time |
-| `AudioPlayerTimeRange` | Seekable progress bar |
-| `AudioPlayerDurationDisplay` | Total duration display |
-| `AudioPlayerMuteButton` | Mute/unmute toggle |
-| `AudioPlayerVolumeRange` | Volume slider |
+- Built on media-chrome for reliable audio playback
+- Fully composable architecture with granular control components
+- ButtonGroup integration for cohesive control layout
+- Individual control components (play, seek, volume, etc.)
+- Flexible layout with customizable control bars
+- CSS custom properties for deep theming
+- Shadcn/ui Button component styling
+- Responsive design that works across devices
+- Full TypeScript support with proper types for all components
 
-## Basic Usage
+## Variants
 
-### With Remote URL
+### AI SDK Speech Result
 
-```tsx
-const Example = () => (
-  <AudioPlayer>
-    <AudioPlayerElement src="https://example.com/audio.mp3" />
-    <AudioPlayerControlBar>
-      <AudioPlayerPlayButton />
-      <AudioPlayerSeekBackwardButton seekOffset={10} />
-      <AudioPlayerSeekForwardButton seekOffset={10} />
-      <AudioPlayerTimeDisplay />
-      <AudioPlayerTimeRange />
-      <AudioPlayerDurationDisplay />
-      <AudioPlayerMuteButton />
-      <AudioPlayerVolumeRange />
-    </AudioPlayerControlBar>
-  </AudioPlayer>
-);
-```
+The `AudioPlayer` component can be used to play audio from an AI SDK Speech Result.
 
-### With AI SDK Speech Result
 
-```tsx
-import type { Experimental_SpeechResult as SpeechResult } from "ai";
 
-const Example = ({ speechData }: { speechData: SpeechResult["audio"] }) => (
-  <AudioPlayer>
-    <AudioPlayerElement data={speechData} />
-    <AudioPlayerControlBar>
-      <AudioPlayerPlayButton />
-      <AudioPlayerTimeDisplay />
-      <AudioPlayerTimeRange />
-      <AudioPlayerDurationDisplay />
-    </AudioPlayerControlBar>
-  </AudioPlayer>
-);
-```
+### Remote Audio
 
-## Props Reference
+The `AudioPlayer` component can be used to play remote audio files.
+
+
+
+## Props
 
 ### `<AudioPlayer />`
+
+Root MediaController component. Accepts all MediaController props except `audio` (which is set to `true` by default).
+
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `className` | `string` | - | Additional CSS classes |
-| `style` | `CSSProperties` | - | Custom CSS variables for theming |
-| `...props` | `ComponentProps<typeof MediaController>` | - | Media controller props |
+| `style` | `CSSProperties` | - | Custom CSS properties can be passed to override media-chrome theming variables. |
+| `...props` | `Omit<React.ComponentProps<typeof MediaController>, ` | - | Any other props are spread to the MediaController component. |
 
 ### `<AudioPlayerElement />`
+
+The audio element that contains the media source. Accepts either a remote URL or AI SDK Speech Result data.
+
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `src` | `string` | - | URL to audio file (use this OR data) |
-| `data` | `SpeechResult["audio"]` | - | AI SDK speech result with base64 audio |
+| `src` | `string` | - | The URL of the audio file to play (for remote audio). |
+| `data` | `SpeechResult[` | - | AI SDK Speech Result audio data with base64 encoding (for AI-generated audio). |
+| `...props` | `Omit<React.ComponentProps<` | - | Any other props are spread to the audio element (excluding src when using data). |
 
 ### `<AudioPlayerControlBar />`
+
+Container for control buttons, wraps children in a ButtonGroup.
+
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `...props` | `ComponentProps<typeof MediaControlBar>` | - | Media control bar props |
+| `...props` | `React.ComponentProps<typeof MediaControlBar>` | - | Any other props are spread to the MediaControlBar component. |
 
 ### `<AudioPlayerPlayButton />`
+
+Play/pause button wrapped in a shadcn Button component.
+
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `className` | `string` | - | Additional CSS classes |
+| `...props` | `React.ComponentProps<typeof MediaPlayButton>` | - | Any other props are spread to the MediaPlayButton component. |
 
 ### `<AudioPlayerSeekBackwardButton />`
+
+Seek backward button wrapped in a shadcn Button component.
+
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `seekOffset` | `number` | `10` | Seconds to seek backward |
+| `seekOffset` | `number` | `10` | The number of seconds to seek backward. |
+| `...props` | `React.ComponentProps<typeof MediaSeekBackwardButton>` | - | Any other props are spread to the MediaSeekBackwardButton component. |
 
 ### `<AudioPlayerSeekForwardButton />`
+
+Seek forward button wrapped in a shadcn Button component.
+
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `seekOffset` | `number` | `10` | Seconds to seek forward |
+| `seekOffset` | `number` | `10` | The number of seconds to seek forward. |
+| `...props` | `React.ComponentProps<typeof MediaSeekForwardButton>` | - | Any other props are spread to the MediaSeekForwardButton component. |
 
 ### `<AudioPlayerTimeDisplay />`
+
+Displays the current playback time, wrapped in ButtonGroupText.
+
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `className` | `string` | - | Additional CSS classes |
+| `...props` | `React.ComponentProps<typeof MediaTimeDisplay>` | - | Any other props are spread to the MediaTimeDisplay component. |
 
 ### `<AudioPlayerTimeRange />`
+
+Seek slider for controlling playback position, wrapped in ButtonGroupText.
+
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `className` | `string` | - | Additional CSS classes |
+| `...props` | `React.ComponentProps<typeof MediaTimeRange>` | - | Any other props are spread to the MediaTimeRange component. |
 
 ### `<AudioPlayerDurationDisplay />`
+
+Displays the total duration of the audio, wrapped in ButtonGroupText.
+
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `className` | `string` | - | Additional CSS classes |
+| `...props` | `React.ComponentProps<typeof MediaDurationDisplay>` | - | Any other props are spread to the MediaDurationDisplay component. |
 
 ### `<AudioPlayerMuteButton />`
+
+Mute/unmute button, wrapped in ButtonGroupText.
+
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `className` | `string` | - | Additional CSS classes |
+| `...props` | `React.ComponentProps<typeof MediaMuteButton>` | - | Any other props are spread to the MediaMuteButton component. |
 
 ### `<AudioPlayerVolumeRange />`
+
+Volume slider control, wrapped in ButtonGroupText.
+
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `className` | `string` | - | Additional CSS classes |
-
-## Examples
-
-See `scripts/` folder for complete working examples.
+| `...props` | `React.ComponentProps<typeof MediaVolumeRange>` | - | Any other props are spread to the MediaVolumeRange component. |

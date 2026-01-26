@@ -1,183 +1,178 @@
 ---
 name: Using the Commit component from AI Elements
-description: How to use the Commit component to display git commit information with file changes.
+description: Display commit information with hash, message, author, and file changes.
 ---
 
-# Commit Component
+The `Commit` component displays commit details including hash, message, author, timestamp, and changed files.
 
-The Commit component displays git commit information including author, message, hash, timestamp, and file changes with additions/deletions. It features a collapsible design to show/hide file details.
 
-## Import
 
-```tsx
-import {
-  Commit,
-  CommitHeader,
-  CommitAuthor,
-  CommitAuthorAvatar,
-  CommitInfo,
-  CommitMessage,
-  CommitMetadata,
-  CommitHash,
-  CommitSeparator,
-  CommitTimestamp,
-  CommitActions,
-  CommitCopyButton,
-  CommitContent,
-  CommitFiles,
-  CommitFile,
-  CommitFileInfo,
-  CommitFileStatus,
-  CommitFileIcon,
-  CommitFilePath,
-  CommitFileChanges,
-  CommitFileAdditions,
-  CommitFileDeletions,
-} from "@repo/elements/commit";
+## Installation
+
+```bash
+npx ai-elements@latest add commit
 ```
 
-## Sub-components
+## Features
 
-| Component | Purpose |
-|-----------|---------|
-| `Commit` | Root collapsible container |
-| `CommitHeader` | Clickable header to expand/collapse |
-| `CommitAuthor` | Author information container |
-| `CommitAuthorAvatar` | Avatar with initials |
-| `CommitInfo` | Container for message and metadata |
-| `CommitMessage` | Commit message text |
-| `CommitMetadata` | Hash and timestamp container |
-| `CommitHash` | Short commit hash with icon |
-| `CommitSeparator` | Bullet separator between metadata |
-| `CommitTimestamp` | Relative time display |
-| `CommitActions` | Action buttons container |
-| `CommitCopyButton` | Copy hash to clipboard |
-| `CommitContent` | Collapsible content for files |
-| `CommitFiles` | Container for file list |
-| `CommitFile` | Individual file row |
-| `CommitFileInfo` | File status, icon, and path |
-| `CommitFileStatus` | Status indicator (A/M/D/R) |
-| `CommitFileIcon` | File icon |
-| `CommitFilePath` | File path text |
-| `CommitFileChanges` | Additions and deletions |
-| `CommitFileAdditions` | Green additions count |
-| `CommitFileDeletions` | Red deletions count |
+- Commit hash display with copy button
+- Author avatar with initials
+- Relative timestamp formatting
+- Collapsible file changes list
+- Color-coded file status (added/modified/deleted/renamed)
+- Line additions/deletions count
 
-## Basic Usage
+## File Status
 
-```tsx
-const files = [
-  { path: "src/auth/login.tsx", status: "added", additions: 150, deletions: 0 },
-  { path: "src/lib/session.ts", status: "modified", additions: 23, deletions: 8 },
-];
+| Status | Label | Color |
+|--------|-------|-------|
+| `added` | A | Green |
+| `modified` | M | Yellow |
+| `deleted` | D | Red |
+| `renamed` | R | Blue |
 
-const Example = () => (
-  <Commit>
-    <CommitHeader>
-      <CommitAuthor>
-        <CommitAuthorAvatar initials="HB" />
-      </CommitAuthor>
-      <CommitInfo>
-        <CommitMessage>feat: Add user authentication flow</CommitMessage>
-        <CommitMetadata>
-          <CommitHash>a1b2c3d</CommitHash>
-          <CommitSeparator />
-          <CommitTimestamp date={new Date()} />
-        </CommitMetadata>
-      </CommitInfo>
-      <CommitActions>
-        <CommitCopyButton hash="a1b2c3d4e5f6" />
-      </CommitActions>
-    </CommitHeader>
-    <CommitContent>
-      <CommitFiles>
-        {files.map((file) => (
-          <CommitFile key={file.path}>
-            <CommitFileInfo>
-              <CommitFileStatus status={file.status} />
-              <CommitFileIcon />
-              <CommitFilePath>{file.path}</CommitFilePath>
-            </CommitFileInfo>
-            <CommitFileChanges>
-              <CommitFileAdditions count={file.additions} />
-              <CommitFileDeletions count={file.deletions} />
-            </CommitFileChanges>
-          </CommitFile>
-        ))}
-      </CommitFiles>
-    </CommitContent>
-  </Commit>
-);
-```
-
-## Props Reference
+## Props
 
 ### `<Commit />`
+
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `className` | `string` | - | Additional CSS classes |
-| `...props` | `ComponentProps<typeof Collapsible>` | - | Collapsible props |
+| `...props` | `React.ComponentProps<typeof Collapsible>` | - | Spread to the Collapsible component. |
 
 ### `<CommitHeader />`
+
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `className` | `string` | - | Additional CSS classes |
-| `children` | `ReactNode` | Required | Header content |
+| `...props` | `React.ComponentProps<typeof CollapsibleTrigger>` | - | Spread to the CollapsibleTrigger component. |
+
+### `<CommitAuthor />`
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `...props` | `React.HTMLAttributes<HTMLDivElement>` | - | Spread to the container div. |
 
 ### `<CommitAuthorAvatar />`
+
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `initials` | `string` | Required | Two-letter initials |
-| `className` | `string` | - | Additional CSS classes |
+| `initials` | `string` | Required | Author initials to display. |
+| `...props` | `React.ComponentProps<typeof Avatar>` | - | Spread to the Avatar component. |
+
+### `<CommitInfo />`
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `...props` | `React.HTMLAttributes<HTMLDivElement>` | - | Spread to the container div. |
 
 ### `<CommitMessage />`
+
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `children` | `ReactNode` | Required | Message text |
-| `className` | `string` | - | Additional CSS classes |
+| `...props` | `React.HTMLAttributes<HTMLSpanElement>` | - | Spread to the span element. |
+
+### `<CommitMetadata />`
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `...props` | `React.HTMLAttributes<HTMLDivElement>` | - | Spread to the container div. |
 
 ### `<CommitHash />`
+
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `children` | `ReactNode` | Required | Short hash (7 chars) |
-| `className` | `string` | - | Additional CSS classes |
+| `...props` | `React.HTMLAttributes<HTMLSpanElement>` | - | Spread to the span element. |
+
+### `<CommitSeparator />`
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `React.ReactNode` | - | Custom separator content. |
+| `...props` | `React.HTMLAttributes<HTMLSpanElement>` | - | Spread to the span element. |
 
 ### `<CommitTimestamp />`
+
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `date` | `Date` | Required | Commit date |
-| `children` | `ReactNode` | - | Custom time display (overrides default) |
-| `className` | `string` | - | Additional CSS classes |
+| `date` | `Date` | Required | Commit date. |
+| `children` | `React.ReactNode` | - | Custom timestamp content. Defaults to relative time. |
+| `...props` | `React.HTMLAttributes<HTMLTimeElement>` | - | Spread to the time element. |
+
+### `<CommitActions />`
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `...props` | `React.HTMLAttributes<HTMLDivElement>` | - | Spread to the container div. |
 
 ### `<CommitCopyButton />`
+
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `hash` | `string` | Required | Full commit hash to copy |
-| `onCopy` | `() => void` | - | Callback on successful copy |
-| `onError` | `(error: Error) => void` | - | Callback on copy error |
-| `timeout` | `number` | `2000` | Reset copied state after ms |
+| `hash` | `string` | Required | Commit hash to copy. |
+| `onCopy` | `() => void` | - | Callback after successful copy. |
+| `onError` | `(error: Error) => void` | - | Callback if copying fails. |
+| `timeout` | `number` | `2000` | Duration to show copied state (ms). |
+| `...props` | `React.ComponentProps<typeof Button>` | - | Spread to the Button component. |
+
+### `<CommitContent />`
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `...props` | `React.ComponentProps<typeof CollapsibleContent>` | - | Spread to the CollapsibleContent component. |
+
+### `<CommitFiles />`
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `...props` | `React.HTMLAttributes<HTMLDivElement>` | - | Spread to the container div. |
+
+### `<CommitFile />`
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `...props` | `React.HTMLAttributes<HTMLDivElement>` | - | Spread to the row div. |
+
+### `<CommitFileInfo />`
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `...props` | `React.HTMLAttributes<HTMLDivElement>` | - | Spread to the container div. |
 
 ### `<CommitFileStatus />`
+
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `status` | `"added" \| "modified" \| "deleted" \| "renamed"` | Required | File change status |
-| `children` | `ReactNode` | - | Custom status label |
-| `className` | `string` | - | Additional CSS classes |
+| `status` | `unknown` | Required | File change status. |
+| `children` | `React.ReactNode` | - | Custom status label. |
+| `...props` | `React.HTMLAttributes<HTMLSpanElement>` | - | Spread to the span element. |
+
+### `<CommitFileIcon />`
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `...props` | `React.ComponentProps<typeof FileIcon>` | - | Spread to the FileIcon component. |
+
+### `<CommitFilePath />`
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `...props` | `React.HTMLAttributes<HTMLSpanElement>` | - | Spread to the span element. |
+
+### `<CommitFileChanges />`
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `...props` | `React.HTMLAttributes<HTMLDivElement>` | - | Spread to the container div. |
 
 ### `<CommitFileAdditions />`
+
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `count` | `number` | Required | Number of lines added |
-| `children` | `ReactNode` | - | Custom content |
-| `className` | `string` | - | Additional CSS classes |
+| `count` | `number` | Required | Number of lines added. |
+| `...props` | `React.HTMLAttributes<HTMLSpanElement>` | - | Spread to the span element. |
 
 ### `<CommitFileDeletions />`
+
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `count` | `number` | Required | Number of lines deleted |
-| `children` | `ReactNode` | - | Custom content |
-| `className` | `string` | - | Additional CSS classes |
-
-## Examples
-
-See `scripts/` folder for complete working examples.
+| `count` | `number` | Required | Number of lines deleted. |
+| `...props` | `React.HTMLAttributes<HTMLSpanElement>` | - | Spread to the span element. |

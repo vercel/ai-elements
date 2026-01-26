@@ -1,80 +1,153 @@
 ---
 name: Using the Loader component from AI Elements
-description: How to use the Loader component to display a spinning loading indicator.
+description: A spinning loader component for indicating loading states in AI applications.
 ---
 
-# Loader Component
+The `Loader` component provides a spinning animation to indicate loading states in your AI applications. It includes both a customizable wrapper component and the underlying icon for flexible usage.
 
-A Vercel-style animated loader with configurable size. Uses an SVG spinner with varying opacity segments for a smooth loading animation.
 
-## Import
 
-```tsx
-import { Loader } from "@repo/elements/loader";
+## Installation
+
+```bash
+npx ai-elements@latest add loader
 ```
 
-## Sub-components
+## Usage with AI SDK
 
-| Component | Purpose |
-|-----------|---------|
-| `Loader` | Spinning SVG loader with configurable size |
+Build a simple chat app that displays a loader before the response starts streaming by using `status === "submitted"`.
 
-## Basic Usage
+Add the following component to your frontend:
 
-```tsx
-import { Loader } from "@repo/elements/loader";
+```tsx title="app/page.tsx"
+'use client';
 
-const LoadingState = () => (
-  <div className="flex items-center justify-center">
-    <Loader />
-  </div>
-);
+import {
+  Conversation,
+  ConversationContent,
+  ConversationScrollButton,
+} from '@/components/ai-elements/conversation';
+import { Message, MessageContent } from '@/components/ai-elements/message';
+import {
+  Input,
+  PromptInputTextarea,
+  PromptInputSubmit,
+} from '@/components/ai-elements/prompt-input';
+import { Loader } from '@/components/ai-elements/loader';
+import { useState } from 'react';
+import { useChat } from '@ai-sdk/react';
+
+const LoaderDemo = () => {
+  const [input, setInput] = useState('');
+  const { messages, sendMessage, status } = useChat();
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (input.trim()) {
+      sendMessage({ text: input });
+      setInput('');
+    }
+  };
+
+  return (
+    <div className="max-w-4xl mx-auto p-6 relative size-full rounded-lg border h-[600px]">
+      <div className="flex flex-col h-full">
+        <Conversation>
+          <ConversationContent>
+            {messages.map((message) => (
+              <Message from={message.role} key={message.id}>
+                <MessageContent>
+                  {message.parts.map((part, i) => {
+                    switch (part.type) {
+                      case 'text':
+                        return (
+                          <div key={`${message.id}-${i}`}>{part.text}</div>
+                        );
+                      default:
+                        return null;
+                    }
+                  })}
+                </MessageContent>
+              </Message>
+            ))}
+            {status === 'submitted' && <Loader />}
+          </ConversationContent>
+          <ConversationScrollButton />
+        </Conversation>
+
+        <Input
+          onSubmit={handleSubmit}
+          className="mt-4 w-full max-w-2xl mx-auto relative"
+        >
+          <PromptInputTextarea
+            value={input}
+            placeholder="Say something..."
+            onChange={(e) => setInput(e.currentTarget.value)}
+            className="pr-12"
+          />
+          <PromptInputSubmit
+            status={status === 'streaming' ? 'streaming' : 'ready'}
+            disabled={!input.trim()}
+            className="absolute bottom-1 right-1"
+          />
+        </Input>
+      </div>
+    </div>
+  );
+};
+
+export default LoaderDemo;
 ```
 
-## Props Reference
+Add the following route to your backend:
 
-### `<Loader />`
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `size` | `number` | `16` | Size in pixels (width and height) |
-| `className` | `string` | - | Additional CSS classes |
-| `...props` | `HTMLAttributes<HTMLDivElement>` | - | All div props supported |
+```ts title="app/api/chat/route.ts"
+import { streamText, UIMessage, convertToModelMessages } from 'ai';
 
-## Styling
+// Allow streaming responses up to 30 seconds
+export const maxDuration = 30;
 
-The loader uses `currentColor` for the stroke, so you can change its color using text color utilities:
+export async function POST(req: Request) {
+  const { model, messages }: { messages: UIMessage[]; model: string } =
+    await req.json();
 
-```tsx
-<Loader className="text-blue-500" size={24} />
-<Loader className="text-red-500" size={32} />
+  const result = streamText({
+    model: 'openai/gpt-4o',
+    messages: await convertToModelMessages(messages),
+  });
+
+  return result.toUIMessageStreamResponse();
+}
 ```
 
-Custom animation speed:
+## Features
 
-```tsx
-<Loader
-  className="animate-spin text-blue-500"
-  size={24}
-  style={{ animationDuration: "0.5s" }}
-/>
-```
-
-## Size Examples
-
-```tsx
-// Small (default)
-<Loader size={16} />
-
-// Medium
-<Loader size={24} />
-
-// Large
-<Loader size={32} />
-
-// Extra Large
-<Loader size={48} />
-```
+- Clean, modern spinning animation using CSS animations
+- Configurable size with the `size` prop
+- Customizable styling with CSS classes
+- Built-in `animate-spin` animation with proper centering
+- Exports both `AILoader` wrapper and `LoaderIcon` for flexible usage
+- Supports all standard HTML div attributes
+- TypeScript support with proper type definitions
+- Optimized SVG icon with multiple opacity levels for smooth animation
+- Uses `currentColor` for proper theme integration
+- Responsive and accessible design
 
 ## Examples
 
-See `scripts/` folder for complete working examples.
+### Different Sizes
+
+
+
+### Custom Styling
+
+
+
+## Props
+
+### `<Loader />`
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `size` | `number` | `16` | The size (width and height) of the loader in pixels. |
+| `...props` | `React.HTMLAttributes<HTMLDivElement>` | - | Any other props are spread to the root div. |

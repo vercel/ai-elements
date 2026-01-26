@@ -1,125 +1,65 @@
 ---
 name: Using the Snippet component from AI Elements
-description: How to use the Snippet component to display copyable code snippets with one-click copy functionality.
+description: Lightweight inline code display for terminal commands and short code references.
 ---
 
-# Snippet Component
+The `Snippet` component provides a lightweight way to display terminal commands and short code snippets with copy functionality. Built on top of InputGroup, it's designed for brief code references in text.
 
-A code snippet component with a read-only input field and one-click copy button. Perfect for displaying CLI commands, API keys, or any copyable text.
 
-## Import
 
-```tsx
-import {
-  Snippet,
-  SnippetAddon,
-  SnippetText,
-  SnippetInput,
-  SnippetCopyButton,
-} from "@repo/elements/snippet";
+## Installation
+
+```bash
+npx ai-elements@latest add snippet
 ```
 
-## Sub-components
+## Features
 
-| Component | Purpose |
-|-----------|---------|
-| `Snippet` | Root container with context provider |
-| `SnippetAddon` | Side addon container (prefix/suffix) |
-| `SnippetText` | Static text content (e.g., "$" prompt) |
-| `SnippetInput` | Read-only input displaying the code |
-| `SnippetCopyButton` | Copy to clipboard button |
-
-## Basic Usage
-
-```tsx
-import {
-  Snippet,
-  SnippetAddon,
-  SnippetCopyButton,
-  SnippetInput,
-} from "@repo/elements/snippet";
-
-const Example = () => (
-  <Snippet code="git clone https://github.com/user/repo">
-    <SnippetInput />
-    <SnippetAddon align="inline-end">
-      <SnippetCopyButton />
-    </SnippetAddon>
-  </Snippet>
-);
-```
-
-## With Command Prompt
-
-```tsx
-import {
-  Snippet,
-  SnippetAddon,
-  SnippetCopyButton,
-  SnippetInput,
-  SnippetText,
-} from "@repo/elements/snippet";
-
-const Example = () => (
-  <Snippet code="npx ai-elements add snippet">
-    <SnippetAddon className="pl-1">
-      <SnippetText>$</SnippetText>
-    </SnippetAddon>
-    <SnippetInput />
-    <SnippetAddon align="inline-end" className="pr-2">
-      <SnippetCopyButton />
-    </SnippetAddon>
-  </Snippet>
-);
-```
-
-## Props Reference
-
-### `<Snippet />`
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `code` | `string` | - | The code to display and copy (required) |
-| `className` | `string` | - | Additional CSS classes |
-
-### `<SnippetAddon />`
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `align` | `"inline-start" \| "inline-end" \| "block-start" \| "block-end"` | - | Position of the addon |
-| `className` | `string` | - | Additional CSS classes |
-
-### `<SnippetText />`
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `className` | `string` | - | Additional CSS classes |
-
-### `<SnippetInput />`
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `className` | `string` | - | Additional CSS classes |
-
-Note: `SnippetInput` is always read-only and displays the `code` from the parent `Snippet`.
-
-### `<SnippetCopyButton />`
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `onCopy` | `() => void` | - | Callback after successful copy |
-| `onError` | `(error: Error) => void` | - | Callback on copy error |
-| `timeout` | `number` | `2000` | Duration to show checkmark after copy (ms) |
-| `className` | `string` | - | Additional CSS classes |
-
-## Copy Behavior
-
-The `SnippetCopyButton` component:
-1. Copies the code to clipboard on click
-2. Shows a checkmark icon for the specified timeout
-3. Returns to the copy icon after timeout
-4. Calls `onCopy` callback on success
-5. Calls `onError` callback if clipboard API fails
-
-## Styling
-
-The Snippet uses `font-mono` for monospace text styling. The component is built on the InputGroup primitives for consistent form-like styling.
+- Composable architecture with InputGroup
+- Optional prefix text (e.g., `$` for terminal commands)
+- Built-in copy button
+- Compact design for chat/markdown
 
 ## Examples
 
-See `scripts/` folder for complete working examples.
+### Without Prefix
+
+
+
+## Props
+
+### `<Snippet />`
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `code` | `string` | Required | The code content to display. |
+| `children` | `React.ReactNode` | - | Child elements like SnippetAddon, SnippetInput, etc. |
+| `...props` | `React.ComponentProps<typeof InputGroup>` | - | Spread to the InputGroup component. |
+
+### `<SnippetAddon />`
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `...props` | `React.ComponentProps<typeof InputGroupAddon>` | - | Spread to the InputGroupAddon component. |
+
+### `<SnippetText />`
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `...props` | `React.ComponentProps<typeof InputGroupText>` | - | Spread to the InputGroupText component. |
+
+### `<SnippetInput />`
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `...props` | `Omit<React.ComponentProps<typeof InputGroupInput>, ` | - | Spread to the InputGroupInput component. Value and readOnly are set automatically. |
+
+### `<SnippetCopyButton />`
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `onCopy` | `() => void` | - | Callback fired after a successful copy. |
+| `onError` | `(error: Error) => void` | - | Callback fired if copying fails. |
+| `timeout` | `number` | `2000` | How long to show the copied state (ms). |
+| `children` | `React.ReactNode` | - | Custom button content. |
+| `...props` | `React.ComponentProps<typeof InputGroupButton>` | - | Spread to the InputGroupButton component. |

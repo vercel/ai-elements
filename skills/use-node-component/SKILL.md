@@ -1,124 +1,76 @@
 ---
 name: Using the Node component from AI Elements
-description: How to use the Node component to create styled nodes for React Flow diagrams with handles.
+description: A composable node component for React Flow-based canvases with Card-based styling.
 ---
 
-# Node Component
+The `Node` component provides a composable, Card-based node for React Flow canvases. It includes support for connection handles, structured layouts, and consistent styling using shadcn/ui components.
 
-A composable node component for React Flow diagrams. Provides a card-based design with optional source/target handles, header, content, and footer sections. Built on shadcn/ui Card components.
+<Callout>
+  The Node component is designed to be used with the [Canvas](/elements/components/canvas) component. See the [Workflow](/elements/examples/workflow) demo for a full example.
+</Callout>
 
-## Import
+## Installation
 
-```tsx
-import {
-  Node,
-  NodeHeader,
-  NodeTitle,
-  NodeDescription,
-  NodeAction,
-  NodeContent,
-  NodeFooter,
-} from "@repo/elements/node";
+```bash
+npx ai-elements@latest add node
 ```
 
-## Sub-components
+## Features
 
-| Component | Purpose |
-|-----------|---------|
-| `Node` | Root card with configurable handles |
-| `NodeHeader` | Header section with secondary background |
-| `NodeTitle` | Node title text |
-| `NodeDescription` | Subtitle/description text |
-| `NodeAction` | Action button in header area |
-| `NodeContent` | Main content area |
-| `NodeFooter` | Footer section with secondary background |
+- Built on shadcn/ui Card components for consistent styling
+- Automatic handle placement (left for target, right for source)
+- Composable sub-components (Header, Title, Description, Action, Content, Footer)
+- Semantic structure for organizing node information
+- Pre-styled sections with borders and backgrounds
+- Responsive sizing with fixed small width
+- Full TypeScript support with proper type definitions
+- Compatible with React Flow's node system
 
-## Basic Usage
-
-```tsx
-import { ReactFlow } from "@xyflow/react";
-import {
-  Node,
-  NodeHeader,
-  NodeTitle,
-  NodeDescription,
-  NodeContent,
-} from "@repo/elements/node";
-
-const CustomNode = ({ data }) => (
-  <Node handles={{ target: true, source: true }}>
-    <NodeHeader>
-      <NodeTitle>{data.title}</NodeTitle>
-      <NodeDescription>{data.description}</NodeDescription>
-    </NodeHeader>
-    <NodeContent>{data.content}</NodeContent>
-  </Node>
-);
-
-const nodeTypes = {
-  custom: CustomNode,
-};
-
-const FlowDiagram = () => (
-  <ReactFlow nodes={nodes} edges={edges} nodeTypes={nodeTypes} />
-);
-```
-
-## Props Reference
+## Props
 
 ### `<Node />`
+
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `handles` | `{ target: boolean; source: boolean }` | - | Handle visibility (required) |
-| `className` | `string` | - | Additional CSS classes |
-| `...props` | `ComponentProps<typeof Card>` | - | All Card props supported |
+| `handles` | `unknown` | - | Configuration for connection handles. Target renders on the left, source on the right. |
+| `className` | `string` | - | Additional CSS classes to apply to the node. |
+| `...props` | `ComponentProps<typeof Card>` | - | Any other props are spread to the underlying Card component. |
 
 ### `<NodeHeader />`
+
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `className` | `string` | - | Additional CSS classes |
-| `...props` | `ComponentProps<typeof CardHeader>` | - | All CardHeader props |
+| `className` | `string` | - | Additional CSS classes to apply to the header. |
+| `...props` | `ComponentProps<typeof CardHeader>` | - | Any other props are spread to the underlying CardHeader component. |
 
 ### `<NodeTitle />`
+
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `...props` | `ComponentProps<typeof CardTitle>` | - | All CardTitle props |
+| `...props` | `ComponentProps<typeof CardTitle>` | - | Any other props are spread to the underlying CardTitle component. |
 
 ### `<NodeDescription />`
+
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `...props` | `ComponentProps<typeof CardDescription>` | - | All CardDescription props |
+| `...props` | `ComponentProps<typeof CardDescription>` | - | Any other props are spread to the underlying CardDescription component. |
 
 ### `<NodeAction />`
+
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `...props` | `ComponentProps<typeof CardAction>` | - | All CardAction props |
+| `...props` | `ComponentProps<typeof CardAction>` | - | Any other props are spread to the underlying CardAction component. |
 
 ### `<NodeContent />`
+
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `className` | `string` | - | Additional CSS classes |
-| `...props` | `ComponentProps<typeof CardContent>` | - | All CardContent props |
+| `className` | `string` | - | Additional CSS classes to apply to the content. |
+| `...props` | `ComponentProps<typeof CardContent>` | - | Any other props are spread to the underlying CardContent component. |
 
 ### `<NodeFooter />`
+
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `className` | `string` | - | Additional CSS classes |
-| `...props` | `ComponentProps<typeof CardFooter>` | - | All CardFooter props |
-
-## Handle Positions
-
-The component uses fixed handle positions:
-- **Target handle**: Left side (`Position.Left`)
-- **Source handle**: Right side (`Position.Right`)
-
-## Styling
-
-Default node styles:
-- Width: `w-sm` (24rem)
-- Rounded corners: `rounded-md`
-- Header/Footer: Secondary background with border
-
-## Examples
-
-See `scripts/` folder for complete working examples.
+| `className` | `string` | - | Additional CSS classes to apply to the footer. |
+| `...props` | `ComponentProps<typeof CardFooter>` | - | Any other props are spread to the underlying CardFooter component. |

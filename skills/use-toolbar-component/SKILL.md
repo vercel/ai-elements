@@ -1,103 +1,35 @@
 ---
 name: Using the Toolbar component from AI Elements
-description: How to use the Toolbar component to display a node toolbar in React Flow diagrams.
+description: A styled toolbar component for React Flow nodes with flexible positioning and custom actions.
 ---
 
-# Toolbar Component
+The `Toolbar` component provides a positioned toolbar that attaches to nodes in React Flow canvases. It features modern card styling with backdrop blur and flexbox layout for action buttons and controls.
 
-A toolbar component for React Flow nodes. Wraps the `@xyflow/react` NodeToolbar with consistent styling.
+<Callout>
+  The Toolbar component is designed to be used with the [Node](/elements/components/node) component. See the [Workflow](/elements/examples/workflow) demo for a full example.
+</Callout>
 
-## Import
+## Installation
 
-```tsx
-import { Toolbar } from "@repo/elements/toolbar";
+```bash
+npx ai-elements@latest add toolbar
 ```
 
-## Sub-components
+## Features
 
-| Component | Purpose |
-|-----------|---------|
-| `Toolbar` | Styled toolbar positioned relative to a React Flow node |
+- Attaches to any React Flow node
+- Bottom positioning by default
+- Rounded card design with border
+- Theme-aware background styling
+- Flexbox layout with gap spacing
+- Full TypeScript support
+- Compatible with all React Flow NodeToolbar features
 
-## Basic Usage
-
-```tsx
-import { Toolbar } from "@repo/elements/toolbar";
-import { Handle, Position, type NodeProps } from "@xyflow/react";
-import { Button } from "@repo/shadcn-ui/components/ui/button";
-import { EditIcon, TrashIcon, CopyIcon } from "lucide-react";
-
-const CustomNode = ({ id, data }: NodeProps) => (
-  <>
-    <Toolbar>
-      <Button size="icon-sm" variant="ghost">
-        <EditIcon className="size-4" />
-      </Button>
-      <Button size="icon-sm" variant="ghost">
-        <CopyIcon className="size-4" />
-      </Button>
-      <Button size="icon-sm" variant="ghost">
-        <TrashIcon className="size-4" />
-      </Button>
-    </Toolbar>
-    <div className="rounded-lg border bg-card p-4">
-      {data.label}
-    </div>
-    <Handle type="target" position={Position.Top} />
-    <Handle type="source" position={Position.Bottom} />
-  </>
-);
-```
-
-## Props Reference
+## Props
 
 ### `<Toolbar />`
+
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `position` | `Position` | `Position.Bottom` | Toolbar position relative to node |
-| `className` | `string` | - | Additional CSS classes |
-| `children` | `ReactNode` | - | Toolbar content (buttons, etc.) |
-| `...props` | `ComponentProps<typeof NodeToolbar>` | - | Props passed to NodeToolbar |
-
-## Requirements
-
-This component requires `@xyflow/react` to be installed and used within a React Flow context:
-
-```tsx
-import { ReactFlow, Controls, Background } from "@xyflow/react";
-import "@xyflow/react/dist/style.css";
-
-const nodeTypes = {
-  custom: CustomNode,
-};
-
-const Flow = () => (
-  <ReactFlow
-    nodes={nodes}
-    edges={edges}
-    nodeTypes={nodeTypes}
-  >
-    <Controls />
-    <Background />
-  </ReactFlow>
-);
-```
-
-## Styling
-
-The toolbar has default styling:
-- Flexbox layout with gap between items
-- Rounded border with background
-- Padding around content
-
-Override with className:
-
-```tsx
-<Toolbar className="bg-primary text-primary-foreground">
-  {/* buttons */}
-</Toolbar>
-```
-
-## Examples
-
-See `scripts/` folder for complete working examples.
+| `className` | `string` | - | Additional CSS classes to apply to the toolbar. |
+| `...props` | `ComponentProps<typeof NodeToolbar>` | - | Any other props from @xyflow/react NodeToolbar component (position, offset, isVisible, etc.). |

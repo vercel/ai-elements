@@ -1,106 +1,125 @@
 ---
 name: Using the Suggestion component from AI Elements
-description: How to use the Suggestion component to display clickable prompt suggestions.
+description: A suggestion component that displays a horizontal row of clickable suggestions for user interaction.
 ---
 
-# Suggestion Component
+The `Suggestion` component displays a horizontal row of clickable suggestions for user interaction.
 
-A horizontally scrollable list of suggestion chips/pills that users can click to quickly fill in prompts or select options.
 
-## Import
 
-```tsx
-import { Suggestions, Suggestion } from "@repo/elements/suggestion";
+## Installation
+
+```bash
+npx ai-elements@latest add suggestion
 ```
 
-## Sub-components
+## Usage with AI SDK
 
-| Component | Purpose |
-|-----------|---------|
-| `Suggestions` | Scrollable container for suggestion chips |
-| `Suggestion` | Individual clickable suggestion button |
+Build a simple input with suggestions users can click to send a message to the LLM.
 
-## Basic Usage
+Add the following component to your frontend:
 
-```tsx
+```tsx title="app/page.tsx"
+'use client';
+
+import {
+  Input,
+  PromptInputTextarea,
+  PromptInputSubmit,
+} from '@/components/ai-elements/prompt-input';
+import { Suggestion, Suggestions } from '@/components/ai-elements/suggestion';
+import { useState } from 'react';
+import { useChat } from '@ai-sdk/react';
+
 const suggestions = [
-  "What are the latest trends in AI?",
-  "How does machine learning work?",
-  "Explain quantum computing",
-  "Best practices for React development",
+  'Can you explain how to play tennis?',
+  'What is the weather in Tokyo?',
+  'How do I make a really good fish taco?',
 ];
 
-const Example = () => {
+const SuggestionDemo = () => {
+  const [input, setInput] = useState('');
+  const { sendMessage, status } = useChat();
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (input.trim()) {
+      sendMessage({ text: input });
+      setInput('');
+    }
+  };
+
   const handleSuggestionClick = (suggestion: string) => {
-    console.log("Selected suggestion:", suggestion);
+    sendMessage({ text: suggestion });
   };
 
   return (
-    <Suggestions>
-      {suggestions.map((suggestion) => (
-        <Suggestion
-          key={suggestion}
-          onClick={handleSuggestionClick}
-          suggestion={suggestion}
-        />
-      ))}
-    </Suggestions>
-  );
-};
-```
-
-## Props Reference
-
-### `<Suggestions />`
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `className` | `string` | - | Additional CSS classes for the flex container |
-| `children` | `ReactNode` | - | Suggestion components |
-| `...props` | `ComponentProps<typeof ScrollArea>` | - | Props passed to ScrollArea |
-
-### `<Suggestion />`
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `suggestion` | `string` | Required | The suggestion text |
-| `onClick` | `(suggestion: string) => void` | - | Callback when suggestion is clicked, receives the suggestion string |
-| `variant` | `"default" \| "outline" \| ...` | `"outline"` | Button variant |
-| `size` | `"default" \| "sm" \| "lg"` | `"sm"` | Button size |
-| `className` | `string` | - | Additional CSS classes |
-| `children` | `ReactNode` | - | Custom content (overrides suggestion text) |
-| `...props` | `Omit<ComponentProps<typeof Button>, "onClick">` | - | Standard Button props |
-
-## Integration with PromptInput
-
-```tsx
-const Example = () => {
-  const [text, setText] = useState("");
-
-  const handleSuggestionClick = (suggestion: string) => {
-    setText(suggestion);
-  };
-
-  return (
-    <div className="grid gap-4">
-      <Suggestions>
-        {suggestions.map((suggestion) => (
-          <Suggestion
-            key={suggestion.key}
-            onClick={handleSuggestionClick}
-            suggestion={suggestion.value}
-          />
-        ))}
-      </Suggestions>
-      <PromptInput onSubmit={handleSubmit}>
-        <PromptInputTextarea
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-        />
-      </PromptInput>
+    <div className="max-w-4xl mx-auto p-6 relative size-full rounded-lg border h-[600px]">
+      <div className="flex flex-col h-full">
+        <div className="flex flex-col gap-4">
+          <Suggestions>
+            {suggestions.map((suggestion) => (
+              <Suggestion
+                key={suggestion}
+                onClick={handleSuggestionClick}
+                suggestion={suggestion}
+              />
+            ))}
+          </Suggestions>
+          <Input
+            onSubmit={handleSubmit}
+            className="mt-4 w-full max-w-2xl mx-auto relative"
+          >
+            <PromptInputTextarea
+              value={input}
+              placeholder="Say something..."
+              onChange={(e) => setInput(e.currentTarget.value)}
+              className="pr-12"
+            />
+            <PromptInputSubmit
+              status={status === 'streaming' ? 'streaming' : 'ready'}
+              disabled={!input.trim()}
+              className="absolute bottom-1 right-1"
+            />
+          </Input>
+        </div>
+      </div>
     </div>
   );
 };
+
+export default SuggestionDemo;
 ```
+
+## Features
+
+- Horizontal row of clickable suggestion buttons
+- Customizable styling with variant and size options
+- Flexible layout that wraps suggestions on smaller screens
+- onClick callback that emits the selected suggestion string
+- Support for both individual suggestions and suggestion lists
+- Clean, modern styling with hover effects
+- Responsive design with mobile-friendly touch targets
+- TypeScript support with proper type definitions
 
 ## Examples
 
-See `scripts/` folder for complete working examples.
+### Usage with AI Input
+
+
+
+## Props
+
+### `<Suggestions />`
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `...props` | `React.ComponentProps<typeof ScrollArea>` | - | Any other props are spread to the underlying ScrollArea component. |
+
+### `<Suggestion />`
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `suggestion` | `string` | Required | The suggestion string to display and emit on click. |
+| `onClick` | `(suggestion: string) => void` | - | Callback fired when the suggestion is clicked. |
+| `...props` | `Omit<React.ComponentProps<typeof Button>, ` | - | Any other props are spread to the underlying shadcn/ui Button component. |

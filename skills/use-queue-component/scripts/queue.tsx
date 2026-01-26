@@ -43,6 +43,22 @@ const sampleMessages: QueueMessage[] = [
       },
     ],
   },
+  {
+    id: "msg-4",
+    parts: [{ type: "text", text: "Please generate a changelog." }],
+  },
+  {
+    id: "msg-5",
+    parts: [{ type: "text", text: "Add dark mode support." }],
+  },
+  {
+    id: "msg-6",
+    parts: [{ type: "text", text: "Optimize database queries." }],
+  },
+  {
+    id: "msg-7",
+    parts: [{ type: "text", text: "Set up CI/CD pipeline." }],
+  },
 ];
 
 const sampleTodos: QueueTodo[] = [
@@ -61,6 +77,18 @@ const sampleTodos: QueueTodo[] = [
     id: "todo-3",
     title: "Fix bug #42",
     description: "Resolve crash on settings page",
+    status: "pending",
+  },
+  {
+    id: "todo-4",
+    title: "Refactor queue logic",
+    description: "Unify queue and todo state management",
+    status: "pending",
+  },
+  {
+    id: "todo-5",
+    title: "Add unit tests",
+    description: "Increase test coverage for hooks",
     status: "pending",
   },
 ];
@@ -119,13 +147,22 @@ const Example = () => {
                       <QueueItemActions>
                         <QueueItemAction
                           aria-label="Remove from queue"
-                          onClick={() => handleRemoveMessage(message.id)}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            handleRemoveMessage(message.id);
+                          }}
+                          title="Remove from queue"
                         >
                           <Trash2 size={12} />
                         </QueueItemAction>
                         <QueueItemAction
                           aria-label="Send now"
-                          onClick={() => handleSendNow(message.id)}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            handleSendNow(message.id);
+                          }}
                         >
                           <ArrowUp size={14} />
                         </QueueItemAction>

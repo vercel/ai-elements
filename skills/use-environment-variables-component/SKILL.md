@@ -1,123 +1,103 @@
 ---
-name: Using the EnvironmentVariables component from AI Elements
-description: How to use the EnvironmentVariables component to display and manage environment variable key-value pairs with visibility toggling.
+name: Using the Environment Variables component from AI Elements
+description: Display environment variables with masking and copy functionality.
 ---
 
-# EnvironmentVariables Component
+The `EnvironmentVariables` component displays environment variables with value masking, visibility toggle, and copy functionality.
 
-A composable component for displaying environment variables with visibility toggling, copy-to-clipboard functionality, and required badges. Useful for settings pages or configuration displays in developer tools.
 
-## Import
 
-```tsx
-import {
-  EnvironmentVariables,
-  EnvironmentVariablesHeader,
-  EnvironmentVariablesTitle,
-  EnvironmentVariablesToggle,
-  EnvironmentVariablesContent,
-  EnvironmentVariable,
-  EnvironmentVariableGroup,
-  EnvironmentVariableName,
-  EnvironmentVariableValue,
-  EnvironmentVariableCopyButton,
-  EnvironmentVariableRequired,
-} from "@repo/elements/environment-variables";
+## Installation
+
+```bash
+npx ai-elements@latest add environment-variables
 ```
 
-## Sub-components
+## Features
 
-| Component | Purpose |
-|-----------|---------|
-| `EnvironmentVariables` | Root container with visibility state management |
-| `EnvironmentVariablesHeader` | Header section with border |
-| `EnvironmentVariablesTitle` | Title heading (defaults to "Environment Variables") |
-| `EnvironmentVariablesToggle` | Switch to show/hide all values |
-| `EnvironmentVariablesContent` | Container for variable rows |
-| `EnvironmentVariable` | Individual variable row with name/value context |
-| `EnvironmentVariableGroup` | Flex container for grouping elements |
-| `EnvironmentVariableName` | Displays the variable name |
-| `EnvironmentVariableValue` | Displays the value (masked or visible) |
-| `EnvironmentVariableCopyButton` | Copy button with multiple formats |
-| `EnvironmentVariableRequired` | Badge indicating required variable |
+- Value masking by default
+- Toggle visibility switch
+- Copy individual values
+- Export format support (`export KEY="value"`)
+- Required badge indicator
 
-## Basic Usage
-
-```tsx
-import {
-  EnvironmentVariables,
-  EnvironmentVariablesHeader,
-  EnvironmentVariablesTitle,
-  EnvironmentVariablesToggle,
-  EnvironmentVariablesContent,
-  EnvironmentVariable,
-  EnvironmentVariableGroup,
-  EnvironmentVariableName,
-  EnvironmentVariableValue,
-  EnvironmentVariableCopyButton,
-  EnvironmentVariableRequired,
-} from "@repo/elements/environment-variables";
-
-const variables = [
-  { name: "API_KEY", value: "sk-1234567890", required: true },
-  { name: "NODE_ENV", value: "production", required: false },
-];
-
-const EnvVarsDisplay = () => (
-  <EnvironmentVariables defaultShowValues={false}>
-    <EnvironmentVariablesHeader>
-      <EnvironmentVariablesTitle />
-      <EnvironmentVariablesToggle />
-    </EnvironmentVariablesHeader>
-    <EnvironmentVariablesContent>
-      {variables.map((v) => (
-        <EnvironmentVariable key={v.name} name={v.name} value={v.value}>
-          <EnvironmentVariableGroup>
-            <EnvironmentVariableName />
-            {v.required && <EnvironmentVariableRequired />}
-          </EnvironmentVariableGroup>
-          <EnvironmentVariableGroup>
-            <EnvironmentVariableValue />
-            <EnvironmentVariableCopyButton copyFormat="export" />
-          </EnvironmentVariableGroup>
-        </EnvironmentVariable>
-      ))}
-    </EnvironmentVariablesContent>
-  </EnvironmentVariables>
-);
-```
-
-## Props Reference
+## Props
 
 ### `<EnvironmentVariables />`
+
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `showValues` | `boolean` | - | Controlled visibility state |
-| `defaultShowValues` | `boolean` | `false` | Initial visibility state |
-| `onShowValuesChange` | `(show: boolean) => void` | - | Callback when visibility changes |
-| `className` | `string` | - | Additional CSS classes |
+| `showValues` | `boolean` | - | Controlled visibility state. |
+| `defaultShowValues` | `boolean` | `false` | Default visibility state. |
+| `onShowValuesChange` | `(show: boolean) => void` | - | Callback when visibility changes. |
+| `...props` | `React.HTMLAttributes<HTMLDivElement>` | - | Spread to the container div. |
+
+### `<EnvironmentVariablesHeader />`
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `...props` | `React.HTMLAttributes<HTMLDivElement>` | - | Spread to the header div. |
+
+### `<EnvironmentVariablesTitle />`
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `React.ReactNode` | - | Custom title text. |
+| `...props` | `React.HTMLAttributes<HTMLHeadingElement>` | - | Spread to the h3 element. |
+
+### `<EnvironmentVariablesToggle />`
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `...props` | `React.ComponentProps<typeof Switch>` | - | Spread to the Switch component. |
+
+### `<EnvironmentVariablesContent />`
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `...props` | `React.HTMLAttributes<HTMLDivElement>` | - | Spread to the content div. |
 
 ### `<EnvironmentVariable />`
+
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `name` | `string` | - | Variable name (required) |
-| `value` | `string` | - | Variable value (required) |
-| `className` | `string` | - | Additional CSS classes |
+| `name` | `string` | Required | Variable name. |
+| `value` | `string` | Required | Variable value. |
+| `...props` | `React.HTMLAttributes<HTMLDivElement>` | - | Spread to the row div. |
+
+### `<EnvironmentVariableGroup />`
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `...props` | `React.HTMLAttributes<HTMLDivElement>` | - | Spread to the group div. |
+
+### `<EnvironmentVariableName />`
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `React.ReactNode` | - | Custom name content. Defaults to the name from context. |
+| `...props` | `React.HTMLAttributes<HTMLSpanElement>` | - | Spread to the span element. |
+
+### `<EnvironmentVariableValue />`
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `React.ReactNode` | - | Custom value content. Defaults to the masked/unmasked value from context. |
+| `...props` | `React.HTMLAttributes<HTMLSpanElement>` | - | Spread to the span element. |
 
 ### `<EnvironmentVariableCopyButton />`
+
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `copyFormat` | `"name" \| "value" \| "export"` | `"value"` | What to copy |
-| `timeout` | `number` | `2000` | Duration of copied state (ms) |
-| `onCopy` | `() => void` | - | Callback after successful copy |
-| `onError` | `(error: Error) => void` | - | Callback on copy error |
+| `copyFormat` | `unknown` | - | Format to copy. |
+| `onCopy` | `() => void` | - | Callback after successful copy. |
+| `onError` | `(error: Error) => void` | - | Callback if copying fails. |
+| `timeout` | `number` | `2000` | Duration to show copied state (ms). |
+| `...props` | `React.ComponentProps<typeof Button>` | - | Spread to the Button component. |
 
 ### `<EnvironmentVariableRequired />`
+
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `children` | `ReactNode` | `"Required"` | Badge text |
-| `...props` | `ComponentProps<typeof Badge>` | - | All Badge props supported |
-
-## Examples
-
-See `scripts/` folder for complete working examples.
+| `children` | `React.ReactNode` | - | Custom badge text. |
+| `...props` | `React.ComponentProps<typeof Badge>` | - | Spread to the Badge component. |

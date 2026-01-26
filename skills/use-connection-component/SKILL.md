@@ -1,92 +1,37 @@
 ---
 name: Using the Connection component from AI Elements
-description: How to use the Connection component to render custom connection lines in React Flow canvases.
+description: A custom connection line component for React Flow-based canvases with animated bezier curve styling.
 ---
 
-# Connection Component
+The `Connection` component provides a styled connection line for React Flow canvases. It renders an animated bezier curve with a circle indicator at the target end, using consistent theming through CSS variables.
 
-The Connection component renders custom bezier curve connection lines between nodes in React Flow canvases. It provides a smooth, animated connection with a terminal circle indicator.
+<Callout>
+  The Connection component is designed to be used with the [Canvas](/elements/components/canvas) component. See the [Workflow](/elements/examples/workflow) demo for a full example.
+</Callout>
 
-## Import
+## Installation
 
-```tsx
-import { Connection } from "@repo/elements/connection";
+```bash
+npx ai-elements@latest add connection
 ```
 
-## Sub-components
+## Features
 
-| Component | Purpose |
-|-----------|---------|
-| `Connection` | Custom connection line renderer for React Flow |
+- Smooth bezier curve animation for connection lines
+- Visual indicator circle at the target position
+- Theme-aware styling using CSS variables
+- Cubic bezier curve calculation for natural flow
+- Lightweight implementation with minimal props
+- Full TypeScript support with React Flow types
+- Compatible with React Flow's connection system
 
-## Basic Usage
-
-```tsx
-import { Canvas } from "@repo/elements/canvas";
-import { Connection } from "@repo/elements/connection";
-
-const Example = () => (
-  <div style={{ width: "100%", height: 500 }}>
-    <Canvas
-      nodes={nodes}
-      edges={edges}
-      connectionLineComponent={Connection}
-    />
-  </div>
-);
-```
-
-## Props Reference
+## Props
 
 ### `<Connection />`
 
-The Connection component implements the `ConnectionLineComponent` interface from React Flow:
-
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `fromX` | `number` | Required | X coordinate of the source point |
-| `fromY` | `number` | Required | Y coordinate of the source point |
-| `toX` | `number` | Required | X coordinate of the target point |
-| `toY` | `number` | Required | Y coordinate of the target point |
-
-## Visual Details
-
-The connection line consists of:
-- A bezier curve path from source to target
-- Stroke color: `var(--color-ring)` (theme-aware)
-- Stroke width: 1px
-- A terminal circle at the target point:
-  - Radius: 3px
-  - Fill: white
-  - Stroke: `var(--color-ring)`
-
-## With Custom Nodes
-
-```tsx
-import { Canvas } from "@repo/elements/canvas";
-import { Connection } from "@repo/elements/connection";
-import { Handle, Position } from "@xyflow/react";
-
-const CustomNode = ({ data }) => (
-  <div className="rounded-lg border bg-background p-4">
-    <Handle type="target" position={Position.Left} />
-    <span>{data.label}</span>
-    <Handle type="source" position={Position.Right} />
-  </div>
-);
-
-const nodeTypes = { custom: CustomNode };
-
-const Example = () => (
-  <Canvas
-    nodes={nodes}
-    edges={edges}
-    nodeTypes={nodeTypes}
-    connectionLineComponent={Connection}
-  />
-);
-```
-
-## Examples
-
-See `scripts/` folder for complete working examples.
+| `fromX` | `number` | - | The x-coordinate of the connection start point. |
+| `fromY` | `number` | - | The y-coordinate of the connection start point. |
+| `toX` | `number` | - | The x-coordinate of the connection end point. |
+| `toY` | `number` | - | The y-coordinate of the connection end point. |

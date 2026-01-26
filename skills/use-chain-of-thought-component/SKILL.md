@@ -1,119 +1,82 @@
 ---
-name: Using the ChainOfThought component from AI Elements
-description: How to use the ChainOfThought component to display AI reasoning steps and search results.
+name: Using the Chain of Thought component from AI Elements
+description: A collapsible component that visualizes AI reasoning steps with support for search results, images, and step-by-step progress indicators.
 ---
 
-# ChainOfThought Component
+The `ChainOfThought` component provides a visual representation of an AI's reasoning process, showing step-by-step thinking with support for search results, images, and progress indicators. It helps users understand how AI arrives at conclusions.
 
-The ChainOfThought component displays AI reasoning processes with collapsible steps, search results, and images. It provides a clear visual representation of how an AI reached its conclusions.
 
-## Import
 
-```tsx
-import {
-  ChainOfThought,
-  ChainOfThoughtHeader,
-  ChainOfThoughtContent,
-  ChainOfThoughtStep,
-  ChainOfThoughtSearchResults,
-  ChainOfThoughtSearchResult,
-  ChainOfThoughtImage,
-} from "@repo/elements/chain-of-thought";
+## Installation
+
+```bash
+npx ai-elements@latest add chain-of-thought
 ```
 
-## Sub-components
+## Features
 
-| Component | Purpose |
-|-----------|---------|
-| `ChainOfThought` | Root container with open/close state |
-| `ChainOfThoughtHeader` | Collapsible trigger with brain icon |
-| `ChainOfThoughtContent` | Collapsible content area for steps |
-| `ChainOfThoughtStep` | Individual reasoning step with icon and status |
-| `ChainOfThoughtSearchResults` | Container for search result badges |
-| `ChainOfThoughtSearchResult` | Individual search result badge |
-| `ChainOfThoughtImage` | Image display with optional caption |
+- Collapsible interface with smooth animations powered by Radix UI
+- Step-by-step visualization of AI reasoning process
+- Support for different step statuses (complete, active, pending)
+- Built-in search results display with badge styling
+- Image support with captions for visual content
+- Custom icons for different step types
+- Context-aware components using React Context API
+- Fully typed with TypeScript
+- Accessible with keyboard navigation support
+- Responsive design that adapts to different screen sizes
+- Smooth fade and slide animations for content transitions
+- Composable architecture for flexible customization
 
-## Basic Usage
-
-```tsx
-import { SearchIcon, CheckIcon } from "lucide-react";
-
-const Example = () => (
-  <ChainOfThought defaultOpen>
-    <ChainOfThoughtHeader>Reasoning</ChainOfThoughtHeader>
-    <ChainOfThoughtContent>
-      <ChainOfThoughtStep
-        icon={SearchIcon}
-        label="Searching for information"
-        status="complete"
-      >
-        <ChainOfThoughtSearchResults>
-          <ChainOfThoughtSearchResult>React docs</ChainOfThoughtSearchResult>
-          <ChainOfThoughtSearchResult>MDN Web Docs</ChainOfThoughtSearchResult>
-        </ChainOfThoughtSearchResults>
-      </ChainOfThoughtStep>
-      <ChainOfThoughtStep
-        icon={CheckIcon}
-        label="Analyzing results"
-        status="active"
-        description="Processing the gathered information"
-      />
-    </ChainOfThoughtContent>
-  </ChainOfThought>
-);
-```
-
-## Props Reference
+## Props
 
 ### `<ChainOfThought />`
+
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `open` | `boolean` | - | Controlled open state |
-| `defaultOpen` | `boolean` | `false` | Initial open state (uncontrolled) |
-| `onOpenChange` | `(open: boolean) => void` | - | Callback when open state changes |
-| `className` | `string` | - | Additional CSS classes |
+| `open` | `boolean` | - | Controlled open state of the collapsible. |
+| `defaultOpen` | `boolean` | `false` | Default open state when uncontrolled. |
+| `onOpenChange` | `(open: boolean) => void` | - | Callback when the open state changes. |
+| `...props` | `React.ComponentProps<` | - | Any other props are spread to the root div element. |
 
 ### `<ChainOfThoughtHeader />`
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `children` | `ReactNode` | `"Chain of Thought"` | Header text |
-| `className` | `string` | - | Additional CSS classes |
 
-### `<ChainOfThoughtContent />`
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `className` | `string` | - | Additional CSS classes |
-| `...props` | `ComponentProps<typeof CollapsibleContent>` | - | Collapsible content props |
+| `children` | `React.ReactNode` | - | Custom header text. |
+| `...props` | `React.ComponentProps<typeof CollapsibleTrigger>` | - | Any other props are spread to the CollapsibleTrigger component. |
 
 ### `<ChainOfThoughtStep />`
+
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `icon` | `LucideIcon` | `DotIcon` | Icon for the step |
-| `label` | `ReactNode` | Required | Step label/title |
-| `description` | `ReactNode` | - | Optional description text |
-| `status` | `"complete" \| "active" \| "pending"` | `"complete"` | Visual status indicator |
-| `children` | `ReactNode` | - | Additional content (e.g., search results) |
-| `className` | `string` | - | Additional CSS classes |
+| `icon` | `LucideIcon` | `DotIcon` | Icon to display for the step. |
+| `label` | `string` | - | The main text label for the step. |
+| `description` | `string` | - | Optional description text shown below the label. |
+| `status` | `unknown` | - | Visual status of the step. |
+| `...props` | `React.ComponentProps<` | - | Any other props are spread to the root div element. |
 
 ### `<ChainOfThoughtSearchResults />`
+
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `className` | `string` | - | Additional CSS classes |
+| `...props` | `React.ComponentProps<` | - | Any props are spread to the container div element. |
 
 ### `<ChainOfThoughtSearchResult />`
+
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `children` | `ReactNode` | Required | Result text/content |
-| `className` | `string` | - | Additional CSS classes |
-| `...props` | `ComponentProps<typeof Badge>` | - | Badge props |
+| `...props` | `React.ComponentProps<typeof Badge>` | - | Any props are spread to the Badge component. |
+
+### `<ChainOfThoughtContent />`
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `...props` | `React.ComponentProps<typeof CollapsibleContent>` | - | Any props are spread to the CollapsibleContent component. |
 
 ### `<ChainOfThoughtImage />`
+
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `caption` | `string` | - | Image caption text |
-| `children` | `ReactNode` | Required | Image element |
-| `className` | `string` | - | Additional CSS classes |
-
-## Examples
-
-See `scripts/` folder for complete working examples.
+| `caption` | `string` | - | Optional caption text displayed below the image. |
+| `...props` | `React.ComponentProps<` | - | Any other props are spread to the container div element. |

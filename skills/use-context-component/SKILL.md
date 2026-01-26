@@ -1,159 +1,127 @@
 ---
 name: Using the Context component from AI Elements
-description: How to use the Context component to display token usage and cost information.
+description: A compound component system for displaying AI model context window usage, token consumption, and cost estimation.
 ---
 
-# Context Component
+The `Context` component provides a comprehensive view of AI model usage through a compound component system. It displays context window utilization, token consumption breakdown (input, output, reasoning, cache), and cost estimation in an interactive hover card interface.
 
-The Context component displays AI model context window usage with a circular progress indicator, detailed token breakdown, and cost calculations. It uses a hover card to show detailed information on demand.
 
-## Import
 
-```tsx
-import {
-  Context,
-  ContextTrigger,
-  ContextContent,
-  ContextContentHeader,
-  ContextContentBody,
-  ContextContentFooter,
-  ContextInputUsage,
-  ContextOutputUsage,
-  ContextReasoningUsage,
-  ContextCacheUsage,
-} from "@repo/elements/context";
+## Installation
+
+```bash
+npx ai-elements@latest add context
 ```
 
-## Sub-components
+## Features
 
-| Component | Purpose |
-|-----------|---------|
-| `Context` | Root container with hover card and context provider |
-| `ContextTrigger` | Button showing percentage with circular indicator |
-| `ContextContent` | Hover card content container |
-| `ContextContentHeader` | Progress bar and token counts |
-| `ContextContentBody` | Container for usage breakdowns |
-| `ContextContentFooter` | Total cost display |
-| `ContextInputUsage` | Input token count and cost |
-| `ContextOutputUsage` | Output token count and cost |
-| `ContextReasoningUsage` | Reasoning token count and cost |
-| `ContextCacheUsage` | Cached token count and cost |
+- **Compound Component Architecture**: Flexible composition of context display elements
+- **Visual Progress Indicator**: Circular SVG progress ring showing context usage percentage
+- **Token Breakdown**: Detailed view of input, output, reasoning, and cached tokens
+- **Cost Estimation**: Real-time cost calculation using the `tokenlens` library
+- **Intelligent Formatting**: Automatic token count formatting (K, M, B suffixes)
+- **Interactive Hover Card**: Detailed information revealed on hover
+- **Context Provider Pattern**: Clean data flow through React Context API
+- **TypeScript Support**: Full type definitions for all components
+- **Accessible Design**: Proper ARIA labels and semantic HTML
+- **Theme Integration**: Uses currentColor for automatic theme adaptation
 
-## Basic Usage
-
-```tsx
-const Example = () => (
-  <Context
-    usedTokens={40_000}
-    maxTokens={128_000}
-    modelId="openai:gpt-4"
-    usage={{
-      inputTokens: 32_000,
-      outputTokens: 8_000,
-      totalTokens: 40_000,
-      cachedInputTokens: 0,
-      reasoningTokens: 0,
-    }}
-  >
-    <ContextTrigger />
-    <ContextContent>
-      <ContextContentHeader />
-      <ContextContentBody>
-        <ContextInputUsage />
-        <ContextOutputUsage />
-        <ContextReasoningUsage />
-        <ContextCacheUsage />
-      </ContextContentBody>
-      <ContextContentFooter />
-    </ContextContent>
-  </Context>
-);
-```
-
-## Minimal Usage
-
-```tsx
-<Context usedTokens={10_000} maxTokens={100_000}>
-  <ContextTrigger />
-  <ContextContent>
-    <ContextContentHeader />
-  </ContextContent>
-</Context>
-```
-
-## Props Reference
+## Props
 
 ### `<Context />`
+
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `usedTokens` | `number` | Required | Number of tokens used |
-| `maxTokens` | `number` | Required | Maximum context window size |
-| `usage` | `LanguageModelUsage` | - | Detailed usage breakdown from AI SDK |
-| `modelId` | `string` | - | Model identifier for cost calculation |
-| `...props` | `ComponentProps<typeof HoverCard>` | - | Hover card props |
+| `maxTokens` | `number` | - | The total context window size in tokens. |
+| `usedTokens` | `number` | - | The number of tokens currently used. |
+| `usage` | `LanguageModelUsage` | - | Detailed token usage breakdown from the AI SDK (input, output, reasoning, cached tokens). |
+| `modelId` | `ModelId` | - | Model identifier for cost calculation (e.g.,  |
+| `...props` | `ComponentProps<HoverCard>` | - | Any other props are spread to the HoverCard component. |
 
 ### `<ContextTrigger />`
+
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `children` | `ReactNode` | - | Custom trigger content (defaults to percentage + icon) |
-| `...props` | `ComponentProps<typeof Button>` | - | Button props |
+| `children` | `React.ReactNode` | - | Custom trigger element. If not provided, renders a default button with percentage and icon. |
+| `...props` | `ComponentProps<Button>` | - | Props spread to the default button element. |
 
 ### `<ContextContent />`
+
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `className` | `string` | - | Additional CSS classes |
-| `...props` | `ComponentProps<typeof HoverCardContent>` | - | Hover card content props |
+| `className` | `string` | - | Additional CSS classes for the hover card content. |
+| `...props` | `ComponentProps<HoverCardContent>` | - | Props spread to the HoverCardContent component. |
 
 ### `<ContextContentHeader />`
+
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `children` | `ReactNode` | - | Custom header content (defaults to progress bar) |
-| `className` | `string` | - | Additional CSS classes |
+| `children` | `React.ReactNode` | - | Custom header content. If not provided, renders percentage and token count with progress bar. |
+| `...props` | `ComponentProps<div>` | - | Props spread to the header div element. |
 
 ### `<ContextContentBody />`
+
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `children` | `ReactNode` | Required | Usage breakdown components |
-| `className` | `string` | - | Additional CSS classes |
+| `children` | `React.ReactNode` | - | Body content, typically containing usage breakdown components. |
+| `...props` | `ComponentProps<div>` | - | Props spread to the body div element. |
 
 ### `<ContextContentFooter />`
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `children` | `ReactNode` | - | Custom footer content (defaults to total cost) |
-| `className` | `string` | - | Additional CSS classes |
 
-### `<ContextInputUsage />`
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `children` | `ReactNode` | - | Custom content |
-| `className` | `string` | - | Additional CSS classes |
+| `children` | `React.ReactNode` | - | Custom footer content. If not provided, renders total cost when modelId is provided. |
+| `...props` | `ComponentProps<div>` | - | Props spread to the footer div element. |
 
-### `<ContextOutputUsage />`
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `children` | `ReactNode` | - | Custom content |
-| `className` | `string` | - | Additional CSS classes |
+### Usage Components
 
-### `<ContextReasoningUsage />`
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `children` | `ReactNode` | - | Custom content |
-| `className` | `string` | - | Additional CSS classes |
+All usage components (`ContextInputUsage`, `ContextOutputUsage`, `ContextReasoningUsage`, `ContextCacheUsage`) share the same props:
 
-### `<ContextCacheUsage />`
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `children` | `ReactNode` | - | Custom content |
-| `className` | `string` | - | Additional CSS classes |
+| `children` | `React.ReactNode` | - | Custom content. If not provided, renders token count and cost for the respective usage type. |
+| `className` | `string` | - | Additional CSS classes. |
+| `...props` | `ComponentProps<div>` | - | Props spread to the div element. |
+
+## Component Architecture
+
+The Context component uses a compound component pattern with React Context for data sharing:
+
+1. **`<Context>`** - Root provider component that holds all context data
+2. **`<ContextTrigger>`** - Interactive trigger element (default: button with percentage)
+3. **`<ContextContent>`** - Hover card content container
+4. **`<ContextContentHeader>`** - Header section with progress visualization
+5. **`<ContextContentBody>`** - Body section for usage breakdowns
+6. **`<ContextContentFooter>`** - Footer section for total cost
+7. **Usage Components** - Individual token usage displays (Input, Output, Reasoning, Cache)
+
+## Token Formatting
+
+The component uses `Intl.NumberFormat` with compact notation for automatic formatting:
+
+- Under 1,000: Shows exact count (e.g., "842")
+- 1,000+: Shows with K suffix (e.g., "32K")
+- 1,000,000+: Shows with M suffix (e.g., "1.5M")
+- 1,000,000,000+: Shows with B suffix (e.g., "2.1B")
 
 ## Cost Calculation
 
-The component uses the `tokenlens` library to calculate costs based on:
-- Model ID (e.g., `"openai:gpt-4"`, `"anthropic:claude-sonnet-4"`)
-- Input, output, reasoning, and cache token counts
+When a `modelId` is provided, the component automatically calculates costs using the `tokenlens` library:
 
-If no `modelId` is provided, cost displays will show `$0.00`.
+- **Input tokens**: Cost based on model's input pricing
+- **Output tokens**: Cost based on model's output pricing
+- **Reasoning tokens**: Special pricing for reasoning-capable models
+- **Cached tokens**: Reduced pricing for cached input tokens
+- **Total cost**: Sum of all token type costs
 
-## Examples
+Costs are formatted using `Intl.NumberFormat` with USD currency.
 
-See `scripts/` folder for complete working examples.
+## Styling
+
+The component uses Tailwind CSS classes and follows your design system:
+
+- Progress indicator uses `currentColor` for theme adaptation
+- Hover card has customizable width and padding
+- Footer has a secondary background for visual separation
+- All text sizes use the `text-xs` class for consistency
+- Muted foreground colors for secondary information

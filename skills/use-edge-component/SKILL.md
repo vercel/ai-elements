@@ -1,77 +1,55 @@
 ---
 name: Using the Edge component from AI Elements
-description: How to use the Edge component to render styled connection lines in React Flow diagrams.
+description: Customizable edge components for React Flow canvases with animated and temporary states.
 ---
 
-# Edge Component
+The `Edge` component provides two pre-styled edge types for React Flow canvases: `Temporary` for dashed temporary connections and `Animated` for connections with animated indicators.
 
-Custom edge components for React Flow diagrams. Provides two edge variants: `Temporary` for dashed placeholder edges and `Animated` for edges with animated flowing particles.
+<Callout>
+  The Edge component is designed to be used with the [Canvas](/elements/components/canvas) component. See the [Workflow](/elements/examples/workflow) demo for a full example.
+</Callout>
 
-## Import
+## Installation
 
-```tsx
-import { Edge } from "@repo/elements/edge";
+```bash
+npx ai-elements@latest add edge
 ```
 
-## Sub-components
+## Features
 
-| Component | Purpose |
-|-----------|---------|
-| `Edge.Temporary` | Dashed edge for temporary/preview connections |
-| `Edge.Animated` | Bezier edge with animated particle flowing along the path |
+- Two distinct edge types: Temporary and Animated
+- Temporary edges use dashed lines with ring color
+- Animated edges include a moving circle indicator
+- Automatic handle position calculation
+- Smart offset calculation based on handle type and position
+- Uses Bezier curves for smooth, natural-looking connections
+- Fully compatible with React Flow's edge system
+- Type-safe implementation with TypeScript
 
-## Basic Usage
+## Edge Types
 
-```tsx
-import { ReactFlow } from "@xyflow/react";
-import { Edge } from "@repo/elements/edge";
+### `Edge.Temporary`
 
-const edgeTypes = {
-  temporary: Edge.Temporary,
-  animated: Edge.Animated,
-};
+A dashed edge style for temporary or preview connections. Uses a simple Bezier path with a dashed stroke pattern.
 
-const edges = [
-  { id: "e1", source: "1", target: "2", type: "animated" },
-  { id: "e2", source: "2", target: "3", type: "temporary" },
-];
+### `Edge.Animated`
 
-const FlowDiagram = () => (
-  <ReactFlow
-    nodes={nodes}
-    edges={edges}
-    edgeTypes={edgeTypes}
-  />
-);
-```
+A solid edge with an animated circle that moves along the path. The animation repeats indefinitely with a 2-second duration, providing visual feedback for active connections.
 
-## Props Reference
+## Props
 
-### `<Edge.Temporary />`
+Both edge types accept standard React Flow `EdgeProps`:
+
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `id` | `string` | - | Edge identifier |
-| `sourceX` | `number` | - | Source X coordinate |
-| `sourceY` | `number` | - | Source Y coordinate |
-| `targetX` | `number` | - | Target X coordinate |
-| `targetY` | `number` | - | Target Y coordinate |
-| `sourcePosition` | `Position` | - | Source handle position |
-| `targetPosition` | `Position` | - | Target handle position |
-
-### `<Edge.Animated />`
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `id` | `string` | - | Edge identifier |
-| `source` | `string` | - | Source node ID |
-| `target` | `string` | - | Target node ID |
-| `markerEnd` | `string` | - | Arrow marker at edge end |
-| `style` | `CSSProperties` | - | Custom edge styling |
-
-## Styling
-
-- `Temporary`: Uses dashed stroke (`strokeDasharray: "5, 5"`) with `stroke-ring` color
-- `Animated`: Renders a circle that animates along the bezier path using `animateMotion` with 2-second duration
-
-## Examples
-
-See `scripts/` folder for complete working examples.
+| `id` | `string` | - | Unique identifier for the edge. |
+| `source` | `string` | - | ID of the source node. |
+| `target` | `string` | - | ID of the target node. |
+| `sourceX` | `number` | - | X coordinate of the source handle (Temporary only). |
+| `sourceY` | `number` | - | Y coordinate of the source handle (Temporary only). |
+| `targetX` | `number` | - | X coordinate of the target handle (Temporary only). |
+| `targetY` | `number` | - | Y coordinate of the target handle (Temporary only). |
+| `sourcePosition` | `Position` | - | Position of the source handle (Left, Right, Top, Bottom). |
+| `targetPosition` | `Position` | - | Position of the target handle (Left, Right, Top, Bottom). |
+| `markerEnd` | `string` | - | SVG marker ID for the edge end (Animated only). |
+| `style` | `React.CSSProperties` | - | Custom styles for the edge (Animated only). |

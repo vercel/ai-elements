@@ -1,64 +1,39 @@
 ---
-name: Using the CodeBlock component from AI Elements
-description: How to use the CodeBlock component to display syntax-highlighted code with copy and language selection.
+name: Using the Code Block component from AI Elements
+description: Provides syntax highlighting, line numbers, and copy to clipboard functionality for code blocks.
 ---
 
-# CodeBlock Component
+The `CodeBlock` component provides syntax highlighting, line numbers, and copy to clipboard functionality for code blocks. It's fully composable, allowing you to customize the header, actions, and content.
 
-The CodeBlock component displays syntax-highlighted code using Shiki with support for light/dark themes, line numbers, copy functionality, and language selection. It includes intelligent caching for optimal performance.
 
-## Import
+
+## Installation
+
+```bash
+npx ai-elements@latest add code-block
+```
+
+## Usage
+
+The CodeBlock is fully composable. Here's a basic example:
 
 ```tsx
 import {
   CodeBlock,
-  CodeBlockContainer,
-  CodeBlockHeader,
-  CodeBlockTitle,
-  CodeBlockFilename,
   CodeBlockActions,
   CodeBlockCopyButton,
-  CodeBlockContent,
-  CodeBlockLanguageSelector,
-  CodeBlockLanguageSelectorTrigger,
-  CodeBlockLanguageSelectorValue,
-  CodeBlockLanguageSelectorContent,
-  CodeBlockLanguageSelectorItem,
-  highlightCode,
-} from "@repo/elements/code-block";
-```
+  CodeBlockFilename,
+  CodeBlockHeader,
+  CodeBlockTitle,
+} from '@/components/ai-elements/code-block';
+import { FileIcon } from 'lucide-react';
 
-## Sub-components
-
-| Component | Purpose |
-|-----------|---------|
-| `CodeBlock` | Root component with context provider |
-| `CodeBlockContainer` | Styled container with border |
-| `CodeBlockHeader` | Top bar for filename and actions |
-| `CodeBlockTitle` | Container for icon and filename |
-| `CodeBlockFilename` | Monospace filename display |
-| `CodeBlockActions` | Container for action buttons |
-| `CodeBlockCopyButton` | Copy to clipboard button |
-| `CodeBlockContent` | Syntax-highlighted code content |
-| `CodeBlockLanguageSelector` | Language dropdown selector |
-| `CodeBlockLanguageSelectorTrigger` | Dropdown trigger |
-| `CodeBlockLanguageSelectorValue` | Selected language display |
-| `CodeBlockLanguageSelectorContent` | Dropdown content |
-| `CodeBlockLanguageSelectorItem` | Individual language option |
-
-## Basic Usage
-
-```tsx
-const code = `function greet(name: string) {
-  return \`Hello, \${name}!\`;
-}`;
-
-const Example = () => (
-  <CodeBlock code={code} language="typescript" showLineNumbers>
+export const Example = () => (
+  <CodeBlock code={code} language="typescript">
     <CodeBlockHeader>
       <CodeBlockTitle>
         <FileIcon size={14} />
-        <CodeBlockFilename>greet.ts</CodeBlockFilename>
+        <CodeBlockFilename>example.ts</CodeBlockFilename>
       </CodeBlockTitle>
       <CodeBlockActions>
         <CodeBlockCopyButton />
@@ -68,104 +43,129 @@ const Example = () => (
 );
 ```
 
-## With Language Selector
+## Features
 
-```tsx
-const [language, setLanguage] = useState("typescript");
-
-const Example = () => (
-  <CodeBlock code={code} language={language}>
-    <CodeBlockHeader>
-      <CodeBlockTitle>
-        <CodeBlockFilename>{filename}</CodeBlockFilename>
-      </CodeBlockTitle>
-      <CodeBlockActions>
-        <CodeBlockLanguageSelector value={language} onValueChange={setLanguage}>
-          <CodeBlockLanguageSelectorTrigger>
-            <CodeBlockLanguageSelectorValue />
-          </CodeBlockLanguageSelectorTrigger>
-          <CodeBlockLanguageSelectorContent>
-            <CodeBlockLanguageSelectorItem value="typescript">TypeScript</CodeBlockLanguageSelectorItem>
-            <CodeBlockLanguageSelectorItem value="python">Python</CodeBlockLanguageSelectorItem>
-            <CodeBlockLanguageSelectorItem value="rust">Rust</CodeBlockLanguageSelectorItem>
-          </CodeBlockLanguageSelectorContent>
-        </CodeBlockLanguageSelector>
-        <CodeBlockCopyButton />
-      </CodeBlockActions>
-    </CodeBlockHeader>
-  </CodeBlock>
-);
-```
-
-## Props Reference
-
-### `<CodeBlock />`
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `code` | `string` | Required | The code to display |
-| `language` | `BundledLanguage` | Required | Programming language for syntax highlighting |
-| `showLineNumbers` | `boolean` | `false` | Show line numbers |
-| `className` | `string` | - | Additional CSS classes |
-| `children` | `ReactNode` | - | Header and other components |
-
-### `<CodeBlockContainer />`
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `language` | `string` | Required | Language for data attribute |
-| `className` | `string` | - | Additional CSS classes |
-| `style` | `CSSProperties` | - | Custom styles |
-
-### `<CodeBlockHeader />`
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `className` | `string` | - | Additional CSS classes |
-| `children` | `ReactNode` | Required | Title and actions |
-
-### `<CodeBlockTitle />`
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `className` | `string` | - | Additional CSS classes |
-| `children` | `ReactNode` | Required | Icon and filename |
-
-### `<CodeBlockFilename />`
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `className` | `string` | - | Additional CSS classes |
-| `children` | `ReactNode` | Required | Filename text |
-
-### `<CodeBlockActions />`
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `className` | `string` | - | Additional CSS classes |
-| `children` | `ReactNode` | Required | Action buttons |
-
-### `<CodeBlockCopyButton />`
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `onCopy` | `() => void` | - | Callback on successful copy |
-| `onError` | `(error: Error) => void` | - | Callback on copy error |
-| `timeout` | `number` | `2000` | Reset copied state after ms |
-| `className` | `string` | - | Additional CSS classes |
-
-### `<CodeBlockContent />`
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `code` | `string` | Required | Code to highlight |
-| `language` | `BundledLanguage` | Required | Language for highlighting |
-| `showLineNumbers` | `boolean` | `false` | Display line numbers |
-
-### `<CodeBlockLanguageSelector />`
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `value` | `string` | - | Selected language value |
-| `onValueChange` | `(value: string) => void` | - | Selection change handler |
-| `...props` | `ComponentProps<typeof Select>` | - | Select props |
-
-## Utility Functions
-
-### `highlightCode(code, language, callback?)`
-Synchronously returns cached tokens or `null`, and optionally calls callback when highlighting completes asynchronously.
+- Syntax highlighting with Shiki
+- Line numbers (optional)
+- Copy to clipboard functionality
+- Automatic light/dark theme switching via CSS variables
+- Language selector for multi-language examples
+- Fully composable architecture
+- Accessible design
 
 ## Examples
 
-See `scripts/` folder for complete working examples.
+### Dark Mode
+
+To use the `CodeBlock` component in dark mode, wrap it in a `div` with the `dark` class.
+
+
+
+### Language Selector
+
+Add a language selector to switch between different code implementations:
+
+
+
+## Props
+
+### `<CodeBlock />`
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `code` | `string` | - | The code content to display. |
+| `language` | `BundledLanguage` | - | The programming language for syntax highlighting. |
+| `showLineNumbers` | `boolean` | `false` | Whether to show line numbers. |
+| `children` | `React.ReactNode` | - | Child elements like CodeBlockHeader. |
+| `className` | `string` | - | Additional CSS classes. |
+
+### `<CodeBlockHeader />`
+
+Container for the header row. Uses flexbox with `justify-between`.
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `React.ReactNode` | - | Header content (CodeBlockTitle, CodeBlockActions, etc.). |
+| `className` | `string` | - | Additional CSS classes. |
+
+### `<CodeBlockTitle />`
+
+Left-aligned container for icon and filename. Uses flexbox with `gap-2`.
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `React.ReactNode` | - | Title content (icon, CodeBlockFilename, etc.). |
+| `className` | `string` | - | Additional CSS classes. |
+
+### `<CodeBlockFilename />`
+
+Displays the filename in monospace font.
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `React.ReactNode` | - | The filename to display. |
+| `className` | `string` | - | Additional CSS classes. |
+
+### `<CodeBlockActions />`
+
+Right-aligned container for action buttons. Uses flexbox with `gap-2`.
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `React.ReactNode` | - | Action buttons (CodeBlockCopyButton, CodeBlockLanguageSelector, etc.). |
+| `className` | `string` | - | Additional CSS classes. |
+
+### `<CodeBlockCopyButton />`
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `onCopy` | `() => void` | - | Callback fired after a successful copy. |
+| `onError` | `(error: Error) => void` | - | Callback fired if copying fails. |
+| `timeout` | `number` | `2000` | How long to show the copied state (ms). |
+| `children` | `React.ReactNode` | - | Custom content for the button. Defaults to copy/check icons. |
+| `className` | `string` | - | Additional CSS classes. |
+
+### `<CodeBlockLanguageSelector />`
+
+Wrapper for the language selector. Extends shadcn/ui Select.
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `value` | `string` | - | The currently selected language. |
+| `onValueChange` | `(value: string) => void` | - | Callback when the language changes. |
+| `children` | `React.ReactNode` | - | Selector components (Trigger, Content, Items). |
+
+### `<CodeBlockLanguageSelectorTrigger />`
+
+Trigger button for the language selector dropdown. Pre-styled for code block header.
+
+### `<CodeBlockLanguageSelectorValue />`
+
+Displays the selected language value.
+
+### `<CodeBlockLanguageSelectorContent />`
+
+Dropdown content container. Defaults to `align="end"`.
+
+### `<CodeBlockLanguageSelectorItem />`
+
+Individual language option in the dropdown.
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `value` | `string` | - | The language value. |
+| `children` | `React.ReactNode` | - | The display label. |
+
+### `<CodeBlockContainer />`
+
+Low-level container component with performance optimizations (`contentVisibility`). Used internally by CodeBlock.
+
+### `<CodeBlockContent />`
+
+Low-level component that handles syntax highlighting. Used internally by CodeBlock, but can be used directly for custom layouts.
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `code` | `string` | - | The code content to display. |
+| `language` | `BundledLanguage` | - | The programming language for syntax highlighting. |
+| `showLineNumbers` | `boolean` | `false` | Whether to show line numbers. |

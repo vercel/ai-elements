@@ -1,120 +1,172 @@
 ---
 name: Using the Checkpoint component from AI Elements
-description: How to use the Checkpoint component to display conversation restore points.
+description: A simple component for marking conversation history points and restoring the chat to a previous state.
 ---
 
-# Checkpoint Component
+The `Checkpoint` component provides a way to mark specific points in a conversation history and restore the chat to that state. Inspired by VSCode's Copilot checkpoint feature, it allows users to revert to an earlier conversation state while maintaining a clear visual separation between different conversation segments.
 
-The Checkpoint component displays a visual marker in conversations that allows users to restore to a previous state. It shows a separator line with a bookmark icon and restore trigger.
 
-## Import
 
-```tsx
+## Installation
+
+```bash
+npx ai-elements@latest add checkpoint
+```
+
+## Features
+
+- Simple flex layout with icon, trigger, and separator
+- Visual separator line for clear conversation breaks
+- Clickable restore button for reverting to checkpoint
+- Customizable icon (defaults to BookmarkIcon)
+- Keyboard accessible with proper ARIA labels
+- Responsive design that adapts to different screen sizes
+- Seamless light/dark theme integration
+
+## Usage with AI SDK
+
+Build a chat interface with conversation checkpoints that allow users to restore to previous states.
+
+Add the following component to your frontend:
+
+```tsx title="app/page.tsx"
+'use client';
+
+import { useState, Fragment } from 'react';
+import { useChat } from '@ai-sdk/react';
 import {
   Checkpoint,
   CheckpointIcon,
   CheckpointTrigger,
-} from "@repo/elements/checkpoint";
-```
+} from '@/components/ai-elements/checkpoint';
+import { Message, MessageContent, MessageResponse } from '@/components/ai-elements/message';
+import { Conversation, ConversationContent } from '@/components/ai-elements/conversation';
 
-## Sub-components
+type CheckpointType = {
+  id: string;
+  messageIndex: number;
+  timestamp: Date;
+  messageCount: number;
+};
 
-| Component | Purpose |
-|-----------|---------|
-| `Checkpoint` | Root container with separator line |
-| `CheckpointIcon` | Bookmark icon (customizable) |
-| `CheckpointTrigger` | Button to trigger restoration with optional tooltip |
+const CheckpointDemo = () => {
+  const { messages, setMessages } = useChat();
+  const [checkpoints, setCheckpoints] = useState<CheckpointType[]>([]);
 
-## Basic Usage
+  const createCheckpoint = (messageIndex: number) => {
+    const checkpoint: CheckpointType = {
+      id: nanoid(),
+      messageIndex,
+      timestamp: new Date(),
+      messageCount: messageIndex + 1,
+    };
+    setCheckpoints([...checkpoints, checkpoint]);
+  };
 
-```tsx
-const Example = () => {
-  const handleRestore = () => {
-    // Restore conversation to this checkpoint
+  const restoreToCheckpoint = (messageIndex: number) => {
+    // Restore messages to checkpoint state
+    setMessages(messages.slice(0, messageIndex + 1));
+    // Remove checkpoints after this point
+    setCheckpoints(checkpoints.filter(cp => cp.messageIndex <= messageIndex));
   };
 
   return (
-    <Checkpoint>
-      <CheckpointIcon />
-      <CheckpointTrigger
-        onClick={handleRestore}
-        tooltip="Restores workspace and chat to this point"
-      >
-        Restore checkpoint
-      </CheckpointTrigger>
-    </Checkpoint>
+    <div className="max-w-4xl mx-auto p-6 relative size-full rounded-lg border h-[600px]">
+      <Conversation>
+        <ConversationContent>
+          {messages.map((message, index) => {
+            const checkpoint = checkpoints.find(cp => cp.messageIndex === index);
+
+            return (
+              <Fragment key={message.id}>
+                <Message from={message.role}>
+                  <MessageContent>
+                    <MessageResponse>{message.content}</MessageResponse>
+                  </MessageContent>
+                </Message>
+                {checkpoint && (
+                  <Checkpoint>
+                    <CheckpointIcon />
+                    <CheckpointTrigger
+                      onClick={() => restoreToCheckpoint(checkpoint.messageIndex)}
+                    >
+                      Restore checkpoint
+                    </CheckpointTrigger>
+                  </Checkpoint>
+                )}
+              </Fragment>
+            );
+          })}
+        </ConversationContent>
+      </Conversation>
+    </div>
   );
 };
+
+export default CheckpointDemo;
 ```
 
-## With Conversation Context
+## Use Cases
+
+### Manual Checkpoints
+
+Allow users to manually create checkpoints at important conversation points:
 
 ```tsx
-import { Conversation, ConversationContent } from "@repo/elements/conversation";
-import { Message, MessageContent, MessageResponse } from "@repo/elements/message";
+<Button onClick={() => createCheckpoint(messages.length - 1)}>
+  Create Checkpoint
+</Button>
+```
 
-const Example = () => {
-  const [messages, setMessages] = useState(initialMessages);
-  const checkpoints = [{ messageCount: 2 }];
+### Automatic Checkpoints
 
-  const handleRestore = (messageCount: number) => {
-    setMessages(initialMessages.slice(0, messageCount));
-  };
+Create checkpoints automatically after significant conversation milestones:
 
-  return (
-    <Conversation>
-      <ConversationContent>
-        {messages.map((message, index) => {
-          const checkpoint = checkpoints.find((cp) => cp.messageCount === index + 1);
-          return (
-            <Fragment key={message.id}>
-              <Message from={message.role}>
-                <MessageContent>
-                  <MessageResponse>{message.content}</MessageResponse>
-                </MessageContent>
-              </Message>
-              {checkpoint && (
-                <Checkpoint>
-                  <CheckpointIcon />
-                  <CheckpointTrigger onClick={() => handleRestore(checkpoint.messageCount)}>
-                    Restore checkpoint
-                  </CheckpointTrigger>
-                </Checkpoint>
-              )}
-            </Fragment>
-          );
-        })}
-      </ConversationContent>
-    </Conversation>
-  );
+```tsx
+useEffect(() => {
+  // Create checkpoint every 5 messages
+  if (messages.length > 0 && messages.length % 5 === 0) {
+    createCheckpoint(messages.length - 1);
+  }
+}, [messages.length]);
+```
+
+### Branching Conversations
+
+Use checkpoints to enable conversation branching where users can explore different conversation paths:
+
+```tsx
+const restoreAndBranch = (messageIndex: number) => {
+  // Save current branch
+  const currentBranch = messages.slice(messageIndex + 1);
+  saveBranch(currentBranch);
+
+  // Restore to checkpoint
+  restoreToCheckpoint(messageIndex);
 };
 ```
 
-## Props Reference
+## Props
 
 ### `<Checkpoint />`
+
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `className` | `string` | - | Additional CSS classes |
-| `children` | `ReactNode` | Required | Icon and trigger components |
+| `children` | `React.ReactNode` | - | The checkpoint icon and trigger components. Automatically includes a Separator at the end. |
+| `...props` | `React.HTMLAttributes<HTMLDivElement>` | - | Any other props are spread to the root div. |
 
 ### `<CheckpointIcon />`
+
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `children` | `ReactNode` | - | Custom icon (defaults to BookmarkIcon) |
-| `className` | `string` | - | Additional CSS classes |
-| `...props` | `LucideProps` | - | Lucide icon props |
+| `children` | `React.ReactNode` | - | Custom icon content. If not provided, defaults to a BookmarkIcon from lucide-react. |
+| `...props` | `LucideProps` | - | Any other props are spread to the BookmarkIcon component. |
 
 ### `<CheckpointTrigger />`
+
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `tooltip` | `string` | - | Tooltip text on hover |
-| `variant` | `string` | `"ghost"` | Button variant |
-| `size` | `string` | `"sm"` | Button size |
-| `children` | `ReactNode` | Required | Button text |
-| `onClick` | `() => void` | - | Click handler |
-| `...props` | `ComponentProps<typeof Button>` | - | Button props |
-
-## Examples
-
-See `scripts/` folder for complete working examples.
+| `children` | `React.ReactNode` | - | The text or content to display in the trigger button. |
+| `variant` | `string` | - | The button variant style. |
+| `size` | `string` | - | The button size. |
+| `...props` | `React.ComponentProps<typeof Button>` | - | Any other props are spread to the underlying shadcn/ui Button component. |

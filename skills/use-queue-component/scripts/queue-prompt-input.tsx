@@ -7,6 +7,19 @@ import {
   Attachments,
 } from "@repo/elements/attachments";
 import {
+  ModelSelector,
+  ModelSelectorContent,
+  ModelSelectorEmpty,
+  ModelSelectorGroup,
+  ModelSelectorInput,
+  ModelSelectorItem,
+  ModelSelectorList,
+  ModelSelectorLogo,
+  ModelSelectorLogoGroup,
+  ModelSelectorName,
+  ModelSelectorTrigger,
+} from "@repo/elements/model-selector";
+import {
   PromptInput,
   PromptInputActionAddAttachments,
   PromptInputActionMenu,
@@ -34,8 +47,49 @@ import {
   QueueSectionContent,
   type QueueTodo,
 } from "@repo/elements/queue";
-import { GlobeIcon, Trash2 } from "lucide-react";
-import { useState } from "react";
+import { CheckIcon, GlobeIcon, Trash2 } from "lucide-react";
+import { useRef, useState } from "react";
+
+const models = [
+  {
+    id: "gpt-4o",
+    name: "GPT-4o",
+    chef: "OpenAI",
+    chefSlug: "openai",
+    providers: ["openai", "azure"],
+  },
+  {
+    id: "gpt-4o-mini",
+    name: "GPT-4o Mini",
+    chef: "OpenAI",
+    chefSlug: "openai",
+    providers: ["openai", "azure"],
+  },
+  {
+    id: "claude-opus-4-20250514",
+    name: "Claude 4 Opus",
+    chef: "Anthropic",
+    chefSlug: "anthropic",
+    providers: ["anthropic", "azure", "google", "amazon-bedrock"],
+  },
+  {
+    id: "claude-sonnet-4-20250514",
+    name: "Claude 4 Sonnet",
+    chef: "Anthropic",
+    chefSlug: "anthropic",
+    providers: ["anthropic", "azure", "google", "amazon-bedrock"],
+  },
+  {
+    id: "gemini-2.0-flash-exp",
+    name: "Gemini 2.0 Flash",
+    chef: "Google",
+    chefSlug: "google",
+    providers: ["google"],
+  },
+];
+
+const SUBMITTING_TIMEOUT = 200;
+const STREAMING_TIMEOUT = 2000;
 
 const sampleTodos: QueueTodo[] = [
   {
@@ -53,6 +107,18 @@ const sampleTodos: QueueTodo[] = [
     id: "todo-3",
     title: "Fix bug #42",
     description: "Resolve crash on settings page",
+    status: "pending",
+  },
+  {
+    id: "todo-4",
+    title: "Refactor queue logic",
+    description: "Unify queue and todo state management",
+    status: "pending",
+  },
+  {
+    id: "todo-5",
+    title: "Add unit tests",
+    description: "Increase test coverage for hooks",
     status: "pending",
   },
 ];
@@ -82,18 +148,37 @@ const PromptInputAttachmentsDisplay = () => {
 
 const Example = () => {
   const [todos, setTodos] = useState(sampleTodos);
-  const [text, setText] = useState<string>("");
-  const [status, setStatus] = useState<
-    "submitted" | "streaming" | "ready" | "error"
-  >("ready");
 
   const handleRemoveTodo = (id: string) => {
     setTodos((prev) => prev.filter((todo) => todo.id !== id));
   };
 
+  const [text, setText] = useState<string>("");
+  const [model, setModel] = useState<string>(models[0].id);
+  const [modelSelectorOpen, setModelSelectorOpen] = useState(false);
+  const [status, setStatus] = useState<
+    "submitted" | "streaming" | "ready" | "error"
+  >("ready");
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const selectedModelData = models.find((m) => m.id === model);
+
+  const stop = () => {
+    console.log("Stopping request...");
+
+    // Clear any pending timeouts
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
+    }
+
+    setStatus("ready");
+  };
+
   const handleSubmit = (message: PromptInputMessage) => {
+    // If currently streaming or submitted, stop instead of submitting
     if (status === "streaming" || status === "submitted") {
-      setStatus("ready");
+      stop();
       return;
     }
 
@@ -106,13 +191,16 @@ const Example = () => {
 
     setStatus("submitted");
 
-    setTimeout(() => {
-      setStatus("streaming");
-    }, 200);
+    console.log("Submitting message:", message);
 
     setTimeout(() => {
+      setStatus("streaming");
+    }, SUBMITTING_TIMEOUT);
+
+    timeoutRef.current = setTimeout(() => {
       setStatus("ready");
-    }, 2000);
+      timeoutRef.current = null;
+    }, STREAMING_TIMEOUT);
   };
 
   return (
@@ -176,6 +264,61 @@ const Example = () => {
               <GlobeIcon size={16} />
               <span>Search</span>
             </PromptInputButton>
+            <ModelSelector
+              onOpenChange={setModelSelectorOpen}
+              open={modelSelectorOpen}
+            >
+              <ModelSelectorTrigger asChild>
+                <PromptInputButton>
+                  {selectedModelData?.chefSlug && (
+                    <ModelSelectorLogo provider={selectedModelData.chefSlug} />
+                  )}
+                  {selectedModelData?.name && (
+                    <ModelSelectorName>
+                      {selectedModelData.name}
+                    </ModelSelectorName>
+                  )}
+                </PromptInputButton>
+              </ModelSelectorTrigger>
+              <ModelSelectorContent>
+                <ModelSelectorInput placeholder="Search models..." />
+                <ModelSelectorList>
+                  <ModelSelectorEmpty>No models found.</ModelSelectorEmpty>
+                  {["OpenAI", "Anthropic", "Google"].map((chef) => (
+                    <ModelSelectorGroup heading={chef} key={chef}>
+                      {models
+                        .filter((m) => m.chef === chef)
+                        .map((m) => (
+                          <ModelSelectorItem
+                            key={m.id}
+                            onSelect={() => {
+                              setModel(m.id);
+                              setModelSelectorOpen(false);
+                            }}
+                            value={m.id}
+                          >
+                            <ModelSelectorLogo provider={m.chefSlug} />
+                            <ModelSelectorName>{m.name}</ModelSelectorName>
+                            <ModelSelectorLogoGroup>
+                              {m.providers.map((provider) => (
+                                <ModelSelectorLogo
+                                  key={provider}
+                                  provider={provider}
+                                />
+                              ))}
+                            </ModelSelectorLogoGroup>
+                            {model === m.id ? (
+                              <CheckIcon className="ml-auto size-4" />
+                            ) : (
+                              <div className="ml-auto size-4" />
+                            )}
+                          </ModelSelectorItem>
+                        ))}
+                    </ModelSelectorGroup>
+                  ))}
+                </ModelSelectorList>
+              </ModelSelectorContent>
+            </ModelSelector>
           </PromptInputTools>
           <PromptInputSubmit status={status} />
         </PromptInputFooter>

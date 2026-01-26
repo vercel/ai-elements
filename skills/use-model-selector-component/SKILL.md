@@ -1,161 +1,113 @@
 ---
-name: Using the ModelSelector component from AI Elements
-description: How to use the ModelSelector component to select AI models with searchable grouped lists and provider logos.
+name: Using the Model Selector component from AI Elements
+description: A searchable command palette for selecting AI models in your chat interface.
 ---
 
-# ModelSelector Component
+The `ModelSelector` component provides a searchable command palette interface for selecting AI models. It's built on top of the cmdk library and provides a keyboard-navigable interface with search functionality.
 
-A composable model selector for choosing AI models. Features a searchable dialog interface with grouped models by provider, provider logos from models.dev, and keyboard navigation. Built on shadcn/ui Dialog and Command components.
 
-## Import
 
-```tsx
-import {
-  ModelSelector,
-  ModelSelectorTrigger,
-  ModelSelectorContent,
-  ModelSelectorDialog,
-  ModelSelectorInput,
-  ModelSelectorList,
-  ModelSelectorEmpty,
-  ModelSelectorGroup,
-  ModelSelectorItem,
-  ModelSelectorSeparator,
-  ModelSelectorShortcut,
-  ModelSelectorLogo,
-  ModelSelectorLogoGroup,
-  ModelSelectorName,
-} from "@repo/elements/model-selector";
+## Installation
+
+```bash
+npx ai-elements@latest add model-selector
 ```
 
-## Sub-components
+## Features
 
-| Component | Purpose |
-|-----------|---------|
-| `ModelSelector` | Root Dialog wrapper |
-| `ModelSelectorTrigger` | Dialog trigger button |
-| `ModelSelectorContent` | Dialog content with Command wrapper |
-| `ModelSelectorDialog` | Alternative CommandDialog wrapper |
-| `ModelSelectorInput` | Search input for filtering models |
-| `ModelSelectorList` | Scrollable list container |
-| `ModelSelectorEmpty` | Empty state when no results |
-| `ModelSelectorGroup` | Group with heading (e.g., by provider) |
-| `ModelSelectorItem` | Individual model option |
-| `ModelSelectorSeparator` | Visual separator between groups |
-| `ModelSelectorShortcut` | Keyboard shortcut display |
-| `ModelSelectorLogo` | Provider logo from models.dev |
-| `ModelSelectorLogoGroup` | Stacked logo group for multi-provider models |
-| `ModelSelectorName` | Model name with truncation |
+- Searchable interface with keyboard navigation
+- Fuzzy search filtering across model names
+- Grouped model organization by provider
+- Keyboard shortcuts support
+- Empty state handling
+- Customizable styling with Tailwind CSS
+- Built on cmdk for excellent accessibility
+- TypeScript support with proper type definitions
 
-## Basic Usage
-
-```tsx
-import {
-  ModelSelector,
-  ModelSelectorTrigger,
-  ModelSelectorContent,
-  ModelSelectorInput,
-  ModelSelectorList,
-  ModelSelectorEmpty,
-  ModelSelectorGroup,
-  ModelSelectorItem,
-  ModelSelectorLogo,
-  ModelSelectorName,
-} from "@repo/elements/model-selector";
-import { Button } from "@repo/shadcn-ui/components/ui/button";
-
-const models = [
-  { id: "gpt-4o", name: "GPT-4o", provider: "openai" },
-  { id: "claude-3.5-sonnet", name: "Claude 3.5 Sonnet", provider: "anthropic" },
-];
-
-const ModelPicker = () => {
-  const [open, setOpen] = useState(false);
-  const [selected, setSelected] = useState("gpt-4o");
-
-  return (
-    <ModelSelector open={open} onOpenChange={setOpen}>
-      <ModelSelectorTrigger asChild>
-        <Button variant="outline">
-          {models.find((m) => m.id === selected)?.name}
-        </Button>
-      </ModelSelectorTrigger>
-      <ModelSelectorContent>
-        <ModelSelectorInput placeholder="Search models..." />
-        <ModelSelectorList>
-          <ModelSelectorEmpty>No models found.</ModelSelectorEmpty>
-          <ModelSelectorGroup heading="Models">
-            {models.map((model) => (
-              <ModelSelectorItem
-                key={model.id}
-                value={model.id}
-                onSelect={() => {
-                  setSelected(model.id);
-                  setOpen(false);
-                }}
-              >
-                <ModelSelectorLogo provider={model.provider} />
-                <ModelSelectorName>{model.name}</ModelSelectorName>
-              </ModelSelectorItem>
-            ))}
-          </ModelSelectorGroup>
-        </ModelSelectorList>
-      </ModelSelectorContent>
-    </ModelSelector>
-  );
-};
-```
-
-## With Provider Logos
-
-```tsx
-<ModelSelectorItem value={model.id}>
-  <ModelSelectorLogo provider={model.provider} />
-  <ModelSelectorName>{model.name}</ModelSelectorName>
-  <ModelSelectorLogoGroup>
-    {model.providers.map((p) => (
-      <ModelSelectorLogo key={p} provider={p} />
-    ))}
-  </ModelSelectorLogoGroup>
-</ModelSelectorItem>
-```
-
-## Props Reference
+## Props
 
 ### `<ModelSelector />`
+
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `open` | `boolean` | - | Controlled open state |
-| `onOpenChange` | `(open: boolean) => void` | - | Open state callback |
-| `...props` | `ComponentProps<typeof Dialog>` | - | All Dialog props |
+| `...props` | `React.ComponentProps<typeof Dialog>` | - | Any other props are spread to the underlying Dialog component. |
+
+### `<ModelSelectorTrigger />`
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `...props` | `React.ComponentProps<typeof DialogTrigger>` | - | Any other props are spread to the underlying DialogTrigger component. |
 
 ### `<ModelSelectorContent />`
+
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `title` | `ReactNode` | `"Model Selector"` | Dialog title (sr-only) |
-| `className` | `string` | - | Additional CSS classes |
+| `title` | `ReactNode` | - | Accessible title for the dialog (rendered in sr-only). |
+| `...props` | `React.ComponentProps<typeof DialogContent>` | - | Any other props are spread to the underlying DialogContent component. |
 
-### `<ModelSelectorLogo />`
+### `<ModelSelectorDialog />`
+
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `provider` | `string` | - | Provider slug (e.g., "openai", "anthropic") |
-| `className` | `string` | - | Additional CSS classes |
+| `...props` | `React.ComponentProps<typeof CommandDialog>` | - | Any other props are spread to the underlying CommandDialog component. |
 
-Supported providers include: `openai`, `anthropic`, `google`, `google-vertex`, `amazon-bedrock`, `azure`, `mistral`, `groq`, `togetherai`, `perplexity`, `deepseek`, `xai`, `llama`, `alibaba`, `cohere`, `fireworks-ai`, `openrouter`, and many more.
+### `<ModelSelectorInput />`
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `...props` | `React.ComponentProps<typeof CommandInput>` | - | Any other props are spread to the underlying CommandInput component. |
+
+### `<ModelSelectorList />`
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `...props` | `React.ComponentProps<typeof CommandList>` | - | Any other props are spread to the underlying CommandList component. |
+
+### `<ModelSelectorEmpty />`
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `...props` | `React.ComponentProps<typeof CommandEmpty>` | - | Any other props are spread to the underlying CommandEmpty component. |
 
 ### `<ModelSelectorGroup />`
+
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `heading` | `string` | - | Group heading text |
-| `...props` | `ComponentProps<typeof CommandGroup>` | - | All CommandGroup props |
+| `...props` | `React.ComponentProps<typeof CommandGroup>` | - | Any other props are spread to the underlying CommandGroup component. |
 
 ### `<ModelSelectorItem />`
+
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `value` | `string` | - | Item value for selection |
-| `onSelect` | `() => void` | - | Selection callback |
-| `...props` | `ComponentProps<typeof CommandItem>` | - | All CommandItem props |
+| `...props` | `React.ComponentProps<typeof CommandItem>` | - | Any other props are spread to the underlying CommandItem component. |
 
-## Examples
+### `<ModelSelectorShortcut />`
 
-See `scripts/` folder for complete working examples.
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `...props` | `React.ComponentProps<typeof CommandShortcut>` | - | Any other props are spread to the underlying CommandShortcut component. |
+
+### `<ModelSelectorSeparator />`
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `...props` | `React.ComponentProps<typeof CommandSeparator>` | - | Any other props are spread to the underlying CommandSeparator component. |
+
+### `<ModelSelectorLogo />`
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `provider` | `string` | Required | The AI provider name. Supports major providers like  |
+| `...props` | `Omit<React.ComponentProps<` | - | Any other props are spread to the underlying img element (except src and alt which are generated). |
+
+### `<ModelSelectorLogoGroup />`
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `...props` | `React.ComponentProps<` | - | Any other props are spread to the underlying div element. |
+
+### `<ModelSelectorName />`
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `...props` | `React.ComponentProps<` | - | Any other props are spread to the underlying span element. |

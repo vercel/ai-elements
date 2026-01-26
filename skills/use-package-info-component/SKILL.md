@@ -1,107 +1,96 @@
 ---
-name: Using the PackageInfo component from AI Elements
-description: How to use the PackageInfo component to display package version updates and dependency information.
+name: Using the Package Info component from AI Elements
+description: Display dependency information and version changes.
 ---
 
-# PackageInfo Component
+The `PackageInfo` component displays package dependency information including version changes and change type badges.
 
-A composable card component for displaying package version information, change types, and dependencies. Useful for showing package updates in AI-driven dependency management.
 
-## Import
 
-```tsx
-import {
-  PackageInfo,
-  PackageInfoHeader,
-  PackageInfoName,
-  PackageInfoChangeType,
-  PackageInfoVersion,
-  PackageInfoDescription,
-  PackageInfoContent,
-  PackageInfoDependencies,
-  PackageInfoDependency,
-} from "@repo/elements/package-info";
+## Installation
+
+```bash
+npx ai-elements@latest add package-info
 ```
 
-## Sub-components
+## Features
 
-| Component | Purpose |
-|-----------|---------|
-| `PackageInfo` | Root container with context provider |
-| `PackageInfoHeader` | Header section for name and change type |
-| `PackageInfoName` | Displays package name with icon |
-| `PackageInfoChangeType` | Badge showing change type (major/minor/patch/added/removed) |
-| `PackageInfoVersion` | Displays current and new version with arrow |
-| `PackageInfoDescription` | Package description text |
-| `PackageInfoContent` | Content section for additional info |
-| `PackageInfoDependencies` | Container for dependency list |
-| `PackageInfoDependency` | Individual dependency item |
+- Version change display (current → new)
+- Color-coded change type badges
+- Dependencies list
+- Description support
 
-## Basic Usage
+## Change Types
 
-```tsx
-import {
-  PackageInfo,
-  PackageInfoChangeType,
-  PackageInfoContent,
-  PackageInfoDependencies,
-  PackageInfoDependency,
-  PackageInfoDescription,
-  PackageInfoHeader,
-  PackageInfoName,
-  PackageInfoVersion,
-} from "@repo/elements/package-info";
+| Type | Color | Use Case |
+|------|-------|----------|
+| `major` | Red | Breaking changes |
+| `minor` | Yellow | New features |
+| `patch` | Green | Bug fixes |
+| `added` | Blue | New dependency |
+| `removed` | Gray | Removed dependency |
 
-const Example = () => (
-  <PackageInfo
-    name="react"
-    currentVersion="18.2.0"
-    newVersion="19.0.0"
-    changeType="major"
-  >
-    <PackageInfoHeader>
-      <PackageInfoName />
-      <PackageInfoChangeType />
-    </PackageInfoHeader>
-    <PackageInfoVersion />
-    <PackageInfoDescription>
-      A JavaScript library for building user interfaces.
-    </PackageInfoDescription>
-    <PackageInfoContent>
-      <PackageInfoDependencies>
-        <PackageInfoDependency name="react-dom" version="^19.0.0" />
-        <PackageInfoDependency name="scheduler" version="^0.24.0" />
-      </PackageInfoDependencies>
-    </PackageInfoContent>
-  </PackageInfo>
-);
-```
-
-## Props Reference
+## Props
 
 ### `<PackageInfo />`
+
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `name` | `string` | - | Package name (required) |
-| `currentVersion` | `string` | - | Current version number |
-| `newVersion` | `string` | - | New version number |
-| `changeType` | `"major" \| "minor" \| "patch" \| "added" \| "removed"` | - | Type of version change |
-| `className` | `string` | - | Additional CSS classes |
+| `name` | `string` | Required | Package name. |
+| `currentVersion` | `string` | - | Current installed version. |
+| `newVersion` | `string` | - | New version being installed. |
+| `changeType` | `unknown` | - | Type of version change. |
+| `...props` | `React.HTMLAttributes<HTMLDivElement>` | - | Spread to the container div. |
+
+### `<PackageInfoHeader />`
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `...props` | `React.HTMLAttributes<HTMLDivElement>` | - | Spread to the header div. |
+
+### `<PackageInfoName />`
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `React.ReactNode` | - | Custom name content. Defaults to the name from context. |
+| `...props` | `React.HTMLAttributes<HTMLDivElement>` | - | Spread to the container div. |
+
+### `<PackageInfoChangeType />`
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `React.ReactNode` | - | Custom change type label. Defaults to the changeType from context. |
+| `...props` | `React.HTMLAttributes<HTMLDivElement>` | - | Spread to the Badge component. |
+
+### `<PackageInfoVersion />`
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `React.ReactNode` | - | Custom version content. Defaults to version transition display. |
+| `...props` | `React.HTMLAttributes<HTMLDivElement>` | - | Spread to the container div. |
+
+### `<PackageInfoDescription />`
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `...props` | `React.HTMLAttributes<HTMLParagraphElement>` | - | Spread to the p element. |
+
+### `<PackageInfoContent />`
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `...props` | `React.HTMLAttributes<HTMLDivElement>` | - | Spread to the container div. |
+
+### `<PackageInfoDependencies />`
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `...props` | `React.HTMLAttributes<HTMLDivElement>` | - | Spread to the container div. |
 
 ### `<PackageInfoDependency />`
+
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `name` | `string` | - | Dependency name (required) |
-| `version` | `string` | - | Dependency version |
-
-## Change Type Styles
-
-- `major` - Red badge with arrow icon
-- `minor` - Yellow badge with arrow icon
-- `patch` - Green badge with arrow icon
-- `added` - Blue badge with plus icon
-- `removed` - Gray badge with minus icon
-
-## Examples
-
-See `scripts/` folder for complete working examples.
+| `name` | `string` | Required | Dependency name. |
+| `version` | `string` | - | Dependency version. |
+| `...props` | `React.HTMLAttributes<HTMLDivElement>` | - | Spread to the row div. |

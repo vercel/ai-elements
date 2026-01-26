@@ -1,112 +1,132 @@
 ---
 name: Using the Agent component from AI Elements
-description: How to use the Agent component to display AI agent configurations with tools and instructions.
+description: A composable component for displaying AI agent configuration with model, instructions, tools, and output schema.
 ---
 
-# Agent Component
+The `Agent` component displays an interface for showing AI agent configuration details. It's designed to represent a configured agent from the AI SDK, showing the agent's model, system instructions, available tools (with expandable input schemas), and output schema.
 
-The Agent component displays an AI agent's configuration, including its name, model, instructions, available tools, and output schema. It provides a clear visual representation of how an agent is set up.
 
-## Import
 
-```tsx
+## Installation
+
+```bash
+npx ai-elements@latest add agent
+```
+
+## Usage with AI SDK
+
+Display an agent's configuration alongside your chat interface. Tools are displayed in an accordion where clicking the description expands to show the input schema.
+
+```tsx title="app/page.tsx"
+'use client';
+
+import { tool } from 'ai';
+import { z } from 'zod';
 import {
   Agent,
-  AgentHeader,
   AgentContent,
+  AgentHeader,
   AgentInstructions,
-  AgentTools,
-  AgentTool,
   AgentOutput,
-} from "@repo/elements/agent";
-```
+  AgentTool,
+  AgentTools,
+} from '@/components/ai-elements/agent';
 
-## Sub-components
-
-| Component | Purpose |
-|-----------|---------|
-| `Agent` | Root container for the agent display |
-| `AgentHeader` | Displays agent name and model badge |
-| `AgentContent` | Container for instructions, tools, and output |
-| `AgentInstructions` | Displays the agent's system instructions |
-| `AgentTools` | Accordion container for available tools |
-| `AgentTool` | Individual tool item showing description and schema |
-| `AgentOutput` | Displays the expected output schema |
-
-## Basic Usage
-
-```tsx
-import { z } from "zod";
-
-const searchTool = {
-  description: "Search the web for information",
+const webSearch = tool({
+  description: 'Search the web for information',
   inputSchema: z.object({
-    query: z.string().describe("The search query"),
+    query: z.string().describe('The search query'),
   }),
-};
+});
 
-const Example = () => (
-  <Agent>
-    <AgentHeader name="Research Assistant" model="anthropic/claude-sonnet-4-5" />
-    <AgentContent>
-      <AgentInstructions>
-        You are a helpful research assistant.
-      </AgentInstructions>
-      <AgentTools>
-        <AgentTool tool={searchTool} value="web_search" />
-      </AgentTools>
-      <AgentOutput schema={`z.object({ result: z.string() })`} />
-    </AgentContent>
-  </Agent>
-);
+const readUrl = tool({
+  description: 'Read and parse content from a URL',
+  inputSchema: z.object({
+    url: z.string().url().describe('The URL to read'),
+  }),
+});
+
+const outputSchema = `z.object({
+  sentiment: z.enum(['positive', 'negative', 'neutral']),
+  score: z.number(),
+  summary: z.string(),
+})`;
+
+export default function Page() {
+  return (
+    <Agent>
+      <AgentHeader name="Sentiment Analyzer" model="anthropic/claude-sonnet-4-5" />
+      <AgentContent>
+        <AgentInstructions>
+          Analyze the sentiment of the provided text and return a structured
+          analysis with sentiment classification, confidence score, and summary.
+        </AgentInstructions>
+        <AgentTools>
+          <AgentTool tool={webSearch} value="web_search" />
+          <AgentTool tool={readUrl} value="read_url" />
+        </AgentTools>
+        <AgentOutput schema={outputSchema} />
+      </AgentContent>
+    </Agent>
+  );
+}
 ```
 
-## Props Reference
+## Features
+
+- Model badge in header
+- Instructions rendered as markdown
+- Tools displayed as accordion items with expandable input schemas
+- Output schema display with syntax highlighting
+- Composable structure for flexible layouts
+- Works with AI SDK `Tool` type
+
+## Props
 
 ### `<Agent />`
+
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `className` | `string` | - | Additional CSS classes |
-| `...props` | `ComponentProps<"div">` | - | Standard div props |
+| `...props` | `React.ComponentProps<` | - | Any props are spread to the root div. |
 
 ### `<AgentHeader />`
+
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `name` | `string` | Required | The agent's display name |
-| `model` | `string` | - | Optional model identifier to display as badge |
-| `className` | `string` | - | Additional CSS classes |
+| `name` | `string` | Required | The name of the agent. |
+| `model` | `string` | - | The model identifier (e.g.  |
+| `...props` | `React.ComponentProps<` | - | Any other props are spread to the container div. |
 
 ### `<AgentContent />`
+
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `className` | `string` | - | Additional CSS classes |
-| `...props` | `ComponentProps<"div">` | - | Standard div props |
+| `...props` | `React.ComponentProps<` | - | Any other props are spread to the container div. |
 
 ### `<AgentInstructions />`
+
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `children` | `string` | Required | The instruction text to display |
-| `className` | `string` | - | Additional CSS classes |
+| `children` | `string` | Required | The instruction text. |
+| `...props` | `React.ComponentProps<` | - | Any other props are spread to the container div. |
 
 ### `<AgentTools />`
+
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `className` | `string` | - | Additional CSS classes |
-| `...props` | `ComponentProps<typeof Accordion>` | - | Accordion props |
+| `...props` | `React.ComponentProps<typeof Accordion>` | - | Any other props are spread to the Accordion component. |
 
 ### `<AgentTool />`
+
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `tool` | `Tool` | Required | The tool object with description and schema |
-| `value` | `string` | Required | Unique identifier for the accordion item |
-| `className` | `string` | - | Additional CSS classes |
+| `tool` | `Tool` | Required | The tool object from the AI SDK containing description and inputSchema. |
+| `value` | `string` | Required | Unique identifier for the accordion item. |
+| `...props` | `React.ComponentProps<typeof AccordionItem>` | - | Any other props are spread to the AccordionItem component. |
 
 ### `<AgentOutput />`
+
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `schema` | `string` | Required | TypeScript/Zod schema string to display |
-| `className` | `string` | - | Additional CSS classes |
-
-## Examples
-
-See `scripts/` folder for complete working examples.
+| `schema` | `string` | Required | The output schema as a string (displayed with syntax highlighting). |
+| `...props` | `React.ComponentProps<` | - | Any other props are spread to the container div. |

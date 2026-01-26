@@ -1,123 +1,120 @@
 ---
 name: Using the Transcription component from AI Elements
-description: How to use the Transcription component to display synchronized audio transcripts.
+description: A composable component for displaying interactive, synchronized transcripts from AI SDK transcribe() results with click-to-seek functionality.
 ---
 
-# Transcription Component
+The `Transcription` component provides a flexible render props interface for displaying audio transcripts with synchronized playback. It automatically highlights the current segment based on playback time and supports click-to-seek functionality for interactive navigation.
 
-A component for displaying audio transcriptions with word-level timing synchronization. Highlights the current word based on playback position and supports seeking by clicking on words.
 
-## Import
 
-```tsx
-import {
-  Transcription,
-  TranscriptionSegment,
-} from "@repo/elements/transcription";
+## Installation
+
+```bash
+npx ai-elements@latest add transcription
 ```
 
-## Sub-components
+## Features
 
-| Component | Purpose |
-|-----------|---------|
-| `Transcription` | Container that provides timing context and renders segments |
-| `TranscriptionSegment` | Individual word/segment with timing-based styling |
+- Render props pattern for maximum flexibility
+- Automatic segment highlighting based on current time
+- Click-to-seek functionality for interactive navigation
+- Controlled and uncontrolled component patterns
+- Automatic filtering of empty segments
+- Visual state indicators (active, past, future)
+- Built on Radix UI's `useControllableState` for flexible state management
+- Full TypeScript support with AI SDK transcription types
 
-## Basic Usage
+## Props
 
-```tsx
-import type { Experimental_TranscriptionResult as TranscriptionResult } from "ai";
+### `<Transcription />`
 
-const segments: TranscriptionResult["segments"] = [
-  { text: "Hello", startSecond: 0, endSecond: 0.5 },
-  { text: " ", startSecond: 0.5, endSecond: 0.6 },
-  { text: "world", startSecond: 0.6, endSecond: 1.0 },
-];
+Root component that provides context and manages transcript state. Uses render props pattern for rendering segments.
 
-const Example = () => {
-  const audioRef = useRef<HTMLAudioElement>(null);
-  const [currentTime, setCurrentTime] = useState(0);
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `segments` | `TranscriptionSegment[]` | - | Array of transcription segments from AI SDK transcribe() function. |
+| `currentTime` | `number` | `0` | Current playback time in seconds (controlled). |
+| `onSeek` | `(time: number) => void` | - | Callback fired when a segment is clicked or when currentTime changes. |
+| `children` | `(segment: TranscriptionSegment, index: number) => ReactNode` | - | Render function that receives each segment and its index. |
+| `...props` | `Omit<React.ComponentProps<` | - | Any other props are spread to the root div element. |
 
-  const handleSeek = (time: number) => {
-    if (audioRef.current) {
-      audioRef.current.currentTime = time;
-    }
-  };
+### `<TranscriptionSegment />`
 
-  const handleTimeUpdate = () => {
-    if (audioRef.current) {
-      setCurrentTime(audioRef.current.currentTime);
-    }
-  };
+Individual segment button with automatic state styling and click-to-seek functionality.
 
-  return (
-    <div>
-      <audio ref={audioRef} onTimeUpdate={handleTimeUpdate} controls>
-        <source src="/audio.mp3" />
-      </audio>
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `segment` | `TranscriptionSegment` | - | The transcription segment data. |
+| `index` | `number` | - | The segment index. |
+| `...props` | `React.ComponentProps<` | - | Any other props are spread to the button element. |
 
-      <Transcription
-        currentTime={currentTime}
-        onSeek={handleSeek}
-        segments={segments}
-      >
-        {(segment, index) => (
-          <TranscriptionSegment
-            key={`${segment.startSecond}-${segment.endSecond}`}
-            index={index}
-            segment={segment}
-          />
-        )}
-      </Transcription>
-    </div>
-  );
+## Behavior
+
+### Render Props Pattern
+
+The component uses a render props pattern where the `children` prop is a function that receives each segment and its index. This provides maximum flexibility for custom rendering while still benefiting from automatic state management and context.
+
+### Segment Highlighting
+
+Segments are automatically styled based on their relationship to the current playback time:
+
+- **Active** (`isActive`): When `currentTime` is within the segment's time range. Styled with primary color.
+- **Past** (`isPast`): When `currentTime` is after the segment's end time. Styled with muted foreground.
+- **Future**: When `currentTime` is before the segment's start time. Styled with dimmed muted foreground.
+
+### Click-to-Seek
+
+When `onSeek` is provided, segments become interactive buttons. Clicking a segment calls `onSeek` with the segment's start time, allowing your audio/video player to seek to that position.
+
+### Empty Segment Filtering
+
+The component automatically filters out segments with empty or whitespace-only text to avoid rendering unnecessary elements.
+
+### State Management
+
+Uses Radix UI's `useControllableState` hook to support both controlled and uncontrolled patterns. When `currentTime` is provided, the component operates in controlled mode. Otherwise, it maintains its own internal state.
+
+## Data Format
+
+The component expects segments from the AI SDK `transcribe()` function:
+
+```ts
+type TranscriptionSegment = {
+  text: string;
+  startSecond: number;
+  endSecond: number;
 };
 ```
 
-## Props Reference
+## Styling
 
-### `<Transcription />`
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `segments` | `TranscriptionResult["segments"]` | Required | Array of transcription segments with timing |
-| `currentTime` | `number` | `0` | Current playback time in seconds |
-| `onSeek` | `(time: number) => void` | - | Callback when user clicks a segment to seek |
-| `children` | `(segment: TranscriptionSegment, index: number) => ReactNode` | Required | Render function for each segment |
-| `className` | `string` | - | Additional CSS classes |
+The component uses data attributes for custom styling:
 
-### `<TranscriptionSegment />`
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `segment` | `TranscriptionSegment` | Required | Segment data with text and timing |
-| `index` | `number` | Required | Segment index for data attributes |
-| `className` | `string` | - | Additional CSS classes |
-| `onClick` | `(event) => void` | - | Additional click handler |
-| `...props` | `ComponentProps<"button">` | - | Standard button props |
+- `data-slot="transcription"`: Root container
+- `data-slot="transcription-segment"`: Individual segment button
+- `data-active`: Present on the currently playing segment
+- `data-index`: The segment's index in the array
 
-## Segment Data Structure
+Default segment appearance:
+- Active segment: `text-primary` (primary brand color)
+- Past segments: `text-muted-foreground`
+- Future segments: `text-muted-foreground/60` (dimmed)
+- Interactive segments: `cursor-pointer hover:text-foreground`
+- Non-interactive segments: `cursor-default`
 
-Each segment follows the Vercel AI SDK transcription format:
+## Accessibility
 
-```tsx
-interface TranscriptionSegment {
-  text: string;        // The transcribed text
-  startSecond: number; // Start time in seconds
-  endSecond: number;   // End time in seconds
-}
-```
+- Uses semantic `<button>` elements for interactive segments
+- Full keyboard navigation support
+- Proper button semantics for screen readers
+- `data-active` attribute for assistive technology
+- Hover and focus states for keyboard users
 
-## Styling States
+## Notes
 
-Segments are automatically styled based on playback position:
-
-| State | Styling | Description |
-|-------|---------|-------------|
-| Active | `text-primary` | Current word being spoken |
-| Past | `text-muted-foreground` | Words already spoken |
-| Future | `text-muted-foreground/60` | Words not yet spoken |
-
-When `onSeek` is provided, segments become clickable with hover state.
-
-## Examples
-
-See `scripts/` folder for complete working examples.
+- Empty or whitespace-only segments are automatically filtered out
+- The component uses `flex-wrap` for responsive text flow
+- Segments maintain inline layout with `gap-1` spacing
+- `text-sm` and `leading-relaxed` provide comfortable reading
+- Click events on segments still fire the `onClick` handler if provided
+- The `onSeek` callback is called both when segments are clicked and when controlled `currentTime` changes

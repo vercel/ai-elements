@@ -1,64 +1,117 @@
 ---
-name: Using the SpeechInput component from AI Elements
-description: How to use the SpeechInput component to capture voice input with transcription.
+name: Using the Speech Input component from AI Elements
+description: A button component that captures voice input and converts it to text, with cross-browser support.
 ---
 
-# SpeechInput Component
+The `SpeechInput` component provides an easy-to-use interface for capturing voice input in your application. It uses the Web Speech API for real-time transcription in supported browsers (Chrome, Edge), and falls back to MediaRecorder with an external transcription service for browsers that don't support Web Speech API (Firefox, Safari).
 
-A voice input button that supports real-time speech recognition using the Web Speech API, with MediaRecorder fallback for browsers without native speech recognition support.
 
-## Import
 
-```tsx
-import { SpeechInput } from "@repo/elements/speech-input";
+## Installation
+
+```bash
+npx ai-elements@latest add speech-input
 ```
 
-## Sub-components
+## Features
 
-| Component | Purpose |
-|-----------|---------|
-| `SpeechInput` | Button that toggles voice recording with visual feedback |
+- Built on Web Speech API (SpeechRecognition) with MediaRecorder fallback
+- Cross-browser support (Chrome, Edge, Firefox, Safari)
+- Continuous speech recognition with interim results
+- Visual feedback with pulse animation when listening
+- Loading state during transcription processing
+- Automatic browser compatibility detection
+- Final transcript extraction and callbacks
+- Error handling and automatic state management
+- Extends shadcn/ui Button component
+- Full TypeScript support
 
-## Basic Usage
-
-```tsx
-const Example = () => {
-  const [transcript, setTranscript] = useState("");
-
-  const handleTranscriptionChange = (text: string) => {
-    setTranscript((prev) => prev ? `${prev} ${text}` : text);
-  };
-
-  return (
-    <SpeechInput
-      onTranscriptionChange={handleTranscriptionChange}
-      size="icon"
-      variant="outline"
-    />
-  );
-};
-```
-
-## Props Reference
+## Props
 
 ### `<SpeechInput />`
+
+The component extends the shadcn/ui Button component, so all Button props are available.
+
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `onTranscriptionChange` | `(text: string) => void` | - | Callback when transcription text is available |
-| `onAudioRecorded` | `(audioBlob: Blob) => Promise<string>` | - | Fallback handler for browsers without Web Speech API (required for Firefox/Safari) |
-| `lang` | `string` | `"en-US"` | Language code for speech recognition |
-| `className` | `string` | - | Additional CSS classes |
-| `...props` | `ComponentProps<typeof Button>` | - | Standard Button props (size, variant, etc.) |
+| `onTranscriptionChange` | `(text: string) => void` | - | Callback fired when final transcription text is available. Only fires for completed phrases, not interim results. |
+| `onAudioRecorded` | `(audioBlob: Blob) => Promise<string>` | - | Callback for MediaRecorder fallback. Required for Firefox/Safari support. Receives recorded audio blob and should return transcribed text from an external service (e.g., OpenAI Whisper). |
+| `lang` | `string` | - | Language for speech recognition. |
+| `...props` | `React.ComponentProps<typeof Button>` | - | Any other props are spread to the Button component, including variant, size, disabled, etc. |
+
+## Behavior
+
+### Speech Recognition Modes
+
+The component automatically detects browser capabilities and uses the best available method:
+
+| Browser | Mode | Behavior |
+|---------|------|----------|
+| Chrome, Edge | Web Speech API | Real-time transcription, no server required |
+| Firefox, Safari | MediaRecorder | Records audio, sends to external transcription service |
+| Unsupported | Disabled | Button is disabled |
+
+### Web Speech API Mode (Chrome, Edge)
+
+Uses the Web Speech API with the following configuration:
+
+- **Continuous**: Set to `true` to keep recognition active until manually stopped
+- **Interim Results**: Set to `true` to receive partial results during speech
+- **Language**: Configurable via `lang` prop, defaults to `"en-US"`
+
+### MediaRecorder Mode (Firefox, Safari)
+
+When the Web Speech API is unavailable, the component falls back to recording audio:
+
+1. Records audio using `MediaRecorder` API
+2. On stop, creates an audio blob (`audio/webm`)
+3. Calls `onAudioRecorded` with the blob
+4. Waits for transcription result
+5. Passes result to `onTranscriptionChange`
+
+**Note**: The `onAudioRecorded` prop is required for this mode to work. Without it, the button will be disabled in Firefox/Safari.
+
+### Transcription Processing
+
+The component only calls `onTranscriptionChange` with **final transcripts**. Interim results (Web Speech API) are ignored to prevent incomplete text from being processed.
+
+### Visual States
+
+- **Default State**: Standard button appearance with microphone icon
+- **Listening State**: Pulsing animation with accent colors to indicate active listening
+- **Processing State**: Loading spinner while waiting for transcription (MediaRecorder mode)
+- **Disabled State**: Button is disabled when no API is available or required props are missing
+
+### Lifecycle
+
+1. **Mount**: Detects available APIs and initializes appropriate mode
+2. **Click**: Toggles between listening/recording and stopped states
+3. **Stop (MediaRecorder)**: Processes audio and waits for transcription
+4. **Unmount**: Stops recognition/recording and releases microphone
 
 ## Browser Support
 
-The component automatically detects browser capabilities:
+The component provides cross-browser support through a two-tier system:
 
-1. **Chrome/Edge**: Uses native Web Speech API for real-time transcription
-2. **Firefox/Safari**: Falls back to MediaRecorder, requires `onAudioRecorded` callback to send audio to a transcription service (e.g., OpenAI Whisper)
-3. **Unsupported browsers**: Button is disabled
+| Browser | API Used | Requirements |
+|---------|----------|--------------|
+| Chrome | Web Speech API | None |
+| Edge | Web Speech API | None |
+| Firefox | MediaRecorder | `onAudioRecorded` prop |
+| Safari | MediaRecorder | `onAudioRecorded` prop |
 
-## MediaRecorder Fallback Example
+For full cross-browser support, provide the `onAudioRecorded` callback that sends audio to a transcription service like OpenAI Whisper, Google Cloud Speech-to-Text, or AssemblyAI.
+
+## Accessibility
+
+- Uses semantic button element via shadcn/ui Button
+- Visual feedback for listening state
+- Keyboard accessible (can be triggered with Space/Enter)
+- Screen reader friendly with proper button semantics
+
+## Usage with MediaRecorder Fallback
+
+To support Firefox and Safari, provide an `onAudioRecorded` callback that sends audio to a transcription service:
 
 ```tsx
 const handleAudioRecorded = async (audioBlob: Blob): Promise<string> => {
@@ -66,24 +119,46 @@ const handleAudioRecorded = async (audioBlob: Blob): Promise<string> => {
   formData.append("file", audioBlob, "audio.webm");
   formData.append("model", "whisper-1");
 
-  const response = await fetch("https://api.openai.com/v1/audio/transcriptions", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${process.env.NEXT_PUBLIC_OPENAI_API_KEY}`,
-    },
-    body: formData,
-  });
+  const response = await fetch(
+    "https://api.openai.com/v1/audio/transcriptions",
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+      },
+      body: formData,
+    }
+  );
 
   const data = await response.json();
   return data.text;
 };
 
 <SpeechInput
+  onTranscriptionChange={(text) => console.log(text)}
   onAudioRecorded={handleAudioRecorded}
-  onTranscriptionChange={handleTranscriptionChange}
 />
 ```
 
-## Examples
+## Notes
 
-See `scripts/` folder for complete working examples.
+- Requires a secure context (HTTPS or localhost)
+- Browser may prompt user for microphone permission
+- Only final transcripts trigger the `onTranscriptionChange` callback
+- Language is configurable via the `lang` prop
+- Continuous recognition continues until button is clicked again
+- Errors are logged to console and automatically stop recognition/recording
+- MediaRecorder fallback requires the `onAudioRecorded` prop to be provided
+- Audio is recorded in `audio/webm` format for the MediaRecorder fallback
+
+## TypeScript
+
+The component includes full TypeScript definitions for the Web Speech API:
+
+- `SpeechRecognition`
+- `SpeechRecognitionEvent`
+- `SpeechRecognitionResult`
+- `SpeechRecognitionAlternative`
+- `SpeechRecognitionErrorEvent`
+
+These types are properly declared for both standard and webkit-prefixed implementations.

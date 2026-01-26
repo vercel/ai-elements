@@ -1,110 +1,80 @@
 ---
 name: Using the Plan component from AI Elements
-description: How to use the Plan component to display AI-generated plans with collapsible content.
+description: A collapsible plan component for displaying AI-generated execution plans with streaming support and shimmer animations.
 ---
 
-# Plan Component
+The `Plan` component provides a flexible system for displaying AI-generated execution plans with collapsible content. Perfect for showing multi-step workflows, task breakdowns, and implementation strategies with support for streaming content and loading states.
 
-A collapsible card component for displaying AI-generated plans with title, description, content, and action buttons. Supports streaming state with shimmer effects.
 
-## Import
 
-```tsx
-import {
-  Plan,
-  PlanHeader,
-  PlanTitle,
-  PlanDescription,
-  PlanAction,
-  PlanContent,
-  PlanFooter,
-  PlanTrigger,
-} from "@repo/elements/plan";
+## Installation
+
+```bash
+npx ai-elements@latest add plan
 ```
 
-## Sub-components
+## Features
 
-| Component | Purpose |
-|-----------|---------|
-| `Plan` | Root container with collapsible functionality |
-| `PlanHeader` | Header section for title, description, and trigger |
-| `PlanTitle` | Plan title with optional streaming shimmer |
-| `PlanDescription` | Plan description with optional streaming shimmer |
-| `PlanAction` | Container for action buttons |
-| `PlanContent` | Collapsible content area |
-| `PlanFooter` | Footer section for actions |
-| `PlanTrigger` | Button to toggle content visibility |
+- Collapsible content with smooth animations
+- Streaming support with shimmer loading states
+- Built on shadcn/ui Card and Collapsible components
+- TypeScript support with comprehensive type definitions
+- Customizable styling with Tailwind CSS
+- Responsive design with mobile-friendly interactions
+- Keyboard navigation and accessibility support
+- Theme-aware with automatic dark mode support
+- Context-based state management for streaming
 
-## Basic Usage
-
-```tsx
-import {
-  Plan,
-  PlanAction,
-  PlanContent,
-  PlanDescription,
-  PlanFooter,
-  PlanHeader,
-  PlanTitle,
-  PlanTrigger,
-} from "@repo/elements/plan";
-import { Button } from "@repo/shadcn-ui/components/ui/button";
-
-const Example = () => (
-  <Plan defaultOpen={false}>
-    <PlanHeader>
-      <div>
-        <PlanTitle>Migrate to SolidJS</PlanTitle>
-        <PlanDescription>
-          Rewrite the component library from React to SolidJS
-        </PlanDescription>
-      </div>
-      <PlanTrigger />
-    </PlanHeader>
-    <PlanContent>
-      <div className="space-y-4 text-sm">
-        <h3 className="font-semibold">Key Steps</h3>
-        <ul className="list-inside list-disc">
-          <li>Set up SolidJS project</li>
-          <li>Migrate components</li>
-          <li>Update tests</li>
-        </ul>
-      </div>
-    </PlanContent>
-    <PlanFooter className="justify-end">
-      <PlanAction>
-        <Button size="sm">Build</Button>
-      </PlanAction>
-    </PlanFooter>
-  </Plan>
-);
-```
-
-## Props Reference
+## Props
 
 ### `<Plan />`
+
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `isStreaming` | `boolean` | `false` | Shows shimmer effect on title/description |
-| `defaultOpen` | `boolean` | - | Initial open state |
-| `open` | `boolean` | - | Controlled open state |
-| `onOpenChange` | `(open: boolean) => void` | - | Callback on open state change |
-| `className` | `string` | - | Additional CSS classes |
+| `isStreaming` | `boolean` | `false` | Whether content is currently streaming. Enables shimmer animations on title and description. |
+| `defaultOpen` | `boolean` | - | Whether the plan is expanded by default. |
+| `...props` | `React.ComponentProps<typeof Collapsible>` | - | Any other props are spread to the Collapsible component. |
+
+### `<PlanHeader />`
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `...props` | `React.ComponentProps<typeof CardHeader>` | - | Any other props are spread to the CardHeader component. |
 
 ### `<PlanTitle />`
+
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `children` | `string` | - | Title text (required) |
+| `children` | `string` | - | The title text. Displays with shimmer animation when isStreaming is true. |
+| `...props` | `Omit<React.ComponentProps<typeof CardTitle>, ` | - | Any other props (except children) are spread to the CardTitle component. |
 
 ### `<PlanDescription />`
+
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `children` | `string` | - | Description text (required) |
+| `children` | `string` | - | The description text. Displays with shimmer animation when isStreaming is true. |
+| `...props` | `Omit<React.ComponentProps<typeof CardDescription>, ` | - | Any other props (except children) are spread to the CardDescription component. |
 
-## Streaming State
+### `<PlanTrigger />`
 
-When `isStreaming` is true, the `PlanTitle` and `PlanDescription` components automatically display a shimmer effect to indicate loading.
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `...props` | `React.ComponentProps<typeof CollapsibleTrigger>` | - | Any other props are spread to the CollapsibleTrigger component. Renders as a Button with chevron icon. |
 
-## Examples
+### `<PlanContent />`
 
-See `scripts/` folder for complete working examples.
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `...props` | `React.ComponentProps<typeof CardContent>` | - | Any other props are spread to the CardContent component. |
+
+### `<PlanFooter />`
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `...props` | `React.ComponentProps<` | - | Any other props are spread to the div element. |
+
+### `<PlanAction />`
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `...props` | `React.ComponentProps<typeof CardAction>` | - | Any other props are spread to the CardAction component. |

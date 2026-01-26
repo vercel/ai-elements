@@ -1,77 +1,159 @@
 ---
 name: Using the Persona component from AI Elements
-description: How to use the Persona component to display animated AI visual avatars with multiple states.
+description: An animated AI visual component powered by Rive that responds to different states like listening, thinking, and speaking.
 ---
 
-# Persona Component
+The `Persona` component displays an animated AI visual that responds to different conversational states. Built with Rive WebGL2, it provides smooth, high-performance animations for various AI interaction states including idle, listening, thinking, speaking, and asleep. The component supports multiple visual variants to match different design aesthetics.
 
-An animated AI visual avatar component powered by Rive animations. Supports multiple visual variants and states like idle, listening, thinking, speaking, and asleep.
 
-## Import
 
-```tsx
-import { Persona, type PersonaState } from "@repo/elements/persona";
+## Installation
+
+```bash
+npx ai-elements@latest add persona
 ```
 
-## Sub-components
+## Features
 
-| Component | Purpose |
-|-----------|---------|
-| `Persona` | Animated AI avatar with Rive integration |
-
-## Basic Usage
-
-```tsx
-import { Persona, type PersonaState } from "@repo/elements/persona";
-import { useState } from "react";
-
-const Example = () => {
-  const [state, setState] = useState<PersonaState>("idle");
-
-  return (
-    <Persona
-      className="size-32"
-      state={state}
-      variant="obsidian"
-    />
-  );
-};
-```
-
-## Props Reference
-
-### `<Persona />`
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `state` | `PersonaState` | `"idle"` | Current animation state |
-| `variant` | `"obsidian" \| "mana" \| "opal" \| "halo" \| "glint" \| "command"` | `"obsidian"` | Visual style variant |
-| `className` | `string` | `"size-16"` | Additional CSS classes |
-| `onLoad` | `RiveParameters["onLoad"]` | - | Callback when Rive loads |
-| `onLoadError` | `RiveParameters["onLoadError"]` | - | Callback on load error |
-| `onReady` | `() => void` | - | Callback when animation is ready |
-| `onPause` | `RiveParameters["onPause"]` | - | Callback when animation pauses |
-| `onPlay` | `RiveParameters["onPlay"]` | - | Callback when animation plays |
-| `onStop` | `RiveParameters["onStop"]` | - | Callback when animation stops |
-
-## PersonaState Type
-
-```tsx
-type PersonaState = "idle" | "listening" | "thinking" | "speaking" | "asleep";
-```
+- Smooth state-based animations powered by Rive
+- Multiple visual variants (obsidian, mana, opal, halo, glint, command)
+- Responsive to five distinct states: idle, listening, thinking, speaking, and asleep
+- WebGL2-accelerated rendering for optimal performance
+- Customizable size and styling
+- Lifecycle callbacks for load, ready, pause, play, and stop events
+- TypeScript support with full type definitions
 
 ## Variants
 
-| Variant | Description | Dynamic Color |
-|---------|-------------|---------------|
-| `obsidian` | Dark geometric style | Yes |
-| `mana` | Fluid energy style | No |
-| `opal` | Orb-like appearance | No |
-| `halo` | Ring/halo style | Yes |
-| `glint` | Sparkle effect | Yes |
-| `command` | Command prompt style | Yes |
+The Persona component comes with 6 distinct visual variants, each with its own unique aesthetic:
 
-Variants with "Dynamic Color" automatically adapt to light/dark theme.
+### Obsidian (Default)
 
-## Examples
 
-See `scripts/` folder for complete working examples.
+
+### Mana
+
+
+
+### Opal
+
+
+
+### Halo
+
+
+
+### Glint
+
+
+
+### Command
+
+
+
+## Props
+
+### `<Persona />`
+
+The root component that renders the animated AI visual.
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `state` | `unknown` | - | The current state of the AI persona. Controls which animation is displayed. |
+| `variant` | `unknown` | - | The visual style variant to display. |
+| `className` | `string` | - | Additional CSS classes to apply to the component. |
+| `onLoad` | `RiveParameters[` | - | Callback fired when the Rive file starts loading. |
+| `onLoadError` | `RiveParameters[` | - | Callback fired if the Rive file fails to load. |
+| `onReady` | `() => void` | - | Callback fired when the Rive animation is ready to play. |
+| `onPause` | `RiveParameters[` | - | Callback fired when the animation is paused. |
+| `onPlay` | `RiveParameters[` | - | Callback fired when the animation starts playing. |
+| `onStop` | `RiveParameters[` | - | Callback fired when the animation is stopped. |
+
+## States
+
+The Persona component responds to five distinct states, each triggering different animations:
+
+- **idle**: The default resting state when the AI is not active
+- **listening**: Displayed when the AI is actively listening to user input (e.g., during voice recording)
+- **thinking**: Shown when the AI is processing or generating a response
+- **speaking**: Active when the AI is delivering a response (e.g., text-to-speech output)
+- **asleep**: A dormant state for when the AI is inactive or in low-power mode
+
+## Usage Examples
+
+### Basic Usage
+
+```tsx
+import { Persona } from "@repo/elements/persona";
+
+export default function App() {
+  return <Persona state="listening" variant="opal" />;
+}
+```
+
+### With State Management
+
+```tsx
+import { Persona } from "@repo/elements/persona";
+import { useState } from "react";
+
+export default function App() {
+  const [state, setState] = useState<
+    "idle" | "listening" | "thinking" | "speaking" | "asleep"
+  >("idle");
+
+  const startListening = () => setState("listening");
+  const startThinking = () => setState("thinking");
+  const startSpeaking = () => setState("speaking");
+  const reset = () => setState("idle");
+
+  return (
+    <div>
+      <Persona state={state} variant="opal" className="size-32" />
+      <div>
+        <button onClick={startListening}>Listen</button>
+        <button onClick={startThinking}>Think</button>
+        <button onClick={startSpeaking}>Speak</button>
+        <button onClick={reset}>Reset</button>
+      </div>
+    </div>
+  );
+}
+```
+
+### With Custom Styling
+
+```tsx
+import { Persona } from "@repo/elements/persona";
+
+export default function App() {
+  return (
+    <Persona
+      state="thinking"
+      variant="halo"
+      className="size-64 rounded-full border border-border"
+    />
+  );
+}
+```
+
+### With Lifecycle Callbacks
+
+```tsx
+import { Persona } from "@repo/elements/persona";
+
+export default function App() {
+  return (
+    <Persona
+      state="listening"
+      variant="glint"
+      onReady={() => console.log("Animation ready")}
+      onLoad={() => console.log("Starting to load")}
+      onLoadError={(error) => console.error("Failed to load:", error)}
+      onPlay={() => console.log("Animation playing")}
+      onPause={() => console.log("Animation paused")}
+      onStop={() => console.log("Animation stopped")}
+    />
+  );
+}
+```

@@ -1,156 +1,201 @@
 ---
-name: Using the WebPreview component from AI Elements
-description: How to use the WebPreview component to display an iframe-based web preview with navigation and console.
+name: Using the Web Preview component from AI Elements
+description: A composable component for previewing the result of a generated UI, with support for live examples and code display.
 ---
 
-# WebPreview Component
+The `WebPreview` component provides a flexible way to showcase the result of a generated UI component, along with its source code. It is designed for documentation and demo purposes, allowing users to interact with live examples and view the underlying implementation.
 
-A browser-like web preview component with navigation controls, URL input, iframe display, and a collapsible console for logs.
 
-## Import
 
-```tsx
+## Installation
+
+```bash
+npx ai-elements@latest add web-preview
+```
+
+## Usage with AI SDK
+
+Build a simple v0 clone using the [v0 Platform API](https://v0.dev/docs/api/platform).
+
+Install the `v0-sdk` package:
+
+```package-install
+npm i v0-sdk
+```
+
+Add the following component to your frontend:
+
+```tsx title="app/page.tsx"
+'use client';
+
 import {
   WebPreview,
-  WebPreviewNavigation,
-  WebPreviewNavigationButton,
-  WebPreviewUrl,
   WebPreviewBody,
-  WebPreviewConsole,
-} from "@repo/elements/web-preview";
+  WebPreviewNavigation,
+  WebPreviewUrl,
+} from '@/components/ai-elements/web-preview';
+import { useState } from 'react';
+import {
+  Input,
+  PromptInputTextarea,
+  PromptInputSubmit,
+} from '@/components/ai-elements/prompt-input';
+import { Loader } from '../ai-elements/loader';
+
+const WebPreviewDemo = () => {
+  const [previewUrl, setPreviewUrl] = useState('');
+  const [prompt, setPrompt] = useState('');
+  const [isGenerating, setIsGenerating] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!prompt.trim()) return;
+    setPrompt('');
+
+    setIsGenerating(true);
+    try {
+      const response = await fetch('/api/v0', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt }),
+      });
+
+      const data = await response.json();
+      setPreviewUrl(data.demo || '/');
+      console.log('Generation finished:', data);
+    } catch (error) {
+      console.error('Generation failed:', error);
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  return (
+    <div className="max-w-4xl mx-auto p-6 relative size-full rounded-lg border h-[600px]">
+      <div className="flex flex-col h-full">
+        <div className="flex-1 mb-4">
+          {isGenerating ? (
+            <div className="flex flex-col items-center justify-center h-full">
+              <Loader />
+              <p className="mt-4 text-muted-foreground">
+                Generating app, this may take a few seconds...
+              </p>
+            </div>
+          ) : previewUrl ? (
+            <WebPreview defaultUrl={previewUrl}>
+              <WebPreviewNavigation>
+                <WebPreviewUrl />
+              </WebPreviewNavigation>
+              <WebPreviewBody src={previewUrl} />
+            </WebPreview>
+          ) : (
+            <div className="flex items-center justify-center h-full text-muted-foreground">
+              Your generated app will appear here
+            </div>
+          )}
+        </div>
+
+        <Input
+          onSubmit={handleSubmit}
+          className="w-full max-w-2xl mx-auto relative"
+        >
+          <PromptInputTextarea
+            value={prompt}
+            placeholder="Describe the app you want to build..."
+            onChange={(e) => setPrompt(e.currentTarget.value)}
+            className="pr-12 min-h-[60px]"
+          />
+          <PromptInputSubmit
+            status={isGenerating ? 'streaming' : 'ready'}
+            disabled={!prompt.trim()}
+            className="absolute bottom-1 right-1"
+          />
+        </Input>
+      </div>
+    </div>
+  );
+};
+
+export default WebPreviewDemo;
 ```
 
-## Sub-components
+Add the following route to your backend:
 
-| Component | Purpose |
-|-----------|---------|
-| `WebPreview` | Root container providing URL state context |
-| `WebPreviewNavigation` | Navigation bar container |
-| `WebPreviewNavigationButton` | Toolbar button with tooltip |
-| `WebPreviewUrl` | URL input field |
-| `WebPreviewBody` | Iframe that displays the preview |
-| `WebPreviewConsole` | Collapsible console log panel |
+```ts title="app/api/v0/route.ts"
+import { v0 } from 'v0-sdk';
 
-## Basic Usage
+export async function POST(req: Request) {
+  const { prompt }: { prompt: string } = await req.json();
 
-```tsx
-const Example = () => (
-  <WebPreview
-    defaultUrl="https://example.com"
-    onUrlChange={(url) => console.log("URL changed:", url)}
-    style={{ height: "400px" }}
-  >
-    <WebPreviewNavigation>
-      <WebPreviewNavigationButton tooltip="Go back">
-        <ArrowLeftIcon className="size-4" />
-      </WebPreviewNavigationButton>
-      <WebPreviewNavigationButton tooltip="Go forward">
-        <ArrowRightIcon className="size-4" />
-      </WebPreviewNavigationButton>
-      <WebPreviewNavigationButton tooltip="Reload">
-        <RefreshCcwIcon className="size-4" />
-      </WebPreviewNavigationButton>
-      <WebPreviewUrl />
-      <WebPreviewNavigationButton tooltip="Open in new tab">
-        <ExternalLinkIcon className="size-4" />
-      </WebPreviewNavigationButton>
-    </WebPreviewNavigation>
+  const result = await v0.chats.create({
+    system: 'You are an expert coder',
+    message: prompt,
+    modelConfiguration: {
+      modelId: 'v0-1.5-sm',
+      imageGenerations: false,
+      thinking: false,
+    },
+  });
 
-    <WebPreviewBody />
-
-    <WebPreviewConsole logs={consoleLogs} />
-  </WebPreview>
-);
+  return Response.json({
+    demo: result.demo,
+    webUrl: result.webUrl,
+  });
+}
 ```
 
-## Props Reference
+## Features
+
+- Live preview of UI components
+- Composable architecture with dedicated sub-components
+- Responsive design modes (Desktop, Tablet, Mobile)
+- Navigation controls with back/forward functionality
+- URL input and example selector
+- Full screen mode support
+- Console logging with timestamps
+- Context-based state management
+- Consistent styling with the design system
+- Easy integration into documentation pages
+
+## Props
 
 ### `<WebPreview />`
+
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `defaultUrl` | `string` | `""` | Initial URL to display |
-| `onUrlChange` | `(url: string) => void` | - | Callback when URL changes |
-| `className` | `string` | - | Additional CSS classes |
-| `children` | `ReactNode` | - | WebPreview sub-components |
-| `...props` | `ComponentProps<"div">` | - | Standard div props |
+| `defaultUrl` | `string` | - | The initial URL to load in the preview. |
+| `onUrlChange` | `(url: string) => void` | - | Callback fired when the URL changes. |
+| `...props` | `React.HTMLAttributes<HTMLDivElement>` | - | Any other props are spread to the root div. |
+
+### `<WebPreviewNavigation />`
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `...props` | `React.HTMLAttributes<HTMLDivElement>` | - | Any other props are spread to the navigation container. |
 
 ### `<WebPreviewNavigationButton />`
+
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `tooltip` | `string` | - | Tooltip text on hover |
-| `onClick` | `() => void` | - | Click handler |
-| `disabled` | `boolean` | - | Disabled state |
-| `children` | `ReactNode` | - | Button content (icon) |
-| `...props` | `ComponentProps<typeof Button>` | - | Standard Button props |
+| `tooltip` | `string` | - | Tooltip text to display on hover. |
+| `...props` | `React.ComponentProps<typeof Button>` | - | Any other props are spread to the underlying shadcn/ui Button component. |
 
 ### `<WebPreviewUrl />`
+
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `value` | `string` | - | Controlled input value |
-| `onChange` | `(event) => void` | - | Input change handler |
-| `onKeyDown` | `(event) => void` | - | Key down handler (Enter navigates) |
-| `...props` | `ComponentProps<typeof Input>` | - | Standard Input props |
+| `...props` | `React.ComponentProps<typeof Input>` | - | Any other props are spread to the underlying shadcn/ui Input component. |
 
 ### `<WebPreviewBody />`
+
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `src` | `string` | - | Override URL from context |
-| `loading` | `ReactNode` | - | Loading state content |
-| `className` | `string` | - | Additional CSS classes |
-| `...props` | `ComponentProps<"iframe">` | - | Standard iframe props |
+| `loading` | `React.ReactNode` | - | Optional loading indicator to display over the preview. |
+| `...props` | `React.IframeHTMLAttributes<HTMLIFrameElement>` | - | Any other props are spread to the underlying iframe. |
 
 ### `<WebPreviewConsole />`
+
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `logs` | `Array<{ level: "log" \| "warn" \| "error"; message: string; timestamp: Date }>` | `[]` | Console log entries |
-| `className` | `string` | - | Additional CSS classes |
-| `children` | `ReactNode` | - | Additional content in console |
-
-## Console Logs Example
-
-```tsx
-const consoleLogs = [
-  {
-    level: "log" as const,
-    message: "Page loaded successfully",
-    timestamp: new Date(Date.now() - 10000),
-  },
-  {
-    level: "warn" as const,
-    message: "Deprecated API usage detected",
-    timestamp: new Date(Date.now() - 5000),
-  },
-  {
-    level: "error" as const,
-    message: "Failed to load resource",
-    timestamp: new Date(),
-  },
-];
-
-<WebPreviewConsole logs={consoleLogs} />
-```
-
-## Context Hook
-
-Access the preview context in custom components:
-
-```tsx
-const useWebPreview = () => {
-  const context = useContext(WebPreviewContext);
-  // Returns: { url, setUrl, consoleOpen, setConsoleOpen }
-  return context;
-};
-```
-
-## Sandbox Permissions
-
-The iframe has these sandbox permissions:
-- `allow-scripts` - JavaScript execution
-- `allow-same-origin` - Same-origin requests
-- `allow-forms` - Form submission
-- `allow-popups` - Popup windows
-- `allow-presentation` - Presentation API
-
-## Examples
-
-See `scripts/` folder for complete working examples.
+| `logs` | `Array<{ level: ` | - | Console log entries to display in the console panel. |
+| `...props` | `React.HTMLAttributes<HTMLDivElement>` | - | Any other props are spread to the root div. |

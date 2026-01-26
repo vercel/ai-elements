@@ -1,82 +1,206 @@
 ---
 name: Using the Sources component from AI Elements
-description: How to use the Sources component to display collapsible citation links.
+description: A component that allows a user to view the sources or citations used to generate a response.
 ---
 
-# Sources Component
+The `Sources` component allows a user to view the sources or citations used to generate a response.
 
-A collapsible component for displaying citation sources with links. Built on top of Radix UI's Collapsible primitive.
 
-## Import
 
-```tsx
+## Installation
+
+```bash
+npx ai-elements@latest add sources
+```
+
+## Usage with AI SDK
+
+Build a simple web search agent with Perplexity Sonar.
+
+Add the following component to your frontend:
+
+```tsx title="app/page.tsx"
+'use client';
+
+import { useChat } from '@ai-sdk/react';
 import {
-  Sources,
-  SourcesTrigger,
-  SourcesContent,
   Source,
-} from "@repo/elements/sources";
+  Sources,
+  SourcesContent,
+  SourcesTrigger,
+} from '@/components/ai-elements/sources';
+import {
+  Input,
+  PromptInputTextarea,
+  PromptInputSubmit,
+} from '@/components/ai-elements/prompt-input';
+import {
+  Conversation,
+  ConversationContent,
+  ConversationScrollButton,
+} from '@/components/ai-elements/conversation';
+import { Message, MessageContent, MessageResponse } from '@/components/ai-elements/message';
+import { useState } from 'react';
+import { DefaultChatTransport } from 'ai';
+
+const SourceDemo = () => {
+  const [input, setInput] = useState('');
+  const { messages, sendMessage, status } = useChat({
+    transport: new DefaultChatTransport({
+      api: '/api/sources',
+    }),
+  });
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (input.trim()) {
+      sendMessage({ text: input });
+      setInput('');
+    }
+  };
+
+  return (
+    <div className="max-w-4xl mx-auto p-6 relative size-full rounded-lg border h-[600px]">
+      <div className="flex flex-col h-full">
+        <div className="flex-1 overflow-auto mb-4">
+          <Conversation>
+            <ConversationContent>
+              {messages.map((message) => (
+                <div key={message.id}>
+                  {message.role === 'assistant' && (
+                    <Sources>
+                      <SourcesTrigger
+                        count={
+                          message.parts.filter(
+                            (part) => part.type === 'source-url',
+                          ).length
+                        }
+                      />
+                      {message.parts.map((part, i) => {
+                        switch (part.type) {
+                          case 'source-url':
+                            return (
+                              <SourcesContent key={`${message.id}-${i}`}>
+                                <Source
+                                  key={`${message.id}-${i}`}
+                                  href={part.url}
+                                  title={part.url}
+                                />
+                              </SourcesContent>
+                            );
+                        }
+                      })}
+                    </Sources>
+                  )}
+                  <Message from={message.role} key={message.id}>
+                    <MessageContent>
+                      {message.parts.map((part, i) => {
+                        switch (part.type) {
+                          case 'text':
+                            return (
+                              <MessageResponse key={`${message.id}-${i}`}>
+                                {part.text}
+                              </MessageResponse>
+                            );
+                          default:
+                            return null;
+                        }
+                      })}
+                    </MessageContent>
+                  </Message>
+                </div>
+              ))}
+            </ConversationContent>
+            <ConversationScrollButton />
+          </Conversation>
+        </div>
+
+        <Input
+          onSubmit={handleSubmit}
+          className="mt-4 w-full max-w-2xl mx-auto relative"
+        >
+          <PromptInputTextarea
+            value={input}
+            placeholder="Ask a question and search the..."
+            onChange={(e) => setInput(e.currentTarget.value)}
+            className="pr-12"
+          />
+          <PromptInputSubmit
+            status={status === 'streaming' ? 'streaming' : 'ready'}
+            disabled={!input.trim()}
+            className="absolute bottom-1 right-1"
+          />
+        </Input>
+      </div>
+    </div>
+  );
+};
+
+export default SourceDemo;
 ```
 
-## Sub-components
+Add the following route to your backend:
 
-| Component | Purpose |
-|-----------|---------|
-| `Sources` | Root container wrapping the collapsible sources section |
-| `SourcesTrigger` | Clickable trigger to expand/collapse the sources list |
-| `SourcesContent` | Container for the list of source links |
-| `Source` | Individual source link item |
+```tsx title="api/chat/route.ts"
+import { convertToModelMessages, streamText, UIMessage } from 'ai';
+import { perplexity } from '@ai-sdk/perplexity';
 
-## Basic Usage
+// Allow streaming responses up to 30 seconds
+export const maxDuration = 30;
 
-```tsx
-const sources = [
-  { href: "https://stripe.com/docs/api", title: "Stripe API Documentation" },
-  { href: "https://docs.github.com/en/rest", title: "GitHub REST API" },
-  { href: "https://docs.aws.amazon.com/sdk-for-javascript/", title: "AWS SDK for JavaScript" },
-];
+export async function POST(req: Request) {
+  const { messages }: { messages: UIMessage[] } = await req.json();
 
-const Example = () => (
-  <Sources>
-    <SourcesTrigger count={sources.length} />
-    <SourcesContent>
-      {sources.map((source) => (
-        <Source href={source.href} key={source.href} title={source.title} />
-      ))}
-    </SourcesContent>
-  </Sources>
-);
+  const result = streamText({
+    model: 'perplexity/sonar',
+    system:
+      'You are a helpful assistant. Keep your responses short (< 100 words) unless you are asked for more details. ALWAYS USE SEARCH.',
+    messages: await convertToModelMessages(messages),
+  });
+
+  return result.toUIMessageStreamResponse({
+    sendSources: true,
+  });
+}
 ```
 
-## Props Reference
+## Features
 
-### `<Sources />`
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `className` | `string` | - | Additional CSS classes |
-| `...props` | `ComponentProps<"div">` | - | Standard div props passed to Collapsible |
-
-### `<SourcesTrigger />`
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `count` | `number` | Required | Number of sources to display in the trigger text |
-| `className` | `string` | - | Additional CSS classes |
-| `children` | `ReactNode` | - | Custom trigger content (overrides default text) |
-
-### `<SourcesContent />`
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `className` | `string` | - | Additional CSS classes |
-| `...props` | `ComponentProps<typeof CollapsibleContent>` | - | Props passed to CollapsibleContent |
-
-### `<Source />`
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `href` | `string` | - | URL of the source link |
-| `title` | `string` | - | Display title for the source |
-| `children` | `ReactNode` | - | Custom content (overrides default icon + title) |
-| `...props` | `ComponentProps<"a">` | - | Standard anchor props |
+- Collapsible component that allows a user to view the sources or citations used to generate a response
+- Customizable trigger and content components
+- Support for custom sources or citations
+- Responsive design with mobile-friendly controls
+- Clean, modern styling with customizable themes
 
 ## Examples
 
-See `scripts/` folder for complete working examples.
+### Custom rendering
+
+
+
+## Props
+
+### `<Sources />`
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `...props` | `React.HTMLAttributes<HTMLDivElement>` | - | Any other props are spread to the root div. |
+
+### `<SourcesTrigger />`
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `count` | `number` | Required | The number of sources to display in the trigger. |
+| `...props` | `React.ComponentProps<typeof CollapsibleTrigger>` | - | Any other props are spread to the CollapsibleTrigger component. |
+
+### `<SourcesContent />`
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `...props` | `React.HTMLAttributes<HTMLDivElement>` | - | Any other props are spread to the content container. |
+
+### `<Source />`
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `...props` | `React.AnchorHTMLAttributes<HTMLAnchorElement>` | - | Any other props are spread to the anchor element. |

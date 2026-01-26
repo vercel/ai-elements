@@ -1,102 +1,68 @@
 ---
-name: Using the OpenInChat component from AI Elements
-description: How to use the OpenInChat component to add "open in chat" dropdown menus for multiple AI providers.
+name: Using the Open In Chat component from AI Elements
+description: A dropdown menu for opening queries in various AI chat platforms including ChatGPT, Claude, T3, Scira, and v0.
 ---
 
-# OpenInChat Component
+The `OpenIn` component provides a dropdown menu that allows users to open queries in different AI chat platforms with a single click.
 
-A dropdown menu component that allows users to open a query in various AI chat providers like ChatGPT, Claude, Cursor, T3 Chat, Scira, and v0.
 
-## Import
 
-```tsx
-import {
-  OpenIn,
-  OpenInContent,
-  OpenInTrigger,
-  OpenInItem,
-  OpenInLabel,
-  OpenInSeparator,
-  OpenInChatGPT,
-  OpenInClaude,
-  OpenInCursor,
-  OpenInT3,
-  OpenInScira,
-  OpenInv0,
-} from "@repo/elements/open-in-chat";
+## Installation
+
+```bash
+npx ai-elements@latest add open-in-chat
 ```
 
-## Sub-components
+## Features
 
-| Component | Purpose |
-|-----------|---------|
-| `OpenIn` | Root container that provides query context |
-| `OpenInTrigger` | Button that triggers the dropdown menu |
-| `OpenInContent` | Dropdown menu content container |
-| `OpenInItem` | Generic dropdown menu item |
-| `OpenInLabel` | Label within the dropdown |
-| `OpenInSeparator` | Separator line between items |
-| `OpenInChatGPT` | Opens query in ChatGPT |
-| `OpenInClaude` | Opens query in Claude |
-| `OpenInCursor` | Opens query in Cursor |
-| `OpenInT3` | Opens query in T3 Chat |
-| `OpenInScira` | Opens query in Scira |
-| `OpenInv0` | Opens query in v0 |
+- Pre-configured links to popular AI chat platforms
+- Context-based query passing for cleaner API
+- Customizable dropdown trigger button
+- Automatic URL parameter encoding for queries
+- Support for ChatGPT, Claude, T3 Chat, Scira AI, v0, and Cursor
+- Branded icons for each platform
+- TypeScript support with proper type definitions
+- Accessible dropdown menu with keyboard navigation
+- External link indicators for clarity
 
-## Basic Usage
+## Supported Platforms
 
-```tsx
-import {
-  OpenIn,
-  OpenInChatGPT,
-  OpenInClaude,
-  OpenInContent,
-  OpenInCursor,
-  OpenInScira,
-  OpenInT3,
-  OpenInTrigger,
-  OpenInv0,
-} from "@repo/elements/open-in-chat";
+- **ChatGPT** - Opens query in OpenAI's ChatGPT with search hints
+- **Claude** - Opens query in Anthropic's Claude AI
+- **T3 Chat** - Opens query in T3 Chat platform
+- **Scira AI** - Opens query in Scira's AI assistant
+- **v0** - Opens query in Vercel's v0 platform
+- **Cursor** - Opens query in Cursor AI editor
 
-const Example = () => {
-  const sampleQuery = "How can I implement authentication in Next.js?";
-
-  return (
-    <OpenIn query={sampleQuery}>
-      <OpenInTrigger />
-      <OpenInContent>
-        <OpenInChatGPT />
-        <OpenInClaude />
-        <OpenInCursor />
-        <OpenInT3 />
-        <OpenInScira />
-        <OpenInv0 />
-      </OpenInContent>
-    </OpenIn>
-  );
-};
-```
-
-## Props Reference
+## Props
 
 ### `<OpenIn />`
+
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `query` | `string` | - | The query text to send to AI providers (required) |
+| `query` | `string` | - | The query text to be sent to all AI platforms. |
+| `...props` | `React.ComponentProps<typeof DropdownMenu>` | - | Props to spread to the underlying radix-ui DropdownMenu component. |
 
 ### `<OpenInTrigger />`
+
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `children` | `ReactNode` | Default button | Custom trigger element |
+| `children` | `React.ReactNode` | - | Custom trigger button. |
+| `...props` | `React.ComponentProps<typeof DropdownMenuTrigger>` | - | Props to spread to the underlying DropdownMenuTrigger component. |
 
 ### `<OpenInContent />`
+
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `className` | `string` | `"w-[240px]"` | Additional CSS classes |
+| `className` | `string` | - | Additional CSS classes to apply to the dropdown content. |
+| `...props` | `React.ComponentProps<typeof DropdownMenuContent>` | - | Props to spread to the underlying DropdownMenuContent component. |
 
-### Provider Components (`OpenInChatGPT`, `OpenInClaude`, etc.)
-All provider components accept standard `DropdownMenuItem` props and automatically use the query from context.
+### `<OpenInChatGPT />`, `<OpenInClaude />`, `<OpenInT3 />`, `<OpenInScira />`, `<OpenInv0 />`, `<OpenInCursor />`
 
-## Examples
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `...props` | `React.ComponentProps<typeof DropdownMenuItem>` | - | Props to spread to the underlying DropdownMenuItem component. The query is automatically provided via context from the parent OpenIn component. |
 
-See `scripts/` folder for complete working examples.
+### `<OpenInItem />`, `<OpenInLabel />`, `<OpenInSeparator />`
+
+Additional composable components for custom dropdown menu items, labels, and separators that follow the same props pattern as their underlying radix-ui counterparts.

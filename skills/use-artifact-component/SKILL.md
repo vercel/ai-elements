@@ -1,121 +1,85 @@
 ---
 name: Using the Artifact component from AI Elements
-description: How to use the Artifact component to display generated content with actions and controls.
+description: A container component for displaying generated content like code, documents, or other outputs with built-in actions.
 ---
 
-# Artifact Component
+The `Artifact` component provides a structured container for displaying generated content like code, documents, or other outputs with built-in header actions.
 
-The Artifact component displays generated content (code, documents, etc.) in a panel with a header for metadata and action buttons. It provides a consistent UI for AI-generated artifacts.
 
-## Import
 
-```tsx
-import {
-  Artifact,
-  ArtifactHeader,
-  ArtifactClose,
-  ArtifactTitle,
-  ArtifactDescription,
-  ArtifactActions,
-  ArtifactAction,
-  ArtifactContent,
-} from "@repo/elements/artifact";
+## Installation
+
+```bash
+npx ai-elements@latest add artifact
 ```
 
-## Sub-components
+## Features
 
-| Component | Purpose |
-|-----------|---------|
-| `Artifact` | Root container with border and shadow |
-| `ArtifactHeader` | Top bar with title, description, and actions |
-| `ArtifactClose` | Close button for dismissing the artifact |
-| `ArtifactTitle` | Main title text |
-| `ArtifactDescription` | Secondary description text |
-| `ArtifactActions` | Container for action buttons |
-| `ArtifactAction` | Individual action button with tooltip support |
-| `ArtifactContent` | Scrollable content area |
-
-## Basic Usage
-
-```tsx
-import { CopyIcon, DownloadIcon, PlayIcon } from "lucide-react";
-
-const Example = () => (
-  <Artifact>
-    <ArtifactHeader>
-      <div>
-        <ArtifactTitle>Generated Code</ArtifactTitle>
-        <ArtifactDescription>Created just now</ArtifactDescription>
-      </div>
-      <ArtifactActions>
-        <ArtifactAction icon={PlayIcon} tooltip="Run code" />
-        <ArtifactAction icon={CopyIcon} tooltip="Copy to clipboard" />
-        <ArtifactAction icon={DownloadIcon} tooltip="Download file" />
-      </ArtifactActions>
-    </ArtifactHeader>
-    <ArtifactContent>
-      {/* Your content here */}
-    </ArtifactContent>
-  </Artifact>
-);
-```
-
-## Props Reference
-
-### `<Artifact />`
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `className` | `string` | - | Additional CSS classes |
-| `...props` | `HTMLAttributes<HTMLDivElement>` | - | Standard div props |
-
-### `<ArtifactHeader />`
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `className` | `string` | - | Additional CSS classes |
-| `...props` | `HTMLAttributes<HTMLDivElement>` | - | Standard div props |
-
-### `<ArtifactClose />`
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `size` | `string` | `"sm"` | Button size |
-| `variant` | `string` | `"ghost"` | Button variant |
-| `className` | `string` | - | Additional CSS classes |
-| `...props` | `ComponentProps<typeof Button>` | - | Button props |
-
-### `<ArtifactTitle />`
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `className` | `string` | - | Additional CSS classes |
-| `...props` | `HTMLAttributes<HTMLParagraphElement>` | - | Standard p props |
-
-### `<ArtifactDescription />`
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `className` | `string` | - | Additional CSS classes |
-| `...props` | `HTMLAttributes<HTMLParagraphElement>` | - | Standard p props |
-
-### `<ArtifactActions />`
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `className` | `string` | - | Additional CSS classes |
-| `...props` | `HTMLAttributes<HTMLDivElement>` | - | Standard div props |
-
-### `<ArtifactAction />`
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `tooltip` | `string` | - | Tooltip text on hover |
-| `label` | `string` | - | Accessible label for screen readers |
-| `icon` | `LucideIcon` | - | Icon component to display |
-| `size` | `string` | `"sm"` | Button size |
-| `variant` | `string` | `"ghost"` | Button variant |
-| `className` | `string` | - | Additional CSS classes |
-
-### `<ArtifactContent />`
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `className` | `string` | - | Additional CSS classes |
-| `...props` | `HTMLAttributes<HTMLDivElement>` | - | Standard div props |
+- Structured container with header and content areas
+- Built-in header with title and description support
+- Flexible action buttons with tooltips
+- Customizable styling for all subcomponents
+- Support for close buttons and action groups
+- Clean, modern design with border and shadow
+- Responsive layout that adapts to content
+- TypeScript support with proper type definitions
+- Composable architecture for maximum flexibility
 
 ## Examples
 
-See `scripts/` folder for complete working examples.
+### With Code Display
+
+
+
+## Props
+
+### `<Artifact />`
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `...props` | `React.HTMLAttributes<HTMLDivElement>` | - | Any other props are spread to the underlying div element. |
+
+### `<ArtifactHeader />`
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `...props` | `React.HTMLAttributes<HTMLDivElement>` | - | Any other props are spread to the underlying div element. |
+
+### `<ArtifactTitle />`
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `...props` | `React.HTMLAttributes<HTMLParagraphElement>` | - | Any other props are spread to the underlying paragraph element. |
+
+### `<ArtifactDescription />`
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `...props` | `React.HTMLAttributes<HTMLParagraphElement>` | - | Any other props are spread to the underlying paragraph element. |
+
+### `<ArtifactActions />`
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `...props` | `React.HTMLAttributes<HTMLDivElement>` | - | Any other props are spread to the underlying div element. |
+
+### `<ArtifactAction />`
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `tooltip` | `string` | - | Tooltip text to display on hover. |
+| `label` | `string` | - | Screen reader label for the action button. |
+| `icon` | `LucideIcon` | - | Lucide icon component to display in the button. |
+| `...props` | `React.ComponentProps<typeof Button>` | - | Any other props are spread to the underlying shadcn/ui Button component. |
+
+### `<ArtifactClose />`
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `...props` | `React.ComponentProps<typeof Button>` | - | Any other props are spread to the underlying shadcn/ui Button component. |
+
+### `<ArtifactContent />`
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `...props` | `React.HTMLAttributes<HTMLDivElement>` | - | Any other props are spread to the underlying div element. |

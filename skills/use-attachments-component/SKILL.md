@@ -1,152 +1,191 @@
 ---
 name: Using the Attachments component from AI Elements
-description: How to use the Attachments component to display file attachments in grid, inline, or list layouts.
+description: A flexible, composable attachment component for displaying files, images, videos, audio, and source documents.
 ---
 
-# Attachments Component
+The `Attachment` component provides a unified way to display file attachments and source documents with multiple layout variants.
 
-The Attachments component displays file attachments with support for multiple layout variants (grid, inline, list), media previews, hover cards, and remove functionality. It handles images, videos, audio, documents, and source documents.
 
-## Import
 
-```tsx
+## Installation
+
+```bash
+npx ai-elements@latest add attachments
+```
+
+## Usage with AI SDK
+
+Display user-uploaded files in chat messages or input areas.
+
+```tsx title="app/page.tsx"
+'use client';
+
 import {
   Attachments,
   Attachment,
   AttachmentPreview,
   AttachmentInfo,
   AttachmentRemove,
-  AttachmentHoverCard,
-  AttachmentHoverCardTrigger,
-  AttachmentHoverCardContent,
-  AttachmentEmpty,
-  getMediaCategory,
-  getAttachmentLabel,
-} from "@repo/elements/attachments";
+} from '@/components/ai-elements/attachments';
+import type { FileUIPart } from 'ai';
+
+interface MessageProps {
+  attachments: (FileUIPart & { id: string })[];
+  onRemove?: (id: string) => void;
+}
+
+const MessageAttachments = ({ attachments, onRemove }: MessageProps) => (
+  <Attachments variant="grid">
+    {attachments.map((file) => (
+      <Attachment
+        key={file.id}
+        data={file}
+        onRemove={onRemove ? () => onRemove(file.id) : undefined}
+      >
+        <AttachmentPreview />
+        <AttachmentRemove />
+      </Attachment>
+    ))}
+  </Attachments>
+);
+
+export default MessageAttachments;
 ```
 
-## Sub-components
+## Features
 
-| Component | Purpose |
-|-----------|---------|
-| `Attachments` | Container with layout variant (grid/inline/list) |
-| `Attachment` | Individual attachment item with context |
-| `AttachmentPreview` | Media preview (image/video/icon) |
-| `AttachmentInfo` | Filename and media type display |
-| `AttachmentRemove` | Remove button with variant-specific styling |
-| `AttachmentHoverCard` | Hover card wrapper for previews |
-| `AttachmentHoverCardTrigger` | Trigger element for hover card |
-| `AttachmentHoverCardContent` | Content shown on hover |
-| `AttachmentEmpty` | Empty state placeholder |
-
-## Basic Usage
-
-### Grid Layout
-
-```tsx
-const Example = () => {
-  const [attachments, setAttachments] = useState([
-    { id: "1", type: "file", url: "image.jpg", mediaType: "image/jpeg", filename: "photo.jpg" },
-  ]);
-
-  return (
-    <Attachments variant="grid">
-      {attachments.map((attachment) => (
-        <Attachment
-          key={attachment.id}
-          data={attachment}
-          onRemove={() => setAttachments((prev) => prev.filter((a) => a.id !== attachment.id))}
-        >
-          <AttachmentPreview />
-          <AttachmentRemove />
-        </Attachment>
-      ))}
-    </Attachments>
-  );
-};
-```
-
-### Inline Layout
-
-```tsx
-<Attachments variant="inline">
-  {attachments.map((attachment) => (
-    <Attachment key={attachment.id} data={attachment}>
-      <AttachmentPreview />
-      <AttachmentInfo />
-      <AttachmentRemove />
-    </Attachment>
-  ))}
-</Attachments>
-```
-
-### List Layout
-
-```tsx
-<Attachments variant="list">
-  {attachments.map((attachment) => (
-    <Attachment key={attachment.id} data={attachment}>
-      <AttachmentPreview />
-      <AttachmentInfo showMediaType />
-      <AttachmentRemove />
-    </Attachment>
-  ))}
-</Attachments>
-```
-
-## Props Reference
-
-### `<Attachments />`
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `variant` | `"grid" \| "inline" \| "list"` | `"grid"` | Layout variant |
-| `className` | `string` | - | Additional CSS classes |
-
-### `<Attachment />`
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `data` | `AttachmentData` | Required | Attachment data (FileUIPart or SourceDocumentUIPart with id) |
-| `onRemove` | `() => void` | - | Callback when remove is clicked |
-| `className` | `string` | - | Additional CSS classes |
-
-### `<AttachmentPreview />`
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `fallbackIcon` | `ReactNode` | - | Custom fallback icon |
-| `className` | `string` | - | Additional CSS classes |
-
-### `<AttachmentInfo />`
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `showMediaType` | `boolean` | `false` | Show media type below filename |
-| `className` | `string` | - | Additional CSS classes |
-
-### `<AttachmentRemove />`
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `label` | `string` | `"Remove"` | Accessible label |
-| `className` | `string` | - | Additional CSS classes |
-
-### `<AttachmentHoverCard />`
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `openDelay` | `number` | `0` | Delay before opening |
-| `closeDelay` | `number` | `0` | Delay before closing |
-
-### `<AttachmentHoverCardContent />`
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `align` | `string` | `"start"` | Alignment of popover |
-| `className` | `string` | - | Additional CSS classes |
-
-## Utility Functions
-
-### `getMediaCategory(data: AttachmentData): AttachmentMediaCategory`
-Returns the media category: `"image"`, `"video"`, `"audio"`, `"document"`, `"source"`, or `"unknown"`.
-
-### `getAttachmentLabel(data: AttachmentData): string`
-Returns a display label for the attachment based on filename or type.
+- Three display variants: grid (thumbnails), inline (badges), and list (rows)
+- Supports both FileUIPart and SourceDocumentUIPart from the AI SDK
+- Automatic media type detection (image, video, audio, document, source)
+- Hover card support for inline previews
+- Remove button with customizable callback
+- Composable architecture for maximum flexibility
+- Accessible with proper ARIA labels
+- TypeScript support with exported utility functions
 
 ## Examples
 
-See `scripts/` folder for complete working examples.
+### Grid Variant
+
+Best for displaying attachments in messages with visual thumbnails.
+
+
+
+### Inline Variant
+
+Best for compact badge-style display in input areas with hover previews.
+
+
+
+### List Variant
+
+Best for file lists with full metadata display.
+
+
+
+## Props
+
+### `<Attachments />`
+
+Container component that sets the layout variant.
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `variant` | `unknown` | - | The display layout variant. |
+| `...props` | `React.HTMLAttributes<HTMLDivElement>` | - | Spread to the underlying div element. |
+
+### `<Attachment />`
+
+Individual attachment item wrapper.
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `data` | `unknown` | - | The attachment data (FileUIPart or SourceDocumentUIPart with id). |
+| `onRemove` | `() => void` | - | Callback fired when the remove button is clicked. |
+| `...props` | `React.HTMLAttributes<HTMLDivElement>` | - | Spread to the underlying div element. |
+
+### `<AttachmentPreview />`
+
+Displays the media preview (image, video, or icon).
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `fallbackIcon` | `React.ReactNode` | - | Custom icon to display when no preview is available. |
+| `...props` | `React.HTMLAttributes<HTMLDivElement>` | - | Spread to the underlying div element. |
+
+### `<AttachmentInfo />`
+
+Displays the filename and optional media type.
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `showMediaType` | `boolean` | `false` | Whether to show the media type below the filename. |
+| `...props` | `React.HTMLAttributes<HTMLDivElement>` | - | Spread to the underlying div element. |
+
+### `<AttachmentRemove />`
+
+Remove button that appears on hover.
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `label` | `string` | - | Screen reader label for the button. |
+| `...props` | `React.ComponentProps<typeof Button>` | - | Spread to the underlying Button component. |
+
+### `<AttachmentHoverCard />`
+
+Wrapper for hover preview functionality.
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `openDelay` | `number` | `0` | Delay in ms before opening the hover card. |
+| `closeDelay` | `number` | `0` | Delay in ms before closing the hover card. |
+| `...props` | `React.ComponentProps<typeof HoverCard>` | - | Spread to the underlying HoverCard component. |
+
+### `<AttachmentHoverCardTrigger />`
+
+Trigger element for the hover card.
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `...props` | `React.ComponentProps<typeof HoverCardTrigger>` | - | Spread to the underlying HoverCardTrigger component. |
+
+### `<AttachmentHoverCardContent />`
+
+Content displayed in the hover card.
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `align` | `unknown` | - | Alignment of the hover card content. |
+| `...props` | `React.ComponentProps<typeof HoverCardContent>` | - | Spread to the underlying HoverCardContent component. |
+
+### `<AttachmentEmpty />`
+
+Empty state component when no attachments are present.
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `...props` | `React.HTMLAttributes<HTMLDivElement>` | - | Spread to the underlying div element. |
+
+## Utility Functions
+
+### `getMediaCategory(data)`
+
+Returns the media category for an attachment.
+
+```tsx
+import { getMediaCategory } from '@/components/ai-elements/attachments';
+
+const category = getMediaCategory(attachment);
+// Returns: "image" | "video" | "audio" | "document" | "source" | "unknown"
+```
+
+### `getAttachmentLabel(data)`
+
+Returns the display label for an attachment.
+
+```tsx
+import { getAttachmentLabel } from '@/components/ai-elements/attachments';
+
+const label = getAttachmentLabel(attachment);
+// Returns filename or fallback like "Image" or "Attachment"
+```

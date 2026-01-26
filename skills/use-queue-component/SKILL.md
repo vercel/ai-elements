@@ -1,123 +1,142 @@
 ---
 name: Using the Queue component from AI Elements
-description: How to use the Queue component to display queued messages and todo items with collapsible sections.
+description: A comprehensive queue component system for displaying message lists, todos, and collapsible task sections in AI applications.
 ---
 
-# Queue Component
+The `Queue` component provides a flexible system for displaying lists of messages, todos, attachments, and collapsible sections. Perfect for showing AI workflow progress, pending tasks, message history, or any structured list of items in your application.
 
-A composable component for displaying queued messages and todo items with collapsible sections, status indicators, and attachment previews.
 
-## Import
 
-```tsx
-import {
-  Queue,
-  QueueItem,
-  QueueItemIndicator,
-  QueueItemContent,
-  QueueItemDescription,
-  QueueItemActions,
-  QueueItemAction,
-  QueueItemAttachment,
-  QueueItemImage,
-  QueueItemFile,
-  QueueList,
-  QueueSection,
-  QueueSectionTrigger,
-  QueueSectionLabel,
-  QueueSectionContent,
-  type QueueMessage,
-  type QueueTodo,
-  type QueueMessagePart,
-} from "@repo/elements/queue";
+## Installation
+
+```bash
+npx ai-elements@latest add queue
 ```
 
-## Sub-components
+## Features
 
-| Component | Purpose |
-|-----------|---------|
-| `Queue` | Root container with styling |
-| `QueueItem` | Individual queue item container |
-| `QueueItemIndicator` | Status indicator dot |
-| `QueueItemContent` | Item text content |
-| `QueueItemDescription` | Secondary description text |
-| `QueueItemActions` | Container for action buttons |
-| `QueueItemAction` | Individual action button |
-| `QueueItemAttachment` | Container for file attachments |
-| `QueueItemImage` | Image attachment preview |
-| `QueueItemFile` | File attachment badge |
-| `QueueList` | Scrollable list container |
-| `QueueSection` | Collapsible section |
-| `QueueSectionTrigger` | Section header/toggle |
-| `QueueSectionLabel` | Section label with count |
-| `QueueSectionContent` | Collapsible content |
+- Flexible component system with composable parts
+- Collapsible sections with smooth animations
+- Support for completed/pending state indicators
+- Built-in scroll area for long lists
+- Attachment display with images and file indicators
+- Hover-revealed action buttons for queue items
+- TypeScript support with comprehensive type definitions
+- Customizable styling with Tailwind CSS
+- Responsive design with mobile-friendly interactions
+- Keyboard navigation and accessibility support
+- Theme-aware with automatic dark mode support
 
-## Basic Usage
+## Examples
 
-```tsx
-import {
-  Queue,
-  QueueItem,
-  QueueItemContent,
-  QueueItemIndicator,
-  QueueList,
-  QueueSection,
-  QueueSectionContent,
-  QueueSectionLabel,
-  QueueSectionTrigger,
-} from "@repo/elements/queue";
+### With PromptInput
 
-const Example = () => (
-  <Queue>
-    <QueueSection>
-      <QueueSectionTrigger>
-        <QueueSectionLabel count={3} label="Queued" />
-      </QueueSectionTrigger>
-      <QueueSectionContent>
-        <QueueList>
-          <QueueItem>
-            <div className="flex items-center gap-2">
-              <QueueItemIndicator />
-              <QueueItemContent>First queued message</QueueItemContent>
-            </div>
-          </QueueItem>
-        </QueueList>
-      </QueueSectionContent>
-    </QueueSection>
-  </Queue>
-);
-```
 
-## Props Reference
 
-### `<QueueItemIndicator />`
+## Props
+
+### `<Queue />`
+
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `completed` | `boolean` | `false` | Shows completed state styling |
-
-### `<QueueItemContent />`
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `completed` | `boolean` | `false` | Shows strikethrough styling |
-
-### `<QueueItemDescription />`
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `completed` | `boolean` | `false` | Shows muted/strikethrough styling |
-
-### `<QueueSectionLabel />`
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `count` | `number` | - | Number to display |
-| `label` | `string` | - | Label text (required) |
-| `icon` | `ReactNode` | - | Optional icon |
+| `...props` | `React.ComponentProps<` | - | Any other props are spread to the root div. |
 
 ### `<QueueSection />`
+
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `defaultOpen` | `boolean` | `true` | Initial open state |
+| `defaultOpen` | `boolean` | `true` | Whether the section is open by default. |
+| `...props` | `React.ComponentProps<typeof Collapsible>` | - | Any other props are spread to the Collapsible component. |
 
-## Types
+### `<QueueSectionTrigger />`
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `...props` | `React.ComponentProps<` | - | Any other props are spread to the button element. |
+
+### `<QueueSectionLabel />`
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `label` | `string` | - | The label text to display. |
+| `count` | `number` | - | The count to display before the label. |
+| `icon` | `React.ReactNode` | - | An optional icon to display before the count. |
+| `...props` | `React.ComponentProps<` | - | Any other props are spread to the span element. |
+
+### `<QueueSectionContent />`
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `...props` | `React.ComponentProps<typeof CollapsibleContent>` | - | Any other props are spread to the CollapsibleContent component. |
+
+### `<QueueList />`
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `...props` | `React.ComponentProps<typeof ScrollArea>` | - | Any other props are spread to the ScrollArea component. |
+
+### `<QueueItem />`
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `...props` | `React.ComponentProps<` | - | Any other props are spread to the li element. |
+
+### `<QueueItemIndicator />`
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `completed` | `boolean` | `false` | Whether the item is completed. Affects the indicator styling. |
+| `...props` | `React.ComponentProps<` | - | Any other props are spread to the span element. |
+
+### `<QueueItemContent />`
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `completed` | `boolean` | `false` | Whether the item is completed. Affects text styling with strikethrough and opacity. |
+| `...props` | `React.ComponentProps<` | - | Any other props are spread to the span element. |
+
+### `<QueueItemDescription />`
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `completed` | `boolean` | `false` | Whether the item is completed. Affects text styling. |
+| `...props` | `React.ComponentProps<` | - | Any other props are spread to the div element. |
+
+### `<QueueItemActions />`
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `...props` | `React.ComponentProps<` | - | Any other props are spread to the div element. |
+
+### `<QueueItemAction />`
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `...props` | `Omit<React.ComponentProps<typeof Button>, ` | - | Any other props (except variant and size) are spread to the Button component. |
+
+### `<QueueItemAttachment />`
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `...props` | `React.ComponentProps<` | - | Any other props are spread to the div element. |
+
+### `<QueueItemImage />`
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `...props` | `React.ComponentProps<` | - | Any other props are spread to the img element. |
+
+### `<QueueItemFile />`
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `...props` | `React.ComponentProps<` | - | Any other props are spread to the span element. |
+
+## Type Exports
+
+### `QueueMessagePart`
+
+Interface for message parts within queue messages.
 
 ```tsx
 interface QueueMessagePart {
@@ -127,12 +146,24 @@ interface QueueMessagePart {
   filename?: string;
   mediaType?: string;
 }
+```
 
+### `QueueMessage`
+
+Interface for queue message items.
+
+```tsx
 interface QueueMessage {
   id: string;
   parts: QueueMessagePart[];
 }
+```
 
+### `QueueTodo`
+
+Interface for todo items in the queue.
+
+```tsx
 interface QueueTodo {
   id: string;
   title: string;
@@ -140,7 +171,3 @@ interface QueueTodo {
   status?: "pending" | "completed";
 }
 ```
-
-## Examples
-
-See `scripts/` folder for complete working examples.

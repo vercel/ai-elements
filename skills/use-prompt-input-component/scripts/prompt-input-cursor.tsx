@@ -9,6 +9,19 @@ import {
   Attachments,
 } from "@repo/elements/attachments";
 import {
+  ModelSelector,
+  ModelSelectorContent,
+  ModelSelectorEmpty,
+  ModelSelectorGroup,
+  ModelSelectorInput,
+  ModelSelectorItem,
+  ModelSelectorList,
+  ModelSelectorLogo,
+  ModelSelectorLogoGroup,
+  ModelSelectorName,
+  ModelSelectorTrigger,
+} from "@repo/elements/model-selector";
+import {
   PromptInput,
   PromptInputBody,
   PromptInputButton,
@@ -36,9 +49,55 @@ import {
   usePromptInputAttachments,
   usePromptInputReferencedSources,
 } from "@repo/elements/prompt-input";
+import { Button } from "@repo/shadcn-ui/components/ui/button";
 import type { SourceDocumentUIPart } from "ai";
-import { AtSignIcon, FilesIcon, GlobeIcon, RulerIcon } from "lucide-react";
+import {
+  AtSignIcon,
+  CheckIcon,
+  FilesIcon,
+  GlobeIcon,
+  ImageIcon,
+  RulerIcon,
+} from "lucide-react";
 import { useState } from "react";
+
+const models = [
+  {
+    id: "gpt-4o",
+    name: "GPT-4o",
+    chef: "OpenAI",
+    chefSlug: "openai",
+    providers: ["openai", "azure"],
+  },
+  {
+    id: "gpt-4o-mini",
+    name: "GPT-4o Mini",
+    chef: "OpenAI",
+    chefSlug: "openai",
+    providers: ["openai", "azure"],
+  },
+  {
+    id: "claude-opus-4-20250514",
+    name: "Claude 4 Opus",
+    chef: "Anthropic",
+    chefSlug: "anthropic",
+    providers: ["anthropic", "azure", "google", "amazon-bedrock"],
+  },
+  {
+    id: "claude-sonnet-4-20250514",
+    name: "Claude 4 Sonnet",
+    chef: "Anthropic",
+    chefSlug: "anthropic",
+    providers: ["anthropic", "azure", "google", "amazon-bedrock"],
+  },
+  {
+    id: "gemini-2.0-flash-exp",
+    name: "Gemini 2.0 Flash",
+    chef: "Google",
+    chefSlug: "google",
+    providers: ["google"],
+  },
+];
 
 const SUBMITTING_TIMEOUT = 200;
 const STREAMING_TIMEOUT = 2000;
@@ -58,6 +117,13 @@ const sampleSources: SourceDocumentUIPart[] = [
     filename: "apps/test/app/examples",
     mediaType: "text/plain",
   },
+  {
+    type: "source-document",
+    sourceId: "3",
+    title: "queue.tsx",
+    filename: "packages/elements/src",
+    mediaType: "text/plain",
+  },
 ];
 
 const sampleTabs = {
@@ -65,6 +131,10 @@ const sampleTabs = {
   recents: [
     { path: "apps/test/app/examples/task-queue-panel.tsx" },
     { path: "apps/test/app/page.tsx" },
+    { path: "packages/elements/src/task.tsx" },
+    { path: "apps/test/app/examples/prompt-input.tsx" },
+    { path: "packages/elements/src/queue.tsx" },
+    { path: "apps/test/app/examples/queue.tsx" },
   ],
 };
 
@@ -116,9 +186,13 @@ const PromptInputReferencedSourcesDisplay = () => {
 };
 
 const Example = () => {
+  const [model, setModel] = useState<string>(models[0].id);
+  const [modelSelectorOpen, setModelSelectorOpen] = useState(false);
   const [status, setStatus] = useState<
     "submitted" | "streaming" | "ready" | "error"
   >("ready");
+
+  const selectedModelData = models.find((m) => m.id === model);
 
   const handleSubmit = (message: PromptInputMessage) => {
     const hasText = Boolean(message.text);
@@ -146,7 +220,11 @@ const Example = () => {
           <PromptInputHeader>
             <PromptInputHoverCard>
               <PromptInputHoverCardTrigger>
-                <PromptInputButton size="icon-sm" variant="outline">
+                <PromptInputButton
+                  className="h-8!"
+                  size="icon-sm"
+                  variant="outline"
+                >
                   <AtSignIcon className="text-muted-foreground" size={12} />
                 </PromptInputButton>
               </PromptInputHoverCardTrigger>
@@ -166,7 +244,14 @@ const Example = () => {
                   <p className="font-medium text-muted-foreground text-sm">
                     Attached Project Rules
                   </p>
+                  <p className="ml-4 text-muted-foreground text-sm">
+                    Always Apply:
+                  </p>
+                  <p className="ml-8 text-sm">ultracite.mdc</p>
                 </div>
+                <p className="bg-sidebar px-4 py-3 text-muted-foreground text-sm">
+                  Click to manage
+                </p>
               </PromptInputHoverCardContent>
             </PromptInputHoverCard>
             <PromptInputHoverCard>
@@ -203,6 +288,9 @@ const Example = () => {
                     ))}
                   </PromptInputTabBody>
                 </PromptInputTab>
+                <div className="border-t px-3 pt-2 text-muted-foreground text-xs">
+                  Only file paths are included
+                </div>
               </PromptInputHoverCardContent>
             </PromptInputHoverCard>
             <PromptInputAttachmentsDisplay />
@@ -212,8 +300,71 @@ const Example = () => {
             <PromptInputTextarea placeholder="Plan, search, build anything" />
           </PromptInputBody>
           <PromptInputFooter>
-            <PromptInputTools />
-            <PromptInputSubmit status={status} />
+            <PromptInputTools>
+              <ModelSelector
+                onOpenChange={setModelSelectorOpen}
+                open={modelSelectorOpen}
+              >
+                <ModelSelectorTrigger asChild>
+                  <PromptInputButton>
+                    {selectedModelData?.chefSlug && (
+                      <ModelSelectorLogo
+                        provider={selectedModelData.chefSlug}
+                      />
+                    )}
+                    {selectedModelData?.name && (
+                      <ModelSelectorName>
+                        {selectedModelData.name}
+                      </ModelSelectorName>
+                    )}
+                  </PromptInputButton>
+                </ModelSelectorTrigger>
+                <ModelSelectorContent>
+                  <ModelSelectorInput placeholder="Search models..." />
+                  <ModelSelectorList>
+                    <ModelSelectorEmpty>No models found.</ModelSelectorEmpty>
+                    {["OpenAI", "Anthropic", "Google"].map((chef) => (
+                      <ModelSelectorGroup heading={chef} key={chef}>
+                        {models
+                          .filter((m) => m.chef === chef)
+                          .map((m) => (
+                            <ModelSelectorItem
+                              key={m.id}
+                              onSelect={() => {
+                                setModel(m.id);
+                                setModelSelectorOpen(false);
+                              }}
+                              value={m.id}
+                            >
+                              <ModelSelectorLogo provider={m.chefSlug} />
+                              <ModelSelectorName>{m.name}</ModelSelectorName>
+                              <ModelSelectorLogoGroup>
+                                {m.providers.map((provider) => (
+                                  <ModelSelectorLogo
+                                    key={provider}
+                                    provider={provider}
+                                  />
+                                ))}
+                              </ModelSelectorLogoGroup>
+                              {model === m.id ? (
+                                <CheckIcon className="ml-auto size-4" />
+                              ) : (
+                                <div className="ml-auto size-4" />
+                              )}
+                            </ModelSelectorItem>
+                          ))}
+                      </ModelSelectorGroup>
+                    ))}
+                  </ModelSelectorList>
+                </ModelSelectorContent>
+              </ModelSelector>
+            </PromptInputTools>
+            <div className="flex items-center gap-2">
+              <Button size="icon-sm" variant="ghost">
+                <ImageIcon className="text-muted-foreground" size={16} />
+              </Button>
+              <PromptInputSubmit className="!h-8" status={status} />
+            </div>
           </PromptInputFooter>
         </PromptInput>
       </PromptInputProvider>
@@ -244,6 +395,7 @@ const SampleFilesMenu = () => {
           <PromptInputCommandItem>
             <GlobeIcon />
             <span>Active Tabs</span>
+            <span className="ml-auto text-muted-foreground">✓</span>
           </PromptInputCommandItem>
         </PromptInputCommandGroup>
         <PromptInputCommandSeparator />

@@ -55,7 +55,7 @@ const Example = () => (
     <PlanFooter className="justify-end">
       <PlanAction>
         <Button size="sm">
-          Build <kbd className="font-mono">Cmd+Enter</kbd>
+          Build <kbd className="font-mono">⌘↩</kbd>
         </Button>
       </PlanAction>
     </PlanFooter>
