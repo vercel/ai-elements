@@ -9,8 +9,11 @@ import { NextResponse } from "next/server";
 import type { Registry, RegistryItem } from "shadcn/schema";
 import { Project } from "ts-morph";
 
-const protocol = process.env.NODE_ENV === "development" ? "http" : "https";
-const registryUrl = `${protocol}://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`;
+const getRegistryUrl = (request: NextRequest) => {
+  const host = request.headers.get("host");
+  const protocol = host?.includes("localhost") ? "http" : "https";
+  return `${protocol}://${host}`;
+};
 
 const packageDir = join(process.cwd(), "..", "..", "packages", "elements");
 const packagePath = join(packageDir, "package.json");
@@ -216,20 +219,22 @@ const exampleItems: RegistryItem[] = exampleTsxFiles.map((exampleFile) => {
 
 const items: RegistryItem[] = [...componentItems, ...exampleItems];
 
-const response: Registry = {
+const getResponse = (registryUrl: string): Registry => ({
   name: "ai-elements",
   homepage: new URL("/elements", registryUrl).toString(),
   items,
-};
+});
 
 interface RequestProps {
   params: Promise<{ component: string }>;
 }
 
 // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Registry route requires handling many component cases
-export const GET = async (_request: NextRequest, { params }: RequestProps) => {
+export const GET = async (request: NextRequest, { params }: RequestProps) => {
   const { component } = await params;
   const parsedComponent = component.replace(".json", "");
+  const registryUrl = getRegistryUrl(request);
+  const response = getResponse(registryUrl);
 
   if (parsedComponent === "registry") {
     try {
