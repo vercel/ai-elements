@@ -12,6 +12,7 @@
     "@repo/elements",
     "@repo/examples",
     "@repo/typescript-config",
-    "@repo/shadcn-ui"
+    "@repo/shadcn-ui",
+    "@repo/scripts"
   ]
 }
