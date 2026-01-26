@@ -21,19 +21,19 @@ const config = {
   rewrites() {
     return [
       {
-        source: "/elements/docs/:path*.mdx",
+        source: "/elements/:path*.mdx",
         destination: "/elements/llms.mdx/:path*",
       },
       {
-        source: "/elements/docs/:path*.md",
+        source: "/elements/:path*.md",
         destination: "/elements/llms.mdx/:path*",
       },
       {
-        source: "/docs/:path*.mdx",
+        source: "/:path*.mdx",
         destination: "/llms.mdx/:path*",
       },
       {
-        source: "/docs/:path*.md",
+        source: "/:path*.md",
         destination: "/llms.mdx/:path*",
       },
     ];
