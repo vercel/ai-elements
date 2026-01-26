@@ -4,9 +4,11 @@ import { basename, join } from 'node:path';
 import matter from 'gray-matter';
 
 const ROOT_DIR = join(import.meta.dirname, '../../..');
-const DOCS_DIR = join(ROOT_DIR, 'apps/docs/content/docs/components');
+const DOCS_DIR = join(ROOT_DIR, 'apps/docs/content/docs');
+const COMPONENTS_DIR = join(DOCS_DIR, 'components');
 const EXAMPLES_DIR = join(ROOT_DIR, 'packages/examples/src');
 const SKILLS_DIR = join(ROOT_DIR, 'skills');
+const SKILL_DIR = join(SKILLS_DIR, 'ai-elements');
 
 const discoverMdxFiles = async (dir: string): Promise<string[]> => {
   const results: string[] = [];
@@ -15,7 +17,7 @@ const discoverMdxFiles = async (dir: string): Promise<string[]> => {
   for (const entry of entries) {
     const fullPath = join(dir, entry.name);
     if (entry.isDirectory()) {
-      results.push(...await discoverMdxFiles(fullPath));
+      results.push(...(await discoverMdxFiles(fullPath)));
     } else if (entry.name.endsWith('.mdx')) {
       results.push(fullPath);
     }
@@ -24,8 +26,18 @@ const discoverMdxFiles = async (dir: string): Promise<string[]> => {
   return results;
 };
 
-const removePreviews = (content: string): string => {
-  return content.replace(/<Preview\s+path=["'][^"']+["']\s*\/>/g, '');
+const replacePreviews = (content: string): string => {
+  return content.replace(
+    /<Preview\s+path=["']([^"']+)["']\s*\/>/g,
+    (_, path) => `See \`scripts/${path}.tsx\` for this example.`
+  );
+};
+
+const removeCustomComponents = (content: string): string => {
+  return content
+    .replace(/<ElementsInstaller\s*\/>/g, '')
+    .replace(/<ElementsDemo\s*\/>/g, '')
+    .replace(/<Callout>\s*[\s\S]*?<\/Callout>/g, '');
 };
 
 const replaceInstaller = (content: string): string => {
@@ -35,7 +47,9 @@ const replaceInstaller = (content: string): string => {
   );
 };
 
-const parseTypeTableProps = (typeContent: string): Array<{
+const parseTypeTableProps = (
+  typeContent: string
+): Array<{
   name: string;
   type: string;
   description: string;
@@ -103,31 +117,41 @@ const replaceTypeTables = (content: string): string => {
   });
 };
 
-const transformMdx = (fileContent: string, title: string, description: string): string => {
-  const { content } = matter(fileContent);
-
-  let processedContent = removePreviews(content);
-  processedContent = replaceInstaller(processedContent);
-  processedContent = replaceTypeTables(processedContent);
-
-  const frontmatter = [
-    '---',
-    `name: Using the ${title} component from AI Elements`,
-    `description: ${description}`,
-    '---',
-  ].join('\n');
-
-  return `${frontmatter}\n${processedContent}`;
+const removeCallouts = (content: string): string => {
+  return content.replace(/<Callout[^>]*>[\s\S]*?<\/Callout>/g, '');
 };
 
-const findMatchingExamples = async (componentName: string): Promise<string[]> => {
+const transformComponentMdx = (fileContent: string): string => {
+  const { content } = matter(fileContent);
+
+  let processedContent = replacePreviews(content);
+  processedContent = replaceInstaller(processedContent);
+  processedContent = replaceTypeTables(processedContent);
+  processedContent = removeCallouts(processedContent);
+
+  return processedContent.trim();
+};
+
+const transformOverviewMdx = (fileContent: string): string => {
+  const { content } = matter(fileContent);
+
+  let processedContent = removeCustomComponents(content);
+  processedContent = processedContent.trim();
+
+  return processedContent;
+};
+
+const findMatchingExamples = async (
+  componentName: string
+): Promise<string[]> => {
   const files = await readdir(EXAMPLES_DIR);
 
   return files.filter((file) => {
     const fileBasename = file.replace('.tsx', '');
     return (
       file.endsWith('.tsx') &&
-      (fileBasename === componentName || fileBasename.startsWith(`${componentName}-`))
+      (fileBasename === componentName ||
+        fileBasename.startsWith(`${componentName}-`))
     );
   });
 };
@@ -139,19 +163,64 @@ const cleanSkillsDir = (): void => {
   mkdirSync(SKILLS_DIR, { recursive: true });
 };
 
-const processComponent = async (mdxPath: string): Promise<void> => {
+const generateOverviewSkill = async (): Promise<void> => {
+  const indexContent = await readFile(join(DOCS_DIR, 'index.mdx'), 'utf-8');
+  const usageContent = await readFile(join(DOCS_DIR, 'usage.mdx'), 'utf-8');
+  const troubleshootingContent = await readFile(
+    join(DOCS_DIR, 'troubleshooting.mdx'),
+    'utf-8'
+  );
+
+  const indexData = matter(indexContent);
+  const usageData = matter(usageContent);
+  const troubleshootingData = matter(troubleshootingContent);
+
+  const skillContent = `---
+name: ai-elements
+description: Create new AI chat interface components for the ai-elements library following established composable patterns, shadcn/ui integration, and Vercel AI SDK conventions. Use when creating new components in packages/elements/src or when the user asks to add a new component to ai-elements.
+---
+
+# AI Elements
+
+${transformOverviewMdx(indexContent)}
+
+## Usage
+
+${transformOverviewMdx(usageContent)}
+
+## Troubleshooting
+
+${transformOverviewMdx(troubleshootingContent)}
+
+## Available Components
+
+See the \`references/\` folder for detailed documentation on each component.
+`;
+
+  mkdirSync(SKILL_DIR, { recursive: true });
+  await writeFile(join(SKILL_DIR, 'SKILL.md'), skillContent);
+  console.log('Generated: SKILL.md (overview)');
+};
+
+const processComponent = async (mdxPath: string): Promise<number> => {
   const componentName = basename(mdxPath, '.mdx');
-  const skillDir = join(SKILLS_DIR, `use-${componentName}-component`);
-  const scriptsDir = join(skillDir, 'scripts');
+  const referencesDir = join(SKILL_DIR, 'references');
+  const scriptsDir = join(SKILL_DIR, 'scripts');
 
   const fileContent = await readFile(mdxPath, 'utf-8');
   const { data } = matter(fileContent);
 
-  const skillContent = transformMdx(fileContent, data.title, data.description);
-  const examples = await findMatchingExamples(componentName);
+  const referenceContent = `# ${data.title}
 
-  mkdirSync(skillDir, { recursive: true });
-  await writeFile(join(skillDir, 'SKILL.md'), skillContent);
+${data.description}
+
+${transformComponentMdx(fileContent)}
+`;
+
+  mkdirSync(referencesDir, { recursive: true });
+  await writeFile(join(referencesDir, `${componentName}.md`), referenceContent);
+
+  const examples = await findMatchingExamples(componentName);
 
   if (examples.length > 0) {
     mkdirSync(scriptsDir, { recursive: true });
@@ -164,22 +233,26 @@ const processComponent = async (mdxPath: string): Promise<void> => {
     }
   }
 
-  console.log(`Generated: use-${componentName}-component (${examples.length} examples)`);
+  console.log(`Generated: references/${componentName}.md (${examples.length} examples)`);
+  return examples.length;
 };
 
 const main = async (): Promise<void> => {
-  console.log('Generating skills from docs and examples...\n');
+  console.log('Generating ai-elements skill from docs and examples...\n');
 
   cleanSkillsDir();
 
-  const mdxFiles = await discoverMdxFiles(DOCS_DIR);
-  console.log(`Found ${mdxFiles.length} MDX files\n`);
+  await generateOverviewSkill();
 
+  const mdxFiles = await discoverMdxFiles(COMPONENTS_DIR);
+  console.log(`\nFound ${mdxFiles.length} component MDX files\n`);
+
+  let totalExamples = 0;
   for (const mdxPath of mdxFiles) {
-    await processComponent(mdxPath);
+    totalExamples += await processComponent(mdxPath);
   }
 
-  console.log('\nDone!');
+  console.log(`\nDone! Generated ${mdxFiles.length} references with ${totalExamples} examples.`);
 };
 
 main().catch(console.error);

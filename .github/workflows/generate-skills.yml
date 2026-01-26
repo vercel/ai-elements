@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - 'apps/docs/content/docs/components/**/*.mdx'
+      - 'apps/docs/content/docs/**/*.mdx'
       - 'packages/examples/src/**/*.tsx'
       - 'packages/scripts/**'
 
