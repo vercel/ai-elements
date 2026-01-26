@@ -7,7 +7,7 @@ import {
 } from "next/server";
 import { i18n } from "@/lib/geistdocs/i18n";
 
-const { rewrite: rewriteLLM } = rewritePath("/*path", "/llms.mdx/*path");
+const { rewrite: rewriteLLM } = rewritePath("/*path", "/en/llms.mdx/*path");
 
 // The basePath from next.config.ts
 const BASE_PATH = "/elements";
