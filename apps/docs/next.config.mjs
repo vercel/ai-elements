@@ -21,20 +21,20 @@ const config = {
   rewrites() {
     return [
       {
-        source: "/elements/:path*.mdx",
-        destination: "/elements/llms.mdx/:path*",
+        source: "/elements/:lang/:path*.mdx",
+        destination: "/elements/:lang/llms.mdx/:path*",
       },
       {
-        source: "/elements/:path*.md",
-        destination: "/elements/llms.mdx/:path*",
+        source: "/elements/:lang/:path*.md",
+        destination: "/elements/:lang/llms.mdx/:path*",
       },
       {
-        source: "/:path*.mdx",
-        destination: "/llms.mdx/:path*",
+        source: "/:lang/:path*.mdx",
+        destination: "/:lang/llms.mdx/:path*",
       },
       {
-        source: "/:path*.md",
-        destination: "/llms.mdx/:path*",
+        source: "/:lang/:path*.md",
+        destination: "/:lang/llms.mdx/:path*",
       },
     ];
   },
