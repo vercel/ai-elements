@@ -1,5 +1,13 @@
 # ai-elements
 
+## 1.8.1
+
+### Patch Changes
+
+- 4ad4531: Bump ansi-to-react
+- 03ee8e1: fix silenced classname prop in message branch navigation component
+- 005e36a: Add skills
+
 ## 1.8.0
 
 ### Minor Changes
