@@ -7,7 +7,9 @@
     "./*": "./src/*.tsx"
   },
   "dependencies": {
+    "@ai-sdk/react": "^3.0.61",
     "@icons-pack/react-simple-icons": "^13.8.0",
+    "@loremllm/transport": "^0.6.1",
     "@repo/elements": "workspace:*",
     "@xyflow/react": "^12.10.0",
     "ai": "^6.0.39",
