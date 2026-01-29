@@ -1,7 +1,5 @@
 "use client";
 
-import { useChat } from "@ai-sdk/react";
-import { StaticChatTransport } from "@loremllm/transport";
 import {
   Conversation,
   ConversationContent,
@@ -9,6 +7,12 @@ import {
 } from "@repo/elements/conversation";
 import {
   Message,
+  MessageBranch,
+  MessageBranchContent,
+  MessageBranchNext,
+  MessageBranchPage,
+  MessageBranchPrevious,
+  MessageBranchSelector,
   MessageContent,
   MessageResponse,
 } from "@repo/elements/message";
@@ -46,7 +50,6 @@ import {
   DropdownMenuTrigger,
 } from "@repo/shadcn-ui/components/ui/dropdown-menu";
 import { cn } from "@repo/shadcn-ui/lib/utils";
-import type { ToolUIPart } from "ai";
 import {
   AudioWaveformIcon,
   CameraIcon,
@@ -56,69 +59,16 @@ import {
   PaperclipIcon,
   ScreenShareIcon,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
-import {
-  getLastUserMessageText,
-  mockMessages,
-  mockResponses,
-  suggestions,
-  userMessageTexts,
-} from "./demo-chat-data";
+
+import { categorizeMessageParts, getMessageVersions, suggestions } from "./demo-chat-data";
+import { useDemoChat } from "./demo-chat-shared";
 
 const Example = () => {
-  const [text, setText] = useState<string>("");
-  const [useWebSearch, setUseWebSearch] = useState<boolean>(false);
-  const [useMicrophone, setUseMicrophone] = useState<boolean>(false);
+  const [text, setText] = useState("");
 
-  const { messages, sendMessage } = useChat({
-    id: "demo-chatgpt",
-    transport: new StaticChatTransport({
-      chunkDelayMs: [20, 50],
-      async *mockResponse({ messages }) {
-        const lastUserMessageText = getLastUserMessageText(messages);
-
-        // If we already have a mock response for the user message:
-        const assistantParts = mockMessages.get(lastUserMessageText);
-        if (assistantParts) {
-          for (const part of assistantParts) yield part;
-          return;
-        }
-
-        // Default response for user messages that aren't structurally defined
-        const randomResponse =
-          mockResponses[Math.floor(Math.random() * mockResponses.length)];
-
-        if (Math.random() > 0.5) {
-          yield {
-            type: "reasoning",
-            text: "Let me think about this question carefully. I need to provide a comprehensive and helpful response that addresses the user's needs while being clear and concise.",
-          };
-        }
-
-        yield {
-          type: "text",
-          text: randomResponse,
-        };
-      },
-    }),
-    onFinish: ({ messages }) => {
-      // When finishing a message, send the next message in the list if it exists
-      const lastUserMessageText = getLastUserMessageText(messages);
-      const lastUserMessageTextIndex = userMessageTexts.indexOf(lastUserMessageText);
-      const nextMessageTextIndex = lastUserMessageTextIndex !== -1 ? lastUserMessageTextIndex + 1 : null;
-      if (nextMessageTextIndex !== null && userMessageTexts[nextMessageTextIndex]) {
-        sendMessage({ text: userMessageTexts[nextMessageTextIndex] });
-      }
-    },
-  });
-
-  // Initialize with first user message
-  useEffect(() => {
-    if (messages.length === 0 && userMessageTexts.length > 0) {
-      sendMessage({ text: userMessageTexts[0] });
-    }
-  }, [messages.length, sendMessage]);
+  const { messages, sendMessage } = useDemoChat("demo-chatgpt");
 
   const handleSubmit = (message: PromptInputMessage) => {
     const hasText = Boolean(message.text);
@@ -147,16 +97,33 @@ const Example = () => {
       <Conversation>
         <ConversationContent>
           {messages.map((message) => {
-            const sources = message.parts.filter(
-              (p) => p.type === "source-url"
-            );
-            const reasoningParts = message.parts.filter(
-              (p) => p.type === "reasoning"
-            );
-            const toolParts = message.parts.filter((p) =>
-              p.type.startsWith("tool-")
-            );
-            const textParts = message.parts.filter((p) => p.type === "text");
+            const { sources, reasoning, tools, text } = categorizeMessageParts(message.parts);
+            const messageText = text[0]?.text ?? "";
+
+            // Check if user message has alternative versions
+            if (message.role === "user") {
+              const versions = getMessageVersions(messageText);
+              if (versions) {
+                return (
+                  <MessageBranch defaultBranch={versions.indexOf(messageText)} key={message.id}>
+                    <MessageBranchContent>
+                      {versions.map((version, i) => (
+                        <Message from="user" key={`${message.id}-v${i}`}>
+                          <MessageContent className="rounded-[24px] bg-secondary text-foreground">
+                            <MessageResponse>{version}</MessageResponse>
+                          </MessageContent>
+                        </Message>
+                      ))}
+                    </MessageBranchContent>
+                    <MessageBranchSelector className="ml-auto" from="user">
+                      <MessageBranchPrevious />
+                      <MessageBranchPage />
+                      <MessageBranchNext />
+                    </MessageBranchSelector>
+                  </MessageBranch>
+                );
+              }
+            }
 
             return (
               <Message from={message.role} key={message.id}>
@@ -175,48 +142,42 @@ const Example = () => {
                       </SourcesContent>
                     </Sources>
                   )}
-                  {toolParts.map((toolPart, i) => {
-                    if (toolPart.type.startsWith("tool-")) {
-                      const tool = toolPart as ToolUIPart;
-                      return (
-                        <Tool
-                          defaultOpen={
-                            tool.state === "output-available" ||
-                            tool.state === "output-error"
-                          }
-                          key={`${message.id}-tool-${i}`}
-                        >
-                          <ToolHeader state={tool.state} type={tool.type} />
-                          <ToolContent>
-                            <ToolInput input={tool.input} />
-                            <ToolOutput
-                              errorText={tool.errorText}
-                              output={tool.output}
-                            />
-                          </ToolContent>
-                        </Tool>
-                      );
-                    }
-                    return null;
-                  })}
-                  {reasoningParts.map((reasoningPart, i) => (
+                  {tools.map((tool, i) => (
+                    <Tool
+                      defaultOpen={
+                        tool.state === "output-available" ||
+                        tool.state === "output-error"
+                      }
+                      key={`${message.id}-tool-${i}`}
+                    >
+                      <ToolHeader state={tool.state} type={tool.type} />
+                      <ToolContent>
+                        <ToolInput input={tool.input} />
+                        <ToolOutput
+                          errorText={tool.errorText}
+                          output={tool.output}
+                        />
+                      </ToolContent>
+                    </Tool>
+                  ))}
+                  {reasoning.map((part, i) => (
                     <Reasoning
-                      isStreaming={reasoningPart.state === "streaming"}
+                      isStreaming={part.state === "streaming"}
                       key={`${message.id}-reasoning-${i}`}
                     >
                       <ReasoningTrigger />
-                      <ReasoningContent>{reasoningPart.text}</ReasoningContent>
+                      <ReasoningContent>{part.text}</ReasoningContent>
                     </Reasoning>
                   ))}
-                  {textParts.map((textPart, i) => (
+                  {text.map((part, i) => (
                     <MessageContent
                       className={cn(
                         "group-[.is-user]:rounded-[24px] group-[.is-user]:bg-secondary group-[.is-user]:text-foreground",
-                        "group-[.is-assistant]:bg-transparent group-[.is-assistant]:p-0 group-[.is-assistant]:text-foreground"
+                        "group-[.is-assistant]:bg-transparent group-[.is-assistant]:p-0 group-[.is-assistant]:text-foreground",
                       )}
                       key={`${message.id}-text-${i}`}
                     >
-                      <MessageResponse>{textPart.text}</MessageResponse>
+                      <MessageResponse>{part.text}</MessageResponse>
                     </MessageContent>
                   ))}
                 </div>
@@ -278,7 +239,6 @@ const Example = () => {
               </DropdownMenu>
               <PromptInputButton
                 className="rounded-full border font-medium"
-                onClick={() => setUseWebSearch(!useWebSearch)}
                 variant="outline"
               >
                 <GlobeIcon size={16} />
@@ -287,7 +247,6 @@ const Example = () => {
             </PromptInputTools>
             <PromptInputButton
               className="rounded-full font-medium text-foreground"
-              onClick={() => setUseMicrophone(!useMicrophone)}
               variant="secondary"
             >
               <AudioWaveformIcon size={16} />
