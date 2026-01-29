@@ -5,11 +5,7 @@ import type {
   ToolUIPart,
   UIMessage,
 } from "ai";
-import {
-  isReasoningUIPart,
-  isStaticToolUIPart,
-  isTextUIPart,
-} from "ai";
+import { isReasoningUIPart, isStaticToolUIPart, isTextUIPart } from "ai";
 import type { LucideIcon } from "lucide-react";
 import {
   BarChartIcon,
@@ -62,14 +58,14 @@ React hooks are a powerful feature that let you use state and other React featur
 \`\`\`jsx
 function ProfilePage({ userId }) {
   const [user, setUser] = useState(null);
-  
+
   useEffect(() => {
     // This runs after render and when userId changes
     fetchUser(userId).then(userData => {
       setUser(userData);
     });
   }, [userId]);
-  
+
   return user ? <Profile user={user} /> : <Loading />;
 }
 \`\`\`
@@ -84,7 +80,7 @@ Would you like me to explain any specific hook in more detail?`,
       {
         type: "reasoning",
         text: `The user is asking for a detailed explanation of useCallback and useMemo. I should provide a clear and concise explanation of each hook's purpose and how they differ.
-      
+
 The useCallback hook is used to memoize functions to prevent unnecessary re-renders of child components that receive functions as props.
 
 The useMemo hook is used to memoize values to avoid expensive recalculations on every render.
@@ -147,11 +143,10 @@ Note that ~~class-based lifecycle methods~~ like \`componentDidMount\` are now r
   ],
 ]);
 
-// Scripted user messages in order (first version only for arrays)
-export const scriptedUserMessages = [
-  "Can you explain how to use React hooks effectively?",
-  "Yes, could you explain useCallback and useMemo in more detail? When should I use one over the other?",
-];
+// Ordered sequence of user messages for auto-play demo.
+// useDemoChat sends the first message on mount, then auto-sends
+// each subsequent message after the previous response completes.
+export const scriptedUserMessages = [...mockMessages.keys()];
 
 // Map of message text -> all versions (for MessageBranch UI)
 const messageVersionsMap = new Map<string, string[]>([
@@ -165,7 +160,7 @@ const messageVersionsMap = new Map<string, string[]>([
   ],
 ]);
 
-// Get alternative versions for a user message text (O(1) lookup)
+// Get alternative versions for a user message text
 export function getMessageVersions(text: string): string[] | null {
   return messageVersionsMap.get(text) ?? null;
 }
@@ -208,7 +203,9 @@ export type CategorizedParts = {
 };
 
 // Single-pass categorization of message parts using SDK type guards
-export function categorizeMessageParts(parts: UIMessage["parts"]): CategorizedParts {
+export function categorizeMessageParts(
+  parts: UIMessage["parts"],
+): CategorizedParts {
   const sources: SourceUrlUIPart[] = [];
   const reasoning: ReasoningUIPart[] = [];
   const tools: ToolUIPart[] = [];
