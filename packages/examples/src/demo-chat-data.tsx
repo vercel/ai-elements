@@ -1,6 +1,16 @@
-"use client";
-
-import type { UIMessage } from "ai";
+import type {
+  ReasoningUIPart,
+  SourceUrlUIPart,
+  TextUIPart,
+  ToolUIPart,
+  UIMessage,
+} from "ai";
+import {
+  isReasoningUIPart,
+  isStaticToolUIPart,
+  isTextUIPart,
+} from "ai";
+import type { LucideIcon } from "lucide-react";
 import {
   BarChartIcon,
   BoxIcon,
@@ -26,35 +36,6 @@ export const mockMessages = new Map<string, UIMessage["parts"]>([
         sourceId: nanoid(),
         url: "https://react.dev/reference/react-dom",
         title: "React DOM Documentation",
-      },
-      {
-        type: "tool-mcp",
-        toolCallId: nanoid(),
-        state: "output-available",
-        input: {
-          query: "React hooks best practices",
-          source: "react.dev",
-        },
-        output: `{
-        "query": "React hooks best practices",
-        "results": [
-          {
-            "title": "Rules of Hooks",
-            "url": "https://react.dev/warnings/invalid-hook-call-warning",
-            "snippet": "Hooks must be called at the top level of your React function components or custom hooks. Don't call hooks inside loops, conditions, or nested functions."
-          },
-          {
-            "title": "useState Hook",
-            "url": "https://react.dev/reference/react/useState",
-            "snippet": "useState is a React Hook that lets you add state to your function components. It returns an array with two values: the current state and a function to update it."
-          },
-          {
-            "title": "useEffect Hook",
-            "url": "https://react.dev/reference/react/useEffect",
-            "snippet": "useEffect lets you synchronize a component with external systems. It runs after render and can be used to perform side effects like data fetching."
-          }
-        ]
-      }`,
       },
       {
         type: "text",
@@ -166,9 +147,36 @@ Note that ~~class-based lifecycle methods~~ like \`componentDidMount\` are now r
   ],
 ]);
 
-export const userMessageTexts = Array.from(mockMessages.keys());
+// Scripted user messages in order (first version only for arrays)
+export const scriptedUserMessages = [
+  "Can you explain how to use React hooks effectively?",
+  "Yes, could you explain useCallback and useMemo in more detail? When should I use one over the other?",
+];
 
-export const suggestions = [
+// Map of message text -> all versions (for MessageBranch UI)
+const messageVersionsMap = new Map<string, string[]>([
+  [
+    "Yes, could you explain useCallback and useMemo in more detail? When should I use one over the other?",
+    [
+      "Yes, could you explain useCallback and useMemo in more detail? When should I use one over the other?",
+      "I'm particularly interested in understanding when to use useCallback vs useMemo. Can you provide some practical examples?",
+      "Thanks for the overview! Could you dive deeper into the performance optimization hooks? I want to understand the tradeoffs.",
+    ],
+  ],
+]);
+
+// Get alternative versions for a user message text (O(1) lookup)
+export function getMessageVersions(text: string): string[] | null {
+  return messageVersionsMap.get(text) ?? null;
+}
+
+export type Suggestion = {
+  icon: LucideIcon | null;
+  text: string;
+  color?: string;
+};
+
+export const suggestions: readonly Suggestion[] = [
   { icon: BarChartIcon, text: "Analyze data", color: "#76d0eb" },
   { icon: BoxIcon, text: "Surprise me", color: "#76d0eb" },
   { icon: NotepadTextIcon, text: "Summarize text", color: "#ea8444" },
@@ -177,7 +185,7 @@ export const suggestions = [
   { icon: null, text: "More" },
 ];
 
-export const mockResponses = [
+export const mockResponses: readonly string[] = [
   "That's a great question! Let me help you understand this concept better. The key thing to remember is that proper implementation requires careful consideration of the underlying principles and best practices in the field.",
   "I'd be happy to explain this topic in detail. From my understanding, there are several important factors to consider when approaching this problem. Let me break it down step by step for you.",
   "This is an interesting topic that comes up frequently. The solution typically involves understanding the core concepts and applying them in the right context. Here's what I recommend...",
@@ -185,10 +193,38 @@ export const mockResponses = [
   "That's definitely worth exploring. From what I can see, the best way to handle this is to consider both the theoretical aspects and practical implementation details.",
 ];
 
-export const getLastUserMessageText = (messages: UIMessage[]) => {
-  const lastUserMessage = [...messages]
-    .reverse()
-    .find((msg) => msg.role === "user");
-  const textPart = lastUserMessage?.parts.find((p) => p.type === "text");
-  return textPart && "text" in textPart ? textPart.text : "";
+export function getLastUserMessageText(messages: UIMessage[]): string {
+  const lastUserMessage = messages.findLast((msg) => msg.role === "user");
+  const textPart = lastUserMessage?.parts.find(isTextUIPart);
+  return textPart?.text ?? "";
+}
+
+// Categorized message parts with proper types
+export type CategorizedParts = {
+  sources: SourceUrlUIPart[];
+  reasoning: ReasoningUIPart[];
+  tools: ToolUIPart[];
+  text: TextUIPart[];
 };
+
+// Single-pass categorization of message parts using SDK type guards
+export function categorizeMessageParts(parts: UIMessage["parts"]): CategorizedParts {
+  const sources: SourceUrlUIPart[] = [];
+  const reasoning: ReasoningUIPart[] = [];
+  const tools: ToolUIPart[] = [];
+  const text: TextUIPart[] = [];
+
+  for (const p of parts) {
+    if (isTextUIPart(p)) {
+      text.push(p);
+    } else if (isReasoningUIPart(p)) {
+      reasoning.push(p);
+    } else if (isStaticToolUIPart(p)) {
+      tools.push(p);
+    } else if (p.type === "source-url") {
+      sources.push(p);
+    }
+  }
+
+  return { sources, reasoning, tools, text };
+}
