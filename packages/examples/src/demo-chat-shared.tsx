@@ -48,10 +48,14 @@ export function useDemoChat(chatId: string) {
     id: chatId,
     transport: demoTransport,
     onFinish: ({ messages }) => {
-      // Auto-send next scripted message
+      // Auto-send next scripted message only if current was part of script
       const lastText = getLastUserMessageText(messages);
-      const nextIndex = scriptedUserMessages.indexOf(lastText) + 1;
+      const currentIndex = scriptedUserMessages.indexOf(lastText);
 
+      // Don't auto-continue for non-scripted messages (e.g., suggestions)
+      if (currentIndex === -1) return;
+
+      const nextIndex = currentIndex + 1;
       if (nextIndex < scriptedUserMessages.length) {
         sendMessage({ text: scriptedUserMessages[nextIndex] });
       }
