@@ -12,79 +12,6 @@ The `PromptInput` component allows a user to send a message with file attachment
 
 <ElementsInstaller path="prompt-input" />
 
-## Usage
-
-```tsx
-import {
-  PromptInput,
-  PromptInputActionAddAttachments,
-  PromptInputActionMenu,
-  PromptInputActionMenuContent,
-  PromptInputActionMenuItem,
-  PromptInputActionMenuTrigger,
-  PromptInputAttachment,
-  PromptInputAttachments,
-  PromptInputBody,
-  PromptInputButton,
-  PromptInputProvider,
-  PromptInputSpeechButton,
-  PromptInputSubmit,
-  PromptInputTextarea,
-  PromptInputFooter,
-  PromptInputTools,
-  usePromptInputAttachments,
-} from '@/components/ai-elements/prompt-input';
-```
-
-```tsx
-import { GlobeIcon } from 'lucide-react';
-
-<PromptInput onSubmit={() => {}} className="mt-4 relative">
-  <PromptInputHeader>
-    <PromptInputAttachments>
-      {(attachment) => (
-        <PromptInputAttachment data={attachment} />
-      )}
-    </PromptInputAttachments>
-  </PromptInputHeader>
-  <PromptInputBody>
-    <PromptInputTextarea onChange={(e) => {}} value={''} />
-  </PromptInputBody>
-  <PromptInputFooter>
-    <PromptInputTools>
-      <PromptInputActionMenu>
-        <PromptInputActionMenuTrigger />
-        <PromptInputActionMenuContent>
-          <PromptInputActionAddAttachments />
-        </PromptInputActionMenuContent>
-      </PromptInputActionMenu>
-      <PromptInputSpeechButton />
-      <PromptInputButton>
-        <GlobeIcon size={16} />
-        <span>Search</span>
-      </PromptInputButton>
-      <PromptInputModelSelect onValueChange={(value) => {}} value="gpt-4o">
-        <PromptInputModelSelectTrigger>
-          <PromptInputModelSelectValue />
-        </PromptInputModelSelectTrigger>
-        <PromptInputModelSelectContent>
-          <PromptInputModelSelectItem value="gpt-4o">
-            GPT-4o
-          </PromptInputModelSelectItem>
-          <PromptInputModelSelectItem value="claude-opus-4-20250514">
-            Claude 4 Opus
-          </PromptInputModelSelectItem>
-        </PromptInputModelSelectContent>
-      </PromptInputModelSelect>
-    </PromptInputTools>
-    <PromptInputSubmit
-      disabled={false}
-      status={'ready'}
-    />
-  </PromptInputFooter>
-</PromptInput>
-```
-
 ## Usage with AI SDK
 
 Build a fully functional chat app using `PromptInput`, [`Conversation`](/elements/components/conversation) with a model picker:
@@ -95,37 +22,64 @@ Add the following component to your frontend:
 'use client';
 
 import {
+  Attachment,
+  AttachmentPreview,
+  AttachmentRemove,
+  Attachments,
+} from '@/components/ai-elements/attachment';
+import {
   PromptInput,
   PromptInputActionAddAttachments,
   PromptInputActionMenu,
   PromptInputActionMenuContent,
   PromptInputActionMenuTrigger,
-  PromptInputAttachment,
-  PromptInputAttachments,
   PromptInputBody,
   PromptInputButton,
+  PromptInputHeader,
   type PromptInputMessage,
-  PromptInputModelSelect,
-  PromptInputModelSelectContent,
-  PromptInputModelSelectItem,
-  PromptInputModelSelectTrigger,
-  PromptInputModelSelectValue,
-  PromptInputSpeechButton,
+  PromptInputSelect,
+  PromptInputSelectContent,
+  PromptInputSelectItem,
+  PromptInputSelectTrigger,
+  PromptInputSelectValue,
   PromptInputSubmit,
   PromptInputTextarea,
   PromptInputFooter,
   PromptInputTools,
+  usePromptInputAttachments,
 } from '@/components/ai-elements/prompt-input';
 import { GlobeIcon } from 'lucide-react';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { useChat } from '@ai-sdk/react';
 import {
   Conversation,
   ConversationContent,
   ConversationScrollButton,
 } from '@/components/ai-elements/conversation';
-import { Message, MessageContent } from '@/components/ai-elements/message';
-import { Response } from '@/components/ai-elements/response';
+import { Message, MessageContent, MessageResponse } from '@/components/ai-elements/message';
+
+const PromptInputAttachmentsDisplay = () => {
+  const attachments = usePromptInputAttachments();
+
+  if (attachments.files.length === 0) {
+    return null;
+  }
+
+  return (
+    <Attachments variant="inline">
+      {attachments.files.map((attachment) => (
+        <Attachment
+          data={attachment}
+          key={attachment.id}
+          onRemove={() => attachments.remove(attachment.id)}
+        >
+          <AttachmentPreview />
+          <AttachmentRemove />
+        </Attachment>
+      ))}
+    </Attachments>
+  );
+};
 
 const models = [
   { id: 'gpt-4o', name: 'GPT-4o' },
@@ -136,7 +90,6 @@ const InputDemo = () => {
   const [text, setText] = useState<string>('');
   const [model, setModel] = useState<string>(models[0].id);
   const [useWebSearch, setUseWebSearch] = useState<boolean>(false);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const { messages, status, sendMessage } = useChat();
 
@@ -175,9 +128,9 @@ const InputDemo = () => {
                     switch (part.type) {
                       case 'text':
                         return (
-                          <Response key={`${message.id}-${i}`}>
+                          <MessageResponse key={`${message.id}-${i}`}>
                             {part.text}
-                          </Response>
+                          </MessageResponse>
                         );
                       default:
                         return null;
@@ -192,15 +145,12 @@ const InputDemo = () => {
 
         <PromptInput onSubmit={handleSubmit} className="mt-4" globalDrop multiple>
           <PromptInputHeader>
-            <PromptInputAttachments>
-              {(attachment) => <PromptInputAttachment data={attachment} />}
-            </PromptInputAttachments>
+            <PromptInputAttachmentsDisplay />
           </PromptInputHeader>
           <PromptInputBody>
      
             <PromptInputTextarea
               onChange={(e) => setText(e.target.value)}
-              ref={textareaRef}
               value={text}
             />
           </PromptInputBody>
@@ -212,10 +162,6 @@ const InputDemo = () => {
                   <PromptInputActionAddAttachments />
                 </PromptInputActionMenuContent>
               </PromptInputActionMenu>
-              <PromptInputSpeechButton
-                onTranscriptionChange={setText}
-                textareaRef={textareaRef}
-              />
               <PromptInputButton
                 onClick={() => setUseWebSearch(!useWebSearch)}
                 variant={useWebSearch ? 'default' : 'ghost'}
@@ -223,23 +169,23 @@ const InputDemo = () => {
                 <GlobeIcon size={16} />
                 <span>Search</span>
               </PromptInputButton>
-              <PromptInputModelSelect
+              <PromptInputSelect
                 onValueChange={(value) => {
                   setModel(value);
                 }}
                 value={model}
               >
-                <PromptInputModelSelectTrigger>
-                  <PromptInputModelSelectValue />
-                </PromptInputModelSelectTrigger>
-                <PromptInputModelSelectContent>
+                <PromptInputSelectTrigger>
+                  <PromptInputSelectValue />
+                </PromptInputSelectTrigger>
+                <PromptInputSelectContent>
                   {models.map((model) => (
-                    <PromptInputModelSelectItem key={model.id} value={model.id}>
+                    <PromptInputSelectItem key={model.id} value={model.id}>
                       {model.name}
-                    </PromptInputModelSelectItem>
+                    </PromptInputSelectItem>
                   ))}
-                </PromptInputModelSelectContent>
-              </PromptInputModelSelect>
+                </PromptInputSelectContent>
+              </PromptInputSelect>
             </PromptInputTools>
             <PromptInputSubmit disabled={!text && !status} status={status} />
           </PromptInputFooter>
@@ -273,7 +219,7 @@ export async function POST(req: Request) {
 
   const result = streamText({
     model: webSearch ? 'perplexity/sonar' : model,
-    messages: convertToModelMessages(messages),
+    messages: await convertToModelMessages(messages),
   });
 
   return result.toUIMessageStreamResponse();
@@ -410,7 +356,7 @@ export async function POST(req: Request) {
   }}
 />
 
-### `<PromptInputModelSelect />`
+### `<PromptInputSelect />`
 
 <TypeTable
   type={{
@@ -421,7 +367,7 @@ export async function POST(req: Request) {
   }}
 />
 
-### `<PromptInputModelSelectTrigger />`
+### `<PromptInputSelectTrigger />`
 
 <TypeTable
   type={{
@@ -432,7 +378,7 @@ export async function POST(req: Request) {
   }}
 />
 
-### `<PromptInputModelSelectContent />`
+### `<PromptInputSelectContent />`
 
 <TypeTable
   type={{
@@ -443,7 +389,7 @@ export async function POST(req: Request) {
   }}
 />
 
-### `<PromptInputModelSelectItem />`
+### `<PromptInputSelectItem />`
 
 <TypeTable
   type={{
@@ -454,7 +400,7 @@ export async function POST(req: Request) {
   }}
 />
 
-### `<PromptInputModelSelectValue />`
+### `<PromptInputSelectValue />`
 
 <TypeTable
   type={{
@@ -476,35 +422,9 @@ export async function POST(req: Request) {
   }}
 />
 
-### `<PromptInputAttachments />`
+### Attachments
 
-<TypeTable
-  type={{
-    children: {
-      description: 'Render function for each attachment.',
-      type: '(attachment: FileUIPart & { id: string }) => React.ReactNode',
-    },
-    '...props': {
-      description: 'Any other props are spread to the attachments container.',
-      type: 'React.HTMLAttributes<HTMLDivElement>',
-    },
-  }}
-/>
-
-### `<PromptInputAttachment />`
-
-<TypeTable
-  type={{
-    data: {
-      description: 'The attachment data to display.',
-      type: 'FileUIPart & { id: string }',
-    },
-    '...props': {
-      description: 'Any other props are spread to the attachment div.',
-      type: 'React.HTMLAttributes<HTMLDivElement>',
-    },
-  }}
-/>
+Attachment components have been moved to a separate module. See the [Attachment](/elements/components/attachment) component documentation for details on `<Attachments />`, `<Attachment />`, `<AttachmentPreview />`, `<AttachmentInfo />`, and `<AttachmentRemove />`.
 
 ### `<PromptInputActionMenu />`
 
@@ -582,68 +502,6 @@ export async function POST(req: Request) {
 />
 
 Optional global provider that lifts PromptInput state outside of PromptInput. When used, it allows you to access and control the input state from anywhere within the provider tree. If not used, PromptInput stays fully self-managed.
-
-### `<PromptInputSpeechButton />`
-
-<TypeTable
-  type={{
-    textareaRef: {
-      description: 'Reference to the textarea element to insert transcribed text.',
-      type: 'RefObject<HTMLTextAreaElement | null>',
-    },
-    onTranscriptionChange: {
-      description: 'Callback fired when transcription text changes.',
-      type: '(text: string) => void',
-    },
-    '...props': {
-      description: 'Any other props are spread to the underlying PromptInputButton component.',
-      type: 'React.ComponentProps<typeof PromptInputButton>',
-    },
-  }}
-/>
-
-Built-in button component that provides native speech recognition using the Web Speech API. The button will be disabled if speech recognition is not supported in the browser. Displays a microphone icon and pulses while actively listening.
-
-## Hooks
-
-### `usePromptInputAttachments`
-
-Access and manage file attachments within a PromptInput context.
-
-```tsx
-const attachments = usePromptInputAttachments();
-
-// Available methods:
-attachments.files // Array of current attachments
-attachments.add(files) // Add new files
-attachments.remove(id) // Remove an attachment by ID
-attachments.clear() // Clear all attachments
-attachments.openFileDialog() // Open file selection dialog
-```
-
-### `usePromptInputController`
-
-Access the full PromptInput controller from a PromptInputProvider. Only available when using the provider.
-
-```tsx
-const controller = usePromptInputController();
-
-// Available methods:
-controller.textInput.value // Current text input value
-controller.textInput.setInput(value) // Set text input value
-controller.textInput.clear() // Clear text input
-controller.attachments // Same as usePromptInputAttachments
-```
-
-### `useProviderAttachments`
-
-Access attachments context from a PromptInputProvider. Only available when using the provider.
-
-```tsx
-const attachments = useProviderAttachments();
-
-// Same interface as usePromptInputAttachments
-```
 
 ### `<PromptInputHeader />`
 
@@ -835,3 +693,59 @@ const attachments = useProviderAttachments();
     },
   }}
 />
+
+
+## Hooks
+
+### `usePromptInputAttachments`
+
+Access and manage file attachments within a PromptInput context.
+
+```tsx
+const attachments = usePromptInputAttachments();
+
+// Available methods:
+attachments.files // Array of current attachments
+attachments.add(files) // Add new files
+attachments.remove(id) // Remove an attachment by ID
+attachments.clear() // Clear all attachments
+attachments.openFileDialog() // Open file selection dialog
+```
+
+### `usePromptInputController`
+
+Access the full PromptInput controller from a PromptInputProvider. Only available when using the provider.
+
+```tsx
+const controller = usePromptInputController();
+
+// Available methods:
+controller.textInput.value // Current text input value
+controller.textInput.setInput(value) // Set text input value
+controller.textInput.clear() // Clear text input
+controller.attachments // Same as usePromptInputAttachments
+```
+
+### `useProviderAttachments`
+
+Access attachments context from a PromptInputProvider. Only available when using the provider.
+
+```tsx
+const attachments = useProviderAttachments();
+
+// Same interface as usePromptInputAttachments
+```
+
+### `usePromptInputReferencedSources`
+
+Access referenced sources context within a PromptInput.
+
+```tsx
+const sources = usePromptInputReferencedSources();
+
+// Available methods:
+sources.sources // Array of current referenced sources
+sources.add(sources) // Add new source(s)
+sources.remove(id) // Remove a source by ID
+sources.clear() // Clear all sources
+```

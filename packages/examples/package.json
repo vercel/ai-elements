@@ -11,16 +11,18 @@
     "@icons-pack/react-simple-icons": "^13.8.0",
     "@loremllm/transport": "^0.4.5",
     "@repo/elements": "workspace:*",
-    "@xyflow/react": "^12.9.0",
+    "@xyflow/react": "^12.10.0",
     "ai": "5.0.87",
-    "lucide-react": "^0.548.0",
+    "lucide-react": "^0.562.0",
     "nanoid": "^5.1.6",
-    "react": "19.2.0",
-    "sonner": "^2.0.7"
+    "react": "19.2.3",
+    "sonner": "^2.0.7",
+    "zod": "^4.3.5"
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
-    "@types/react": "19.2.2",
+    "@types/node": "^25.0.9",
+    "@types/react": "19.2.8",
     "typescript": "^5.9.3"
   }
 }

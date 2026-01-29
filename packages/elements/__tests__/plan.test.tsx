@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import {
   Plan,
   PlanAction,
@@ -178,7 +178,7 @@ describe("Plan", () => {
       // Suppress console.error for this test
       const consoleSpy = vi
         .spyOn(console, "error")
-        .mockImplementation(() => {});
+        .mockImplementation(() => undefined);
 
       expect(() => {
         render(<PlanTitle>Title</PlanTitle>);
@@ -268,7 +268,7 @@ describe("Plan", () => {
     it("throws error when used outside Plan context", () => {
       const consoleSpy = vi
         .spyOn(console, "error")
-        .mockImplementation(() => {});
+        .mockImplementation(() => undefined);
 
       expect(() => {
         render(<PlanDescription>Description</PlanDescription>);

@@ -12,18 +12,6 @@ The `Suggestion` component displays a horizontal row of clickable suggestions fo
 
 <ElementsInstaller path="suggestion" />
 
-## Usage
-
-```tsx
-import { Suggestion, Suggestions } from '@/components/ai-elements/suggestion';
-```
-
-```tsx
-<Suggestions>
-  <Suggestion suggestion="What are the latest trends in AI?" />
-</Suggestions>
-```
-
 ## Usage with AI SDK
 
 Build a simple input with suggestions users can click to send a message to the LLM.
@@ -139,6 +127,7 @@ export default SuggestionDemo;
     suggestion: {
       description: 'The suggestion string to display and emit on click.',
       type: 'string',
+      required: true,
     },
     onClick: {
       description: 'Callback fired when the suggestion is clicked.',

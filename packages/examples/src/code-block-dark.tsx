@@ -1,6 +1,14 @@
 "use client";
 
-import { CodeBlock, CodeBlockCopyButton } from "@repo/elements/code-block";
+import {
+  CodeBlock,
+  CodeBlockActions,
+  CodeBlockCopyButton,
+  CodeBlockFilename,
+  CodeBlockHeader,
+  CodeBlockTitle,
+} from "@repo/elements/code-block";
+import { FileIcon } from "lucide-react";
 
 const code = `function MyComponent(props) {
   return (
@@ -14,10 +22,18 @@ const code = `function MyComponent(props) {
 const Example = () => (
   <div className="dark">
     <CodeBlock code={code} language="jsx">
-      <CodeBlockCopyButton
-        onCopy={() => console.log("Copied code to clipboard")}
-        onError={() => console.error("Failed to copy code to clipboard")}
-      />
+      <CodeBlockHeader>
+        <CodeBlockTitle>
+          <FileIcon size={14} />
+          <CodeBlockFilename>MyComponent.jsx</CodeBlockFilename>
+        </CodeBlockTitle>
+        <CodeBlockActions>
+          <CodeBlockCopyButton
+            onCopy={() => console.log("Copied code to clipboard")}
+            onError={() => console.error("Failed to copy code to clipboard")}
+          />
+        </CodeBlockActions>
+      </CodeBlockHeader>
     </CodeBlock>
   </div>
 );

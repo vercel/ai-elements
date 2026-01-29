@@ -13,9 +13,11 @@
     "examples/v0",
     "examples/workflow",
     "---Components---",
-    "components/index",
     "components/(chatbot)",
+    "components/(code)",
+    "components/(voice)",
     "components/(workflow)",
-    "components/(vibe-coding)"
+    "components/(vibe-coding)",
+    "components/(utilities)"
   ]
 }

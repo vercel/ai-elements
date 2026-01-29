@@ -1,0 +1,133 @@
+---
+title: Artifact
+description: A container component for displaying generated content like code, documents, or other outputs with built-in actions.
+path: elements/components/artifact
+---
+
+The `Artifact` component provides a structured container for displaying generated content like code, documents, or other outputs with built-in header actions.
+
+<Preview path="artifact" />
+
+## Installation
+
+<ElementsInstaller path="artifact" />
+
+## Features
+
+- Structured container with header and content areas
+- Built-in header with title and description support
+- Flexible action buttons with tooltips
+- Customizable styling for all subcomponents
+- Support for close buttons and action groups
+- Clean, modern design with border and shadow
+- Responsive layout that adapts to content
+- TypeScript support with proper type definitions
+- Composable architecture for maximum flexibility
+
+## Examples
+
+### With Code Display
+
+<Preview path="artifact" />
+
+## Props
+
+### `<Artifact />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any other props are spread to the underlying div element.',
+      type: 'React.HTMLAttributes<HTMLDivElement>',
+    },
+  }}
+/>
+
+### `<ArtifactHeader />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any other props are spread to the underlying div element.',
+      type: 'React.HTMLAttributes<HTMLDivElement>',
+    },
+  }}
+/>
+
+### `<ArtifactTitle />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any other props are spread to the underlying paragraph element.',
+      type: 'React.HTMLAttributes<HTMLParagraphElement>',
+    },
+  }}
+/>
+
+### `<ArtifactDescription />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any other props are spread to the underlying paragraph element.',
+      type: 'React.HTMLAttributes<HTMLParagraphElement>',
+    },
+  }}
+/>
+
+### `<ArtifactActions />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any other props are spread to the underlying div element.',
+      type: 'React.HTMLAttributes<HTMLDivElement>',
+    },
+  }}
+/>
+
+### `<ArtifactAction />`
+
+<TypeTable
+  type={{
+    tooltip: {
+      description: 'Tooltip text to display on hover.',
+      type: 'string',
+    },
+    label: {
+      description: 'Screen reader label for the action button.',
+      type: 'string',
+    },
+    icon: {
+      description: 'Lucide icon component to display in the button.',
+      type: 'LucideIcon',
+    },
+    '...props': {
+      description: 'Any other props are spread to the underlying shadcn/ui Button component.',
+      type: 'React.ComponentProps<typeof Button>',
+    },
+  }}
+/>
+
+### `<ArtifactClose />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any other props are spread to the underlying shadcn/ui Button component.',
+      type: 'React.ComponentProps<typeof Button>',
+    },
+  }}
+/>
+
+### `<ArtifactContent />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any other props are spread to the underlying div element.',
+      type: 'React.HTMLAttributes<HTMLDivElement>',
+    },
+  }}
+/>

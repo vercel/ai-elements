@@ -12,29 +12,6 @@ The `Task` component provides a structured way to display task lists or workflow
 
 <ElementsInstaller path="task" />
 
-## Usage
-
-```tsx
-import {
-  Task,
-  TaskContent,
-  TaskItem,
-  TaskItemFile,
-  TaskTrigger,
-} from '@/components/ai-elements/task';
-```
-
-```tsx
-<Task className="w-full">
-  <TaskTrigger title="Found project files" />
-  <TaskContent>
-    <TaskItem>
-      Read <TaskItemFile>index.md</TaskItemFile>
-    </TaskItem>
-  </TaskContent>
-</Task>
-```
-
 ## Usage with AI SDK
 
 Build a mock async programming agent using [`experimental_generateObject`](/docs/reference/ai-sdk-ui/use-object).
@@ -216,6 +193,11 @@ export async function POST(req: Request) {
 
 <TypeTable
   type={{
+    defaultOpen: {
+      description: 'Whether the task is open by default.',
+      type: 'boolean',
+      default: 'true',
+    },
     '...props': {
       description: 'Any other props are spread to the root Collapsible component.',
       type: 'React.ComponentProps<typeof Collapsible>',
@@ -230,6 +212,7 @@ export async function POST(req: Request) {
     title: {
       description: 'The title of the task that will be displayed in the trigger.',
       type: 'string',
+      required: true,
     },
     '...props': {
       description: 'Any other props are spread to the CollapsibleTrigger component.',

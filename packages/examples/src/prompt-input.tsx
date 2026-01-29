@@ -1,96 +1,166 @@
 "use client";
 
 import {
+  Attachment,
+  AttachmentPreview,
+  AttachmentRemove,
+  Attachments,
+} from "@repo/elements/attachments";
+import {
+  ModelSelector,
+  ModelSelectorContent,
+  ModelSelectorEmpty,
+  ModelSelectorGroup,
+  ModelSelectorInput,
+  ModelSelectorItem,
+  ModelSelectorList,
+  ModelSelectorLogo,
+  ModelSelectorLogoGroup,
+  ModelSelectorName,
+  ModelSelectorTrigger,
+} from "@repo/elements/model-selector";
+import {
   PromptInput,
   PromptInputActionAddAttachments,
   PromptInputActionMenu,
   PromptInputActionMenuContent,
   PromptInputActionMenuTrigger,
-  PromptInputAttachment,
-  PromptInputAttachments,
   PromptInputBody,
   PromptInputButton,
   PromptInputFooter,
-  PromptInputHeader,
   type PromptInputMessage,
-  PromptInputModelSelect,
-  PromptInputModelSelectContent,
-  PromptInputModelSelectItem,
-  PromptInputModelSelectTrigger,
-  PromptInputModelSelectValue,
   PromptInputProvider,
-  PromptInputSpeechButton,
   PromptInputSubmit,
   PromptInputTextarea,
   PromptInputTools,
+  usePromptInputAttachments,
   usePromptInputController,
 } from "@repo/elements/prompt-input";
 import { Button } from "@repo/shadcn-ui/components/ui/button";
-import { GlobeIcon } from "lucide-react";
-import { useRef, useState } from "react";
+import { ButtonGroup } from "@repo/shadcn-ui/components/ui/button-group";
+import { CheckIcon, GlobeIcon } from "lucide-react";
+import { useState } from "react";
 
 const models = [
-  { id: "gpt-4", name: "GPT-4" },
-  { id: "gpt-3.5-turbo", name: "GPT-3.5 Turbo" },
-  { id: "claude-2", name: "Claude 2" },
-  { id: "claude-instant", name: "Claude Instant" },
-  { id: "palm-2", name: "PaLM 2" },
-  { id: "llama-2-70b", name: "Llama 2 70B" },
-  { id: "llama-2-13b", name: "Llama 2 13B" },
-  { id: "cohere-command", name: "Command" },
-  { id: "mistral-7b", name: "Mistral 7B" },
+  {
+    id: "gpt-4o",
+    name: "GPT-4o",
+    chef: "OpenAI",
+    chefSlug: "openai",
+    providers: ["openai", "azure"],
+  },
+  {
+    id: "gpt-4o-mini",
+    name: "GPT-4o Mini",
+    chef: "OpenAI",
+    chefSlug: "openai",
+    providers: ["openai", "azure"],
+  },
+  {
+    id: "claude-opus-4-20250514",
+    name: "Claude 4 Opus",
+    chef: "Anthropic",
+    chefSlug: "anthropic",
+    providers: ["anthropic", "azure", "google", "amazon-bedrock"],
+  },
+  {
+    id: "claude-sonnet-4-20250514",
+    name: "Claude 4 Sonnet",
+    chef: "Anthropic",
+    chefSlug: "anthropic",
+    providers: ["anthropic", "azure", "google", "amazon-bedrock"],
+  },
+  {
+    id: "gemini-2.0-flash-exp",
+    name: "Gemini 2.0 Flash",
+    chef: "Google",
+    chefSlug: "google",
+    providers: ["google"],
+  },
 ];
 
 const SUBMITTING_TIMEOUT = 200;
 const STREAMING_TIMEOUT = 2000;
 
-function HeaderControls() {
-  const controller = usePromptInputController();
+const PromptInputAttachmentsDisplay = () => {
+  const attachments = usePromptInputAttachments();
+
+  if (attachments.files.length === 0) {
+    return null;
+  }
+
   return (
-    <header className="mb-10">
-      <h4 className="mb-4 text-sm">
+    <Attachments variant="inline">
+      {attachments.files.map((attachment) => (
+        <Attachment
+          data={attachment}
+          key={attachment.id}
+          onRemove={() => attachments.remove(attachment.id)}
+        >
+          <AttachmentPreview />
+          <AttachmentRemove />
+        </Attachment>
+      ))}
+    </Attachments>
+  );
+};
+
+const HeaderControls = () => {
+  const controller = usePromptInputController();
+
+  return (
+    <header className="mt-8 flex items-center justify-between">
+      <p className="text-sm">
         Header Controls via{" "}
-        <code className="rounded-md bg-gray-100 p-1 font-bold">
+        <code className="rounded-md bg-muted p-1 font-bold">
           PromptInputProvider
         </code>
-      </h4>
-      <div className="mb-10 flex gap-2 rounded-md bg-gray-100 p-2">
+      </p>
+      <ButtonGroup>
         <Button
           onClick={() => {
             controller.textInput.clear();
           }}
+          size="sm"
           type="button"
+          variant="outline"
         >
-          clear input
+          Clear input
         </Button>
         <Button
           onClick={() => {
             controller.textInput.setInput("Inserted via PromptInputProvider");
           }}
+          size="sm"
           type="button"
+          variant="outline"
         >
-          set input
+          Set input
         </Button>
 
         <Button
           onClick={() => {
             controller.attachments.clear();
           }}
+          size="sm"
           type="button"
+          variant="outline"
         >
-          clear attachments
+          Clear attachments
         </Button>
-      </div>
+      </ButtonGroup>
     </header>
   );
-}
+};
 
 const Example = () => {
   const [model, setModel] = useState<string>(models[0].id);
+  const [modelSelectorOpen, setModelSelectorOpen] = useState(false);
   const [status, setStatus] = useState<
     "submitted" | "streaming" | "ready" | "error"
   >("ready");
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  const selectedModelData = models.find((m) => m.id === model);
 
   const handleSubmit = (message: PromptInputMessage) => {
     const hasText = Boolean(message.text);
@@ -115,50 +185,90 @@ const Example = () => {
   };
 
   return (
-    <PromptInputProvider>
-      <HeaderControls />
-      <PromptInput globalDrop multiple onSubmit={handleSubmit}>
-        <PromptInputHeader>
-          <PromptInputAttachments>
-            {(attachment) => <PromptInputAttachment data={attachment} />}
-          </PromptInputAttachments>
-        </PromptInputHeader>
-        <PromptInputBody>
-          <PromptInputTextarea ref={textareaRef} />
-        </PromptInputBody>
-        <PromptInputFooter>
-          <PromptInputTools>
-            <PromptInputActionMenu>
-              <PromptInputActionMenuTrigger />
-              <PromptInputActionMenuContent>
-                <PromptInputActionAddAttachments />
-              </PromptInputActionMenuContent>
-            </PromptInputActionMenu>
-            <PromptInputSpeechButton textareaRef={textareaRef} />
-            <PromptInputButton>
-              <GlobeIcon size={16} />
-              <span>Search</span>
-            </PromptInputButton>
-            <PromptInputModelSelect onValueChange={setModel} value={model}>
-              <PromptInputModelSelectTrigger>
-                <PromptInputModelSelectValue />
-              </PromptInputModelSelectTrigger>
-              <PromptInputModelSelectContent>
-                {models.map((modelOption) => (
-                  <PromptInputModelSelectItem
-                    key={modelOption.id}
-                    value={modelOption.id}
-                  >
-                    {modelOption.name}
-                  </PromptInputModelSelectItem>
-                ))}
-              </PromptInputModelSelectContent>
-            </PromptInputModelSelect>
-          </PromptInputTools>
-          <PromptInputSubmit status={status} />
-        </PromptInputFooter>
-      </PromptInput>
-    </PromptInputProvider>
+    <div className="size-full">
+      <PromptInputProvider>
+        <PromptInput globalDrop multiple onSubmit={handleSubmit}>
+          <PromptInputAttachmentsDisplay />
+          <PromptInputBody>
+            <PromptInputTextarea />
+          </PromptInputBody>
+          <PromptInputFooter>
+            <PromptInputTools>
+              <PromptInputActionMenu>
+                <PromptInputActionMenuTrigger />
+                <PromptInputActionMenuContent>
+                  <PromptInputActionAddAttachments />
+                </PromptInputActionMenuContent>
+              </PromptInputActionMenu>
+              <PromptInputButton>
+                <GlobeIcon size={16} />
+                <span>Search</span>
+              </PromptInputButton>
+              <ModelSelector
+                onOpenChange={setModelSelectorOpen}
+                open={modelSelectorOpen}
+              >
+                <ModelSelectorTrigger asChild>
+                  <PromptInputButton>
+                    {selectedModelData?.chefSlug && (
+                      <ModelSelectorLogo
+                        provider={selectedModelData.chefSlug}
+                      />
+                    )}
+                    {selectedModelData?.name && (
+                      <ModelSelectorName>
+                        {selectedModelData.name}
+                      </ModelSelectorName>
+                    )}
+                  </PromptInputButton>
+                </ModelSelectorTrigger>
+                <ModelSelectorContent>
+                  <ModelSelectorInput placeholder="Search models..." />
+                  <ModelSelectorList>
+                    <ModelSelectorEmpty>No models found.</ModelSelectorEmpty>
+                    {["OpenAI", "Anthropic", "Google"].map((chef) => (
+                      <ModelSelectorGroup heading={chef} key={chef}>
+                        {models
+                          .filter((m) => m.chef === chef)
+                          .map((m) => (
+                            <ModelSelectorItem
+                              key={m.id}
+                              onSelect={() => {
+                                setModel(m.id);
+                                setModelSelectorOpen(false);
+                              }}
+                              value={m.id}
+                            >
+                              <ModelSelectorLogo provider={m.chefSlug} />
+                              <ModelSelectorName>{m.name}</ModelSelectorName>
+                              <ModelSelectorLogoGroup>
+                                {m.providers.map((provider) => (
+                                  <ModelSelectorLogo
+                                    key={provider}
+                                    provider={provider}
+                                  />
+                                ))}
+                              </ModelSelectorLogoGroup>
+                              {model === m.id ? (
+                                <CheckIcon className="ml-auto size-4" />
+                              ) : (
+                                <div className="ml-auto size-4" />
+                              )}
+                            </ModelSelectorItem>
+                          ))}
+                      </ModelSelectorGroup>
+                    ))}
+                  </ModelSelectorList>
+                </ModelSelectorContent>
+              </ModelSelector>
+            </PromptInputTools>
+            <PromptInputSubmit status={status} />
+          </PromptInputFooter>
+        </PromptInput>
+
+        <HeaderControls />
+      </PromptInputProvider>
+    </div>
   );
 };
 

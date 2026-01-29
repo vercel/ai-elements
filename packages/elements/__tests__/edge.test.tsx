@@ -117,7 +117,7 @@ describe("Edge.Temporary", () => {
   it("renders directly as a component", () => {
     const { container } = render(
       <ReactFlowProvider>
-        <svg>
+        <svg aria-label="edge diagram" role="img">
           <Edge.Temporary
             id="temp-1"
             sourcePosition={Position.Right}
@@ -161,7 +161,7 @@ describe("Edge.Temporary", () => {
   it("renders with Top and Bottom positions", () => {
     const { container } = render(
       <ReactFlowProvider>
-        <svg>
+        <svg aria-label="edge diagram" role="img">
           <Edge.Temporary
             id="temp-2"
             sourcePosition={Position.Top}
@@ -310,7 +310,7 @@ describe("Edge.Animated", () => {
   it("renders directly with valid source and target", () => {
     const { container } = render(
       <ReactFlowProvider>
-        <svg>
+        <svg aria-label="edge diagram" role="img">
           <Edge.Animated
             id="animated-1"
             source="1"
@@ -332,7 +332,7 @@ describe("Edge.Animated", () => {
   it("renders null when source is missing in direct render", () => {
     const { container } = render(
       <ReactFlowProvider>
-        <svg>
+        <svg aria-label="edge diagram" role="img">
           <Edge.Animated
             id="animated-missing"
             source="missing"
@@ -354,7 +354,7 @@ describe("Edge.Animated", () => {
   it("renders with nodes that have no handles", () => {
     const { container } = render(
       <ReactFlowProvider>
-        <svg>
+        <svg aria-label="edge diagram" role="img">
           <Edge.Animated
             id="animated-no-handles"
             source="no-handles"
@@ -376,7 +376,7 @@ describe("Edge.Animated", () => {
   it("renders with Top and Bottom positions", () => {
     const { container } = render(
       <ReactFlowProvider>
-        <svg>
+        <svg aria-label="edge diagram" role="img">
           <Edge.Animated
             id="animated-top-bottom"
             source="top-bottom"

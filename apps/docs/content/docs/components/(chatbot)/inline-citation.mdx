@@ -12,51 +12,6 @@ The `InlineCitation` component provides a way to display citations inline with t
 
 <ElementsInstaller path="inline-citation" />
 
-## Usage
-
-```tsx
-import {
-  InlineCitation,
-  InlineCitationCard,
-  InlineCitationCardBody,
-  InlineCitationCardTrigger,
-  InlineCitationCarousel,
-  InlineCitationCarouselContent,
-  InlineCitationCarouselItem,
-  InlineCitationCarouselHeader,
-  InlineCitationCarouselIndex,
-  InlineCitationSource,
-  InlineCitationText,
-} from '@/components/ai-elements/inline-citation';
-```
-
-```tsx
-<InlineCitation>
-  <InlineCitationText>{citation.text}</InlineCitationText>
-  <InlineCitationCard>
-    <InlineCitationCardTrigger
-      sources={citation.sources.map((source) => source.url)}
-    />
-    <InlineCitationCardBody>
-      <InlineCitationCarousel>
-        <InlineCitationCarouselHeader>
-          <InlineCitationCarouselIndex />
-        </InlineCitationCarouselHeader>
-        <InlineCitationCarouselContent>
-          <InlineCitationCarouselItem>
-            <InlineCitationSource
-              title="AI SDK"
-              url="https://ai-sdk.dev"
-              description="The AI Toolkit for TypeScript"
-            />
-          </InlineCitationCarouselItem>
-        </InlineCitationCarouselContent>
-      </InlineCitationCarousel>
-    </InlineCitationCardBody>
-  </InlineCitationCard>
-</InlineCitation>
-```
-
 ## Usage with AI SDK
 
 Build citations for AI-generated content using [`experimental_generateObject`](/docs/reference/ai-sdk-ui/use-object).
@@ -232,6 +187,26 @@ export async function POST(req: Request) {
 - Seamless integration with AI-generated content
 - Clean visual design that doesn't disrupt reading flow
 - Smart badge display showing source hostname and count
+
+## Usage with AI SDK
+
+Currently, there is no official support for inline citations with Streamdown or the Response component. This is because:
+
+- There isn't any good markdown syntax for inline citations
+- Language models don't naturally respond with inline citation syntax
+- The AI SDK doesn't have built-in support for inline citations
+
+### Potential Approaches
+
+While these methods are hypothetical and not officially supported, there are two conceptual ways inline citations could work with Streamdown:
+
+1. **Footnote conversion**: GitHub Flavored Markdown (GFM) handles footnotes using `[^1]` syntax. You could hypothetically remove the default footnote rendering and convert footnotes to inline citations instead.
+
+2. **Custom HTML syntax**: You could add a system prompt instructing the model to use a special HTML syntax like `<citation />` and pass that as a custom component to Streamdown.
+
+These approaches require custom implementation and are not currently supported out of the box. We will investigate official support for this use case in the future.
+
+For now, the recommended approach is to use `experimental_useObject` (as shown in the usage example above) to generate structured citation data, then manually parse and render inline citations.
 
 ## Props
 

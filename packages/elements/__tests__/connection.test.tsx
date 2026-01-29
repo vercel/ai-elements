@@ -7,7 +7,7 @@ describe("Connection", () => {
     // Mock console.error to suppress React SVG warnings from @xyflow/react
     const consoleError = vi
       .spyOn(console, "error")
-      .mockImplementation(() => {});
+      .mockImplementation(() => undefined);
 
     const props = {
       fromX: 0,

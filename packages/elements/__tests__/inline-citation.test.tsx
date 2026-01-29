@@ -18,6 +18,10 @@ import {
   InlineCitationText,
 } from "../src/inline-citation";
 
+const EXAMPLE_COM_PLUS_TWO_REGEX = /example\.com \+2/;
+const PREVIOUS_REGEX = /previous/i;
+const NEXT_REGEX = /next/i;
+
 describe("InlineCitation", () => {
   it("renders children", () => {
     render(<InlineCitation>Citation content</InlineCitation>);
@@ -77,7 +81,7 @@ describe("InlineCitationCardTrigger", () => {
         />
       </InlineCitationCard>
     );
-    expect(screen.getByText(/example\.com \+2/)).toBeInTheDocument();
+    expect(screen.getByText(EXAMPLE_COM_PLUS_TWO_REGEX)).toBeInTheDocument();
   });
 
   it("renders unknown for empty sources", () => {
@@ -220,12 +224,12 @@ describe("InlineCitationCarouselPrev", () => {
       </InlineCitationCarousel>
     );
     expect(
-      screen.getByRole("button", { name: /previous/i })
+      screen.getByRole("button", { name: PREVIOUS_REGEX })
     ).toBeInTheDocument();
   });
 
   it("applies custom className", () => {
-    const { container } = render(
+    render(
       <InlineCitationCarousel>
         <InlineCitationCarouselHeader>
           <InlineCitationCarouselPrev className="custom-prev" />
@@ -235,7 +239,7 @@ describe("InlineCitationCarouselPrev", () => {
         </InlineCitationCarouselContent>
       </InlineCitationCarousel>
     );
-    const button = screen.getByRole("button", { name: /previous/i });
+    const button = screen.getByRole("button", { name: PREVIOUS_REGEX });
     expect(button).toHaveClass("custom-prev");
   });
 
@@ -269,7 +273,7 @@ describe("InlineCitationCarouselPrev", () => {
       </InlineCitationCarousel>
     );
 
-    const button = screen.getByRole("button", { name: /previous/i });
+    const button = screen.getByRole("button", { name: PREVIOUS_REGEX });
     await user.click(button);
 
     // Button should be clickable without errors
@@ -289,11 +293,13 @@ describe("InlineCitationCarouselNext", () => {
         </InlineCitationCarouselContent>
       </InlineCitationCarousel>
     );
-    expect(screen.getByRole("button", { name: /next/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: NEXT_REGEX })
+    ).toBeInTheDocument();
   });
 
   it("applies custom className", () => {
-    const { container } = render(
+    render(
       <InlineCitationCarousel>
         <InlineCitationCarouselHeader>
           <InlineCitationCarouselNext className="custom-next" />
@@ -303,7 +309,7 @@ describe("InlineCitationCarouselNext", () => {
         </InlineCitationCarouselContent>
       </InlineCitationCarousel>
     );
-    const button = screen.getByRole("button", { name: /next/i });
+    const button = screen.getByRole("button", { name: NEXT_REGEX });
     expect(button).toHaveClass("custom-next");
   });
 
@@ -337,7 +343,7 @@ describe("InlineCitationCarouselNext", () => {
       </InlineCitationCarousel>
     );
 
-    const button = screen.getByRole("button", { name: /next/i });
+    const button = screen.getByRole("button", { name: NEXT_REGEX });
     await user.click(button);
 
     // Button should be clickable without errors

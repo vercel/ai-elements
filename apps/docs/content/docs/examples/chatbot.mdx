@@ -51,33 +51,42 @@ import {
   ConversationContent,
   ConversationScrollButton,
 } from '@/components/ai-elements/conversation';
-import { Message, MessageContent } from '@/components/ai-elements/message';
+import {
+  Message,
+  MessageContent,
+  MessageResponse,
+  MessageActions,
+  MessageAction,
+} from '@/components/ai-elements/message';
+import {
+  Attachment,
+  AttachmentPreview,
+  AttachmentRemove,
+  Attachments,
+} from '@/components/ai-elements/attachment';
 import {
   PromptInput,
   PromptInputActionAddAttachments,
   PromptInputActionMenu,
   PromptInputActionMenuContent,
   PromptInputActionMenuTrigger,
-  PromptInputAttachment,
-  PromptInputAttachments,
   PromptInputBody,
   PromptInputButton,
   PromptInputHeader,
   type PromptInputMessage,
-  PromptInputModelSelect,
-  PromptInputModelSelectContent,
-  PromptInputModelSelectItem,
-  PromptInputModelSelectTrigger,
-  PromptInputModelSelectValue,
+  PromptInputSelect,
+  PromptInputSelectContent,
+  PromptInputSelectItem,
+  PromptInputSelectTrigger,
+  PromptInputSelectValue,
   PromptInputSubmit,
   PromptInputTextarea,
   PromptInputFooter,
   PromptInputTools,
+  usePromptInputAttachments,
 } from '@/components/ai-elements/prompt-input';
-import { Action, Actions } from '@/components/ai-elements/actions';
 import { Fragment, useState } from 'react';
 import { useChat } from '@ai-sdk/react';
-import { Response } from '@/components/ai-elements/response';
 import { CopyIcon, GlobeIcon, RefreshCcwIcon } from 'lucide-react';
 import {
   Source,
@@ -91,6 +100,29 @@ import {
   ReasoningTrigger,
 } from '@/components/ai-elements/reasoning';
 import { Loader } from '@/components/ai-elements/loader';
+
+const PromptInputAttachmentsDisplay = () => {
+  const attachments = usePromptInputAttachments();
+
+  if (attachments.files.length === 0) {
+    return null;
+  }
+
+  return (
+    <Attachments variant="inline">
+      {attachments.files.map((attachment) => (
+        <Attachment
+          data={attachment}
+          key={attachment.id}
+          onRemove={() => attachments.remove(attachment.id)}
+        >
+          <AttachmentPreview />
+          <AttachmentRemove />
+        </Attachment>
+      ))}
+    </Attachments>
+  );
+};
 
 const models = [
   {
@@ -163,33 +195,31 @@ const ChatBotDemo = () => {
                   switch (part.type) {
                     case 'text':
                       return (
-                        <Fragment key={`${message.id}-${i}`}>
-                          <Message from={message.role}>
-                            <MessageContent>
-                              <Response>
-                                {part.text}
-                              </Response>
-                            </MessageContent>
-                          </Message>
+                        <Message key={`${message.id}-${i}`} from={message.role}>
+                          <MessageContent>
+                            <MessageResponse>
+                              {part.text}
+                            </MessageResponse>
+                          </MessageContent>
                           {message.role === 'assistant' && i === messages.length - 1 && (
-                            <Actions className="mt-2">
-                              <Action
+                            <MessageActions>
+                              <MessageAction
                                 onClick={() => regenerate()}
                                 label="Retry"
                               >
                                 <RefreshCcwIcon className="size-3" />
-                              </Action>
-                              <Action
+                              </MessageAction>
+                              <MessageAction
                                 onClick={() =>
                                   navigator.clipboard.writeText(part.text)
                                 }
                                 label="Copy"
                               >
                                 <CopyIcon className="size-3" />
-                              </Action>
-                            </Actions>
+                              </MessageAction>
+                            </MessageActions>
                           )}
-                        </Fragment>
+                        </Message>
                       );
                     case 'reasoning':
                       return (
@@ -215,9 +245,7 @@ const ChatBotDemo = () => {
 
         <PromptInput onSubmit={handleSubmit} className="mt-4" globalDrop multiple>
           <PromptInputHeader>
-            <PromptInputAttachments>
-              {(attachment) => <PromptInputAttachment data={attachment} />}
-            </PromptInputAttachments>
+            <PromptInputAttachmentsDisplay />
           </PromptInputHeader>
           <PromptInputBody>
             <PromptInputTextarea
@@ -240,23 +268,23 @@ const ChatBotDemo = () => {
                 <GlobeIcon size={16} />
                 <span>Search</span>
               </PromptInputButton>
-              <PromptInputModelSelect
+              <PromptInputSelect
                 onValueChange={(value) => {
                   setModel(value);
                 }}
                 value={model}
               >
-                <PromptInputModelSelectTrigger>
-                  <PromptInputModelSelectValue />
-                </PromptInputModelSelectTrigger>
-                <PromptInputModelSelectContent>
+                <PromptInputSelectTrigger>
+                  <PromptInputSelectValue />
+                </PromptInputSelectTrigger>
+                <PromptInputSelectContent>
                   {models.map((model) => (
-                    <PromptInputModelSelectItem key={model.value} value={model.value}>
+                    <PromptInputSelectItem key={model.value} value={model.value}>
                       {model.name}
-                    </PromptInputModelSelectItem>
+                    </PromptInputSelectItem>
                   ))}
-                </PromptInputModelSelectContent>
-              </PromptInputModelSelect>
+                </PromptInputSelectContent>
+              </PromptInputSelect>
             </PromptInputTools>
             <PromptInputSubmit disabled={!input && !status} status={status} />
           </PromptInputFooter>
@@ -292,7 +320,7 @@ export async function POST(req: Request) {
 
   const result = streamText({
     model: webSearch ? 'perplexity/sonar' : model,
-    messages: convertToModelMessages(messages),
+    messages: await convertToModelMessages(messages),
     system:
       'You are a helpful assistant that can answer questions and help with tasks',
   });

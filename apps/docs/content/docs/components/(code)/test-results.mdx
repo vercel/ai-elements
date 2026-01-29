@@ -1,0 +1,269 @@
+---
+title: Test Results
+description: Display test suite results with pass/fail/skip status and error details.
+path: elements/components/test-results
+---
+
+The `TestResults` component displays test suite results including summary statistics, progress, individual tests, and error details.
+
+<Preview path="test-results" />
+
+## Installation
+
+<ElementsInstaller path="test-results" />
+
+## Features
+
+- Summary statistics (passed/failed/skipped)
+- Progress bar visualization
+- Collapsible test suites
+- Individual test status and duration
+- Error messages with stack traces
+- Color-coded status indicators
+
+## Status Colors
+
+| Status | Color | Use Case |
+|--------|-------|----------|
+| `passed` | Green | Test succeeded |
+| `failed` | Red | Test failed |
+| `skipped` | Yellow | Test skipped |
+| `running` | Blue (animated) | Test in progress |
+
+## Examples
+
+### Basic Usage
+
+<Preview path="test-results-basic" />
+
+### With Test Suites
+
+<Preview path="test-results-suites" />
+
+### With Error Details
+
+<Preview path="test-results-errors" />
+
+## Props
+
+### `<TestResults />`
+
+<TypeTable
+  type={{
+    summary: {
+      description: 'Test results summary.',
+      type: '{ passed, failed, skipped, total, duration? }',
+    },
+    className: {
+      description: 'Additional CSS classes.',
+      type: 'string',
+    },
+  }}
+/>
+
+### `<TestSuite />`
+
+<TypeTable
+  type={{
+    name: {
+      description: 'Suite name.',
+      type: 'string',
+    },
+    status: {
+      description: 'Overall suite status.',
+      type: '"passed" | "failed" | "skipped" | "running"',
+    },
+    defaultOpen: {
+      description: 'Initially expanded.',
+      type: 'boolean',
+    },
+  }}
+/>
+
+### `<Test />`
+
+<TypeTable
+  type={{
+    name: {
+      description: 'Test name.',
+      type: 'string',
+    },
+    status: {
+      description: 'Test status.',
+      type: '"passed" | "failed" | "skipped" | "running"',
+    },
+    duration: {
+      description: 'Test duration in ms.',
+      type: 'number',
+    },
+  }}
+/>
+
+### `<TestResultsHeader />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any other props are spread to the div element.',
+      type: 'React.HTMLAttributes<HTMLDivElement>',
+    },
+  }}
+/>
+
+### `<TestResultsSummary />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any other props are spread to the div element.',
+      type: 'React.HTMLAttributes<HTMLDivElement>',
+    },
+  }}
+/>
+
+### `<TestResultsDuration />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any other props are spread to the span element.',
+      type: 'React.HTMLAttributes<HTMLSpanElement>',
+    },
+  }}
+/>
+
+### `<TestResultsProgress />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any other props are spread to the div element.',
+      type: 'React.HTMLAttributes<HTMLDivElement>',
+    },
+  }}
+/>
+
+### `<TestResultsContent />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any other props are spread to the div element.',
+      type: 'React.HTMLAttributes<HTMLDivElement>',
+    },
+  }}
+/>
+
+### `<TestSuiteName />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any other props are spread to the CollapsibleTrigger component.',
+      type: 'React.ComponentProps<typeof CollapsibleTrigger>',
+    },
+  }}
+/>
+
+### `<TestSuiteStats />`
+
+<TypeTable
+  type={{
+    passed: {
+      description: 'Number of passed tests.',
+      type: 'number',
+      default: '0',
+    },
+    failed: {
+      description: 'Number of failed tests.',
+      type: 'number',
+      default: '0',
+    },
+    skipped: {
+      description: 'Number of skipped tests.',
+      type: 'number',
+      default: '0',
+    },
+    '...props': {
+      description: 'Any other props are spread to the div element.',
+      type: 'React.HTMLAttributes<HTMLDivElement>',
+    },
+  }}
+/>
+
+### `<TestSuiteContent />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any other props are spread to the CollapsibleContent component.',
+      type: 'React.ComponentProps<typeof CollapsibleContent>',
+    },
+  }}
+/>
+
+### `<TestStatus />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any other props are spread to the span element.',
+      type: 'React.HTMLAttributes<HTMLSpanElement>',
+    },
+  }}
+/>
+
+### `<TestName />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any other props are spread to the span element.',
+      type: 'React.HTMLAttributes<HTMLSpanElement>',
+    },
+  }}
+/>
+
+### `<TestDuration />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any other props are spread to the span element.',
+      type: 'React.HTMLAttributes<HTMLSpanElement>',
+    },
+  }}
+/>
+
+### `<TestError />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any other props are spread to the div element.',
+      type: 'React.HTMLAttributes<HTMLDivElement>',
+    },
+  }}
+/>
+
+### `<TestErrorMessage />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any other props are spread to the p element.',
+      type: 'React.HTMLAttributes<HTMLParagraphElement>',
+    },
+  }}
+/>
+
+### `<TestErrorStack />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any other props are spread to the pre element.',
+      type: 'React.HTMLAttributes<HTMLPreElement>',
+    },
+  }}
+/>

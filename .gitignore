@@ -40,3 +40,6 @@ yarn-error.log*
 
 # Fumadocs
 .source
+
+# Next.js
+next-env.d.ts

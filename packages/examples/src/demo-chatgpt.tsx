@@ -7,7 +7,11 @@ import {
   ConversationContent,
   ConversationScrollButton,
 } from "@repo/elements/conversation";
-import { Message, MessageContent } from "@repo/elements/message";
+import {
+  Message,
+  MessageContent,
+  MessageResponse,
+} from "@repo/elements/message";
 import {
   PromptInput,
   PromptInputButton,
@@ -21,7 +25,6 @@ import {
   ReasoningContent,
   ReasoningTrigger,
 } from "@repo/elements/reasoning";
-import { Response } from "@repo/elements/response";
 import {
   Source,
   Sources,
@@ -115,7 +118,7 @@ const Example = () => {
     if (messages.length === 0 && userMessageTexts.length > 0) {
       sendMessage({ text: userMessageTexts[0] });
     }
-  }, [messages.length, sendMessage, userMessageTexts]);
+  }, [messages.length, sendMessage]);
 
   const handleSubmit = (message: PromptInputMessage) => {
     const hasText = Boolean(message.text);
@@ -213,7 +216,7 @@ const Example = () => {
                       )}
                       key={`${message.id}-text-${i}`}
                     >
-                      <Response>{textPart.text}</Response>
+                      <MessageResponse>{textPart.text}</MessageResponse>
                     </MessageContent>
                   ))}
                 </div>

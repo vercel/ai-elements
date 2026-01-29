@@ -1,0 +1,118 @@
+---
+title: File Tree
+description: Display hierarchical file and folder structure with expand/collapse functionality.
+path: elements/components/file-tree
+---
+
+The `FileTree` component displays a hierarchical file system structure with expandable folders and file selection.
+
+<Preview path="file-tree" />
+
+## Installation
+
+<ElementsInstaller path="file-tree" />
+
+## Features
+
+- Hierarchical folder structure
+- Expand/collapse folders
+- File selection with callback
+- Keyboard accessible
+- Customizable icons
+- Controlled and uncontrolled modes
+
+## Examples
+
+### Basic Usage
+
+<Preview path="file-tree-basic" />
+
+### With Selection
+
+<Preview path="file-tree-selection" />
+
+### Default Expanded
+
+<Preview path="file-tree-expanded" />
+
+## Props
+
+### `<FileTree />`
+
+<TypeTable
+  type={{
+    expanded: {
+      description: 'Controlled expanded paths.',
+      type: 'Set<string>',
+    },
+    defaultExpanded: {
+      description: 'Default expanded paths.',
+      type: 'Set<string>',
+      default: 'new Set()',
+    },
+    selectedPath: {
+      description: 'Currently selected file/folder path.',
+      type: 'string',
+    },
+    onSelect: {
+      description: 'Callback when a file/folder is selected.',
+      type: '(path: string) => void',
+    },
+    onExpandedChange: {
+      description: 'Callback when expanded paths change.',
+      type: '(expanded: Set<string>) => void',
+    },
+    className: {
+      description: 'Additional CSS classes.',
+      type: 'string',
+    },
+  }}
+/>
+
+### `<FileTreeFolder />`
+
+<TypeTable
+  type={{
+    path: {
+      description: 'Unique folder path.',
+      type: 'string',
+    },
+    name: {
+      description: 'Display name.',
+      type: 'string',
+    },
+    className: {
+      description: 'Additional CSS classes.',
+      type: 'string',
+    },
+  }}
+/>
+
+### `<FileTreeFile />`
+
+<TypeTable
+  type={{
+    path: {
+      description: 'Unique file path.',
+      type: 'string',
+    },
+    name: {
+      description: 'Display name.',
+      type: 'string',
+    },
+    icon: {
+      description: 'Custom file icon.',
+      type: 'ReactNode',
+    },
+    className: {
+      description: 'Additional CSS classes.',
+      type: 'string',
+    },
+  }}
+/>
+
+### Subcomponents
+
+- `FileTreeIcon` - Icon wrapper
+- `FileTreeName` - Name text
+- `FileTreeActions` - Action buttons container (stops click propagation)

@@ -1,5 +1,8 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
+
+const QUERY_REGEX = /"query"/;
+
 import {
   Tool,
   ToolContent,
@@ -78,11 +81,7 @@ describe("ToolHeader", () => {
   it("shows awaiting approval status", () => {
     render(
       <Tool>
-        <ToolHeader
-          state={"approval-requested" as any}
-          title="test"
-          type="tool-test"
-        />
+        <ToolHeader state="approval-requested" title="test" type="tool-test" />
       </Tool>
     );
     expect(screen.getByText("Awaiting Approval")).toBeInTheDocument();
@@ -91,11 +90,7 @@ describe("ToolHeader", () => {
   it("shows responded status", () => {
     render(
       <Tool>
-        <ToolHeader
-          state={"approval-responded" as any}
-          title="test"
-          type="tool-test"
-        />
+        <ToolHeader state="approval-responded" title="test" type="tool-test" />
       </Tool>
     );
     expect(screen.getByText("Responded")).toBeInTheDocument();
@@ -104,11 +99,7 @@ describe("ToolHeader", () => {
   it("shows denied status", () => {
     render(
       <Tool>
-        <ToolHeader
-          state={"output-denied" as any}
-          title="test"
-          type="tool-test"
-        />
+        <ToolHeader state="output-denied" title="test" type="tool-test" />
       </Tool>
     );
     expect(screen.getByText("Denied")).toBeInTheDocument();
@@ -121,6 +112,61 @@ describe("ToolHeader", () => {
       </Tool>
     );
     expect(container.querySelector("svg")).toBeInTheDocument();
+  });
+});
+
+describe("ToolHeader with DynamicToolUIPart", () => {
+  it("renders dynamic tool name from toolName prop", () => {
+    render(
+      <Tool defaultOpen>
+        <ToolHeader
+          state="input-available"
+          toolName="web-search"
+          type="dynamic-tool"
+        />
+      </Tool>
+    );
+    expect(screen.getByText("web-search")).toBeInTheDocument();
+  });
+
+  it("renders title over toolName for dynamic tools", () => {
+    render(
+      <Tool defaultOpen>
+        <ToolHeader
+          state="input-available"
+          title="Custom Title"
+          toolName="web-search"
+          type="dynamic-tool"
+        />
+      </Tool>
+    );
+    expect(screen.getByText("Custom Title")).toBeInTheDocument();
+  });
+
+  it("shows status badge for dynamic tools", () => {
+    render(
+      <Tool>
+        <ToolHeader
+          state="output-available"
+          toolName="search"
+          type="dynamic-tool"
+        />
+      </Tool>
+    );
+    expect(screen.getByText("Completed")).toBeInTheDocument();
+  });
+
+  it("shows approval-requested status for dynamic tools", () => {
+    render(
+      <Tool>
+        <ToolHeader
+          state="approval-requested"
+          toolName="delete-file"
+          type="dynamic-tool"
+        />
+      </Tool>
+    );
+    expect(screen.getByText("Awaiting Approval")).toBeInTheDocument();
   });
 });
 
@@ -149,7 +195,7 @@ describe("ToolInput", () => {
     );
     expect(screen.getByText("Parameters")).toBeInTheDocument();
     await waitFor(() => {
-      expect(screen.getAllByText(/"query"/)[0]).toBeInTheDocument();
+      expect(screen.getAllByText(QUERY_REGEX)[0]).toBeInTheDocument();
     });
   });
 

@@ -7,17 +7,30 @@ import {
   ConversationContent,
   ConversationScrollButton,
 } from "@repo/elements/conversation";
-import { Message, MessageAvatar, MessageContent } from "@repo/elements/message";
+import {
+  Message,
+  MessageAvatar,
+  MessageContent,
+  MessageResponse,
+} from "@repo/elements/message";
+import {
+  ModelSelector,
+  ModelSelectorContent,
+  ModelSelectorEmpty,
+  ModelSelectorGroup,
+  ModelSelectorInput,
+  ModelSelectorItem,
+  ModelSelectorList,
+  ModelSelectorLogo,
+  ModelSelectorLogoGroup,
+  ModelSelectorName,
+  ModelSelectorTrigger,
+} from "@repo/elements/model-selector";
 import {
   PromptInput,
   PromptInputButton,
   PromptInputFooter,
   type PromptInputMessage,
-  PromptInputModelSelect,
-  PromptInputModelSelectContent,
-  PromptInputModelSelectItem,
-  PromptInputModelSelectTrigger,
-  PromptInputModelSelectValue,
   PromptInputSubmit,
   PromptInputTextarea,
   PromptInputTools,
@@ -27,7 +40,6 @@ import {
   ReasoningContent,
   ReasoningTrigger,
 } from "@repo/elements/reasoning";
-import { Response } from "@repo/elements/response";
 import {
   Source,
   Sources,
@@ -52,6 +64,7 @@ import type { ToolUIPart } from "ai";
 import {
   ArrowUpIcon,
   CameraIcon,
+  CheckIcon,
   FileIcon,
   ImageIcon,
   PlusIcon,
@@ -68,13 +81,32 @@ import {
 } from "./demo-chat-data";
 
 const models = [
-  { id: "claude-3-opus", name: "Claude 3 Opus" },
-  { id: "claude-3-sonnet", name: "Claude 3 Sonnet" },
-  { id: "claude-3-haiku", name: "Claude 3 Haiku" },
+  {
+    id: "claude-opus-4-20250514",
+    name: "Claude 4 Opus",
+    chef: "Anthropic",
+    chefSlug: "anthropic",
+    providers: ["anthropic", "azure", "google", "amazon-bedrock"],
+  },
+  {
+    id: "claude-sonnet-4-20250514",
+    name: "Claude 4 Sonnet",
+    chef: "Anthropic",
+    chefSlug: "anthropic",
+    providers: ["anthropic", "azure", "google", "amazon-bedrock"],
+  },
+  {
+    id: "claude-3-haiku",
+    name: "Claude 3 Haiku",
+    chef: "Anthropic",
+    chefSlug: "anthropic",
+    providers: ["anthropic", "azure", "google", "amazon-bedrock"],
+  },
 ];
 
 const Example = () => {
   const [model, setModel] = useState<string>(models[0].id);
+  const [modelSelectorOpen, setModelSelectorOpen] = useState(false);
   const [text, setText] = useState<string>("");
 
   const { messages, sendMessage, status } = useChat({
@@ -119,12 +151,14 @@ const Example = () => {
     },
   });
 
+  const selectedModelData = models.find((m) => m.id === model);
+
   // Initialize with first user message
   useEffect(() => {
     if (messages.length === 0 && userMessageTexts.length > 0) {
       sendMessage({ text: userMessageTexts[0] });
     }
-  }, [messages.length, sendMessage, userMessageTexts]);
+  }, [messages.length, sendMessage]);
 
   const handleSubmit = (message: PromptInputMessage) => {
     const hasText = Boolean(message.text);
@@ -231,7 +265,7 @@ const Example = () => {
                           />
                         )}
                         <div className="mt-1 w-full">
-                          <Response>{textPart.text}</Response>
+                          <MessageResponse>{textPart.text}</MessageResponse>
                         </div>
                       </div>
                     </MessageContent>
@@ -296,18 +330,59 @@ const Example = () => {
               </PromptInputButton>
             </PromptInputTools>
             <div className="flex items-center gap-2">
-              <PromptInputModelSelect onValueChange={setModel} value={model}>
-                <PromptInputModelSelectTrigger className="font-serif">
-                  <PromptInputModelSelectValue />
-                </PromptInputModelSelectTrigger>
-                <PromptInputModelSelectContent className="font-serif">
-                  {models.map((model) => (
-                    <PromptInputModelSelectItem key={model.id} value={model.id}>
-                      {model.name}
-                    </PromptInputModelSelectItem>
-                  ))}
-                </PromptInputModelSelectContent>
-              </PromptInputModelSelect>
+              <ModelSelector
+                onOpenChange={setModelSelectorOpen}
+                open={modelSelectorOpen}
+              >
+                <ModelSelectorTrigger asChild>
+                  <PromptInputButton className="font-serif">
+                    {selectedModelData?.chefSlug && (
+                      <ModelSelectorLogo
+                        provider={selectedModelData.chefSlug}
+                      />
+                    )}
+                    {selectedModelData?.name && (
+                      <ModelSelectorName>
+                        {selectedModelData.name}
+                      </ModelSelectorName>
+                    )}
+                  </PromptInputButton>
+                </ModelSelectorTrigger>
+                <ModelSelectorContent className="font-serif">
+                  <ModelSelectorInput placeholder="Search models..." />
+                  <ModelSelectorList>
+                    <ModelSelectorEmpty>No models found.</ModelSelectorEmpty>
+                    <ModelSelectorGroup heading="Anthropic">
+                      {models.map((m) => (
+                        <ModelSelectorItem
+                          key={m.id}
+                          onSelect={() => {
+                            setModel(m.id);
+                            setModelSelectorOpen(false);
+                          }}
+                          value={m.id}
+                        >
+                          <ModelSelectorLogo provider={m.chefSlug} />
+                          <ModelSelectorName>{m.name}</ModelSelectorName>
+                          <ModelSelectorLogoGroup>
+                            {m.providers.map((provider) => (
+                              <ModelSelectorLogo
+                                key={provider}
+                                provider={provider}
+                              />
+                            ))}
+                          </ModelSelectorLogoGroup>
+                          {model === m.id ? (
+                            <CheckIcon className="ml-auto size-4" />
+                          ) : (
+                            <div className="ml-auto size-4" />
+                          )}
+                        </ModelSelectorItem>
+                      ))}
+                    </ModelSelectorGroup>
+                  </ModelSelectorList>
+                </ModelSelectorContent>
+              </ModelSelector>
               <PromptInputSubmit
                 className="bg-[#c96442]"
                 disabled={!text.trim() || status === "streaming"}

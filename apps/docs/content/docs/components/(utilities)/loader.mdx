@@ -1,0 +1,161 @@
+---
+title: Loader
+description: A spinning loader component for indicating loading states in AI applications.
+path: elements/components/loader
+---
+
+The `Loader` component provides a spinning animation to indicate loading states in your AI applications. It includes both a customizable wrapper component and the underlying icon for flexible usage.
+
+<Preview path="loader" />
+
+## Installation
+
+<ElementsInstaller path="loader" />
+
+## Usage with AI SDK
+
+Build a simple chat app that displays a loader before the response starts streaming by using `status === "submitted"`.
+
+Add the following component to your frontend:
+
+```tsx title="app/page.tsx"
+'use client';
+
+import {
+  Conversation,
+  ConversationContent,
+  ConversationScrollButton,
+} from '@/components/ai-elements/conversation';
+import { Message, MessageContent } from '@/components/ai-elements/message';
+import {
+  Input,
+  PromptInputTextarea,
+  PromptInputSubmit,
+} from '@/components/ai-elements/prompt-input';
+import { Loader } from '@/components/ai-elements/loader';
+import { useState } from 'react';
+import { useChat } from '@ai-sdk/react';
+
+const LoaderDemo = () => {
+  const [input, setInput] = useState('');
+  const { messages, sendMessage, status } = useChat();
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (input.trim()) {
+      sendMessage({ text: input });
+      setInput('');
+    }
+  };
+
+  return (
+    <div className="max-w-4xl mx-auto p-6 relative size-full rounded-lg border h-[600px]">
+      <div className="flex flex-col h-full">
+        <Conversation>
+          <ConversationContent>
+            {messages.map((message) => (
+              <Message from={message.role} key={message.id}>
+                <MessageContent>
+                  {message.parts.map((part, i) => {
+                    switch (part.type) {
+                      case 'text':
+                        return (
+                          <div key={`${message.id}-${i}`}>{part.text}</div>
+                        );
+                      default:
+                        return null;
+                    }
+                  })}
+                </MessageContent>
+              </Message>
+            ))}
+            {status === 'submitted' && <Loader />}
+          </ConversationContent>
+          <ConversationScrollButton />
+        </Conversation>
+
+        <Input
+          onSubmit={handleSubmit}
+          className="mt-4 w-full max-w-2xl mx-auto relative"
+        >
+          <PromptInputTextarea
+            value={input}
+            placeholder="Say something..."
+            onChange={(e) => setInput(e.currentTarget.value)}
+            className="pr-12"
+          />
+          <PromptInputSubmit
+            status={status === 'streaming' ? 'streaming' : 'ready'}
+            disabled={!input.trim()}
+            className="absolute bottom-1 right-1"
+          />
+        </Input>
+      </div>
+    </div>
+  );
+};
+
+export default LoaderDemo;
+```
+
+Add the following route to your backend:
+
+```ts title="app/api/chat/route.ts"
+import { streamText, UIMessage, convertToModelMessages } from 'ai';
+
+// Allow streaming responses up to 30 seconds
+export const maxDuration = 30;
+
+export async function POST(req: Request) {
+  const { model, messages }: { messages: UIMessage[]; model: string } =
+    await req.json();
+
+  const result = streamText({
+    model: 'openai/gpt-4o',
+    messages: await convertToModelMessages(messages),
+  });
+
+  return result.toUIMessageStreamResponse();
+}
+```
+
+## Features
+
+- Clean, modern spinning animation using CSS animations
+- Configurable size with the `size` prop
+- Customizable styling with CSS classes
+- Built-in `animate-spin` animation with proper centering
+- Exports both `AILoader` wrapper and `LoaderIcon` for flexible usage
+- Supports all standard HTML div attributes
+- TypeScript support with proper type definitions
+- Optimized SVG icon with multiple opacity levels for smooth animation
+- Uses `currentColor` for proper theme integration
+- Responsive and accessible design
+
+## Examples
+
+### Different Sizes
+
+<Preview path="loader-sizes" />
+
+### Custom Styling
+
+<Preview path="loader-custom" />
+
+## Props
+
+### `<Loader />`
+
+<TypeTable
+  type={{
+    size: {
+      description: 'The size (width and height) of the loader in pixels.',
+      type: 'number',
+      default: '16',
+    },
+    '...props': {
+      description: 'Any other props are spread to the root div.',
+      type: 'React.HTMLAttributes<HTMLDivElement>',
+    },
+  }}
+/>

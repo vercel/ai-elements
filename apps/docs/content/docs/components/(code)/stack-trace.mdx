@@ -1,0 +1,362 @@
+---
+title: Stack Trace
+description: Displays formatted JavaScript/Node.js error stack traces with syntax highlighting and collapsible frames.
+path: elements/components/stack-trace
+---
+
+The `StackTrace` component displays formatted JavaScript/Node.js error stack traces with clickable file paths, internal frame dimming, and collapsible content.
+
+<Preview path="stack-trace" />
+
+## Installation
+
+<ElementsInstaller path="stack-trace" />
+
+## Usage with AI SDK
+
+Build an error display tool that shows stack traces from AI-generated code using the [`useChat`](https://ai-sdk.dev/docs/reference/ai-sdk-ui/use-chat) hook.
+
+Add the following component to your frontend:
+
+```tsx title="app/page.tsx"
+'use client';
+
+import { useChat } from '@ai-sdk/react';
+import {
+  StackTrace,
+  StackTraceHeader,
+  StackTraceError,
+  StackTraceErrorType,
+  StackTraceErrorMessage,
+  StackTraceActions,
+  StackTraceCopyButton,
+  StackTraceExpandButton,
+  StackTraceContent,
+  StackTraceFrames,
+} from '@/components/ai-elements/stack-trace';
+
+export default function Page() {
+  const { messages } = useChat({
+    api: '/api/run-code',
+  });
+
+  return (
+    <div className="max-w-4xl mx-auto p-6">
+      {messages.map((message) => {
+        const toolInvocations = message.parts?.filter(
+          (part) => part.type === 'tool-invocation'
+        );
+
+        return toolInvocations?.map((tool) => {
+          if (tool.toolName === 'runCode' && tool.result?.error) {
+            return (
+              <StackTrace
+                key={tool.toolCallId}
+                trace={tool.result.error}
+                defaultOpen
+              >
+                <StackTraceHeader>
+                  <StackTraceError>
+                    <StackTraceErrorType />
+                    <StackTraceErrorMessage />
+                  </StackTraceError>
+                  <StackTraceActions>
+                    <StackTraceCopyButton />
+                    <StackTraceExpandButton />
+                  </StackTraceActions>
+                </StackTraceHeader>
+                <StackTraceContent>
+                  <StackTraceFrames />
+                </StackTraceContent>
+              </StackTrace>
+            );
+          }
+          return null;
+        });
+      })}
+    </div>
+  );
+}
+```
+
+Add the following route to your backend:
+
+```tsx title="api/run-code/route.ts"
+import { streamText, tool } from 'ai';
+import { z } from 'zod';
+
+export async function POST(req: Request) {
+  const { messages } = await req.json();
+
+  const result = streamText({
+    model: 'openai/gpt-4o',
+    messages,
+    tools: {
+      runCode: tool({
+        description: 'Execute JavaScript code and return any errors',
+        parameters: z.object({
+          code: z.string(),
+        }),
+        execute: async ({ code }) => {
+          try {
+            // Execute code in sandbox
+            eval(code);
+            return { success: true };
+          } catch (error) {
+            return { error: (error as Error).stack };
+          }
+        },
+      }),
+    },
+  });
+
+  return result.toDataStreamResponse();
+}
+```
+
+## Features
+
+- Parses standard JavaScript/Node.js stack trace format
+- Highlights error type in red
+- Dims internal frames (node_modules, node: paths)
+- Collapsible content with smooth animation
+- Copy full stack trace to clipboard
+- Clickable file paths with line/column numbers
+
+## Examples
+
+### Collapsed by Default
+
+<Preview path="stack-trace-collapsed" />
+
+### Hide Internal Frames
+
+<Preview path="stack-trace-no-internal" />
+
+## Props
+
+### `<StackTrace />`
+
+<TypeTable
+  type={{
+    trace: {
+      description: 'The raw stack trace string to parse and display.',
+      type: 'string',
+    },
+    open: {
+      description: 'Controlled open state.',
+      type: 'boolean',
+    },
+    defaultOpen: {
+      description: 'Whether the content is expanded by default.',
+      type: 'boolean',
+      default: 'false',
+    },
+    onOpenChange: {
+      description: 'Callback when open state changes.',
+      type: '(open: boolean) => void',
+    },
+    onFilePathClick: {
+      description: 'Callback when a file path is clicked. Receives the file path, line number, and column number.',
+      type: '(path: string, line?: number, column?: number) => void',
+    },
+    children: {
+      description: 'Child elements (StackTraceHeader, StackTraceContent, etc.).',
+      type: 'React.ReactNode',
+    },
+    className: {
+      description: 'Additional CSS classes.',
+      type: 'string',
+    },
+    '...props': {
+      description: 'Any other props are spread to the root div.',
+      type: 'React.HTMLAttributes<HTMLDivElement>',
+    },
+  }}
+/>
+
+### `<StackTraceHeader />`
+
+<TypeTable
+  type={{
+    children: {
+      description: 'Header content (typically StackTraceError and StackTraceActions).',
+      type: 'React.ReactNode',
+    },
+    className: {
+      description: 'Additional CSS classes.',
+      type: 'string',
+    },
+    '...props': {
+      description: 'Any other props are spread to the CollapsibleTrigger.',
+      type: 'React.ComponentProps<typeof CollapsibleTrigger>',
+    },
+  }}
+/>
+
+### `<StackTraceError />`
+
+<TypeTable
+  type={{
+    children: {
+      description: 'Error content (typically StackTraceErrorType and StackTraceErrorMessage).',
+      type: 'React.ReactNode',
+    },
+    className: {
+      description: 'Additional CSS classes.',
+      type: 'string',
+    },
+    '...props': {
+      description: 'Any other props are spread to the container div.',
+      type: 'React.HTMLAttributes<HTMLDivElement>',
+    },
+  }}
+/>
+
+### `<StackTraceErrorType />`
+
+<TypeTable
+  type={{
+    children: {
+      description: 'Custom content. Defaults to the parsed error type (e.g., "TypeError").',
+      type: 'React.ReactNode',
+    },
+    className: {
+      description: 'Additional CSS classes.',
+      type: 'string',
+    },
+    '...props': {
+      description: 'Any other props are spread to the span element.',
+      type: 'React.HTMLAttributes<HTMLSpanElement>',
+    },
+  }}
+/>
+
+### `<StackTraceErrorMessage />`
+
+<TypeTable
+  type={{
+    children: {
+      description: 'Custom content. Defaults to the parsed error message.',
+      type: 'React.ReactNode',
+    },
+    className: {
+      description: 'Additional CSS classes.',
+      type: 'string',
+    },
+    '...props': {
+      description: 'Any other props are spread to the span element.',
+      type: 'React.HTMLAttributes<HTMLSpanElement>',
+    },
+  }}
+/>
+
+### `<StackTraceActions />`
+
+<TypeTable
+  type={{
+    children: {
+      description: 'Action buttons (typically StackTraceCopyButton and StackTraceExpandButton).',
+      type: 'React.ReactNode',
+    },
+    className: {
+      description: 'Additional CSS classes.',
+      type: 'string',
+    },
+    '...props': {
+      description: 'Any other props are spread to the container div.',
+      type: 'React.HTMLAttributes<HTMLDivElement>',
+    },
+  }}
+/>
+
+### `<StackTraceCopyButton />`
+
+<TypeTable
+  type={{
+    onCopy: {
+      description: 'Callback fired after a successful copy.',
+      type: '() => void',
+    },
+    onError: {
+      description: 'Callback fired if copying fails.',
+      type: '(error: Error) => void',
+    },
+    timeout: {
+      description: 'How long to show the copied state (ms).',
+      type: 'number',
+      default: '2000',
+    },
+    children: {
+      description: 'Custom content for the button. Defaults to copy/check icons.',
+      type: 'React.ReactNode',
+    },
+    className: {
+      description: 'Additional CSS classes.',
+      type: 'string',
+    },
+    '...props': {
+      description: 'Any other props are spread to the underlying shadcn/ui Button component.',
+      type: 'React.ComponentProps<typeof Button>',
+    },
+  }}
+/>
+
+### `<StackTraceExpandButton />`
+
+<TypeTable
+  type={{
+    className: {
+      description: 'Additional CSS classes.',
+      type: 'string',
+    },
+    '...props': {
+      description: 'Any other props are spread to the container div.',
+      type: 'React.HTMLAttributes<HTMLDivElement>',
+    },
+  }}
+/>
+
+### `<StackTraceContent />`
+
+<TypeTable
+  type={{
+    maxHeight: {
+      description: 'Maximum height of the content area. Enables scrolling when content exceeds this height.',
+      type: 'number',
+      default: '400',
+    },
+    children: {
+      description: 'Content to display (typically StackTraceFrames).',
+      type: 'React.ReactNode',
+    },
+    className: {
+      description: 'Additional CSS classes.',
+      type: 'string',
+    },
+    '...props': {
+      description: 'Any other props are spread to the CollapsibleContent.',
+      type: 'React.ComponentProps<typeof CollapsibleContent>',
+    },
+  }}
+/>
+
+### `<StackTraceFrames />`
+
+<TypeTable
+  type={{
+    showInternalFrames: {
+      description: 'Whether to show internal frames (node_modules, node: paths).',
+      type: 'boolean',
+      default: 'true',
+    },
+    className: {
+      description: 'Additional CSS classes.',
+      type: 'string',
+    },
+    '...props': {
+      description: 'Any other props are spread to the container div.',
+      type: 'React.HTMLAttributes<HTMLDivElement>',
+    },
+  }}
+/>

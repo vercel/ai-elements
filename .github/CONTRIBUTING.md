@@ -81,6 +81,15 @@ When adding code examples:
 - Use semantic HTML in components
 - Follow Tailwind CSS conventions for styling
 
+### Adding a New Component
+
+When adding a new component to the library, follow these steps:
+
+1. **Create the component file** in `packages/elements/src/`
+2. **Create example file(s)** in `packages/examples/src/`
+3. **Create documentation** in `apps/docs/content/docs/components/`
+4. **Wire up examples with Preview**
+
 ## Pull Request Guidelines
 
 1. **Ensure your PR has a clear purpose**
@@ -174,13 +183,15 @@ When reporting issues:
 - Review the documentation at [ai-sdk.dev/elements](https://ai-sdk.dev/elements)
 - Reach out to maintainers if you need guidance
 
+
+
 ## Code of Conduct
 
 This project follows a Code of Conduct. By participating, you agree to uphold professional, respectful, and inclusive behavior.
 
 ## License
 
-By contributing, you agree that your contributions will be licensed under the same license as the project (MIT).
+By contributing, you agree that your contributions will be licensed under the same license as the project ([Apache License 2.0](../LICENSE)).
 
 ## Recognition
 

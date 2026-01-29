@@ -18,32 +18,42 @@ const config = {
     ],
   },
 
-  // biome-ignore lint/suspicious/useAwait: "rewrites is async"
-  async rewrites() {
+  rewrites() {
     return [
       {
-        source: "/:path*.mdx",
-        destination: "/llms.mdx/:path*",
+        source: "/elements/:lang/:path*.mdx",
+        destination: "/elements/:lang/llms.mdx/:path*",
+      },
+      {
+        source: "/elements/:lang/:path*.md",
+        destination: "/elements/:lang/llms.mdx/:path*",
+      },
+      {
+        source: "/:lang/:path*.mdx",
+        destination: "/:lang/llms.mdx/:path*",
+      },
+      {
+        source: "/:lang/:path*.md",
+        destination: "/:lang/llms.mdx/:path*",
       },
     ];
   },
 
-  // biome-ignore lint/suspicious/useAwait: "redirects is async"
-  async redirects() {
+  redirects() {
     return [
-      {
-        source: "/elements/overview",
-        destination: "/elements",
-        permanent: true,
-      },
       {
         source: "/overview",
         destination: "/",
         permanent: true,
       },
       {
-        source: "/elements/components/chatbot",
-        destination: "/elements/examples/chatbot",
+        source: "/components",
+        destination: "/components/chain-of-thought",
+        permanent: true,
+      },
+      {
+        source: "/components/chatbot",
+        destination: "/examples/chatbot",
         permanent: true,
       },
     ];

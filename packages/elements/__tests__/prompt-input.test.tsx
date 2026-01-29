@@ -1,6 +1,20 @@
 import { act, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import React from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+
+const DATA_PREFIX_REGEX = /^data:/;
+const BLOB_PREFIX_REGEX = /^blob:/;
+const SUBMIT_REGEX = /submit/i;
+
+import {
+  Attachment,
+  type AttachmentData,
+  AttachmentInfo,
+  AttachmentPreview,
+  AttachmentRemove,
+  Attachments,
+} from "../src/attachments";
 import {
   PromptInput,
   PromptInputActionAddAttachments,
@@ -8,26 +22,96 @@ import {
   PromptInputActionMenuContent,
   PromptInputActionMenuItem,
   PromptInputActionMenuTrigger,
-  PromptInputAttachment,
-  PromptInputAttachments,
   PromptInputBody,
   PromptInputButton,
-  PromptInputModelSelect,
-  PromptInputModelSelectContent,
-  PromptInputModelSelectItem,
-  PromptInputModelSelectTrigger,
-  PromptInputModelSelectValue,
-  PromptInputSpeechButton,
+  PromptInputSelect,
+  PromptInputSelectContent,
+  PromptInputSelectItem,
+  PromptInputSelectTrigger,
+  PromptInputSelectValue,
   PromptInputSubmit,
   PromptInputTextarea,
   PromptInputTools,
   usePromptInputAttachments,
+  usePromptInputReferencedSources,
 } from "../src/prompt-input";
+
+// Backwards-compatibility aliases for tests (these components were moved to attachment.tsx)
+const PromptInputAttachment = ({
+  data,
+  onRemove,
+}: {
+  data: AttachmentData;
+  onRemove?: () => void;
+}) => (
+  <Attachment data={data} onRemove={onRemove}>
+    <AttachmentPreview />
+    <AttachmentInfo />
+    <AttachmentRemove label="Remove attachment" />
+  </Attachment>
+);
+
+const PromptInputAttachments = ({
+  children,
+}: {
+  children: (
+    attachment: AttachmentData,
+    onRemove: () => void
+  ) => React.ReactNode;
+}) => {
+  const attachments = usePromptInputAttachments();
+  if (!attachments.files.length) {
+    return null;
+  }
+  return (
+    <Attachments variant="inline">
+      {attachments.files.map((file) => (
+        <React.Fragment key={file.id}>
+          {children(file, () => attachments.remove(file.id))}
+        </React.Fragment>
+      ))}
+    </Attachments>
+  );
+};
+
+const PromptInputReferencedSource = ({
+  data,
+  onRemove,
+}: {
+  data: AttachmentData;
+  onRemove?: () => void;
+}) => (
+  <Attachment data={data} onRemove={onRemove}>
+    <AttachmentPreview />
+    <AttachmentInfo />
+    <AttachmentRemove label="Remove referenced source" />
+  </Attachment>
+);
+
+const PromptInputReferencedSources = ({
+  children,
+}: {
+  children: (source: AttachmentData, onRemove: () => void) => React.ReactNode;
+}) => {
+  const referencedSources = usePromptInputReferencedSources();
+  if (!referencedSources.sources.length) {
+    return null;
+  }
+  return (
+    <Attachments variant="inline">
+      {referencedSources.sources.map((source) => (
+        <React.Fragment key={source.id}>
+          {children(source, () => referencedSources.remove(source.id))}
+        </React.Fragment>
+      ))}
+    </Attachments>
+  );
+};
 
 // Mock URL.createObjectURL and URL.revokeObjectURL for tests
 beforeEach(() => {
   window.URL.createObjectURL = vi.fn(
-    (blob) => `blob:mock-url-${Math.random()}`
+    (_blob) => `blob:mock-url-${Math.random()}`
   );
   window.URL.revokeObjectURL = vi.fn();
 
@@ -44,7 +128,7 @@ beforeEach(() => {
 
   // Mock FileReader
   window.FileReader = vi.fn(function (this: FileReader) {
-    this.readAsDataURL = vi.fn(function (this: FileReader, blob: Blob) {
+    this.readAsDataURL = vi.fn(function (this: FileReader, _blob: Blob) {
       // Simulate async file reading
       setTimeout(() => {
         this.result = "data:text/plain;base64,dGVzdCBjb250ZW50";
@@ -233,8 +317,8 @@ describe("PromptInput", () => {
     // Verify that the URL was converted from blob: to data:
     const [message] = onSubmit.mock.calls[0];
     expect(message.files).toHaveLength(1);
-    expect(message.files[0].url).toMatch(/^data:/);
-    expect(message.files[0].url).not.toMatch(/^blob:/);
+    expect(message.files[0].url).toMatch(DATA_PREFIX_REGEX);
+    expect(message.files[0].url).not.toMatch(BLOB_PREFIX_REGEX);
     expect(message.files[0].filename).toBe("test.txt");
   });
 
@@ -592,7 +676,7 @@ describe("PromptInputSubmit", () => {
         </PromptInputBody>
       </PromptInput>
     );
-    const button = screen.getByRole("button", { name: /submit/i });
+    const button = screen.getByRole("button", { name: SUBMIT_REGEX });
     expect(button).toHaveAttribute("type", "submit");
   });
 
@@ -640,22 +724,20 @@ describe("PromptInputActionMenu", () => {
   });
 });
 
-describe("PromptInputModelSelect", () => {
+describe("PromptInputSelect", () => {
   it("renders model select", () => {
     const onSubmit = vi.fn();
     render(
       <PromptInput onSubmit={onSubmit}>
         <PromptInputBody>
-          <PromptInputModelSelect>
-            <PromptInputModelSelectTrigger>
-              <PromptInputModelSelectValue placeholder="Select model" />
-            </PromptInputModelSelectTrigger>
-            <PromptInputModelSelectContent>
-              <PromptInputModelSelectItem value="gpt-4">
-                GPT-4
-              </PromptInputModelSelectItem>
-            </PromptInputModelSelectContent>
-          </PromptInputModelSelect>
+          <PromptInputSelect>
+            <PromptInputSelectTrigger>
+              <PromptInputSelectValue placeholder="Select model" />
+            </PromptInputSelectTrigger>
+            <PromptInputSelectContent>
+              <PromptInputSelectItem value="gpt-4">GPT-4</PromptInputSelectItem>
+            </PromptInputSelectContent>
+          </PromptInputSelect>
         </PromptInputBody>
       </PromptInput>
     );
@@ -665,7 +747,7 @@ describe("PromptInputModelSelect", () => {
 
 describe("PromptInputProvider", () => {
   it("provides context to children", async () => {
-    const onSubmit = vi.fn();
+    const _onSubmit = vi.fn();
     const { PromptInputProvider, usePromptInputController } = await import(
       "../src/prompt-input"
     );
@@ -703,7 +785,7 @@ describe("PromptInputProvider", () => {
     };
 
     // Suppress console.error for this test
-    const spy = vi.spyOn(console, "error").mockImplementation(() => {});
+    const spy = vi.spyOn(console, "error").mockImplementation(() => undefined);
 
     expect(() => render(<TestComponent />)).toThrow();
 
@@ -939,6 +1021,700 @@ describe("File validation", () => {
 
     expect(screen.getByTestId("count")).toHaveTextContent("1");
   });
+
+  it("enforces accept video/* filter", async () => {
+    const onSubmit = vi.fn();
+    const onError = vi.fn();
+    const user = userEvent.setup();
+
+    const textFile = new File(["test"], "test.txt", { type: "text/plain" });
+    const videoFile = new File(["video"], "test.mp4", { type: "video/mp4" });
+
+    const AttachmentConsumer = () => {
+      const attachments = usePromptInputAttachments();
+      return (
+        <>
+          <button
+            data-testid="add-text"
+            onClick={() => attachments.add([textFile])}
+            type="button"
+          >
+            Add Text
+          </button>
+          <button
+            data-testid="add-video"
+            onClick={() => attachments.add([videoFile])}
+            type="button"
+          >
+            Add Video
+          </button>
+          <div data-testid="count">{attachments.files.length}</div>
+        </>
+      );
+    };
+
+    render(
+      <PromptInput accept="video/*" onError={onError} onSubmit={onSubmit}>
+        <PromptInputBody>
+          <AttachmentConsumer />
+          <PromptInputTextarea />
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    await user.click(screen.getByTestId("add-text"));
+    expect(screen.getByTestId("count")).toHaveTextContent("0");
+    expect(onError).toHaveBeenCalledWith({
+      code: "accept",
+      message: expect.any(String),
+    });
+
+    await user.click(screen.getByTestId("add-video"));
+    expect(screen.getByTestId("count")).toHaveTextContent("1");
+  });
+
+  it("enforces accept audio/* filter", async () => {
+    const onSubmit = vi.fn();
+    const onError = vi.fn();
+    const user = userEvent.setup();
+
+    const imageFile = new File(["image"], "test.png", { type: "image/png" });
+    const audioFile = new File(["audio"], "test.mp3", { type: "audio/mpeg" });
+
+    const AttachmentConsumer = () => {
+      const attachments = usePromptInputAttachments();
+      return (
+        <>
+          <button
+            data-testid="add-image"
+            onClick={() => attachments.add([imageFile])}
+            type="button"
+          >
+            Add Image
+          </button>
+          <button
+            data-testid="add-audio"
+            onClick={() => attachments.add([audioFile])}
+            type="button"
+          >
+            Add Audio
+          </button>
+          <div data-testid="count">{attachments.files.length}</div>
+        </>
+      );
+    };
+
+    render(
+      <PromptInput accept="audio/*" onError={onError} onSubmit={onSubmit}>
+        <PromptInputBody>
+          <AttachmentConsumer />
+          <PromptInputTextarea />
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    await user.click(screen.getByTestId("add-image"));
+    expect(screen.getByTestId("count")).toHaveTextContent("0");
+    expect(onError).toHaveBeenCalledWith({
+      code: "accept",
+      message: expect.any(String),
+    });
+
+    await user.click(screen.getByTestId("add-audio"));
+    expect(screen.getByTestId("count")).toHaveTextContent("1");
+  });
+
+  it("enforces accept with exact MIME type", async () => {
+    const onSubmit = vi.fn();
+    const onError = vi.fn();
+    const user = userEvent.setup();
+
+    const pngFile = new File(["image"], "test.png", { type: "image/png" });
+    const jpegFile = new File(["image"], "test.jpg", { type: "image/jpeg" });
+
+    const AttachmentConsumer = () => {
+      const attachments = usePromptInputAttachments();
+      return (
+        <>
+          <button
+            data-testid="add-png"
+            onClick={() => attachments.add([pngFile])}
+            type="button"
+          >
+            Add PNG
+          </button>
+          <button
+            data-testid="add-jpeg"
+            onClick={() => attachments.add([jpegFile])}
+            type="button"
+          >
+            Add JPEG
+          </button>
+          <div data-testid="count">{attachments.files.length}</div>
+        </>
+      );
+    };
+
+    render(
+      <PromptInput accept="image/png" onError={onError} onSubmit={onSubmit}>
+        <PromptInputBody>
+          <AttachmentConsumer />
+          <PromptInputTextarea />
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    await user.click(screen.getByTestId("add-png"));
+    expect(screen.getByTestId("count")).toHaveTextContent("1");
+
+    await user.click(screen.getByTestId("add-jpeg"));
+    expect(screen.getByTestId("count")).toHaveTextContent("1");
+    expect(onError).toHaveBeenCalledWith({
+      code: "accept",
+      message: expect.any(String),
+    });
+  });
+
+  it("allows exact MIME type match for application/pdf", async () => {
+    const onSubmit = vi.fn();
+    const onError = vi.fn();
+    const user = userEvent.setup();
+
+    const pdfFile = new File(["pdf"], "doc.pdf", {
+      type: "application/pdf",
+    });
+    const textFile = new File(["text"], "doc.txt", { type: "text/plain" });
+
+    const AttachmentConsumer = () => {
+      const attachments = usePromptInputAttachments();
+      return (
+        <>
+          <button
+            data-testid="add-pdf"
+            onClick={() => attachments.add([pdfFile])}
+            type="button"
+          >
+            Add PDF
+          </button>
+          <button
+            data-testid="add-text"
+            onClick={() => attachments.add([textFile])}
+            type="button"
+          >
+            Add Text
+          </button>
+          <div data-testid="count">{attachments.files.length}</div>
+        </>
+      );
+    };
+
+    render(
+      <PromptInput
+        accept="application/pdf"
+        onError={onError}
+        onSubmit={onSubmit}
+      >
+        <PromptInputBody>
+          <AttachmentConsumer />
+          <PromptInputTextarea />
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    await user.click(screen.getByTestId("add-pdf"));
+    expect(screen.getByTestId("count")).toHaveTextContent("1");
+
+    await user.click(screen.getByTestId("add-text"));
+    expect(screen.getByTestId("count")).toHaveTextContent("1");
+    expect(onError).toHaveBeenCalledWith({
+      code: "accept",
+      message: expect.any(String),
+    });
+  });
+
+  it("accepts multiple comma-separated patterns with wildcards", async () => {
+    const onSubmit = vi.fn();
+    const onError = vi.fn();
+    const user = userEvent.setup();
+
+    const imageFile = new File(["image"], "test.png", { type: "image/png" });
+    const videoFile = new File(["video"], "test.mp4", { type: "video/mp4" });
+    const audioFile = new File(["audio"], "test.mp3", { type: "audio/mpeg" });
+    const textFile = new File(["text"], "test.txt", { type: "text/plain" });
+
+    const AttachmentConsumer = () => {
+      const attachments = usePromptInputAttachments();
+      return (
+        <>
+          <button
+            data-testid="add-image"
+            onClick={() => attachments.add([imageFile])}
+            type="button"
+          >
+            Add Image
+          </button>
+          <button
+            data-testid="add-video"
+            onClick={() => attachments.add([videoFile])}
+            type="button"
+          >
+            Add Video
+          </button>
+          <button
+            data-testid="add-audio"
+            onClick={() => attachments.add([audioFile])}
+            type="button"
+          >
+            Add Audio
+          </button>
+          <button
+            data-testid="add-text"
+            onClick={() => attachments.add([textFile])}
+            type="button"
+          >
+            Add Text
+          </button>
+          <div data-testid="count">{attachments.files.length}</div>
+        </>
+      );
+    };
+
+    render(
+      <PromptInput
+        accept="image/*, video/*"
+        onError={onError}
+        onSubmit={onSubmit}
+      >
+        <PromptInputBody>
+          <AttachmentConsumer />
+          <PromptInputTextarea />
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    await user.click(screen.getByTestId("add-image"));
+    expect(screen.getByTestId("count")).toHaveTextContent("1");
+
+    await user.click(screen.getByTestId("add-video"));
+    expect(screen.getByTestId("count")).toHaveTextContent("2");
+
+    await user.click(screen.getByTestId("add-audio"));
+    expect(screen.getByTestId("count")).toHaveTextContent("2");
+    expect(onError).toHaveBeenCalledWith({
+      code: "accept",
+      message: expect.any(String),
+    });
+
+    await user.click(screen.getByTestId("add-text"));
+    expect(screen.getByTestId("count")).toHaveTextContent("2");
+    expect(onError).toHaveBeenCalledTimes(2);
+  });
+
+  it("accepts multiple comma-separated exact MIME types", async () => {
+    const onSubmit = vi.fn();
+    const onError = vi.fn();
+    const user = userEvent.setup();
+
+    const pngFile = new File(["image"], "test.png", { type: "image/png" });
+    const jpegFile = new File(["image"], "test.jpg", { type: "image/jpeg" });
+    const pdfFile = new File(["pdf"], "doc.pdf", {
+      type: "application/pdf",
+    });
+    const textFile = new File(["text"], "doc.txt", { type: "text/plain" });
+
+    const AttachmentConsumer = () => {
+      const attachments = usePromptInputAttachments();
+      return (
+        <>
+          <button
+            data-testid="add-png"
+            onClick={() => attachments.add([pngFile])}
+            type="button"
+          >
+            Add PNG
+          </button>
+          <button
+            data-testid="add-jpeg"
+            onClick={() => attachments.add([jpegFile])}
+            type="button"
+          >
+            Add JPEG
+          </button>
+          <button
+            data-testid="add-pdf"
+            onClick={() => attachments.add([pdfFile])}
+            type="button"
+          >
+            Add PDF
+          </button>
+          <button
+            data-testid="add-text"
+            onClick={() => attachments.add([textFile])}
+            type="button"
+          >
+            Add Text
+          </button>
+          <div data-testid="count">{attachments.files.length}</div>
+        </>
+      );
+    };
+
+    render(
+      <PromptInput
+        accept="image/png, application/pdf"
+        onError={onError}
+        onSubmit={onSubmit}
+      >
+        <PromptInputBody>
+          <AttachmentConsumer />
+          <PromptInputTextarea />
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    await user.click(screen.getByTestId("add-png"));
+    expect(screen.getByTestId("count")).toHaveTextContent("1");
+
+    await user.click(screen.getByTestId("add-pdf"));
+    expect(screen.getByTestId("count")).toHaveTextContent("2");
+
+    await user.click(screen.getByTestId("add-jpeg"));
+    expect(screen.getByTestId("count")).toHaveTextContent("2");
+    expect(onError).toHaveBeenCalledWith({
+      code: "accept",
+      message: expect.any(String),
+    });
+
+    await user.click(screen.getByTestId("add-text"));
+    expect(screen.getByTestId("count")).toHaveTextContent("2");
+    expect(onError).toHaveBeenCalledTimes(2);
+  });
+
+  it("accepts mixed wildcard and exact MIME type patterns", async () => {
+    const onSubmit = vi.fn();
+    const onError = vi.fn();
+    const user = userEvent.setup();
+
+    const pngFile = new File(["image"], "test.png", { type: "image/png" });
+    const jpegFile = new File(["image"], "test.jpg", { type: "image/jpeg" });
+    const pdfFile = new File(["pdf"], "doc.pdf", {
+      type: "application/pdf",
+    });
+    const docxFile = new File(["docx"], "doc.docx", {
+      type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    });
+
+    const AttachmentConsumer = () => {
+      const attachments = usePromptInputAttachments();
+      return (
+        <>
+          <button
+            data-testid="add-png"
+            onClick={() => attachments.add([pngFile])}
+            type="button"
+          >
+            Add PNG
+          </button>
+          <button
+            data-testid="add-jpeg"
+            onClick={() => attachments.add([jpegFile])}
+            type="button"
+          >
+            Add JPEG
+          </button>
+          <button
+            data-testid="add-pdf"
+            onClick={() => attachments.add([pdfFile])}
+            type="button"
+          >
+            Add PDF
+          </button>
+          <button
+            data-testid="add-docx"
+            onClick={() => attachments.add([docxFile])}
+            type="button"
+          >
+            Add DOCX
+          </button>
+          <div data-testid="count">{attachments.files.length}</div>
+        </>
+      );
+    };
+
+    render(
+      <PromptInput
+        accept="image/*, application/pdf"
+        onError={onError}
+        onSubmit={onSubmit}
+      >
+        <PromptInputBody>
+          <AttachmentConsumer />
+          <PromptInputTextarea />
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    await user.click(screen.getByTestId("add-png"));
+    expect(screen.getByTestId("count")).toHaveTextContent("1");
+
+    await user.click(screen.getByTestId("add-jpeg"));
+    expect(screen.getByTestId("count")).toHaveTextContent("2");
+
+    await user.click(screen.getByTestId("add-pdf"));
+    expect(screen.getByTestId("count")).toHaveTextContent("3");
+
+    await user.click(screen.getByTestId("add-docx"));
+    expect(screen.getByTestId("count")).toHaveTextContent("3");
+    expect(onError).toHaveBeenCalledWith({
+      code: "accept",
+      message: expect.any(String),
+    });
+  });
+
+  it("handles accept with extra whitespace in patterns", async () => {
+    const onSubmit = vi.fn();
+    const user = userEvent.setup();
+
+    const imageFile = new File(["image"], "test.png", { type: "image/png" });
+    const pdfFile = new File(["pdf"], "doc.pdf", {
+      type: "application/pdf",
+    });
+
+    const AttachmentConsumer = () => {
+      const attachments = usePromptInputAttachments();
+      return (
+        <>
+          <button
+            data-testid="add-image"
+            onClick={() => attachments.add([imageFile])}
+            type="button"
+          >
+            Add Image
+          </button>
+          <button
+            data-testid="add-pdf"
+            onClick={() => attachments.add([pdfFile])}
+            type="button"
+          >
+            Add PDF
+          </button>
+          <div data-testid="count">{attachments.files.length}</div>
+        </>
+      );
+    };
+
+    render(
+      <PromptInput accept="  image/*  ,  application/pdf  " onSubmit={onSubmit}>
+        <PromptInputBody>
+          <AttachmentConsumer />
+          <PromptInputTextarea />
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    await user.click(screen.getByTestId("add-image"));
+    expect(screen.getByTestId("count")).toHaveTextContent("1");
+
+    await user.click(screen.getByTestId("add-pdf"));
+    expect(screen.getByTestId("count")).toHaveTextContent("2");
+  });
+
+  it("accepts all files when accept is empty string", async () => {
+    const onSubmit = vi.fn();
+    const user = userEvent.setup();
+
+    const imageFile = new File(["image"], "test.png", { type: "image/png" });
+    const textFile = new File(["text"], "test.txt", { type: "text/plain" });
+
+    const AttachmentConsumer = () => {
+      const attachments = usePromptInputAttachments();
+      return (
+        <>
+          <button
+            data-testid="add-image"
+            onClick={() => attachments.add([imageFile])}
+            type="button"
+          >
+            Add Image
+          </button>
+          <button
+            data-testid="add-text"
+            onClick={() => attachments.add([textFile])}
+            type="button"
+          >
+            Add Text
+          </button>
+          <div data-testid="count">{attachments.files.length}</div>
+        </>
+      );
+    };
+
+    render(
+      <PromptInput accept="" onSubmit={onSubmit}>
+        <PromptInputBody>
+          <AttachmentConsumer />
+          <PromptInputTextarea />
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    await user.click(screen.getByTestId("add-image"));
+    expect(screen.getByTestId("count")).toHaveTextContent("1");
+
+    await user.click(screen.getByTestId("add-text"));
+    expect(screen.getByTestId("count")).toHaveTextContent("2");
+  });
+
+  it("accepts all files when accept is only whitespace", async () => {
+    const onSubmit = vi.fn();
+    const user = userEvent.setup();
+
+    const imageFile = new File(["image"], "test.png", { type: "image/png" });
+    const textFile = new File(["text"], "test.txt", { type: "text/plain" });
+
+    const AttachmentConsumer = () => {
+      const attachments = usePromptInputAttachments();
+      return (
+        <>
+          <button
+            data-testid="add-image"
+            onClick={() => attachments.add([imageFile])}
+            type="button"
+          >
+            Add Image
+          </button>
+          <button
+            data-testid="add-text"
+            onClick={() => attachments.add([textFile])}
+            type="button"
+          >
+            Add Text
+          </button>
+          <div data-testid="count">{attachments.files.length}</div>
+        </>
+      );
+    };
+
+    render(
+      <PromptInput accept="   " onSubmit={onSubmit}>
+        <PromptInputBody>
+          <AttachmentConsumer />
+          <PromptInputTextarea />
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    await user.click(screen.getByTestId("add-image"));
+    expect(screen.getByTestId("count")).toHaveTextContent("1");
+
+    await user.click(screen.getByTestId("add-text"));
+    expect(screen.getByTestId("count")).toHaveTextContent("2");
+  });
+
+  it("filters out empty patterns from comma-separated list", async () => {
+    const onSubmit = vi.fn();
+    const onError = vi.fn();
+    const user = userEvent.setup();
+
+    const imageFile = new File(["image"], "test.png", { type: "image/png" });
+    const textFile = new File(["text"], "test.txt", { type: "text/plain" });
+
+    const AttachmentConsumer = () => {
+      const attachments = usePromptInputAttachments();
+      return (
+        <>
+          <button
+            data-testid="add-image"
+            onClick={() => attachments.add([imageFile])}
+            type="button"
+          >
+            Add Image
+          </button>
+          <button
+            data-testid="add-text"
+            onClick={() => attachments.add([textFile])}
+            type="button"
+          >
+            Add Text
+          </button>
+          <div data-testid="count">{attachments.files.length}</div>
+        </>
+      );
+    };
+
+    render(
+      <PromptInput accept="image/*,  ,  " onError={onError} onSubmit={onSubmit}>
+        <PromptInputBody>
+          <AttachmentConsumer />
+          <PromptInputTextarea />
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    await user.click(screen.getByTestId("add-image"));
+    expect(screen.getByTestId("count")).toHaveTextContent("1");
+
+    await user.click(screen.getByTestId("add-text"));
+    expect(screen.getByTestId("count")).toHaveTextContent("1");
+    expect(onError).toHaveBeenCalledWith({
+      code: "accept",
+      message: expect.any(String),
+    });
+  });
+
+  it("enforces maxFiles limit when using PromptInputProvider", async () => {
+    const {
+      PromptInputProvider,
+      PromptInput,
+      PromptInputBody,
+      PromptInputTextarea,
+      usePromptInputAttachments,
+    } = await import("../src/prompt-input");
+
+    const onSubmit = vi.fn();
+    const onError = vi.fn();
+    const user = userEvent.setup();
+
+    const file1 = new File(["test1"], "test1.txt", { type: "text/plain" });
+    const file2 = new File(["test2"], "test2.txt", { type: "text/plain" });
+    const file3 = new File(["test3"], "test3.txt", { type: "text/plain" });
+
+    const AttachmentConsumer = () => {
+      const attachments = usePromptInputAttachments();
+      return (
+        <>
+          <button
+            data-testid="add-files"
+            onClick={() => attachments.add([file1, file2, file3])}
+            type="button"
+          >
+            Add Files
+          </button>
+          <div data-testid="count">{attachments.files.length}</div>
+        </>
+      );
+    };
+
+    render(
+      <PromptInputProvider>
+        <PromptInput maxFiles={2} onError={onError} onSubmit={onSubmit}>
+          <PromptInputBody>
+            <AttachmentConsumer />
+            <PromptInputTextarea />
+          </PromptInputBody>
+        </PromptInput>
+      </PromptInputProvider>
+    );
+
+    await user.click(screen.getByTestId("add-files"));
+
+    // Only 2 files should be added even when using provider
+    expect(screen.getByTestId("count")).toHaveTextContent("2");
+    expect(onError).toHaveBeenCalledWith({
+      code: "max_files",
+      message: expect.any(String),
+    });
+  });
 });
 
 describe("Drag and drop", () => {
@@ -1012,7 +1788,7 @@ describe("Paste functionality", () => {
       ],
     };
 
-    await act(async () => {
+    await act(() => {
       textarea.dispatchEvent(pasteEvent);
     });
 
@@ -1051,147 +1827,6 @@ describe("Paste functionality", () => {
   });
 });
 
-describe("PromptInputSpeechButton", () => {
-  let mockRecognition: any;
-
-  beforeEach(() => {
-    // Mock SpeechRecognition API
-    mockRecognition = {
-      start: vi.fn(),
-      stop: vi.fn(),
-      continuous: false,
-      interimResults: false,
-      lang: "",
-      onstart: null,
-      onend: null,
-      onresult: null,
-      onerror: null,
-    };
-
-    // @ts-expect-error - Mocking browser API
-    window.SpeechRecognition = () => mockRecognition;
-  });
-
-  afterEach(() => {
-    // @ts-expect-error - Cleaning up mock
-    delete window.SpeechRecognition;
-    // @ts-expect-error - Cleaning up mock
-    delete window.webkitSpeechRecognition;
-  });
-
-  it("renders button component", () => {
-    const { container } = render(<PromptInputSpeechButton />);
-    expect(container.querySelector("button")).toBeInTheDocument();
-  });
-
-  it("applies custom className", () => {
-    const { container } = render(
-      <PromptInputSpeechButton className="custom-speech-btn" />
-    );
-    const button = container.querySelector("button");
-    expect(button).toHaveClass("custom-speech-btn");
-  });
-
-  it("accepts additional props", () => {
-    render(<PromptInputSpeechButton data-testid="speech-btn" />);
-    expect(screen.getByTestId("speech-btn")).toBeInTheDocument();
-  });
-
-  it("initializes speech recognition when available", () => {
-    render(<PromptInputSpeechButton />);
-    // Verify speech recognition was properly initialized by checking properties
-    expect(mockRecognition.continuous).toBe(true);
-    expect(mockRecognition.interimResults).toBe(true);
-    expect(mockRecognition.lang).toBe("en-US");
-  });
-
-  it("toggles listening when clicked", async () => {
-    const user = userEvent.setup();
-    const { container } = render(<PromptInputSpeechButton />);
-    const button = container.querySelector("button");
-
-    if (button) {
-      await user.click(button);
-      expect(mockRecognition.start).toHaveBeenCalled();
-    }
-  });
-
-  it("stops recognition when clicked while listening", async () => {
-    const user = userEvent.setup();
-    const { container } = render(<PromptInputSpeechButton />);
-    const button = container.querySelector("button");
-
-    if (button) {
-      // Start listening
-      await user.click(button);
-      act(() => {
-        mockRecognition.onstart?.();
-      });
-
-      // Stop listening
-      await user.click(button);
-      expect(mockRecognition.stop).toHaveBeenCalled();
-    }
-  });
-
-  it("cleans up recognition on unmount", () => {
-    const { unmount } = render(<PromptInputSpeechButton />);
-    unmount();
-    expect(mockRecognition.stop).toHaveBeenCalled();
-  });
-
-  it("sets up speech recognition result handler", () => {
-    render(
-      <PromptInput onSubmit={vi.fn()}>
-        <PromptInputBody>
-          <PromptInputTextarea />
-          <PromptInputSpeechButton />
-        </PromptInputBody>
-      </PromptInput>
-    );
-
-    // Verify onresult handler is set up
-    expect(mockRecognition.onresult).toBeDefined();
-    expect(typeof mockRecognition.onresult).toBe("function");
-  });
-
-  it("sets up all speech recognition event handlers", () => {
-    render(<PromptInputSpeechButton />);
-
-    expect(mockRecognition.onstart).toBeDefined();
-    expect(mockRecognition.onend).toBeDefined();
-    expect(mockRecognition.onresult).toBeDefined();
-    expect(mockRecognition.onerror).toBeDefined();
-  });
-
-  it("handles speech recognition error", () => {
-    const consoleError = vi
-      .spyOn(console, "error")
-      .mockImplementation(() => {});
-
-    render(<PromptInputSpeechButton />);
-
-    // Simulate error
-    mockRecognition.onerror?.({ error: "network" });
-
-    expect(consoleError).toHaveBeenCalledWith(
-      "Speech recognition error:",
-      "network"
-    );
-    consoleError.mockRestore();
-  });
-
-  it("is disabled when speech recognition not available", () => {
-    // @ts-expect-error - Removing mock
-    delete window.SpeechRecognition;
-
-    const { container } = render(<PromptInputSpeechButton />);
-    const button = container.querySelector("button");
-
-    expect(button).toBeDisabled();
-  });
-});
-
 describe("PromptInputAttachment", () => {
   it("renders file attachment with icon", () => {
     const onSubmit = vi.fn();
@@ -1206,7 +1841,9 @@ describe("PromptInputAttachment", () => {
     render(
       <PromptInput onSubmit={onSubmit}>
         <PromptInputBody>
-          <PromptInputAttachment data={file} />
+          <Attachments variant="inline">
+            <PromptInputAttachment data={file} />
+          </Attachments>
         </PromptInputBody>
       </PromptInput>
     );
@@ -1254,8 +1891,12 @@ describe("PromptInputAttachment", () => {
             Add
           </button>
           <PromptInputAttachments>
-            {(attachment) => (
-              <PromptInputAttachment data={attachment} key={attachment.id} />
+            {(attachment, onRemove) => (
+              <PromptInputAttachment
+                data={attachment}
+                key={attachment.id}
+                onRemove={onRemove}
+              />
             )}
           </PromptInputAttachments>
         </>
@@ -1390,6 +2031,454 @@ describe("PromptInputAttachment", () => {
 
     expect(screen.getByText("test.txt")).toBeInTheDocument();
     expect(textarea.value).toBe("Some tex");
+  });
+});
+
+describe("PromptInputReferencedSource", () => {
+  it("renders referenced source with globe icon", () => {
+    const onSubmit = vi.fn();
+    const source = {
+      id: "1",
+      type: "source-document" as const,
+      sourceId: "source-1",
+      title: "Test Document",
+      filename: "doc.pdf",
+      mediaType: "application/pdf",
+    };
+
+    render(
+      <PromptInput onSubmit={onSubmit}>
+        <PromptInputBody>
+          <Attachments variant="inline">
+            <PromptInputReferencedSource data={source} />
+          </Attachments>
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    expect(screen.getByText("Test Document")).toBeInTheDocument();
+  });
+
+  it("falls back to filename when title is not provided", () => {
+    const onSubmit = vi.fn();
+    const source = {
+      id: "1",
+      type: "source-document" as const,
+      sourceId: "source-1",
+      title: "",
+      filename: "document.pdf",
+      mediaType: "application/pdf",
+    };
+
+    render(
+      <PromptInput onSubmit={onSubmit}>
+        <PromptInputBody>
+          <Attachments variant="inline">
+            <PromptInputReferencedSource data={source} />
+          </Attachments>
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    expect(screen.getByText("document.pdf")).toBeInTheDocument();
+  });
+
+  it("removes referenced source when remove button clicked", async () => {
+    const onSubmit = vi.fn();
+    const user = userEvent.setup();
+
+    const ReferencedSourceConsumer = () => {
+      const refs = usePromptInputReferencedSources();
+      return (
+        <>
+          <button
+            data-testid="add-source"
+            onClick={() =>
+              refs.add({
+                type: "source-document",
+                sourceId: "source-1",
+                title: "Test Source",
+                mediaType: "text/plain",
+              })
+            }
+            type="button"
+          >
+            Add
+          </button>
+          <PromptInputReferencedSources>
+            {(source, onRemove) => (
+              <PromptInputReferencedSource
+                data={source}
+                key={source.id}
+                onRemove={onRemove}
+              />
+            )}
+          </PromptInputReferencedSources>
+        </>
+      );
+    };
+
+    render(
+      <PromptInput onSubmit={onSubmit}>
+        <PromptInputBody>
+          <ReferencedSourceConsumer />
+          <PromptInputTextarea />
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    await user.click(screen.getByTestId("add-source"));
+    expect(screen.getByText("Test Source")).toBeInTheDocument();
+
+    const removeButton = screen.getByLabelText("Remove referenced source");
+    await user.click(removeButton);
+
+    expect(screen.queryByText("Test Source")).not.toBeInTheDocument();
+  });
+});
+
+describe("PromptInputReferencedSources", () => {
+  it("renders multiple referenced sources", async () => {
+    const onSubmit = vi.fn();
+    const user = userEvent.setup();
+
+    const ReferencedSourceConsumer = () => {
+      const refs = usePromptInputReferencedSources();
+      return (
+        <>
+          <button
+            data-testid="add-sources"
+            onClick={() =>
+              refs.add([
+                {
+                  type: "source-document",
+                  sourceId: "s1",
+                  title: "Source 1",
+                  mediaType: "text/plain",
+                },
+                {
+                  type: "source-document",
+                  sourceId: "s2",
+                  title: "Source 2",
+                  mediaType: "text/plain",
+                },
+              ])
+            }
+            type="button"
+          >
+            Add Sources
+          </button>
+          <PromptInputReferencedSources>
+            {(source) => <div key={source.id}>{source.title}</div>}
+          </PromptInputReferencedSources>
+        </>
+      );
+    };
+
+    render(
+      <PromptInput onSubmit={onSubmit}>
+        <PromptInputBody>
+          <ReferencedSourceConsumer />
+          <PromptInputTextarea />
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    await user.click(screen.getByTestId("add-sources"));
+
+    expect(screen.getByText("Source 1")).toBeInTheDocument();
+    expect(screen.getByText("Source 2")).toBeInTheDocument();
+  });
+
+  it("does not render when no sources exist", () => {
+    const onSubmit = vi.fn();
+
+    const ReferencedSourceConsumer = () => {
+      const _refs = usePromptInputReferencedSources();
+      return (
+        <PromptInputReferencedSources data-testid="sources-container">
+          {(source) => <div key={source.id}>{source.title}</div>}
+        </PromptInputReferencedSources>
+      );
+    };
+
+    render(
+      <PromptInput onSubmit={onSubmit}>
+        <PromptInputBody>
+          <ReferencedSourceConsumer />
+          <PromptInputTextarea />
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    expect(screen.queryByTestId("sources-container")).not.toBeInTheDocument();
+  });
+
+  it("clears referenced sources after successful form submission", async () => {
+    const onSubmit = vi.fn(() => Promise.resolve());
+    const user = userEvent.setup();
+
+    const ReferencedSourceConsumer = () => {
+      const refs = usePromptInputReferencedSources();
+      return (
+        <>
+          <button
+            data-testid="add-source"
+            onClick={() =>
+              refs.add({
+                type: "source-document",
+                sourceId: "s1",
+                title: "Test Source",
+                mediaType: "text/plain",
+              })
+            }
+            type="button"
+          >
+            Add Source
+          </button>
+          <PromptInputReferencedSources>
+            {(source) => <div key={source.id}>{source.title}</div>}
+          </PromptInputReferencedSources>
+        </>
+      );
+    };
+
+    render(
+      <PromptInput onSubmit={onSubmit}>
+        <PromptInputBody>
+          <ReferencedSourceConsumer />
+          <PromptInputTextarea />
+          <PromptInputSubmit />
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    // Add a referenced source
+    await user.click(screen.getByTestId("add-source"));
+    expect(screen.getByText("Test Source")).toBeInTheDocument();
+
+    // Type and submit
+    const textarea = screen.getByPlaceholderText(
+      "What would you like to know?"
+    ) as HTMLTextAreaElement;
+    await user.type(textarea, "test message");
+    await user.keyboard("{Enter}");
+
+    // Wait for async submission to complete
+    await vi.waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledTimes(1);
+    });
+
+    // Give time for promise resolution
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
+    // Verify referenced source was cleared
+    expect(screen.queryByText("Test Source")).not.toBeInTheDocument();
+  });
+
+  it("does not clear referenced sources when onSubmit throws an error", async () => {
+    const onSubmit = vi.fn(() => {
+      throw new Error("Submission failed");
+    });
+    const user = userEvent.setup();
+
+    const ReferencedSourceConsumer = () => {
+      const refs = usePromptInputReferencedSources();
+      return (
+        <>
+          <button
+            data-testid="add-source"
+            onClick={() =>
+              refs.add({
+                type: "source-document",
+                sourceId: "s1",
+                title: "Test Source",
+                mediaType: "text/plain",
+              })
+            }
+            type="button"
+          >
+            Add Source
+          </button>
+          <PromptInputReferencedSources>
+            {(source) => <div key={source.id}>{source.title}</div>}
+          </PromptInputReferencedSources>
+        </>
+      );
+    };
+
+    render(
+      <PromptInput onSubmit={onSubmit}>
+        <PromptInputBody>
+          <ReferencedSourceConsumer />
+          <PromptInputTextarea />
+          <PromptInputSubmit />
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    // Add a referenced source
+    await user.click(screen.getByTestId("add-source"));
+    expect(screen.getByText("Test Source")).toBeInTheDocument();
+
+    // Type and submit
+    const textarea = screen.getByPlaceholderText(
+      "What would you like to know?"
+    ) as HTMLTextAreaElement;
+    await user.type(textarea, "test message");
+    await user.keyboard("{Enter}");
+
+    // Wait for submission attempt
+    await vi.waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledTimes(1);
+    });
+
+    // Verify referenced source was NOT cleared due to error
+    expect(screen.getByText("Test Source")).toBeInTheDocument();
+  });
+
+  it("does not clear referenced sources when async onSubmit rejects", async () => {
+    const onSubmit = vi.fn(() =>
+      Promise.reject(new Error("Async submission failed"))
+    );
+    const user = userEvent.setup();
+
+    const ReferencedSourceConsumer = () => {
+      const refs = usePromptInputReferencedSources();
+      return (
+        <>
+          <button
+            data-testid="add-source"
+            onClick={() =>
+              refs.add({
+                type: "source-document",
+                sourceId: "s1",
+                title: "Test Source",
+                mediaType: "text/plain",
+              })
+            }
+            type="button"
+          >
+            Add Source
+          </button>
+          <PromptInputReferencedSources>
+            {(source) => <div key={source.id}>{source.title}</div>}
+          </PromptInputReferencedSources>
+        </>
+      );
+    };
+
+    render(
+      <PromptInput onSubmit={onSubmit}>
+        <PromptInputBody>
+          <ReferencedSourceConsumer />
+          <PromptInputTextarea />
+          <PromptInputSubmit />
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    // Add a referenced source
+    await user.click(screen.getByTestId("add-source"));
+    expect(screen.getByText("Test Source")).toBeInTheDocument();
+
+    // Type and submit
+    const textarea = screen.getByPlaceholderText(
+      "What would you like to know?"
+    ) as HTMLTextAreaElement;
+    await user.type(textarea, "test message");
+    await user.keyboard("{Enter}");
+
+    // Wait for async submission attempt
+    await vi.waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledTimes(1);
+    });
+
+    // Give time for promise rejection
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
+    // Verify referenced source was NOT cleared due to rejection
+    expect(screen.getByText("Test Source")).toBeInTheDocument();
+  });
+
+  it("clears both attachments and referenced sources after successful submission", async () => {
+    const onSubmit = vi.fn(() => Promise.resolve());
+    const user = userEvent.setup();
+
+    const file = new File(["test"], "test.txt", { type: "text/plain" });
+
+    const Consumer = () => {
+      const attachments = usePromptInputAttachments();
+      const refs = usePromptInputReferencedSources();
+      return (
+        <>
+          <button
+            data-testid="add-file"
+            onClick={() => attachments.add([file])}
+            type="button"
+          >
+            Add File
+          </button>
+          <button
+            data-testid="add-source"
+            onClick={() =>
+              refs.add({
+                type: "source-document",
+                sourceId: "s1",
+                title: "Test Source",
+                mediaType: "text/plain",
+              })
+            }
+            type="button"
+          >
+            Add Source
+          </button>
+          <PromptInputAttachments>
+            {(attachment) => (
+              <div key={attachment.id}>{attachment.filename}</div>
+            )}
+          </PromptInputAttachments>
+          <PromptInputReferencedSources>
+            {(source) => <div key={source.id}>{source.title}</div>}
+          </PromptInputReferencedSources>
+        </>
+      );
+    };
+
+    render(
+      <PromptInput onSubmit={onSubmit}>
+        <PromptInputBody>
+          <Consumer />
+          <PromptInputTextarea />
+          <PromptInputSubmit />
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    // Add both attachment and referenced source
+    await user.click(screen.getByTestId("add-file"));
+    await user.click(screen.getByTestId("add-source"));
+    expect(screen.getByText("test.txt")).toBeInTheDocument();
+    expect(screen.getByText("Test Source")).toBeInTheDocument();
+
+    // Type and submit
+    const textarea = screen.getByPlaceholderText(
+      "What would you like to know?"
+    ) as HTMLTextAreaElement;
+    await user.type(textarea, "test message");
+    await user.keyboard("{Enter}");
+
+    // Wait for async submission
+    await vi.waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledTimes(1);
+    });
+
+    // Give time for promise resolution
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
+    // Verify both were cleared
+    expect(screen.queryByText("test.txt")).not.toBeInTheDocument();
+    expect(screen.queryByText("Test Source")).not.toBeInTheDocument();
   });
 });
 
@@ -1697,26 +2786,26 @@ describe("PromptInputTab components", () => {
   });
 });
 
-describe("PromptInputModelSelect components", () => {
+describe("PromptInputSelect components", () => {
   it("renders model select with all subcomponents", () => {
     const onSubmit = vi.fn();
 
     render(
       <PromptInput onSubmit={onSubmit}>
         <PromptInputBody>
-          <PromptInputModelSelect>
-            <PromptInputModelSelectTrigger>
-              <PromptInputModelSelectValue placeholder="Choose model" />
-            </PromptInputModelSelectTrigger>
-            <PromptInputModelSelectContent>
-              <PromptInputModelSelectItem value="model-1">
+          <PromptInputSelect>
+            <PromptInputSelectTrigger>
+              <PromptInputSelectValue placeholder="Choose model" />
+            </PromptInputSelectTrigger>
+            <PromptInputSelectContent>
+              <PromptInputSelectItem value="model-1">
                 Model 1
-              </PromptInputModelSelectItem>
-              <PromptInputModelSelectItem value="model-2">
+              </PromptInputSelectItem>
+              <PromptInputSelectItem value="model-2">
                 Model 2
-              </PromptInputModelSelectItem>
-            </PromptInputModelSelectContent>
-          </PromptInputModelSelect>
+              </PromptInputSelectItem>
+            </PromptInputSelectContent>
+          </PromptInputSelect>
         </PromptInputBody>
       </PromptInput>
     );
@@ -1735,16 +2824,16 @@ describe("PromptInputModelSelect components", () => {
     render(
       <PromptInput onSubmit={onSubmit}>
         <PromptInputBody>
-          <PromptInputModelSelect>
-            <PromptInputModelSelectTrigger>
-              <PromptInputModelSelectValue placeholder="Select" />
-            </PromptInputModelSelectTrigger>
-            <PromptInputModelSelectContent>
-              <PromptInputModelSelectItem value="model-1">
+          <PromptInputSelect>
+            <PromptInputSelectTrigger>
+              <PromptInputSelectValue placeholder="Select" />
+            </PromptInputSelectTrigger>
+            <PromptInputSelectContent>
+              <PromptInputSelectItem value="model-1">
                 Model 1
-              </PromptInputModelSelectItem>
-            </PromptInputModelSelectContent>
-          </PromptInputModelSelect>
+              </PromptInputSelectItem>
+            </PromptInputSelectContent>
+          </PromptInputSelect>
         </PromptInputBody>
       </PromptInput>
     );
@@ -1831,16 +2920,16 @@ describe("Integration tests", () => {
       <PromptInput onSubmit={onSubmit}>
         <PromptInputBody>
           <PromptInputHeader>
-            <PromptInputModelSelect>
-              <PromptInputModelSelectTrigger>
-                <PromptInputModelSelectValue placeholder="Model" />
-              </PromptInputModelSelectTrigger>
-              <PromptInputModelSelectContent>
-                <PromptInputModelSelectItem value="gpt-4">
+            <PromptInputSelect>
+              <PromptInputSelectTrigger>
+                <PromptInputSelectValue placeholder="Model" />
+              </PromptInputSelectTrigger>
+              <PromptInputSelectContent>
+                <PromptInputSelectItem value="gpt-4">
                   GPT-4
-                </PromptInputModelSelectItem>
-              </PromptInputModelSelectContent>
-            </PromptInputModelSelect>
+                </PromptInputSelectItem>
+              </PromptInputSelectContent>
+            </PromptInputSelect>
           </PromptInputHeader>
           <PromptInputTextarea />
           <PromptInputFooter>
@@ -1851,7 +2940,6 @@ describe("Integration tests", () => {
                   <PromptInputActionMenuItem>Action</PromptInputActionMenuItem>
                 </PromptInputActionMenuContent>
               </PromptInputActionMenu>
-              <PromptInputSpeechButton />
             </PromptInputTools>
             <PromptInputSubmit />
           </PromptInputFooter>
@@ -1863,6 +2951,8 @@ describe("Integration tests", () => {
       screen.getByPlaceholderText("What would you like to know?")
     ).toBeInTheDocument();
     expect(screen.getByText("Model")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /submit/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: SUBMIT_REGEX })
+    ).toBeInTheDocument();
   });
 });

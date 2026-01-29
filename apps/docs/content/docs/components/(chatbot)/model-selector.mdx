@@ -1,0 +1,190 @@
+---
+title: Model Selector
+description: A searchable command palette for selecting AI models in your chat interface.
+path: elements/components/model-selector
+---
+
+The `ModelSelector` component provides a searchable command palette interface for selecting AI models. It's built on top of the cmdk library and provides a keyboard-navigable interface with search functionality.
+
+<Preview path="model-selector" />
+
+## Installation
+
+<ElementsInstaller path="model-selector" />
+
+## Features
+
+- Searchable interface with keyboard navigation
+- Fuzzy search filtering across model names
+- Grouped model organization by provider
+- Keyboard shortcuts support
+- Empty state handling
+- Customizable styling with Tailwind CSS
+- Built on cmdk for excellent accessibility
+- TypeScript support with proper type definitions
+
+## Props
+
+### `<ModelSelector />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any other props are spread to the underlying Dialog component.',
+      type: 'React.ComponentProps<typeof Dialog>',
+    },
+  }}
+/>
+
+### `<ModelSelectorTrigger />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any other props are spread to the underlying DialogTrigger component.',
+      type: 'React.ComponentProps<typeof DialogTrigger>',
+    },
+  }}
+/>
+
+### `<ModelSelectorContent />`
+
+<TypeTable
+  type={{
+    title: {
+      description: 'Accessible title for the dialog (rendered in sr-only).',
+      type: 'ReactNode',
+      default: '"Model Selector"',
+    },
+    '...props': {
+      description: 'Any other props are spread to the underlying DialogContent component.',
+      type: 'React.ComponentProps<typeof DialogContent>',
+    },
+  }}
+/>
+
+### `<ModelSelectorDialog />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any other props are spread to the underlying CommandDialog component.',
+      type: 'React.ComponentProps<typeof CommandDialog>',
+    },
+  }}
+/>
+
+### `<ModelSelectorInput />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any other props are spread to the underlying CommandInput component.',
+      type: 'React.ComponentProps<typeof CommandInput>',
+    },
+  }}
+/>
+
+### `<ModelSelectorList />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any other props are spread to the underlying CommandList component.',
+      type: 'React.ComponentProps<typeof CommandList>',
+    },
+  }}
+/>
+
+### `<ModelSelectorEmpty />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any other props are spread to the underlying CommandEmpty component.',
+      type: 'React.ComponentProps<typeof CommandEmpty>',
+    },
+  }}
+/>
+
+### `<ModelSelectorGroup />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any other props are spread to the underlying CommandGroup component.',
+      type: 'React.ComponentProps<typeof CommandGroup>',
+    },
+  }}
+/>
+
+### `<ModelSelectorItem />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any other props are spread to the underlying CommandItem component.',
+      type: 'React.ComponentProps<typeof CommandItem>',
+    },
+  }}
+/>
+
+### `<ModelSelectorShortcut />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any other props are spread to the underlying CommandShortcut component.',
+      type: 'React.ComponentProps<typeof CommandShortcut>',
+    },
+  }}
+/>
+
+### `<ModelSelectorSeparator />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any other props are spread to the underlying CommandSeparator component.',
+      type: 'React.ComponentProps<typeof CommandSeparator>',
+    },
+  }}
+/>
+
+### `<ModelSelectorLogo />`
+
+<TypeTable
+  type={{
+    provider: {
+      description: 'The AI provider name. Supports major providers like "openai", "anthropic", "google", "mistral", etc.',
+      type: 'string',
+      required: true,
+    },
+    '...props': {
+      description: 'Any other props are spread to the underlying img element (except src and alt which are generated).',
+      type: 'Omit<React.ComponentProps<"img">, "src" | "alt">',
+    },
+  }}
+/>
+
+### `<ModelSelectorLogoGroup />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any other props are spread to the underlying div element.',
+      type: 'React.ComponentProps<"div">',
+    },
+  }}
+/>
+
+### `<ModelSelectorName />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any other props are spread to the underlying span element.',
+      type: 'React.ComponentProps<"span">',
+    },
+  }}
+/>

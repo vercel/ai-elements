@@ -1,0 +1,269 @@
+---
+title: Code Block
+description: Provides syntax highlighting, line numbers, and copy to clipboard functionality for code blocks.
+path: elements/components/code-block
+---
+
+The `CodeBlock` component provides syntax highlighting, line numbers, and copy to clipboard functionality for code blocks. It's fully composable, allowing you to customize the header, actions, and content.
+
+<Preview path="code-block" />
+
+## Installation
+
+<ElementsInstaller path="code-block" />
+
+## Usage
+
+The CodeBlock is fully composable. Here's a basic example:
+
+```tsx
+import {
+  CodeBlock,
+  CodeBlockActions,
+  CodeBlockCopyButton,
+  CodeBlockFilename,
+  CodeBlockHeader,
+  CodeBlockTitle,
+} from '@/components/ai-elements/code-block';
+import { FileIcon } from 'lucide-react';
+
+export const Example = () => (
+  <CodeBlock code={code} language="typescript">
+    <CodeBlockHeader>
+      <CodeBlockTitle>
+        <FileIcon size={14} />
+        <CodeBlockFilename>example.ts</CodeBlockFilename>
+      </CodeBlockTitle>
+      <CodeBlockActions>
+        <CodeBlockCopyButton />
+      </CodeBlockActions>
+    </CodeBlockHeader>
+  </CodeBlock>
+);
+```
+
+## Features
+
+- Syntax highlighting with Shiki
+- Line numbers (optional)
+- Copy to clipboard functionality
+- Automatic light/dark theme switching via CSS variables
+- Language selector for multi-language examples
+- Fully composable architecture
+- Accessible design
+
+## Examples
+
+### Dark Mode
+
+To use the `CodeBlock` component in dark mode, wrap it in a `div` with the `dark` class.
+
+<Preview path="code-block-dark" />
+
+### Language Selector
+
+Add a language selector to switch between different code implementations:
+
+<Preview path="code-block" />
+
+## Props
+
+### `<CodeBlock />`
+
+<TypeTable
+  type={{
+    code: {
+      description: 'The code content to display.',
+      type: 'string',
+    },
+    language: {
+      description: 'The programming language for syntax highlighting.',
+      type: 'BundledLanguage',
+    },
+    showLineNumbers: {
+      description: 'Whether to show line numbers.',
+      type: 'boolean',
+      default: 'false',
+    },
+    children: {
+      description: 'Child elements like CodeBlockHeader.',
+      type: 'React.ReactNode',
+    },
+    className: {
+      description: 'Additional CSS classes.',
+      type: 'string',
+    },
+  }}
+/>
+
+### `<CodeBlockHeader />`
+
+Container for the header row. Uses flexbox with `justify-between`.
+
+<TypeTable
+  type={{
+    children: {
+      description: 'Header content (CodeBlockTitle, CodeBlockActions, etc.).',
+      type: 'React.ReactNode',
+    },
+    className: {
+      description: 'Additional CSS classes.',
+      type: 'string',
+    },
+  }}
+/>
+
+### `<CodeBlockTitle />`
+
+Left-aligned container for icon and filename. Uses flexbox with `gap-2`.
+
+<TypeTable
+  type={{
+    children: {
+      description: 'Title content (icon, CodeBlockFilename, etc.).',
+      type: 'React.ReactNode',
+    },
+    className: {
+      description: 'Additional CSS classes.',
+      type: 'string',
+    },
+  }}
+/>
+
+### `<CodeBlockFilename />`
+
+Displays the filename in monospace font.
+
+<TypeTable
+  type={{
+    children: {
+      description: 'The filename to display.',
+      type: 'React.ReactNode',
+    },
+    className: {
+      description: 'Additional CSS classes.',
+      type: 'string',
+    },
+  }}
+/>
+
+### `<CodeBlockActions />`
+
+Right-aligned container for action buttons. Uses flexbox with `gap-2`.
+
+<TypeTable
+  type={{
+    children: {
+      description: 'Action buttons (CodeBlockCopyButton, CodeBlockLanguageSelector, etc.).',
+      type: 'React.ReactNode',
+    },
+    className: {
+      description: 'Additional CSS classes.',
+      type: 'string',
+    },
+  }}
+/>
+
+### `<CodeBlockCopyButton />`
+
+<TypeTable
+  type={{
+    onCopy: {
+      description: 'Callback fired after a successful copy.',
+      type: '() => void',
+    },
+    onError: {
+      description: 'Callback fired if copying fails.',
+      type: '(error: Error) => void',
+    },
+    timeout: {
+      description: 'How long to show the copied state (ms).',
+      type: 'number',
+      default: '2000',
+    },
+    children: {
+      description: 'Custom content for the button. Defaults to copy/check icons.',
+      type: 'React.ReactNode',
+    },
+    className: {
+      description: 'Additional CSS classes.',
+      type: 'string',
+    },
+  }}
+/>
+
+### `<CodeBlockLanguageSelector />`
+
+Wrapper for the language selector. Extends shadcn/ui Select.
+
+<TypeTable
+  type={{
+    value: {
+      description: 'The currently selected language.',
+      type: 'string',
+    },
+    onValueChange: {
+      description: 'Callback when the language changes.',
+      type: '(value: string) => void',
+    },
+    children: {
+      description: 'Selector components (Trigger, Content, Items).',
+      type: 'React.ReactNode',
+    },
+  }}
+/>
+
+### `<CodeBlockLanguageSelectorTrigger />`
+
+Trigger button for the language selector dropdown. Pre-styled for code block header.
+
+### `<CodeBlockLanguageSelectorValue />`
+
+Displays the selected language value.
+
+### `<CodeBlockLanguageSelectorContent />`
+
+Dropdown content container. Defaults to `align="end"`.
+
+### `<CodeBlockLanguageSelectorItem />`
+
+Individual language option in the dropdown.
+
+<TypeTable
+  type={{
+    value: {
+      description: 'The language value.',
+      type: 'string',
+    },
+    children: {
+      description: 'The display label.',
+      type: 'React.ReactNode',
+    },
+  }}
+/>
+
+### `<CodeBlockContainer />`
+
+Low-level container component with performance optimizations (`contentVisibility`). Used internally by CodeBlock.
+
+### `<CodeBlockContent />`
+
+Low-level component that handles syntax highlighting. Used internally by CodeBlock, but can be used directly for custom layouts.
+
+<TypeTable
+  type={{
+    code: {
+      description: 'The code content to display.',
+      type: 'string',
+    },
+    language: {
+      description: 'The programming language for syntax highlighting.',
+      type: 'BundledLanguage',
+    },
+    showLineNumbers: {
+      description: 'Whether to show line numbers.',
+      type: 'boolean',
+      default: 'false',
+    },
+  }}
+/>

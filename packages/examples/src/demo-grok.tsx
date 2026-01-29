@@ -7,17 +7,29 @@ import {
   ConversationContent,
   ConversationScrollButton,
 } from "@repo/elements/conversation";
-import { Message, MessageContent } from "@repo/elements/message";
+import {
+  Message,
+  MessageContent,
+  MessageResponse,
+} from "@repo/elements/message";
+import {
+  ModelSelector,
+  ModelSelectorContent,
+  ModelSelectorEmpty,
+  ModelSelectorGroup,
+  ModelSelectorInput,
+  ModelSelectorItem,
+  ModelSelectorList,
+  ModelSelectorLogo,
+  ModelSelectorLogoGroup,
+  ModelSelectorName,
+  ModelSelectorTrigger,
+} from "@repo/elements/model-selector";
 import {
   PromptInput,
   PromptInputButton,
   PromptInputFooter,
   type PromptInputMessage,
-  PromptInputModelSelect,
-  PromptInputModelSelectContent,
-  PromptInputModelSelectItem,
-  PromptInputModelSelectTrigger,
-  PromptInputModelSelectValue,
   PromptInputTextarea,
   PromptInputTools,
 } from "@repo/elements/prompt-input";
@@ -26,7 +38,6 @@ import {
   ReasoningContent,
   ReasoningTrigger,
 } from "@repo/elements/reasoning";
-import { Response } from "@repo/elements/response";
 import {
   Source,
   Sources,
@@ -51,6 +62,7 @@ import type { ToolUIPart } from "ai";
 import {
   AudioWaveformIcon,
   CameraIcon,
+  CheckIcon,
   ChevronDownIcon,
   FileIcon,
   ImageIcon,
@@ -69,12 +81,25 @@ import {
 } from "./demo-chat-data";
 
 const models = [
-  { id: "grok-3", name: "Grok-3" },
-  { id: "grok-2-1212", name: "Grok-2-1212" },
+  {
+    id: "grok-3",
+    name: "Grok-3",
+    chef: "xAI",
+    chefSlug: "xai",
+    providers: ["xai"],
+  },
+  {
+    id: "grok-2-1212",
+    name: "Grok-2-1212",
+    chef: "xAI",
+    chefSlug: "xai",
+    providers: ["xai"],
+  },
 ];
 
 const Example = () => {
   const [model, setModel] = useState<string>(models[0].id);
+  const [modelSelectorOpen, setModelSelectorOpen] = useState(false);
   const [text, setText] = useState<string>("");
   const [useWebSearch, setUseWebSearch] = useState<boolean>(false);
   const [useMicrophone, setUseMicrophone] = useState<boolean>(false);
@@ -121,12 +146,14 @@ const Example = () => {
     },
   });
 
+  const selectedModelData = models.find((m) => m.id === model);
+
   // Initialize with first user message
   useEffect(() => {
     if (messages.length === 0 && userMessageTexts.length > 0) {
       sendMessage({ text: userMessageTexts[0] });
     }
-  }, [messages.length, sendMessage, userMessageTexts]);
+  }, [messages.length, sendMessage]);
 
   const handleSubmit = (message: PromptInputMessage) => {
     const hasText = Boolean(message.text);
@@ -220,7 +247,7 @@ const Example = () => {
                       )}
                       key={`${message.id}-text-${i}`}
                     >
-                      <Response>{textPart.text}</Response>
+                      <MessageResponse>{textPart.text}</MessageResponse>
                     </MessageContent>
                   ))}
                 </div>
@@ -307,18 +334,59 @@ const Example = () => {
               </PromptInputButton>
             </PromptInputTools>
             <div className="flex items-center gap-2">
-              <PromptInputModelSelect onValueChange={setModel} value={model}>
-                <PromptInputModelSelectTrigger>
-                  <PromptInputModelSelectValue />
-                </PromptInputModelSelectTrigger>
-                <PromptInputModelSelectContent>
-                  {models.map((model) => (
-                    <PromptInputModelSelectItem key={model.id} value={model.id}>
-                      {model.name}
-                    </PromptInputModelSelectItem>
-                  ))}
-                </PromptInputModelSelectContent>
-              </PromptInputModelSelect>
+              <ModelSelector
+                onOpenChange={setModelSelectorOpen}
+                open={modelSelectorOpen}
+              >
+                <ModelSelectorTrigger asChild>
+                  <PromptInputButton>
+                    {selectedModelData?.chefSlug && (
+                      <ModelSelectorLogo
+                        provider={selectedModelData.chefSlug}
+                      />
+                    )}
+                    {selectedModelData?.name && (
+                      <ModelSelectorName>
+                        {selectedModelData.name}
+                      </ModelSelectorName>
+                    )}
+                  </PromptInputButton>
+                </ModelSelectorTrigger>
+                <ModelSelectorContent>
+                  <ModelSelectorInput placeholder="Search models..." />
+                  <ModelSelectorList>
+                    <ModelSelectorEmpty>No models found.</ModelSelectorEmpty>
+                    <ModelSelectorGroup heading="xAI">
+                      {models.map((m) => (
+                        <ModelSelectorItem
+                          key={m.id}
+                          onSelect={() => {
+                            setModel(m.id);
+                            setModelSelectorOpen(false);
+                          }}
+                          value={m.id}
+                        >
+                          <ModelSelectorLogo provider={m.chefSlug} />
+                          <ModelSelectorName>{m.name}</ModelSelectorName>
+                          <ModelSelectorLogoGroup>
+                            {m.providers.map((provider) => (
+                              <ModelSelectorLogo
+                                key={provider}
+                                provider={provider}
+                              />
+                            ))}
+                          </ModelSelectorLogoGroup>
+                          {model === m.id ? (
+                            <CheckIcon className="ml-auto size-4" />
+                          ) : (
+                            <div className="ml-auto size-4" />
+                          )}
+                        </ModelSelectorItem>
+                      ))}
+                    </ModelSelectorGroup>
+                  </ModelSelectorList>
+                </ModelSelectorContent>
+              </ModelSelector>
               <PromptInputButton
                 className="rounded-full bg-foreground font-medium text-background"
                 onClick={() => setUseMicrophone(!useMicrophone)}

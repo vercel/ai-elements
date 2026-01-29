@@ -1,0 +1,331 @@
+---
+title: Commit
+description: Display commit information with hash, message, author, and file changes.
+path: elements/components/commit
+---
+
+The `Commit` component displays commit details including hash, message, author, timestamp, and changed files.
+
+<Preview path="commit" />
+
+## Installation
+
+<ElementsInstaller path="commit" />
+
+## Features
+
+- Commit hash display with copy button
+- Author avatar with initials
+- Relative timestamp formatting
+- Collapsible file changes list
+- Color-coded file status (added/modified/deleted/renamed)
+- Line additions/deletions count
+
+## File Status
+
+| Status | Label | Color |
+|--------|-------|-------|
+| `added` | A | Green |
+| `modified` | M | Yellow |
+| `deleted` | D | Red |
+| `renamed` | R | Blue |
+
+## Props
+
+### `<Commit />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Spread to the Collapsible component.',
+      type: 'React.ComponentProps<typeof Collapsible>',
+    },
+  }}
+/>
+
+### `<CommitHeader />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Spread to the CollapsibleTrigger component.',
+      type: 'React.ComponentProps<typeof CollapsibleTrigger>',
+    },
+  }}
+/>
+
+### `<CommitAuthor />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Spread to the container div.',
+      type: 'React.HTMLAttributes<HTMLDivElement>',
+    },
+  }}
+/>
+
+### `<CommitAuthorAvatar />`
+
+<TypeTable
+  type={{
+    initials: {
+      description: 'Author initials to display.',
+      type: 'string',
+      required: true,
+    },
+    '...props': {
+      description: 'Spread to the Avatar component.',
+      type: 'React.ComponentProps<typeof Avatar>',
+    },
+  }}
+/>
+
+### `<CommitInfo />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Spread to the container div.',
+      type: 'React.HTMLAttributes<HTMLDivElement>',
+    },
+  }}
+/>
+
+### `<CommitMessage />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Spread to the span element.',
+      type: 'React.HTMLAttributes<HTMLSpanElement>',
+    },
+  }}
+/>
+
+### `<CommitMetadata />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Spread to the container div.',
+      type: 'React.HTMLAttributes<HTMLDivElement>',
+    },
+  }}
+/>
+
+### `<CommitHash />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Spread to the span element.',
+      type: 'React.HTMLAttributes<HTMLSpanElement>',
+    },
+  }}
+/>
+
+### `<CommitSeparator />`
+
+<TypeTable
+  type={{
+    children: {
+      description: 'Custom separator content.',
+      type: 'React.ReactNode',
+      default: '"•"',
+    },
+    '...props': {
+      description: 'Spread to the span element.',
+      type: 'React.HTMLAttributes<HTMLSpanElement>',
+    },
+  }}
+/>
+
+### `<CommitTimestamp />`
+
+<TypeTable
+  type={{
+    date: {
+      description: 'Commit date.',
+      type: 'Date',
+      required: true,
+    },
+    children: {
+      description: 'Custom timestamp content. Defaults to relative time.',
+      type: 'React.ReactNode',
+    },
+    '...props': {
+      description: 'Spread to the time element.',
+      type: 'React.HTMLAttributes<HTMLTimeElement>',
+    },
+  }}
+/>
+
+### `<CommitActions />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Spread to the container div.',
+      type: 'React.HTMLAttributes<HTMLDivElement>',
+    },
+  }}
+/>
+
+### `<CommitCopyButton />`
+
+<TypeTable
+  type={{
+    hash: {
+      description: 'Commit hash to copy.',
+      type: 'string',
+      required: true,
+    },
+    onCopy: {
+      description: 'Callback after successful copy.',
+      type: '() => void',
+    },
+    onError: {
+      description: 'Callback if copying fails.',
+      type: '(error: Error) => void',
+    },
+    timeout: {
+      description: 'Duration to show copied state (ms).',
+      type: 'number',
+      default: '2000',
+    },
+    '...props': {
+      description: 'Spread to the Button component.',
+      type: 'React.ComponentProps<typeof Button>',
+    },
+  }}
+/>
+
+### `<CommitContent />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Spread to the CollapsibleContent component.',
+      type: 'React.ComponentProps<typeof CollapsibleContent>',
+    },
+  }}
+/>
+
+### `<CommitFiles />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Spread to the container div.',
+      type: 'React.HTMLAttributes<HTMLDivElement>',
+    },
+  }}
+/>
+
+### `<CommitFile />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Spread to the row div.',
+      type: 'React.HTMLAttributes<HTMLDivElement>',
+    },
+  }}
+/>
+
+### `<CommitFileInfo />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Spread to the container div.',
+      type: 'React.HTMLAttributes<HTMLDivElement>',
+    },
+  }}
+/>
+
+### `<CommitFileStatus />`
+
+<TypeTable
+  type={{
+    status: {
+      description: 'File change status.',
+      type: '"added" | "modified" | "deleted" | "renamed"',
+      required: true,
+    },
+    children: {
+      description: 'Custom status label.',
+      type: 'React.ReactNode',
+    },
+    '...props': {
+      description: 'Spread to the span element.',
+      type: 'React.HTMLAttributes<HTMLSpanElement>',
+    },
+  }}
+/>
+
+### `<CommitFileIcon />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Spread to the FileIcon component.',
+      type: 'React.ComponentProps<typeof FileIcon>',
+    },
+  }}
+/>
+
+### `<CommitFilePath />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Spread to the span element.',
+      type: 'React.HTMLAttributes<HTMLSpanElement>',
+    },
+  }}
+/>
+
+### `<CommitFileChanges />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Spread to the container div.',
+      type: 'React.HTMLAttributes<HTMLDivElement>',
+    },
+  }}
+/>
+
+### `<CommitFileAdditions />`
+
+<TypeTable
+  type={{
+    count: {
+      description: 'Number of lines added.',
+      type: 'number',
+      required: true,
+    },
+    '...props': {
+      description: 'Spread to the span element.',
+      type: 'React.HTMLAttributes<HTMLSpanElement>',
+    },
+  }}
+/>
+
+### `<CommitFileDeletions />`
+
+<TypeTable
+  type={{
+    count: {
+      description: 'Number of lines deleted.',
+      type: 'number',
+      required: true,
+    },
+    '...props': {
+      description: 'Spread to the span element.',
+      type: 'React.HTMLAttributes<HTMLSpanElement>',
+    },
+  }}
+/>

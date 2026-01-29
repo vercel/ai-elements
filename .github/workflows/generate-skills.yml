@@ -1,0 +1,60 @@
+name: Generate Skills
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'apps/docs/content/docs/**/*.mdx'
+      - 'packages/examples/src/**/*.tsx'
+      - 'packages/scripts/**'
+
+concurrency: ${{ github.workflow }}-${{ github.ref }}
+
+permissions:
+  contents: write
+
+jobs:
+  generate:
+    name: Generate Skills
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Generate GitHub App Token
+        id: generate-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ secrets.AI_ELEMENTS_APP_ID }}
+          private-key: ${{ secrets.AI_ELEMENTS_APP_PRIVATE_KEY }}
+
+      - name: Checkout Repo
+        uses: actions/checkout@v6
+        with:
+          token: ${{ steps.generate-token.outputs.token }}
+
+      - name: Setup Git User
+        run: |
+          git config --global user.email "ai-elements-bot[bot]@users.noreply.github.com"
+          git config --global user.name "ai-elements-bot[bot]"
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+
+      - name: Install Dependencies
+        run: pnpm i
+
+      - name: Generate Skills
+        run: pnpm --filter @repo/scripts generate-skills
+
+      - name: Commit if changed
+        run: |
+          git add -A
+          if ! git diff --staged --quiet; then
+            git commit -m "chore: regenerate skills"
+            git push
+          fi

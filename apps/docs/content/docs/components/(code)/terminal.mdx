@@ -1,0 +1,164 @@
+---
+title: Terminal
+description: Display streaming console output with full ANSI color support.
+path: elements/components/terminal
+---
+
+The `Terminal` component displays console output with ANSI color support, streaming indicators, and auto-scroll functionality.
+
+<Preview path="terminal" />
+
+## Installation
+
+<ElementsInstaller path="terminal" />
+
+## Features
+
+- Full ANSI color support (256 colors, bold, italic, underline)
+- Streaming mode with cursor animation
+- Auto-scroll to latest output
+- Copy output to clipboard
+- Clear button support
+- Dark terminal theme
+
+## ANSI Support
+
+The Terminal uses `ansi-to-react` to parse ANSI escape codes:
+
+```bash
+\x1b[32m✓\x1b[0m Success    # Green checkmark
+\x1b[31m✗\x1b[0m Error      # Red X
+\x1b[33mwarn\x1b[0m Warning   # Yellow text
+\x1b[1mBold\x1b[0m           # Bold text
+```
+
+## Examples
+
+### Basic Usage
+
+<Preview path="terminal-basic" />
+
+### Streaming Mode
+
+<Preview path="terminal-streaming" />
+
+### With Clear Button
+
+<Preview path="terminal-clear" />
+
+## Props
+
+### `<Terminal />`
+
+<TypeTable
+  type={{
+    output: {
+      description: 'Terminal output text (supports ANSI codes).',
+      type: 'string',
+    },
+    isStreaming: {
+      description: 'Show streaming indicator.',
+      type: 'boolean',
+      default: 'false',
+    },
+    autoScroll: {
+      description: 'Auto-scroll to bottom on new output.',
+      type: 'boolean',
+      default: 'true',
+    },
+    onClear: {
+      description: 'Callback to clear output (enables clear button).',
+      type: '() => void',
+    },
+    className: {
+      description: 'Additional CSS classes.',
+      type: 'string',
+    },
+  }}
+/>
+
+### `<TerminalCopyButton />`
+
+<TypeTable
+  type={{
+    onCopy: {
+      description: 'Callback after successful copy.',
+      type: '() => void',
+    },
+    onError: {
+      description: 'Callback if copying fails.',
+      type: '(error: Error) => void',
+    },
+    timeout: {
+      description: 'Duration to show copied state (ms).',
+      type: 'number',
+      default: '2000',
+    },
+  }}
+/>
+
+### `<TerminalHeader />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any other props are spread to the div element.',
+      type: 'React.HTMLAttributes<HTMLDivElement>',
+    },
+  }}
+/>
+
+### `<TerminalTitle />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any other props are spread to the div element.',
+      type: 'React.HTMLAttributes<HTMLDivElement>',
+    },
+  }}
+/>
+
+### `<TerminalStatus />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any other props are spread to the div element.',
+      type: 'React.HTMLAttributes<HTMLDivElement>',
+    },
+  }}
+/>
+
+### `<TerminalActions />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any other props are spread to the div element.',
+      type: 'React.HTMLAttributes<HTMLDivElement>',
+    },
+  }}
+/>
+
+### `<TerminalClearButton />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any other props are spread to the Button component.',
+      type: 'React.ComponentProps<typeof Button>',
+    },
+  }}
+/>
+
+### `<TerminalContent />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Any other props are spread to the div element.',
+      type: 'React.HTMLAttributes<HTMLDivElement>',
+    },
+  }}
+/>

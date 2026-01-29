@@ -12,46 +12,6 @@ The `Plan` component provides a flexible system for displaying AI-generated exec
 
 <ElementsInstaller path="plan" />
 
-## Usage
-
-```tsx
-import {
-  Plan,
-  PlanAction,
-  PlanContent,
-  PlanDescription,
-  PlanFooter,
-  PlanHeader,
-  PlanTitle,
-  PlanTrigger,
-} from '@/components/ai-elements/plan';
-```
-
-```tsx
-<Plan defaultOpen={false}>
-  <PlanHeader>
-    <div>
-      <PlanTitle>Implement new feature</PlanTitle>
-      <PlanDescription>
-        Add authentication system with JWT tokens and refresh logic.
-      </PlanDescription>
-    </div>
-    <PlanTrigger />
-  </PlanHeader>
-  <PlanContent>
-    <div className="space-y-4 text-sm">
-      <div>
-        <h3 className="mb-2 font-semibold">Overview</h3>
-        <p>This plan outlines the implementation strategy...</p>
-      </div>
-    </div>
-  </PlanContent>
-  <PlanFooter>
-    <Button>Execute Plan</Button>
-  </PlanFooter>
-</Plan>
-```
-
 ## Features
 
 - Collapsible content with smooth animations

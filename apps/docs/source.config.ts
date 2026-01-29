@@ -1,3 +1,4 @@
+import { remarkMdxMermaid } from "fumadocs-core/mdx-plugins";
 import {
   defineConfig,
   defineDocs,
@@ -6,10 +7,14 @@ import {
 } from "fumadocs-mdx/config";
 
 // You can customise Zod schemas for frontmatter and `meta.json` here
-// see https://fumadocs.dev/docs/mdx/collections#define-docs
+// see https://fumadocs.dev/docs/mdx/collections
 export const docs = defineDocs({
+  dir: "content/docs",
   docs: {
     schema: frontmatterSchema,
+    postprocess: {
+      includeProcessedMarkdown: true,
+    },
   },
   meta: {
     schema: metaSchema,
@@ -18,6 +23,6 @@ export const docs = defineDocs({
 
 export default defineConfig({
   mdxOptions: {
-    // MDX options
+    remarkPlugins: [remarkMdxMermaid],
   },
 });

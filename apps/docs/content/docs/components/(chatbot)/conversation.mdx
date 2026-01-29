@@ -12,38 +12,6 @@ The `Conversation` component wraps messages and automatically scrolls to the bot
 
 <ElementsInstaller path="conversation" />
 
-## Usage
-
-```tsx
-import {
-  Conversation,
-  ConversationContent,
-  ConversationEmptyState,
-  ConversationScrollButton,
-} from '@/components/ai-elements/conversation';
-```
-
-```tsx
-<Conversation className="relative w-full" style={{ height: '500px' }}>
-  <ConversationContent>
-    {messages.length === 0 ? (
-      <ConversationEmptyState
-        icon={<MessageSquare className="size-12" />}
-        title="No messages yet"
-        description="Start a conversation to see messages here"
-      />
-    ) : (
-      messages.map((message) => (
-        <Message from={message.from} key={message.id}>
-          <MessageContent>{message.content}</MessageContent>
-        </Message>
-      ))
-    )}
-  </ConversationContent>
-  <ConversationScrollButton />
-</Conversation>
-```
-
 ## Usage with AI SDK
 
 Build a simple conversational UI with `Conversation` and [`PromptInput`](/elements/components/prompt-input):
@@ -59,7 +27,11 @@ import {
   ConversationEmptyState,
   ConversationScrollButton,
 } from '@/components/ai-elements/conversation';
-import { Message, MessageContent } from '@/components/ai-elements/message';
+import { 
+  Message, 
+  MessageContent,
+  MessageResponse,
+} from '@/components/ai-elements/message';
 import {
   Input,
   PromptInputTextarea,
@@ -68,7 +40,6 @@ import {
 import { MessageSquare } from 'lucide-react';
 import { useState } from 'react';
 import { useChat } from '@ai-sdk/react';
-import { Response } from '@/components/ai-elements/response';
 
 const ConversationDemo = () => {
   const [input, setInput] = useState('');
@@ -101,9 +72,9 @@ const ConversationDemo = () => {
                       switch (part.type) {
                         case 'text': // we don't use any reasoning or tool calls in this example
                           return (
-                            <Response key={`${message.id}-${i}`}>
+                            <MessageResponse key={`${message.id}-${i}`}>
                               {part.text}
-                            </Response>
+                            </MessageResponse>
                           );
                         default:
                           return null;
@@ -154,7 +125,7 @@ export async function POST(req: Request) {
 
   const result = streamText({
     model: 'openai/gpt-4o',
-    messages: convertToModelMessages(messages),
+    messages: await convertToModelMessages(messages),
   });
 
   return result.toUIMessageStreamResponse();

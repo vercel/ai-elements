@@ -1,0 +1,203 @@
+---
+title: Environment Variables
+description: Display environment variables with masking and copy functionality.
+path: elements/components/environment-variables
+---
+
+The `EnvironmentVariables` component displays environment variables with value masking, visibility toggle, and copy functionality.
+
+<Preview path="environment-variables" />
+
+## Installation
+
+<ElementsInstaller path="environment-variables" />
+
+## Features
+
+- Value masking by default
+- Toggle visibility switch
+- Copy individual values
+- Export format support (`export KEY="value"`)
+- Required badge indicator
+
+## Props
+
+### `<EnvironmentVariables />`
+
+<TypeTable
+  type={{
+    showValues: {
+      description: 'Controlled visibility state.',
+      type: 'boolean',
+    },
+    defaultShowValues: {
+      description: 'Default visibility state.',
+      type: 'boolean',
+      default: 'false',
+    },
+    onShowValuesChange: {
+      description: 'Callback when visibility changes.',
+      type: '(show: boolean) => void',
+    },
+    '...props': {
+      description: 'Spread to the container div.',
+      type: 'React.HTMLAttributes<HTMLDivElement>',
+    },
+  }}
+/>
+
+### `<EnvironmentVariablesHeader />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Spread to the header div.',
+      type: 'React.HTMLAttributes<HTMLDivElement>',
+    },
+  }}
+/>
+
+### `<EnvironmentVariablesTitle />`
+
+<TypeTable
+  type={{
+    children: {
+      description: 'Custom title text.',
+      type: 'React.ReactNode',
+      default: '"Environment Variables"',
+    },
+    '...props': {
+      description: 'Spread to the h3 element.',
+      type: 'React.HTMLAttributes<HTMLHeadingElement>',
+    },
+  }}
+/>
+
+### `<EnvironmentVariablesToggle />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Spread to the Switch component.',
+      type: 'React.ComponentProps<typeof Switch>',
+    },
+  }}
+/>
+
+### `<EnvironmentVariablesContent />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Spread to the content div.',
+      type: 'React.HTMLAttributes<HTMLDivElement>',
+    },
+  }}
+/>
+
+### `<EnvironmentVariable />`
+
+<TypeTable
+  type={{
+    name: {
+      description: 'Variable name.',
+      type: 'string',
+      required: true,
+    },
+    value: {
+      description: 'Variable value.',
+      type: 'string',
+      required: true,
+    },
+    '...props': {
+      description: 'Spread to the row div.',
+      type: 'React.HTMLAttributes<HTMLDivElement>',
+    },
+  }}
+/>
+
+### `<EnvironmentVariableGroup />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Spread to the group div.',
+      type: 'React.HTMLAttributes<HTMLDivElement>',
+    },
+  }}
+/>
+
+### `<EnvironmentVariableName />`
+
+<TypeTable
+  type={{
+    children: {
+      description: 'Custom name content. Defaults to the name from context.',
+      type: 'React.ReactNode',
+    },
+    '...props': {
+      description: 'Spread to the span element.',
+      type: 'React.HTMLAttributes<HTMLSpanElement>',
+    },
+  }}
+/>
+
+### `<EnvironmentVariableValue />`
+
+<TypeTable
+  type={{
+    children: {
+      description: 'Custom value content. Defaults to the masked/unmasked value from context.',
+      type: 'React.ReactNode',
+    },
+    '...props': {
+      description: 'Spread to the span element.',
+      type: 'React.HTMLAttributes<HTMLSpanElement>',
+    },
+  }}
+/>
+
+### `<EnvironmentVariableCopyButton />`
+
+<TypeTable
+  type={{
+    copyFormat: {
+      description: 'Format to copy.',
+      type: '"name" | "value" | "export"',
+      default: '"value"',
+    },
+    onCopy: {
+      description: 'Callback after successful copy.',
+      type: '() => void',
+    },
+    onError: {
+      description: 'Callback if copying fails.',
+      type: '(error: Error) => void',
+    },
+    timeout: {
+      description: 'Duration to show copied state (ms).',
+      type: 'number',
+      default: '2000',
+    },
+    '...props': {
+      description: 'Spread to the Button component.',
+      type: 'React.ComponentProps<typeof Button>',
+    },
+  }}
+/>
+
+### `<EnvironmentVariableRequired />`
+
+<TypeTable
+  type={{
+    children: {
+      description: 'Custom badge text.',
+      type: 'React.ReactNode',
+      default: '"Required"',
+    },
+    '...props': {
+      description: 'Spread to the Badge component.',
+      type: 'React.ComponentProps<typeof Badge>',
+    },
+  }}
+/>

@@ -1,0 +1,169 @@
+---
+title: Package Info
+description: Display dependency information and version changes.
+path: elements/components/package-info
+---
+
+The `PackageInfo` component displays package dependency information including version changes and change type badges.
+
+<Preview path="package-info" />
+
+## Installation
+
+<ElementsInstaller path="package-info" />
+
+## Features
+
+- Version change display (current → new)
+- Color-coded change type badges
+- Dependencies list
+- Description support
+
+## Change Types
+
+| Type | Color | Use Case |
+|------|-------|----------|
+| `major` | Red | Breaking changes |
+| `minor` | Yellow | New features |
+| `patch` | Green | Bug fixes |
+| `added` | Blue | New dependency |
+| `removed` | Gray | Removed dependency |
+
+## Props
+
+### `<PackageInfo />`
+
+<TypeTable
+  type={{
+    name: {
+      description: 'Package name.',
+      type: 'string',
+      required: true,
+    },
+    currentVersion: {
+      description: 'Current installed version.',
+      type: 'string',
+    },
+    newVersion: {
+      description: 'New version being installed.',
+      type: 'string',
+    },
+    changeType: {
+      description: 'Type of version change.',
+      type: '"major" | "minor" | "patch" | "added" | "removed"',
+    },
+    '...props': {
+      description: 'Spread to the container div.',
+      type: 'React.HTMLAttributes<HTMLDivElement>',
+    },
+  }}
+/>
+
+### `<PackageInfoHeader />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Spread to the header div.',
+      type: 'React.HTMLAttributes<HTMLDivElement>',
+    },
+  }}
+/>
+
+### `<PackageInfoName />`
+
+<TypeTable
+  type={{
+    children: {
+      description: 'Custom name content. Defaults to the name from context.',
+      type: 'React.ReactNode',
+    },
+    '...props': {
+      description: 'Spread to the container div.',
+      type: 'React.HTMLAttributes<HTMLDivElement>',
+    },
+  }}
+/>
+
+### `<PackageInfoChangeType />`
+
+<TypeTable
+  type={{
+    children: {
+      description: 'Custom change type label. Defaults to the changeType from context.',
+      type: 'React.ReactNode',
+    },
+    '...props': {
+      description: 'Spread to the Badge component.',
+      type: 'React.HTMLAttributes<HTMLDivElement>',
+    },
+  }}
+/>
+
+### `<PackageInfoVersion />`
+
+<TypeTable
+  type={{
+    children: {
+      description: 'Custom version content. Defaults to version transition display.',
+      type: 'React.ReactNode',
+    },
+    '...props': {
+      description: 'Spread to the container div.',
+      type: 'React.HTMLAttributes<HTMLDivElement>',
+    },
+  }}
+/>
+
+### `<PackageInfoDescription />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Spread to the p element.',
+      type: 'React.HTMLAttributes<HTMLParagraphElement>',
+    },
+  }}
+/>
+
+### `<PackageInfoContent />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Spread to the container div.',
+      type: 'React.HTMLAttributes<HTMLDivElement>',
+    },
+  }}
+/>
+
+### `<PackageInfoDependencies />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Spread to the container div.',
+      type: 'React.HTMLAttributes<HTMLDivElement>',
+    },
+  }}
+/>
+
+### `<PackageInfoDependency />`
+
+<TypeTable
+  type={{
+    name: {
+      description: 'Dependency name.',
+      type: 'string',
+      required: true,
+    },
+    version: {
+      description: 'Dependency version.',
+      type: 'string',
+    },
+    '...props': {
+      description: 'Spread to the row div.',
+      type: 'React.HTMLAttributes<HTMLDivElement>',
+    },
+  }}
+/>

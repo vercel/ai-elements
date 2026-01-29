@@ -9,6 +9,28 @@ on:
       - main
 
 jobs:
+
+  build:
+    name: Build Packages
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v6
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js 24
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+
+      - name: Install Dependencies
+        run: pnpm i
+
+      - name: Build Packages and Docs
+        run: pnpm build --filter ai-elements --filter docs
+
   test:
     name: Run Tests (Node.js ${{ matrix.node-version }})
     runs-on: ubuntu-latest
@@ -19,7 +41,7 @@ jobs:
 
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4

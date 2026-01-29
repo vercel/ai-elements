@@ -15,7 +15,7 @@ describe("Reasoning", () => {
 
   it("throws error when components used outside Reasoning provider", () => {
     // Suppress console.error for this test
-    const spy = vi.spyOn(console, "error").mockImplementation(() => {});
+    const spy = vi.spyOn(console, "error").mockImplementation(() => undefined);
 
     expect(() => render(<ReasoningTrigger />)).toThrow(
       "Reasoning components must be used within Reasoning"
@@ -126,6 +126,15 @@ describe("ReasoningTrigger", () => {
     expect(screen.getByText("Thinking...")).toBeInTheDocument();
   });
 
+  it("renders generic message when duration is undefined", () => {
+    render(
+      <Reasoning isStreaming={false}>
+        <ReasoningTrigger />
+      </Reasoning>
+    );
+    expect(screen.getByText("Thought for a few seconds")).toBeInTheDocument();
+  });
+
   it("renders custom children", () => {
     render(
       <Reasoning>
@@ -144,7 +153,7 @@ describe("ReasoningTrigger", () => {
     expect(container.querySelector("svg")).toBeInTheDocument();
   });
 
-  it("rounds sub-second durations up to 1 second - #63", async () => {
+  it("rounds sub-second durations up to 1 second - #63", () => {
     vi.useFakeTimers();
     const { rerender } = render(
       <Reasoning isStreaming>

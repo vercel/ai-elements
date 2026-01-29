@@ -1,0 +1,109 @@
+---
+title: Snippet
+description: Lightweight inline code display for terminal commands and short code references.
+path: elements/components/snippet
+---
+
+The `Snippet` component provides a lightweight way to display terminal commands and short code snippets with copy functionality. Built on top of InputGroup, it's designed for brief code references in text.
+
+<Preview path="snippet" />
+
+## Installation
+
+<ElementsInstaller path="snippet" />
+
+## Features
+
+- Composable architecture with InputGroup
+- Optional prefix text (e.g., `$` for terminal commands)
+- Built-in copy button
+- Compact design for chat/markdown
+
+## Examples
+
+### Without Prefix
+
+<Preview path="snippet-plain" />
+
+## Props
+
+### `<Snippet />`
+
+<TypeTable
+  type={{
+    code: {
+      description: 'The code content to display.',
+      type: 'string',
+      required: true,
+    },
+    children: {
+      description: 'Child elements like SnippetAddon, SnippetInput, etc.',
+      type: 'React.ReactNode',
+    },
+    '...props': {
+      description: 'Spread to the InputGroup component.',
+      type: 'React.ComponentProps<typeof InputGroup>',
+    },
+  }}
+/>
+
+### `<SnippetAddon />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Spread to the InputGroupAddon component.',
+      type: 'React.ComponentProps<typeof InputGroupAddon>',
+    },
+  }}
+/>
+
+### `<SnippetText />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Spread to the InputGroupText component.',
+      type: 'React.ComponentProps<typeof InputGroupText>',
+    },
+  }}
+/>
+
+### `<SnippetInput />`
+
+<TypeTable
+  type={{
+    '...props': {
+      description: 'Spread to the InputGroupInput component. Value and readOnly are set automatically.',
+      type: 'Omit<React.ComponentProps<typeof InputGroupInput>, "readOnly" | "value">',
+    },
+  }}
+/>
+
+### `<SnippetCopyButton />`
+
+<TypeTable
+  type={{
+    onCopy: {
+      description: 'Callback fired after a successful copy.',
+      type: '() => void',
+    },
+    onError: {
+      description: 'Callback fired if copying fails.',
+      type: '(error: Error) => void',
+    },
+    timeout: {
+      description: 'How long to show the copied state (ms).',
+      type: 'number',
+      default: '2000',
+    },
+    children: {
+      description: 'Custom button content.',
+      type: 'React.ReactNode',
+    },
+    '...props': {
+      description: 'Spread to the InputGroupButton component.',
+      type: 'React.ComponentProps<typeof InputGroupButton>',
+    },
+  }}
+/>

@@ -1,6 +1,9 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
+
+const CONSOLE_REGEX = /console/i;
+
 import {
   WebPreview,
   WebPreviewBody,
@@ -44,7 +47,7 @@ describe("WebPreview", () => {
 
   it("throws error when component used outside provider", () => {
     // Suppress console.error for this test
-    const spy = vi.spyOn(console, "error").mockImplementation(() => {});
+    const spy = vi.spyOn(console, "error").mockImplementation(() => undefined);
 
     expect(() => render(<WebPreviewUrl />)).toThrow(
       "WebPreview components must be used within a WebPreview"
@@ -166,7 +169,7 @@ describe("WebPreviewConsole", () => {
       </WebPreview>
     );
     expect(
-      screen.getByRole("button", { name: /console/i })
+      screen.getByRole("button", { name: CONSOLE_REGEX })
     ).toBeInTheDocument();
   });
 
@@ -179,7 +182,7 @@ describe("WebPreviewConsole", () => {
       </WebPreview>
     );
 
-    await user.click(screen.getByRole("button", { name: /console/i }));
+    await user.click(screen.getByRole("button", { name: CONSOLE_REGEX }));
     expect(screen.getByText("No console output")).toBeVisible();
   });
 
@@ -200,7 +203,7 @@ describe("WebPreviewConsole", () => {
       </WebPreview>
     );
 
-    await user.click(screen.getByRole("button", { name: /console/i }));
+    await user.click(screen.getByRole("button", { name: CONSOLE_REGEX }));
     expect(screen.getByText("Test log")).toBeVisible();
     expect(screen.getByText("Error message")).toBeVisible();
   });

@@ -12,46 +12,6 @@ The `Confirmation` component provides a flexible system for displaying tool appr
 
 <ElementsInstaller path="confirmation" />
 
-## Usage
-
-```tsx
-import {
-  Confirmation,
-  ConfirmationContent,
-  ConfirmationRequest,
-  ConfirmationAccepted,
-  ConfirmationRejected,
-  ConfirmationActions,
-  ConfirmationAction,
-} from '@/components/ai-elements/confirmation';
-```
-
-```tsx
-<Confirmation approval={{ id: 'tool-1' }} state="approval-requested">
-  <ConfirmationContent>
-    <ConfirmationRequest>
-      This tool wants to access your file system. Do you approve?
-    </ConfirmationRequest>
-    <ConfirmationAccepted>
-      <CheckIcon className="size-4" />
-      <span>Approved</span>
-    </ConfirmationAccepted>
-    <ConfirmationRejected>
-      <XIcon className="size-4" />
-      <span>Rejected</span>
-    </ConfirmationRejected>
-  </ConfirmationContent>
-  <ConfirmationActions>
-    <ConfirmationAction variant="outline" onClick={handleReject}>
-      Reject
-    </ConfirmationAction>
-    <ConfirmationAction variant="default" onClick={handleApprove}>
-      Approve
-    </ConfirmationAction>
-  </ConfirmationActions>
-</Confirmation>
-```
-
 ## Usage with AI SDK
 
 Build a chat UI with tool approval workflow where dangerous tools require user confirmation before execution.
@@ -68,14 +28,13 @@ import { CheckIcon, XIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Confirmation,
-  ConfirmationContent,
   ConfirmationRequest,
   ConfirmationAccepted,
   ConfirmationRejected,
   ConfirmationActions,
   ConfirmationAction,
 } from '@/components/ai-elements/confirmation';
-import { Response } from '@/components/ai-elements/response';
+import { MessageResponse } from '@/components/ai-elements/message';
 
 type DeleteFileInput = {
   filePath: string;
@@ -114,21 +73,19 @@ const Example = () => {
 
         {deleteTool?.approval && (
           <Confirmation approval={deleteTool.approval} state={deleteTool.state}>
-            <ConfirmationContent>
-              <ConfirmationRequest>
-                This tool wants to delete: <code>{deleteTool.input?.filePath}</code>
-                <br />
-                Do you approve this action?
-              </ConfirmationRequest>
-              <ConfirmationAccepted>
-                <CheckIcon className="size-4" />
-                <span>You approved this tool execution</span>
-              </ConfirmationAccepted>
-              <ConfirmationRejected>
-                <XIcon className="size-4" />
-                <span>You rejected this tool execution</span>
-              </ConfirmationRejected>
-            </ConfirmationContent>
+            <ConfirmationRequest>
+              This tool wants to delete: <code>{deleteTool.input?.filePath}</code>
+              <br />
+              Do you approve this action?
+            </ConfirmationRequest>
+            <ConfirmationAccepted>
+              <CheckIcon className="size-4" />
+              <span>You approved this tool execution</span>
+            </ConfirmationAccepted>
+            <ConfirmationRejected>
+              <XIcon className="size-4" />
+              <span>You rejected this tool execution</span>
+            </ConfirmationRejected>
             <ConfirmationActions>
               <ConfirmationAction
                 variant="outline"
@@ -157,11 +114,11 @@ const Example = () => {
         )}
 
         {deleteTool?.output && (
-          <Response>
+          <MessageResponse>
             {deleteTool.output.success
               ? deleteTool.output.message
               : `Error: ${deleteTool.output.message}`}
-          </Response>
+          </MessageResponse>
         )}
       </div>
     </div>
@@ -185,7 +142,7 @@ export async function POST(req: Request) {
 
   const result = streamText({
     model: 'openai/gpt-4o',
-    messages: convertToModelMessages(messages),
+    messages: await convertToModelMessages(messages),
     tools: {
       delete_file: {
         description: 'Delete a file from the file system',
@@ -273,21 +230,6 @@ Shows the rejected status when user rejects and state is `output-denied`.
     '...props': {
       description: 'Any other props are spread to the Alert component.',
       type: 'React.ComponentProps<typeof Alert>',
-    },
-  }}
-/>
-
-### `<ConfirmationContent />`
-
-<TypeTable
-  type={{
-    className: {
-      description: 'Additional CSS classes to apply to the AlertDescription component.',
-      type: 'string',
-    },
-    '...props': {
-      description: 'Any other props are spread to the AlertDescription component.',
-      type: 'React.ComponentProps<typeof AlertDescription>',
     },
   }}
 />
