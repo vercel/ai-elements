@@ -202,7 +202,7 @@ export type CategorizedParts = {
   text: TextUIPart[];
 };
 
-// Single-pass categorization of message parts using SDK type guards
+// Categorization of message parts. We need this because of branching messages.
 export function categorizeMessageParts(
   parts: UIMessage["parts"],
 ): CategorizedParts {
