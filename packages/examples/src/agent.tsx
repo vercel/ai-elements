@@ -41,17 +41,14 @@ const outputSchema = `z.object({
 
 const Example = () => (
   <Agent>
-    <AgentHeader
-      model="anthropic/claude-sonnet-4-5"
-      name="Research Assistant"
-    />
+    <AgentHeader model="openai/gpt-5.2-pro" name="Research Assistant" />
     <AgentContent>
       <AgentInstructions>
         You are a helpful research assistant. Your job is to search the web for
         information and summarize findings for the user. Always cite your
         sources and provide accurate, up-to-date information.
       </AgentInstructions>
-      <AgentTools>
+      <AgentTools type="multiple">
         <AgentTool tool={webSearchTool} value="web_search" />
         <AgentTool tool={readUrlTool} value="read_url" />
         <AgentTool tool={summarizeTool} value="summarize" />
