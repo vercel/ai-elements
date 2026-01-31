@@ -33,9 +33,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@repo/shadcn-ui/components/ui/select";
+import { Spinner } from "@repo/shadcn-ui/components/ui/spinner";
 import { cn } from "@repo/shadcn-ui/lib/utils";
 import type { ChatStatus, FileUIPart, SourceDocumentUIPart } from "ai";
-import { Spinner } from "@repo/shadcn-ui/components/ui/spinner";
 import {
   CornerDownLeftIcon,
   ImageIcon,

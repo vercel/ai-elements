@@ -422,7 +422,7 @@ const Example = () => {
     let output = "";
 
     for (const line of mockTerminalLines) {
-      output += line + "\n";
+      output += `${line}\n`;
       setTerminalOutput(output);
       await new Promise((resolve) => setTimeout(resolve, 100));
     }
@@ -464,7 +464,9 @@ const Example = () => {
 
   // Handle chat submit
   const handleSubmit = (message: PromptInputMessage) => {
-    if (!message.text.trim()) return;
+    if (!message.text.trim()) {
+      return;
+    }
 
     const userMessage: MessageType = {
       key: nanoid(),
