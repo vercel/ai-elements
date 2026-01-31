@@ -399,13 +399,14 @@ const Example = () => {
   // Stream message
   const streamMessage = useCallback(
     async (message: MessageType) => {
+      const newKey = nanoid(); // Generate fresh key to avoid duplicates
       if (message.from === "user") {
-        setMessages((prev) => [...prev, message]);
+        setMessages((prev) => [...prev, { ...message, key: newKey }]);
         return;
       }
 
       // Add empty assistant message
-      const newMessage = { ...message, content: "" };
+      const newMessage = { ...message, key: newKey, content: "" };
       setMessages((prev) => [...prev, newMessage]);
 
       setStatus("streaming");

@@ -2,7 +2,6 @@
 
 import { Conversation, ConversationContent } from "@repo/elements/conversation";
 import { Message, MessageContent } from "@repo/elements/message";
-import { Spinner } from "@repo/shadcn-ui/components/ui/spinner";
 import {
   PromptInput,
   type PromptInputMessage,
@@ -16,6 +15,7 @@ import {
   WebPreviewNavigation,
   WebPreviewUrl,
 } from "@repo/elements/web-preview";
+import { Spinner } from "@repo/shadcn-ui/components/ui/spinner";
 import { nanoid } from "nanoid";
 import { useState } from "react";
 
@@ -50,7 +50,8 @@ const mockChatHistory = [
   {
     id: "5",
     type: "user" as const,
-    content: "Can you add a grid of skill cards showing different capabilities?",
+    content:
+      "Can you add a grid of skill cards showing different capabilities?",
   },
   {
     id: "6",
@@ -69,13 +70,14 @@ export default function Home() {
   const [message, setMessage] = useState("");
   const [currentChat, setCurrentChat] = useState<Chat | null>(mockChat);
   const [isLoading, setIsLoading] = useState(false);
-  const [chatHistory, setChatHistory] = useState<
-    Array<{
-      id: string;
-      type: "user" | "assistant";
-      content: string;
-    }>
-  >(mockChatHistory);
+  const [chatHistory, setChatHistory] =
+    useState<
+      Array<{
+        id: string;
+        type: "user" | "assistant";
+        content: string;
+      }>
+    >(mockChatHistory);
 
   const handleSendMessage = async (promptMessage: PromptInputMessage) => {
     const hasText = Boolean(promptMessage.text);
@@ -138,14 +140,9 @@ export default function Home() {
   };
 
   return (
-    <div className="flex size-full">
+    <div className="flex size-full divide-x">
       {/* Chat Panel */}
-      <div className="flex w-1/2 flex-col border-r">
-        {/* Header */}
-        <div className="flex h-14 items-center justify-between border-b p-3">
-          <h1 className="font-semibold text-lg">v0 Clone</h1>
-        </div>
-
+      <div className="flex flex-1 flex-col">
         <div className="flex-1 space-y-4 overflow-y-auto p-4">
           {chatHistory.length === 0 ? (
             <div className="mt-8 text-center font-semibold">
@@ -200,7 +197,7 @@ export default function Home() {
           )}
           <div className="flex gap-2">
             <PromptInput
-              className="relative mx-auto mt-4 w-full max-w-2xl"
+              className="relative mx-auto w-full max-w-2xl"
               onSubmit={handleSendMessage}
             >
               <PromptInputTextarea
@@ -219,8 +216,8 @@ export default function Home() {
       </div>
 
       {/* Preview Panel */}
-      <div className="flex w-1/2 flex-col">
-        <WebPreview>
+      <div className="flex flex-1 flex-col">
+        <WebPreview className="rounded-none border-0">
           <WebPreviewNavigation>
             <WebPreviewUrl
               placeholder="Your app here..."
