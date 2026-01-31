@@ -1,0 +1,116 @@
+---
+title: New Components
+description: Guidelines for proposing and building new AI Elements components.
+---
+
+Want to add a new component to AI Elements? This guide covers what we look for and how to submit.
+
+## Fit & Scope
+
+Before building, consider whether the component:
+
+### Solves an AI-Specific Need
+
+Components should address challenges unique to AI interfaces:
+
+- Chat and conversation UIs
+- Streaming content display
+- Model status and feedback
+- AI-specific interactions (regenerate, branch, etc.)
+
+### Doesn't Already Exist
+
+Check if shadcn/ui or another library already provides what you need. AI Elements focuses on components that require AI-specific behavior.
+
+### Has Broad Applicability
+
+The component should be useful across different AI applications, not just your specific use case.
+
+## Design Requirements
+
+### Composability
+
+Build components from smaller pieces:
+
+```tsx title="example.tsx"
+// Good: Composable
+<Message from="assistant">
+  <MessageContent>
+    <MessageResponse>{text}</MessageResponse>
+  </MessageContent>
+</Message>
+
+// Avoid: Monolithic
+<Message from="assistant" content={text} />
+```
+
+### Consistency
+
+Follow existing patterns in the library:
+
+- Use `cn()` for class merging
+- Extend HTML primitive attributes
+- Use CSS variables for theming
+- Match naming conventions
+
+### Accessibility
+
+Components must be:
+
+- Keyboard navigable
+- Screen reader friendly
+- WCAG 2.1 AA compliant
+- Properly labeled
+
+## Documentation Requirements
+
+Every component needs:
+
+1. **MDX documentation** with title and description
+2. **Props table** documenting all props
+3. **Usage examples** showing AI SDK integration
+4. **Installation instructions**
+
+## Technical Standards
+
+### TypeScript
+
+- Export all prop types
+- Use proper generics where needed
+- Avoid `any` types
+
+### Testing
+
+- Add unit tests for component logic
+- Test accessibility with automated tools
+- Verify behavior with AI SDK hooks
+
+### Code Style
+
+- Follow the project's Biome configuration
+- Run `pnpm run check` before submitting
+- Match existing component patterns
+
+## Submission Process
+
+1. **Open an issue first** - Describe the component and its use case. Get feedback before building.
+
+2. **Build the component** - Follow the patterns in `packages/elements/src/`.
+
+3. **Add examples** - Create examples in `packages/examples/src/`.
+
+4. **Write documentation** - Add MDX docs in `apps/docs/content/components/`.
+
+5. **Submit a PR** - Reference the original issue. Include screenshots or videos of the component in action.
+
+## Review Process
+
+Maintainers will review for:
+
+- Alignment with library goals
+- Code quality and patterns
+- Documentation completeness
+- Accessibility compliance
+- AI SDK integration
+
+Expect feedback and iteration. Quality components take time to get right.

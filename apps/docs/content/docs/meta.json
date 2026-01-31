@@ -2,5 +2,21 @@
   "title": "Docs",
   "description": "Documentation for AI Elements",
   "root": true,
-  "pages": ["index", "usage", "troubleshooting", "mcp"]
+  "pages": [
+    "---Overview---",
+    "index",
+    "benefits",
+    "community",
+    "vercel-ai-frontend",
+    "---Usage---",
+    "setup",
+    "usage",
+    "mcp",
+    "skill",
+    "troubleshooting",
+    "---Contributing---",
+    "how-to-contribute",
+    "new-components",
+    "philosophy"
+  ]
 }

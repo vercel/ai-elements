@@ -1,0 +1,194 @@
+---
+title: The Vercel AI Frontend Stack
+description: How AI Gateway, AI SDK, and AI Elements work together.
+---
+
+Vercel provides a complete stack for building AI-powered applications. Here's how the pieces fit together.
+
+## The Stack
+
+```mermaid
+graph TB
+    subgraph "Your Application"
+        UI[AI Elements Components]
+        Hooks[AI SDK React Hooks]
+    end
+
+    subgraph "Backend"
+        Routes[AI SDK Core / Next.js Routes]
+    end
+
+    subgraph "Vercel Infrastructure"
+        Gateway[AI Gateway]
+    end
+
+    subgraph "Model Providers"
+        OpenAI[OpenAI]
+        Anthropic[Anthropic]
+        Google[Google]
+        Others[Others...]
+    end
+
+    UI --> Hooks
+    Hooks --> Routes
+    Routes --> Gateway
+    Gateway --> OpenAI
+    Gateway --> Anthropic
+    Gateway --> Google
+    Gateway --> Others
+```
+
+## AI Gateway
+
+[AI Gateway](https://vercel.com/docs/ai-gateway) is your single point of access to AI models.
+
+### What It Does
+
+- **Unified API** - One API key for OpenAI, Anthropic, Google, and more
+- **Caching** - Reduce costs by caching identical requests
+- **Rate limiting** - Protect your application from abuse
+- **Observability** - Monitor usage, latency, and costs
+- **Fallbacks** - Automatically retry with backup models
+
+### Setup
+
+Add `AI_GATEWAY_API_KEY` to your environment:
+
+```bash title=".env.local"
+AI_GATEWAY_API_KEY=your_api_key_here
+```
+
+Then use it with the AI SDK:
+
+```ts title="app/api/chat/route.ts"
+import { createOpenAI } from '@ai-sdk/openai';
+
+const openai = createOpenAI({
+  apiKey: process.env.AI_GATEWAY_API_KEY,
+  baseURL: 'https://gateway.ai.cloudflare.com/v1/your_account_id_here/ai-gateway/openai',
+});
+```
+
+## AI SDK
+
+The [AI SDK](https://ai-sdk.dev/) provides the foundation for AI interactions.
+
+### Core Features
+
+- **Streaming** - Stream responses from any model
+- **Tool calling** - Let models call functions
+- **Structured output** - Get typed responses
+- **Multi-modal** - Handle text, images, and files
+
+### React Hooks
+
+```tsx title="example.tsx"
+import { useChat } from '@ai-sdk/react';
+
+function Chat() {
+  const { messages, input, handleInputChange, handleSubmit, status } = useChat();
+
+  return (
+    <form onSubmit={handleSubmit}>
+      {messages.map(m => (
+        <div key={m.id}>{m.content}</div>
+      ))}
+      <input value={input} onChange={handleInputChange} />
+    </form>
+  );
+}
+```
+
+### Server Integration
+
+```ts title="app/api/chat/route.ts"
+import { streamText } from 'ai';
+import { openai } from '@ai-sdk/openai';
+
+export async function POST(req: Request) {
+  const { messages } = await req.json();
+
+  const result = streamText({
+    model: openai('gpt-4o'),
+    messages,
+  });
+
+  return result.toDataStreamResponse();
+}
+```
+
+## AI Elements
+
+AI Elements provides the UI layer on top of the AI SDK.
+
+### What It Adds
+
+- **Pre-built components** - Message, Conversation, PromptInput, and more
+- **Streaming support** - Components handle partial content gracefully
+- **Composable design** - Build exactly the UI you need
+- **Theme integration** - Works with your existing shadcn/ui setup
+
+### Integration Example
+
+```tsx title="app/chat/page.tsx"
+'use client';
+
+import { useChat } from '@ai-sdk/react';
+import { Conversation, ConversationContent } from '@/components/ai-elements/conversation';
+import { Message, MessageContent, MessageResponse } from '@/components/ai-elements/message';
+import { Input, PromptInputTextarea, PromptInputSubmit } from '@/components/ai-elements/prompt-input';
+
+export default function ChatPage() {
+  const { messages, input, handleInputChange, handleSubmit, status } = useChat();
+
+  return (
+    <div className="h-screen flex flex-col">
+      <Conversation className="flex-1">
+        <ConversationContent>
+          {messages.map(message => (
+            <Message key={message.id} from={message.role}>
+              <MessageContent>
+                {message.parts.map((part, i) =>
+                  part.type === 'text' ? (
+                    <MessageResponse key={i}>{part.text}</MessageResponse>
+                  ) : null
+                )}
+              </MessageContent>
+            </Message>
+          ))}
+        </ConversationContent>
+      </Conversation>
+
+      <Input onSubmit={handleSubmit} className="p-4">
+        <PromptInputTextarea
+          value={input}
+          onChange={handleInputChange}
+          placeholder="Type a message..."
+        />
+        <PromptInputSubmit
+          status={status === 'streaming' ? 'streaming' : 'ready'}
+        />
+      </Input>
+    </div>
+  );
+}
+```
+
+## Putting It Together
+
+The full flow:
+
+1. **User types** in an AI Elements `PromptInput`
+2. **React hook** (`useChat`) sends the message to your API route
+3. **AI SDK** streams the response from the model via AI Gateway
+4. **AI Elements** renders the streaming response in `MessageResponse`
+
+Each layer handles its responsibility:
+
+| Layer | Responsibility |
+|-------|----------------|
+| AI Gateway | Model access, caching, observability |
+| AI SDK | Streaming, hooks, server integration |
+| AI Elements | UI components, theming, accessibility |
+
+This separation means you can swap any layer independently. Use a different model provider, build custom hooks, or create your own components—the stack remains flexible.
