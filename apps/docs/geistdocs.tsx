@@ -27,7 +27,7 @@ export const nav = [
 export const suggestions = [
   "What is AI Elements?",
   "What can I build with AI Elements?",
-  "What is AI Elements?",
+  "What components are available in AI Elements?",
   "How much does AI Elements cost?",
 ];
 
