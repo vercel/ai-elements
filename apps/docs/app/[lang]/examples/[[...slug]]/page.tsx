@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import { ElementsDemo } from "@/components/custom/elements-demo";
 import { ElementsInstaller } from "@/components/custom/elements-installer";
 import { Preview } from "@/components/custom/preview";
+import { SourceCode } from "@/components/custom/source-code";
 import { AskAI } from "@/components/geistdocs/ask-ai";
 import { CopyPage } from "@/components/geistdocs/copy-page";
 import {
@@ -65,6 +66,7 @@ const Page = async ({ params }: PageProps<"/[lang]/examples/[[...slug]]">) => {
             Preview,
             ElementsInstaller,
             ElementsDemo,
+            SourceCode,
           })}
         />
       </DocsBody>

@@ -85,13 +85,10 @@ export const CodeBlock = ({
 
   if (!title) {
     return (
-      <div className="relative mb-6">
+      <div className={cn("relative mb-6", className)}>
         <CodeBlockComponent />
         <Button
-          className={cn(
-            "absolute top-[5px] right-[5px] bg-background/80 backdrop-blur-sm",
-            className
-          )}
+          className="absolute top-[5px] right-[5px] bg-background/80 backdrop-blur-sm"
           onClick={copyToClipboard}
           size="icon"
           variant="ghost"
@@ -105,16 +102,18 @@ export const CodeBlock = ({
   return (
     <Card className="not-prose mb-6 gap-0 overflow-hidden rounded-sm p-0 shadow-none">
       <CardHeader className="flex items-center gap-2 border-b bg-sidebar py-1.5! pr-1.5 pl-4 text-muted-foreground">
-        <div
-          className="size-3.5 shrink-0"
-          // biome-ignore lint/security/noDangerouslySetInnerHtml: "Required for icon prop."
-          dangerouslySetInnerHTML={{ __html: icon as unknown as TrustedHTML }}
-        />
+        {icon && (
+          <div
+            className="size-3.5 shrink-0"
+            // biome-ignore lint/security/noDangerouslySetInnerHtml: "Required for icon prop."
+            dangerouslySetInnerHTML={{ __html: icon as unknown as TrustedHTML }}
+          />
+        )}
         <CardTitle className="flex-1 font-mono font-normal text-sm tracking-tight">
           {title}
         </CardTitle>
         <Button
-          className={cn("shrink-0", className)}
+          className="shrink-0"
           onClick={copyToClipboard}
           size="icon"
           variant="ghost"
@@ -122,7 +121,7 @@ export const CodeBlock = ({
           <Icon size={14} />
         </Button>
       </CardHeader>
-      <CardContent className="p-0">
+      <CardContent className={cn("p-0", className)}>
         <CodeBlockComponent className="line-numbers rounded-none border-none" />
       </CardContent>
     </Card>

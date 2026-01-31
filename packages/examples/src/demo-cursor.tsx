@@ -5,18 +5,8 @@ import {
   CheckpointIcon,
   CheckpointTrigger,
 } from "@repo/elements/checkpoint";
-import {
-  CodeBlock,
-  CodeBlockActions,
-  CodeBlockCopyButton,
-  CodeBlockFilename,
-  CodeBlockHeader,
-  CodeBlockTitle,
-} from "@repo/elements/code-block";
-import {
-  Conversation,
-  ConversationContent,
-} from "@repo/elements/conversation";
+import { CodeBlock } from "@repo/elements/code-block";
+import { Conversation, ConversationContent } from "@repo/elements/conversation";
 import {
   FileTree,
   FileTreeFile,
@@ -38,8 +28,8 @@ import {
 } from "@repo/elements/plan";
 import {
   PromptInput,
-  type PromptInputMessage,
   PromptInputFooter,
+  type PromptInputMessage,
   PromptInputSubmit,
   PromptInputTextarea,
 } from "@repo/elements/prompt-input";
@@ -54,18 +44,18 @@ import {
   QueueSectionLabel,
   QueueSectionTrigger,
 } from "@repo/elements/queue";
-import { Task, TaskContent, TaskItemFile, TaskTrigger } from "@repo/elements/task";
 import {
-  Terminal,
-  TerminalContent,
-  TerminalHeader,
-  TerminalTitle,
-} from "@repo/elements/terminal";
+  Task,
+  TaskContent,
+  TaskItemFile,
+  TaskTrigger,
+} from "@repo/elements/task";
+import { Terminal, TerminalContent } from "@repo/elements/terminal";
 import { cn } from "@repo/shadcn-ui/lib/utils";
-import type { BundledLanguage } from "shiki";
+import { CheckCircle2Icon, ListTodoIcon } from "lucide-react";
 import { nanoid } from "nanoid";
 import { useCallback, useEffect, useState } from "react";
-import { CheckCircle2Icon, CircleIcon, ListTodoIcon } from "lucide-react";
+import type { BundledLanguage } from "shiki";
 
 // Types
 interface MockFile {
@@ -352,12 +342,15 @@ const Example = () => {
 
   // Terminal state
   const [terminalOutput, setTerminalOutput] = useState<string>("");
-  const [isTerminalStreaming, setIsTerminalStreaming] = useState<boolean>(false);
+  const [isTerminalStreaming, setIsTerminalStreaming] =
+    useState<boolean>(false);
 
   // Chat state
   const [messages, setMessages] = useState<MessageType[]>([]);
   const [chatText, setChatText] = useState<string>("");
-  const [status, setStatus] = useState<"ready" | "streaming" | "submitted">("ready");
+  const [status, setStatus] = useState<"ready" | "streaming" | "submitted">(
+    "ready"
+  );
 
   // Tasks state
   const [tasks, setTasks] = useState<TaskItem[]>(initialTasks);
@@ -487,7 +480,8 @@ const Example = () => {
       const assistantMessage: MessageType = {
         key: nanoid(),
         from: "assistant",
-        content: "I'll look into that for you. Let me analyze the codebase and suggest some improvements.",
+        content:
+          "I'll look into that for you. Let me analyze the codebase and suggest some improvements.",
       };
       streamMessage(assistantMessage);
     }, 500);
@@ -500,10 +494,7 @@ const Example = () => {
     <div className="flex h-full w-full bg-background">
       {/* Left Sidebar - File Tree */}
       <div className="flex w-64 flex-col border-r">
-        <div className="border-b px-4 py-3">
-          <h2 className="font-semibold text-sm">Explorer</h2>
-        </div>
-        <div className="flex-1 overflow-auto p-2">
+        <div className="flex-1 overflow-auto p-1">
           <FileTree
             className="border-none"
             expanded={expandedPaths}
@@ -513,8 +504,14 @@ const Example = () => {
           >
             <FileTreeFolder name="src" path="src">
               <FileTreeFolder name="components" path="src/components">
-                <FileTreeFile name="button.tsx" path="src/components/button.tsx" />
-                <FileTreeFile name="input.tsx" path="src/components/input.tsx" />
+                <FileTreeFile
+                  name="button.tsx"
+                  path="src/components/button.tsx"
+                />
+                <FileTreeFile
+                  name="input.tsx"
+                  path="src/components/input.tsx"
+                />
               </FileTreeFolder>
               <FileTreeFolder name="utils" path="src/utils">
                 <FileTreeFile name="helpers.ts" path="src/utils/helpers.ts" />
@@ -530,36 +527,20 @@ const Example = () => {
       {/* Center Panel - Code + Terminal */}
       <div className="flex flex-1 flex-col overflow-hidden">
         {/* Code Block */}
-        <div className="flex-1 overflow-auto p-4">
-          <CodeBlock
-            code={currentFile.content}
-            language={currentFile.language}
-            showLineNumbers
-          >
-            <CodeBlockHeader>
-              <CodeBlockTitle>
-                <CodeBlockFilename>{currentFile.path}</CodeBlockFilename>
-              </CodeBlockTitle>
-              <CodeBlockActions>
-                <CodeBlockCopyButton />
-              </CodeBlockActions>
-            </CodeBlockHeader>
-          </CodeBlock>
-        </div>
+        <CodeBlock
+          className="rounded-none border-0"
+          code={currentFile.content}
+          language={currentFile.language}
+          showLineNumbers
+        />
 
-        {/* Terminal */}
-        <div className="h-64 border-t p-4">
-          <Terminal
-            className="h-full"
-            isStreaming={isTerminalStreaming}
-            output={terminalOutput}
-          >
-            <TerminalHeader>
-              <TerminalTitle>Build Output</TerminalTitle>
-            </TerminalHeader>
-            <TerminalContent className="max-h-full" />
-          </Terminal>
-        </div>
+        <Terminal
+          className="h-64 rounded-none border-0"
+          isStreaming={isTerminalStreaming}
+          output={terminalOutput}
+        >
+          <TerminalContent className="max-h-full" />
+        </Terminal>
       </div>
 
       {/* Right Sidebar - AI Chat */}
@@ -626,7 +607,9 @@ const Example = () => {
                     <QueueItem key={task.id}>
                       <div className="flex items-center gap-2">
                         <QueueItemIndicator completed />
-                        <QueueItemContent completed>{task.title}</QueueItemContent>
+                        <QueueItemContent completed>
+                          {task.title}
+                        </QueueItemContent>
                       </div>
                     </QueueItem>
                   ))}
@@ -670,10 +653,7 @@ const Example = () => {
 
           {/* Chat Input */}
           <div className="border-t p-3">
-            <PromptInput
-              className="rounded-lg border"
-              onSubmit={handleSubmit}
-            >
+            <PromptInput className="rounded-lg border" onSubmit={handleSubmit}>
               <PromptInputTextarea
                 className="min-h-10"
                 onChange={(e) => setChatText(e.target.value)}
