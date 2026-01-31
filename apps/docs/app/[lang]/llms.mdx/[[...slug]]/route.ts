@@ -1,5 +1,12 @@
+import type { InferPageType } from "fumadocs-core/source";
 import { notFound } from "next/navigation";
-import { getLLMText, source } from "@/lib/geistdocs/source";
+import {
+  type componentsSource,
+  type docsSource,
+  type examplesSource,
+  getLLMText,
+  source,
+} from "@/lib/geistdocs/source";
 
 export const revalidate = false;
 
@@ -14,11 +21,18 @@ export async function GET(
     notFound();
   }
 
-  return new Response(await getLLMText(page), {
-    headers: {
-      "Content-Type": "text/markdown",
-    },
-  });
+  return new Response(
+    await getLLMText(
+      page as InferPageType<
+        typeof docsSource | typeof componentsSource | typeof examplesSource
+      >
+    ),
+    {
+      headers: {
+        "Content-Type": "text/markdown",
+      },
+    }
+  );
 }
 
 export const generateStaticParams = async ({

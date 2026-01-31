@@ -9,13 +9,12 @@ import type { ComponentProps } from "react";
 
 type CalloutProps = ComponentProps<typeof CalloutPrimitive>;
 
-export const Callout = ({ className, label, ...props }: CalloutProps) => (
+export const Callout = ({ className, ...props }: CalloutProps) => (
   <CalloutPrimitive
     className={cn(
       "rounded-sm bg-transparent p-3! shadow-none [&_div[role='none']]:hidden",
       className
     )}
-    label={label || undefined}
     {...props}
   />
 );

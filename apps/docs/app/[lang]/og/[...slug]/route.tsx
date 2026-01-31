@@ -1,8 +1,15 @@
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
+import type { InferPageType } from "fumadocs-core/source";
 import { ImageResponse } from "next/og";
 import type { NextRequest } from "next/server";
-import { getPageImage, source } from "@/lib/geistdocs/source";
+import {
+  type componentsSource,
+  type docsSource,
+  type examplesSource,
+  getPageImage,
+  source,
+} from "@/lib/geistdocs/source";
 
 export const GET = async (
   _request: NextRequest,
@@ -89,6 +96,10 @@ export const generateStaticParams = async ({
 
   return source.getPages(lang).map((page) => ({
     lang: page.locale,
-    slug: getPageImage(page).segments,
+    slug: getPageImage(
+      page as InferPageType<
+        typeof docsSource | typeof componentsSource | typeof examplesSource
+      >
+    ).segments,
   }));
 };

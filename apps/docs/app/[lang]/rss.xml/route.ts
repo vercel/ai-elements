@@ -22,6 +22,10 @@ export const GET = async (
   });
 
   for (const page of source.getPages(lang)) {
+    if (!(page.data.title && page.data.description)) {
+      continue;
+    }
+
     feed.addItem({
       id: page.url,
       title: page.data.title,

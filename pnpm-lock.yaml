@@ -334,6 +334,9 @@ importers:
       '@types/react':
         specifier: 19.2.8
         version: 19.2.8
+      shiki:
+        specifier: 3.21.0
+        version: 3.21.0
       typescript:
         specifier: ^5.9.3
         version: 5.9.3
