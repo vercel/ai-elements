@@ -30,22 +30,24 @@ export const metadata: Metadata = {
 
 const templates = [
   {
-    title: "AI Chatbot",
-    description: "A full-featured chat interface with streaming, markdown and file attachments.",
-    link: "https://github.com/haydenbleasel/ai-elements/tree/main/templates/chatbot",
-    image: "https://placehold.co/600x400.png",
+    title: "Chatbot",
+    description:
+      "A full-featured chat interface with streaming, markdown and file attachments.",
+    link: "/examples/chatbot",
+    file: "demo-chatgpt",
   },
   {
-    title: "Code Assistant",
-    description: "IDE-style interface with syntax highlighting, terminal output and file trees.",
-    link: "https://github.com/haydenbleasel/ai-elements/tree/main/templates/code-assistant",
-    image: "https://placehold.co/600x400.png",
+    title: "IDE",
+    description:
+      "IDE-style interface with syntax highlighting, terminal output and file trees.",
+    link: "/examples/ide",
+    file: "demo-cursor",
   },
   {
-    title: "Voice Agent",
-    description: "Real-time voice interface with transcription, audio playback and mic selection.",
-    link: "https://github.com/haydenbleasel/ai-elements/tree/main/templates/voice-agent",
-    image: "https://placehold.co/600x400.png",
+    title: "Workflow",
+    description: "Visualize and interact with your AI workflows.",
+    link: "/examples/workflow",
+    file: "demo-workflow",
   },
 ];
 
@@ -53,17 +55,20 @@ const textGridSection = [
   {
     id: "1",
     title: "Fully Composable",
-    description: "Every component is a building block. Combine small, focused pieces to create exactly the UI you need.",
+    description:
+      "Every component is a building block. Combine small, focused pieces to create exactly the UI you need.",
   },
   {
     id: "2",
     title: "AI SDK Integration",
-    description: "Deep integration with the AI SDK. Streaming, status states and type safety built-in.",
+    description:
+      "Deep integration with the AI SDK. Streaming, status states and type safety built-in.",
   },
   {
     id: "3",
     title: "shadcn/ui Foundation",
-    description: "Built on shadcn/ui conventions. Your existing theme and setup apply automatically.",
+    description:
+      "Built on shadcn/ui conventions. Your existing theme and setup apply automatically.",
   },
 ];
 
@@ -134,14 +139,46 @@ const HomePage = () => (
         description="Install only what you need. The CLI adds components directly to your codebase with full source code access. No hidden dependencies, tree-shaking friendly."
         title="Fast, Flexible Installation"
       >
-        <div className="aspect-video rounded-lg border bg-background" />
+        <div className="aspect-video gap-2 rounded-lg border bg-background p-6 font-mono text-sm leading-relaxed">
+          <span className="text-muted-foreground">$</span>
+          <span className="ml-1">npx ai-elements@latest add conversation</span>
+          <div className="mt-2 gap-1">
+            <p>
+              <span className="text-muted-foreground">✔</span> Checking
+              registry.
+            </p>
+            <p>
+              <span className="text-muted-foreground">✔</span> Installing
+              dependencies.
+            </p>
+            <p>
+              <span className="text-muted-foreground">✔</span> Created 1 file:
+            </p>
+            <p>
+              <span className="ml-4">
+                - components/ai-elements/conversation.tsx
+              </span>
+            </p>
+            <p>
+              <span className="text-muted-foreground">ℹ</span> Skipped 1 files:
+              (files might be identical, use --overwrite to overwrite)
+            </p>
+            <p>
+              <span className="ml-4">- components/ui/button.tsx</span>
+            </p>
+          </div>
+        </div>
       </OneTwoSection>
       <Templates
         data={templates}
-        description="See AI Elements in action with one of our starter templates."
+        description="See AI Elements in action with one of our examples."
         title="Get started quickly"
       />
-      <CTA cta="Get started" href="/docs" title="Start building AI interfaces today" />
+      <CTA
+        cta="Get started"
+        href="/docs"
+        title="Start building AI interfaces today"
+      />
     </div>
   </div>
 );
