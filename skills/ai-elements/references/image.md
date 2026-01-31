@@ -34,7 +34,7 @@ import {
   PromptInputSubmit,
 } from '@/components/ai-elements/prompt-input';
 import { useState } from 'react';
-import { Loader } from '@/components/ai-elements/loader';
+import { Spinner } from '@/components/ui/spinner';
 
 const ImageDemo = () => {
   const [prompt, setPrompt] = useState('A futuristic cityscape at sunset');
@@ -76,7 +76,7 @@ const ImageDemo = () => {
               />
             </div>
           )}
-          {isLoading && <Loader />}
+          {isLoading && <Spinner />}
         </div>
 
         <Input

@@ -1,8 +1,8 @@
 "use client";
 
 import { Conversation, ConversationContent } from "@repo/elements/conversation";
-import { Loader } from "@repo/elements/loader";
 import { Message, MessageContent } from "@repo/elements/message";
+import { Spinner } from "@repo/shadcn-ui/components/ui/spinner";
 import {
   PromptInput,
   type PromptInputMessage,
@@ -166,7 +166,7 @@ export default function Home() {
                 <Message from="assistant">
                   <MessageContent>
                     <p className="flex items-center gap-2">
-                      <Loader />
+                      <Spinner />
                       Creating your app...
                     </p>
                   </MessageContent>

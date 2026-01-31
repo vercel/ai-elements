@@ -39,7 +39,7 @@ import {
   PromptInputTextarea,
   PromptInputSubmit,
 } from '@/components/ai-elements/prompt-input';
-import { Loader } from '../ai-elements/loader';
+import { Spinner } from '@/components/ui/spinner';
 
 const WebPreviewDemo = () => {
   const [previewUrl, setPreviewUrl] = useState('');
@@ -75,7 +75,7 @@ const WebPreviewDemo = () => {
         <div className="flex-1 mb-4">
           {isGenerating ? (
             <div className="flex flex-col items-center justify-center h-full">
-              <Loader />
+              <Spinner />
               <p className="mt-4 text-muted-foreground">
                 Generating app, this may take a few seconds...
               </p>

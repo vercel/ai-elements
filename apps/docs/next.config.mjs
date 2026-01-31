@@ -54,6 +54,11 @@ const config = {
         destination: "/examples/chatbot",
         permanent: true,
       },
+      {
+        source: "/components/loader",
+        destination: "https://ui.shadcn.com/docs/components/radix/spinner",
+        permanent: true,
+      },
     ];
   },
 };

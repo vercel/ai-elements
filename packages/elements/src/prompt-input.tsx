@@ -35,10 +35,10 @@ import {
 } from "@repo/shadcn-ui/components/ui/select";
 import { cn } from "@repo/shadcn-ui/lib/utils";
 import type { ChatStatus, FileUIPart, SourceDocumentUIPart } from "ai";
+import { Spinner } from "@repo/shadcn-ui/components/ui/spinner";
 import {
   CornerDownLeftIcon,
   ImageIcon,
-  Loader2Icon,
   PlusIcon,
   SquareIcon,
   XIcon,
@@ -1033,7 +1033,7 @@ export const PromptInputSubmit = ({
   let Icon = <CornerDownLeftIcon className="size-4" />;
 
   if (status === "submitted") {
-    Icon = <Loader2Icon className="size-4 animate-spin" />;
+    Icon = <Spinner />;
   } else if (status === "streaming") {
     Icon = <SquareIcon className="size-4" />;
   } else if (status === "error") {

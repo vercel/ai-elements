@@ -36,7 +36,7 @@ import {
   PromptInputTextarea,
   PromptInputSubmit,
 } from '@/components/ai-elements/prompt-input';
-import { Loader } from '@/components/ai-elements/loader';
+import { Spinner } from '@/components/ui/spinner';
 import { Message, MessageContent, MessageResponse } from '@/components/ai-elements/message';
 import { useState } from 'react';
 import { useChat } from '@ai-sdk/react';
@@ -84,7 +84,7 @@ const ReasoningDemo = () => {
                 </MessageContent>
               </Message>
             ))}
-            {status === 'submitted' && <Loader />}
+            {status === 'submitted' && <Spinner />}
           </ConversationContent>
           <ConversationScrollButton />
         </Conversation>
