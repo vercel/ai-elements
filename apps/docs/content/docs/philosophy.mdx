@@ -1,0 +1,98 @@
+---
+title: Philosophy
+description: The principles that guide AI Elements design and development.
+---
+
+AI Elements is built on core principles that shape every component and decision.
+
+## Composability
+
+Components are building blocks, not black boxes. You combine small, focused pieces to create exactly what you need.
+
+```tsx title="example.tsx"
+<Message from="assistant">
+  <MessageContent>
+    <MessageResponse>{text}</MessageResponse>
+  </MessageContent>
+  <MessageActions>
+    <MessageAction label="Copy" onClick={handleCopy}>
+      <CopyIcon />
+    </MessageAction>
+  </MessageActions>
+</Message>
+```
+
+This approach gives you:
+
+- **Flexibility** - Add, remove, or rearrange pieces
+- **Control** - Style and configure each part independently
+- **Clarity** - Understand exactly what renders
+
+## Simplicity
+
+Do one thing well. Components have a clear purpose and minimal API surface. We avoid:
+
+- Unnecessary props and options
+- Complex configuration objects
+- Hidden behavior
+
+When in doubt, we leave it out. You can always extend components in your codebase.
+
+## Accessibility
+
+Every component follows accessibility best practices:
+
+- Semantic HTML elements
+- Proper ARIA attributes
+- Keyboard navigation
+- Screen reader support
+- Sufficient color contrast
+
+Accessibility isn't an afterthought—it's built into component architecture from the start.
+
+## Performance
+
+Components are optimized for real-world AI applications:
+
+- Minimal re-renders during streaming
+- Efficient DOM updates
+- Tree-shakeable exports
+- No runtime CSS-in-JS
+
+## Developer Experience
+
+Building AI interfaces should feel natural:
+
+- **Familiar patterns** - Standard React props and hooks
+- **TypeScript first** - Full type safety and autocomplete
+- **Good defaults** - Works out of the box
+- **Full control** - Customize when needed
+
+## AI SDK Alignment
+
+Components integrate deeply with the [AI SDK](https://ai-sdk.dev/):
+
+- Props match AI SDK types
+- Hooks work seamlessly
+- Streaming behavior is handled correctly
+- Status states are built-in
+
+## shadcn/ui Foundation
+
+AI Elements builds on [shadcn/ui](https://ui.shadcn.com/) conventions:
+
+- Components live in your codebase
+- CSS variables for theming
+- Tailwind CSS for styling
+- Copy-paste friendly
+
+Your existing shadcn/ui setup and theme apply automatically.
+
+## Open Source
+
+AI Elements is open source and community-driven:
+
+- Transparent development
+- Community contributions welcome
+- No vendor lock-in
+- Apache 2.0 license

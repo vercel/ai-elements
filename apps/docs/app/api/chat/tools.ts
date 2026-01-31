@@ -1,19 +1,21 @@
 import { type ToolSet, tool, type UIMessageStreamWriter } from "ai";
 import { initAdvancedSearch } from "fumadocs-core/search/server";
+import type { InferPageType } from "fumadocs-core/source";
 import z from "zod";
 import { i18n } from "@/lib/geistdocs/i18n";
-import { source } from "@/lib/geistdocs/source";
+import { type docsSource, source } from "@/lib/geistdocs/source";
 
 const createSearchServer = (lang: string) => {
   const pages = source.getPages(lang);
 
   return initAdvancedSearch({
     indexes: pages.map((page) => ({
-      title: page.data.title,
+      title: page.data.title ?? "",
       description: page.data.description,
       url: page.url,
       id: page.url,
-      structuredData: page.data.structuredData,
+      structuredData: (page as InferPageType<typeof docsSource>).data
+        .structuredData,
     })),
   });
 };
@@ -81,10 +83,13 @@ const search_docs = (writer: UIMessageStreamWriter) =>
             `Found page for ${url}: ${page.data.title}, ${page.data.description}`
           );
 
+          const structuredData = (page as InferPageType<typeof docsSource>).data
+            .structuredData;
+
           return {
             title: page.data.title,
             description: page.data.description,
-            content: JSON.stringify(page.data.structuredData.contents),
+            content: JSON.stringify(structuredData.contents),
             slug: page.url,
           };
         });
@@ -184,9 +189,12 @@ const get_doc_page = tool({
       };
     }
 
+    const structuredData = (doc as InferPageType<typeof docsSource>).data
+      .structuredData;
+
     return `# ${doc.data.title}\n\n${
       doc.data.description ? `${doc.data.description}\n\n` : ""
-    }${doc.data.structuredData.contents}`;
+    }${structuredData.contents}`;
   },
 });
 

@@ -205,8 +205,8 @@ export function highlightCode(
 
       const tokenized: TokenizedCode = {
         tokens: result.tokens,
-        fg: result.fg,
-        bg: result.bg,
+        fg: result.fg ?? "inherit",
+        bg: result.bg ?? "transparent",
       };
 
       // Cache the result
@@ -325,7 +325,7 @@ export const CodeBlockHeader = ({
 }: HTMLAttributes<HTMLDivElement>) => (
   <div
     className={cn(
-      "flex items-center justify-between bg-muted/80 px-3 py-2 text-muted-foreground text-xs",
+      "flex items-center justify-between border-b bg-muted/80 px-3 py-2 text-muted-foreground text-xs",
       className
     )}
     {...props}
@@ -359,7 +359,10 @@ export const CodeBlockActions = ({
   className,
   ...props
 }: HTMLAttributes<HTMLDivElement>) => (
-  <div className={cn("flex items-center gap-2", className)} {...props}>
+  <div
+    className={cn("-my-1 -mr-1 flex items-center gap-2", className)}
+    {...props}
+  >
     {children}
   </div>
 );

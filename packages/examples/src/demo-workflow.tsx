@@ -168,7 +168,7 @@ const edgeTypes = {
 };
 
 const Example = () => (
-  <div style={{ height: "400px", width: "100%" }}>
+  <div style={{ height: "100%", width: "100%" }}>
     <Canvas
       connectionLineComponent={Connection}
       edges={edges}

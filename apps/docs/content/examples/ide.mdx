@@ -1,0 +1,56 @@
+---
+title: IDE
+description: An example of how to use the AI Elements to build an AI-powered IDE with file navigation, code display, terminal output, and an integrated chat assistant.
+full: true
+---
+
+<Preview path="demo-cursor" type="block" className="p-0" />
+
+## Tutorial
+
+Let's walk through how to build an AI-powered IDE using AI Elements. Our example will include a file tree, code block viewer, terminal output, task queue, and chat interface with streaming responses.
+
+### Setup
+
+First, set up a new Next.js repo and cd into it by running the following command (make sure you choose to use Tailwind in the project setup):
+
+```package-install
+npx create-next-app@latest ai-ide && cd ai-ide
+```
+
+Run the following command to install AI Elements. This will also set up shadcn/ui if you haven't already configured it:
+
+```package-install
+npx ai-elements@latest
+```
+
+Now, install the required dependencies:
+
+```package-install
+npm i nanoid shiki lucide-react
+```
+
+We're now ready to start building our IDE!
+
+### Client
+
+Let's build the IDE step by step. We'll create the component structure with a three-panel layout: file tree on the left, code and terminal in the center, and the AI chat on the right.
+
+First, import the necessary AI Elements components in your `app/page.tsx`:
+
+<SourceCode path="demo-cursor" />
+
+## Key Features
+
+The IDE example demonstrates several powerful features:
+
+- **File Tree Navigation**: The `FileTree` component displays a hierarchical file structure with expandable folders and file selection.
+- **Code Display**: The `CodeBlock` component renders syntax-highlighted code with line numbers and a copy button.
+- **Terminal Output**: The `Terminal` component shows streaming build output with ANSI color support.
+- **Plan Component**: The `Plan` displays the AI's implementation strategy with collapsible sections.
+- **Task Queue**: The `Queue` component organizes pending and completed tasks in separate sections.
+- **Chat Interface**: The `Conversation` and `Message` components create a streaming chat experience.
+- **Checkpoints**: The `Checkpoint` component allows users to mark and restore conversation states.
+- **Streaming Support**: All components support real-time streaming for a responsive user experience.
+
+You now have a working AI-powered IDE interface! Feel free to extend it with additional features like file editing, multiple tabs, or connect it to a real AI backend using the AI SDK.

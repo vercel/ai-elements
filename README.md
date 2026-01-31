@@ -1,6 +1,6 @@
 # ▲ AI Elements
 
-[AI Elements](https://ai-sdk.dev/elements) is a component library built on top of [shadcn/ui](https://ui.shadcn.com/) to help you build AI-native applications faster.
+[AI Elements](https://elements.ai-sdk.dev) is a component library built on top of [shadcn/ui](https://ui.shadcn.com/) to help you build AI-native applications faster.
 
 ## Overview
 
@@ -15,7 +15,7 @@ You can use the AI Elements CLI directly with npx, or install it globally:
 npx ai-elements@latest
 
 # Or using shadcn cli
-npx shadcn@latest add https://ai-sdk.dev/elements/api/registry/all.json
+npx shadcn@latest add https://elements.ai-sdk.dev/api/registry/all.json
 ```
 
 ## Prerequisites
@@ -70,70 +70,29 @@ You can also install components using the standard shadcn/ui CLI:
 
 ```bash
 # Install all components
-npx shadcn@latest add https://ai-sdk.dev/elements/api/registry/all.json
+npx shadcn@latest add https://elements.ai-sdk.dev/api/registry/all.json
 
 # Install a specific component
-npx shadcn@latest add https://ai-sdk.dev/elements/api/registry/message.json
+npx shadcn@latest add https://elements.ai-sdk.dev/api/registry/message.json
 ```
-
-## Available Components
-
-AI Elements includes the following components:
-
-| Component          | Description                                             |
-| ------------------ | ------------------------------------------------------- |
-| **Chatbot**        |                                                         |
-| `actions`          | Interactive action buttons for AI responses             |
-| `branch`           | Branch visualization for conversation flows             |
-| `chain-of-thought` | Display AI reasoning and thought processes              |
-| `code-block`       | Syntax-highlighted code display with copy functionality |
-| `context`          | Display Context consumption                             |
-| `conversation`     | Container for chat conversations                        |
-| `image`            | AI-generated image display component                    |
-| `inline-citation`  | Inline source citations                                 |
-| `loader`           | Loading states for AI operations                        |
-| `message`          | Individual chat messages with avatars                   |
-| `open-in-chat`     | Open in chat button for a message                       |
-| `plan`             | Plan and task planning display component                |
-| `prompt-input`     | Advanced input component with model selection           |
-| `queue`            | Message and todo queue with attachments                 |
-| `reasoning`        | Display AI reasoning and thought processes              |
-| `response`         | Formatted AI response display                           |
-| `shimmer`          | Text shimmer animation effect                           |
-| `sources`          | Source attribution component                            |
-| `suggestion`       | Quick action suggestions                                |
-| `task`             | Task completion tracking                                |
-| `tool`             | Tool usage visualization                                |
-| `confirmation`     | Tool execution approval workflows                       |
-| **Vibe-Coding**    |                                                         |
-| `artifact`         | Display a code or document                              |
-| `web-preview`      | Embedded web page previews                              |
-| **Workflow**       |                                                         |
-| `canvas`           | ReactFlow canvas for workflow visualizations            |
-| `connection`       | Connection line component for workflow edges            |
-| `controls`         | Flow controls for canvas (zoom, fit view, etc.)         |
-| `edge`             | Edge component for connections between workflow nodes   |
-| `node`             | Node component for workflow graphs                      |
-| `panel`            | Panel component for canvas overlays                     |
-| `toolbar`          | Node toolbar for workflow elements                      |
 
 ## Quick Start Example
 
 After installing components, you can use them in your React application:
 
 ```tsx
-'use client';
+"use client";
 
-import { useChat } from '@ai-sdk/react';
+import { useChat } from "@ai-sdk/react";
 import {
   Conversation,
   ConversationContent,
-} from '@/components/ai-elements/conversation';
+} from "@/components/ai-elements/conversation";
 import {
   Message,
   MessageContent,
   MessageResponse,
-} from '@/components/ai-elements/message';
+} from "@/components/ai-elements/message";
 
 export default function Chat() {
   const { messages } = useChat();
@@ -159,7 +118,7 @@ export default function Chat() {
 The AI Elements CLI:
 
 1. **Detects your package manager** (npm, pnpm, yarn, or bun) automatically
-2. **Fetches component registry** from `https://ai-sdk.dev/elements/api/registry/registry.json`
+2. **Fetches component registry** from `https://elements.ai-sdk.dev/api/registry/registry.json`
 3. **Installs components** using the shadcn/ui CLI under the hood
 4. **Adds dependencies** and integrates with your existing shadcn/ui setup
 

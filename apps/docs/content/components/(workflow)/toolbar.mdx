@@ -1,0 +1,44 @@
+---
+title: Toolbar
+description: A styled toolbar component for React Flow nodes with flexible positioning and custom actions.
+path: elements/components/toolbar
+---
+
+The `Toolbar` component provides a positioned toolbar that attaches to nodes in React Flow canvases. It features modern card styling with backdrop blur and flexbox layout for action buttons and controls.
+
+<Callout>
+  The Toolbar component is designed to be used with the [Node](/components/node)
+  component. See the [Workflow](/examples/workflow) demo for a full example.
+</Callout>
+
+## Installation
+
+<ElementsInstaller path="toolbar" />
+
+## Features
+
+- Attaches to any React Flow node
+- Bottom positioning by default
+- Rounded card design with border
+- Theme-aware background styling
+- Flexbox layout with gap spacing
+- Full TypeScript support
+- Compatible with all React Flow NodeToolbar features
+
+## Props
+
+### `<Toolbar />`
+
+<TypeTable
+  type={{
+    className: {
+      description: "Additional CSS classes to apply to the toolbar.",
+      type: "string",
+    },
+    "...props": {
+      description:
+        "Any other props from @xyflow/react NodeToolbar component (position, offset, isVisible, etc.).",
+      type: "ComponentProps<typeof NodeToolbar>",
+    },
+  }}
+/>

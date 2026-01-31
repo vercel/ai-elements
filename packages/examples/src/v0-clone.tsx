@@ -1,7 +1,6 @@
 "use client";
 
 import { Conversation, ConversationContent } from "@repo/elements/conversation";
-import { Loader } from "@repo/elements/loader";
 import { Message, MessageContent } from "@repo/elements/message";
 import {
   PromptInput,
@@ -16,6 +15,7 @@ import {
   WebPreviewNavigation,
   WebPreviewUrl,
 } from "@repo/elements/web-preview";
+import { Spinner } from "@repo/shadcn-ui/components/ui/spinner";
 import { nanoid } from "nanoid";
 import { useState } from "react";
 
@@ -24,17 +24,60 @@ interface Chat {
   demo: string;
 }
 
+const mockChatHistory = [
+  {
+    id: "1",
+    type: "user" as const,
+    content: "Build me an agent skills website with a modern dark theme",
+  },
+  {
+    id: "2",
+    type: "assistant" as const,
+    content:
+      "I'll create a sleek agent skills website with a dark theme. The design will feature a clean layout showcasing various AI agent capabilities with smooth animations.",
+  },
+  {
+    id: "3",
+    type: "user" as const,
+    content: "Add a hero section with a catchy tagline about AI skills",
+  },
+  {
+    id: "4",
+    type: "assistant" as const,
+    content:
+      "Done! I've added a hero section with the tagline 'Supercharge your AI agents with powerful skills'. The section includes a gradient background and animated elements.",
+  },
+  {
+    id: "5",
+    type: "user" as const,
+    content:
+      "Can you add a grid of skill cards showing different capabilities?",
+  },
+  {
+    id: "6",
+    type: "assistant" as const,
+    content:
+      "I've added a skills grid featuring cards for Web Search, Code Execution, File Management, API Integration, and more. Each card has an icon and description. Check the preview!",
+  },
+];
+
+const mockChat: Chat = {
+  id: "mock-chat-1",
+  demo: "https://skills.sh/",
+};
+
 export default function Home() {
   const [message, setMessage] = useState("");
-  const [currentChat, setCurrentChat] = useState<Chat | null>(null);
+  const [currentChat, setCurrentChat] = useState<Chat | null>(mockChat);
   const [isLoading, setIsLoading] = useState(false);
-  const [chatHistory, setChatHistory] = useState<
-    Array<{
-      id: string;
-      type: "user" | "assistant";
-      content: string;
-    }>
-  >([]);
+  const [chatHistory, setChatHistory] =
+    useState<
+      Array<{
+        id: string;
+        type: "user" | "assistant";
+        content: string;
+      }>
+    >(mockChatHistory);
 
   const handleSendMessage = async (promptMessage: PromptInputMessage) => {
     const hasText = Boolean(promptMessage.text);
@@ -97,14 +140,9 @@ export default function Home() {
   };
 
   return (
-    <div className="flex h-[800px]">
+    <div className="flex size-full divide-x">
       {/* Chat Panel */}
-      <div className="flex w-1/2 flex-col border-r">
-        {/* Header */}
-        <div className="flex h-14 items-center justify-between border-b p-3">
-          <h1 className="font-semibold text-lg">v0 Clone</h1>
-        </div>
-
+      <div className="flex flex-1 flex-col">
         <div className="flex-1 space-y-4 overflow-y-auto p-4">
           {chatHistory.length === 0 ? (
             <div className="mt-8 text-center font-semibold">
@@ -125,7 +163,7 @@ export default function Home() {
                 <Message from="assistant">
                   <MessageContent>
                     <p className="flex items-center gap-2">
-                      <Loader />
+                      <Spinner />
                       Creating your app...
                     </p>
                   </MessageContent>
@@ -159,7 +197,7 @@ export default function Home() {
           )}
           <div className="flex gap-2">
             <PromptInput
-              className="relative mx-auto mt-4 w-full max-w-2xl"
+              className="relative mx-auto w-full max-w-2xl"
               onSubmit={handleSendMessage}
             >
               <PromptInputTextarea
@@ -178,8 +216,8 @@ export default function Home() {
       </div>
 
       {/* Preview Panel */}
-      <div className="flex w-1/2 flex-col">
-        <WebPreview>
+      <div className="flex flex-1 flex-col">
+        <WebPreview className="rounded-none border-0">
           <WebPreviewNavigation>
             <WebPreviewUrl
               placeholder="Your app here..."

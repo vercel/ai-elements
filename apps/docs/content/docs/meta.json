@@ -3,21 +3,20 @@
   "description": "Documentation for AI Elements",
   "root": true,
   "pages": [
-    "---Docs---",
+    "---Overview---",
     "index",
+    "benefits",
+    "community",
+    "vercel-ai-frontend",
+    "---Usage---",
+    "setup",
     "usage",
-    "troubleshooting",
     "mcp",
-    "---Examples---",
-    "examples/chatbot",
-    "examples/v0",
-    "examples/workflow",
-    "---Components---",
-    "components/(chatbot)",
-    "components/(code)",
-    "components/(voice)",
-    "components/(workflow)",
-    "components/(vibe-coding)",
-    "components/(utilities)"
+    "skill",
+    "troubleshooting",
+    "---Contributing---",
+    "how-to-contribute",
+    "new-components",
+    "philosophy"
   ]
 }

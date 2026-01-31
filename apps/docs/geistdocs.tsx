@@ -15,15 +15,19 @@ export const nav = [
     href: "/docs",
   },
   {
-    label: "Source",
-    href: `https://github.com/${github.owner}/${github.repo}/`,
+    label: "Components",
+    href: "/components",
+  },
+  {
+    label: "Examples",
+    href: "/examples",
   },
 ];
 
 export const suggestions = [
   "What is AI Elements?",
   "What can I build with AI Elements?",
-  "What is AI Elements?",
+  "What components are available in AI Elements?",
   "How much does AI Elements cost?",
 ];
 
@@ -38,4 +42,4 @@ export const translations = {
   },
 };
 
-export const basePath: string | undefined = "/elements";
+export const basePath: string | undefined = undefined;

@@ -1,0 +1,17 @@
+{
+  "title": "Components",
+  "description": "Components for AI Elements",
+  "root": true,
+  "pages": [
+    "---Chatbot---",
+    "...(chatbot)",
+    "---Code---",
+    "...(code)",
+    "---Voice---",
+    "...(voice)",
+    "---Workflow---",
+    "...(workflow)",
+    "---Utilities---",
+    "...(utilities)"
+  ]
+}

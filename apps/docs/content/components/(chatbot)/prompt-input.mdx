@@ -1,0 +1,780 @@
+---
+title: Prompt Input
+description: Allows a user to send a message with file attachments to a large language model. It includes a textarea, file upload capabilities, a submit button, and a dropdown for selecting the model.
+path: elements/components/prompt-input
+---
+
+The `PromptInput` component allows a user to send a message with file attachments to a large language model. It includes a textarea, file upload capabilities, a submit button, and a dropdown for selecting the model.
+
+<Preview path="prompt-input" />
+
+## Installation
+
+<ElementsInstaller path="prompt-input" />
+
+## Usage with AI SDK
+
+Build a fully functional chat app using `PromptInput`, [`Conversation`](/components/conversation) with a model picker:
+
+Add the following component to your frontend:
+
+```tsx title="app/page.tsx"
+"use client";
+
+import {
+  Attachment,
+  AttachmentPreview,
+  AttachmentRemove,
+  Attachments,
+} from "@/components/ai-elements/attachments";
+import {
+  PromptInput,
+  PromptInputActionAddAttachments,
+  PromptInputActionMenu,
+  PromptInputActionMenuContent,
+  PromptInputActionMenuTrigger,
+  PromptInputBody,
+  PromptInputButton,
+  PromptInputHeader,
+  type PromptInputMessage,
+  PromptInputSelect,
+  PromptInputSelectContent,
+  PromptInputSelectItem,
+  PromptInputSelectTrigger,
+  PromptInputSelectValue,
+  PromptInputSubmit,
+  PromptInputTextarea,
+  PromptInputFooter,
+  PromptInputTools,
+  usePromptInputAttachments,
+} from "@/components/ai-elements/prompt-input";
+import { GlobeIcon } from "lucide-react";
+import { useState } from "react";
+import { useChat } from "@ai-sdk/react";
+import {
+  Conversation,
+  ConversationContent,
+  ConversationScrollButton,
+} from "@/components/ai-elements/conversation";
+import {
+  Message,
+  MessageContent,
+  MessageResponse,
+} from "@/components/ai-elements/message";
+
+const PromptInputAttachmentsDisplay = () => {
+  const attachments = usePromptInputAttachments();
+
+  if (attachments.files.length === 0) {
+    return null;
+  }
+
+  return (
+    <Attachments variant="inline">
+      {attachments.files.map((attachment) => (
+        <Attachment
+          data={attachment}
+          key={attachment.id}
+          onRemove={() => attachments.remove(attachment.id)}
+        >
+          <AttachmentPreview />
+          <AttachmentRemove />
+        </Attachment>
+      ))}
+    </Attachments>
+  );
+};
+
+const models = [
+  { id: "gpt-4o", name: "GPT-4o" },
+  { id: "claude-opus-4-20250514", name: "Claude 4 Opus" },
+];
+
+const InputDemo = () => {
+  const [text, setText] = useState<string>("");
+  const [model, setModel] = useState<string>(models[0].id);
+  const [useWebSearch, setUseWebSearch] = useState<boolean>(false);
+
+  const { messages, status, sendMessage } = useChat();
+
+  const handleSubmit = (message: PromptInputMessage) => {
+    const hasText = Boolean(message.text);
+    const hasAttachments = Boolean(message.files?.length);
+
+    if (!(hasText || hasAttachments)) {
+      return;
+    }
+
+    sendMessage(
+      {
+        text: message.text || "Sent with attachments",
+        files: message.files,
+      },
+      {
+        body: {
+          model: model,
+          webSearch: useWebSearch,
+        },
+      },
+    );
+    setText("");
+  };
+
+  return (
+    <div className="max-w-4xl mx-auto p-6 relative size-full rounded-lg border h-[600px]">
+      <div className="flex flex-col h-full">
+        <Conversation>
+          <ConversationContent>
+            {messages.map((message) => (
+              <Message from={message.role} key={message.id}>
+                <MessageContent>
+                  {message.parts.map((part, i) => {
+                    switch (part.type) {
+                      case "text":
+                        return (
+                          <MessageResponse key={`${message.id}-${i}`}>
+                            {part.text}
+                          </MessageResponse>
+                        );
+                      default:
+                        return null;
+                    }
+                  })}
+                </MessageContent>
+              </Message>
+            ))}
+          </ConversationContent>
+          <ConversationScrollButton />
+        </Conversation>
+
+        <PromptInput
+          onSubmit={handleSubmit}
+          className="mt-4"
+          globalDrop
+          multiple
+        >
+          <PromptInputHeader>
+            <PromptInputAttachmentsDisplay />
+          </PromptInputHeader>
+          <PromptInputBody>
+            <PromptInputTextarea
+              onChange={(e) => setText(e.target.value)}
+              value={text}
+            />
+          </PromptInputBody>
+          <PromptInputFooter>
+            <PromptInputTools>
+              <PromptInputActionMenu>
+                <PromptInputActionMenuTrigger />
+                <PromptInputActionMenuContent>
+                  <PromptInputActionAddAttachments />
+                </PromptInputActionMenuContent>
+              </PromptInputActionMenu>
+              <PromptInputButton
+                onClick={() => setUseWebSearch(!useWebSearch)}
+                variant={useWebSearch ? "default" : "ghost"}
+              >
+                <GlobeIcon size={16} />
+                <span>Search</span>
+              </PromptInputButton>
+              <PromptInputSelect
+                onValueChange={(value) => {
+                  setModel(value);
+                }}
+                value={model}
+              >
+                <PromptInputSelectTrigger>
+                  <PromptInputSelectValue />
+                </PromptInputSelectTrigger>
+                <PromptInputSelectContent>
+                  {models.map((model) => (
+                    <PromptInputSelectItem key={model.id} value={model.id}>
+                      {model.name}
+                    </PromptInputSelectItem>
+                  ))}
+                </PromptInputSelectContent>
+              </PromptInputSelect>
+            </PromptInputTools>
+            <PromptInputSubmit disabled={!text && !status} status={status} />
+          </PromptInputFooter>
+        </PromptInput>
+      </div>
+    </div>
+  );
+};
+
+export default InputDemo;
+```
+
+Add the following route to your backend:
+
+```ts title="app/api/chat/route.ts"
+import { streamText, UIMessage, convertToModelMessages } from "ai";
+
+// Allow streaming responses up to 30 seconds
+export const maxDuration = 30;
+
+export async function POST(req: Request) {
+  const {
+    model,
+    messages,
+    webSearch,
+  }: {
+    messages: UIMessage[];
+    model: string;
+    webSearch?: boolean;
+  } = await req.json();
+
+  const result = streamText({
+    model: webSearch ? "perplexity/sonar" : model,
+    messages: await convertToModelMessages(messages),
+  });
+
+  return result.toUIMessageStreamResponse();
+}
+```
+
+## Features
+
+- Auto-resizing textarea that adjusts height based on content
+- File attachment support with drag-and-drop
+- Image preview for image attachments
+- Configurable file constraints (max files, max size, accepted types)
+- Automatic submit button icons based on status
+- Support for keyboard shortcuts (Enter to submit, Shift+Enter for new line)
+- Customizable min/max height for the textarea
+- Flexible toolbar with support for custom actions and tools
+- Built-in model selection dropdown
+- Built-in native speech recognition button (Web Speech API)
+- Optional provider for lifted state management
+- Form automatically resets on submit
+- Responsive design with mobile-friendly controls
+- Clean, modern styling with customizable themes
+- Form-based submission handling
+- Hidden file input sync for native form posts
+- Global document drop support (opt-in)
+
+## Examples
+
+### Cursor style
+
+<Preview path="prompt-input-cursor" />
+
+## Props
+
+### `<PromptInput />`
+
+<TypeTable
+  type={{
+    onSubmit: {
+      description:
+        "Handler called when the form is submitted with message text and files.",
+      type: "(message: PromptInputMessage, event: FormEvent) => void",
+    },
+    accept: {
+      description:
+        'File types to accept (e.g., "image/*"). Leave undefined for any.',
+      type: "string",
+    },
+    multiple: {
+      description: "Whether to allow multiple file selection.",
+      type: "boolean",
+    },
+    globalDrop: {
+      description: "When true, accepts file drops anywhere on the document.",
+      type: "boolean",
+    },
+    syncHiddenInput: {
+      description:
+        "Render a hidden input with given name for native form posts.",
+      type: "boolean",
+    },
+    maxFiles: {
+      description: "Maximum number of files allowed.",
+      type: "number",
+    },
+    maxFileSize: {
+      description: "Maximum file size in bytes.",
+      type: "number",
+    },
+    onError: {
+      description: "Handler for file validation errors.",
+      type: '(err: { code: "max_files" | "max_file_size" | "accept", message: string }) => void',
+    },
+    "...props": {
+      description: "Any other props are spread to the root form element.",
+      type: "React.HTMLAttributes<HTMLFormElement>",
+    },
+  }}
+/>
+
+### `<PromptInputTextarea />`
+
+<TypeTable
+  type={{
+    "...props": {
+      description:
+        "Any other props are spread to the underlying Textarea component.",
+      type: "React.ComponentProps<typeof Textarea>",
+    },
+  }}
+/>
+
+### `<PromptInputFooter />`
+
+<TypeTable
+  type={{
+    "...props": {
+      description: "Any other props are spread to the toolbar div.",
+      type: "React.HTMLAttributes<HTMLDivElement>",
+    },
+  }}
+/>
+
+### `<PromptInputTools />`
+
+<TypeTable
+  type={{
+    "...props": {
+      description: "Any other props are spread to the tools div.",
+      type: "React.HTMLAttributes<HTMLDivElement>",
+    },
+  }}
+/>
+
+### `<PromptInputButton />`
+
+<TypeTable
+  type={{
+    "...props": {
+      description:
+        "Any other props are spread to the underlying shadcn/ui Button component.",
+      type: "React.ComponentProps<typeof Button>",
+    },
+  }}
+/>
+
+### `<PromptInputSubmit />`
+
+<TypeTable
+  type={{
+    status: {
+      description:
+        "Current chat status to determine button icon (submitted, streaming, error).",
+      type: "ChatStatus",
+    },
+    "...props": {
+      description:
+        "Any other props are spread to the underlying shadcn/ui Button component.",
+      type: "React.ComponentProps<typeof Button>",
+    },
+  }}
+/>
+
+### `<PromptInputSelect />`
+
+<TypeTable
+  type={{
+    "...props": {
+      description:
+        "Any other props are spread to the underlying Select component.",
+      type: "React.ComponentProps<typeof Select>",
+    },
+  }}
+/>
+
+### `<PromptInputSelectTrigger />`
+
+<TypeTable
+  type={{
+    "...props": {
+      description:
+        "Any other props are spread to the underlying SelectTrigger component.",
+      type: "React.ComponentProps<typeof SelectTrigger>",
+    },
+  }}
+/>
+
+### `<PromptInputSelectContent />`
+
+<TypeTable
+  type={{
+    "...props": {
+      description:
+        "Any other props are spread to the underlying SelectContent component.",
+      type: "React.ComponentProps<typeof SelectContent>",
+    },
+  }}
+/>
+
+### `<PromptInputSelectItem />`
+
+<TypeTable
+  type={{
+    "...props": {
+      description:
+        "Any other props are spread to the underlying SelectItem component.",
+      type: "React.ComponentProps<typeof SelectItem>",
+    },
+  }}
+/>
+
+### `<PromptInputSelectValue />`
+
+<TypeTable
+  type={{
+    "...props": {
+      description:
+        "Any other props are spread to the underlying SelectValue component.",
+      type: "React.ComponentProps<typeof SelectValue>",
+    },
+  }}
+/>
+
+### `<PromptInputBody />`
+
+<TypeTable
+  type={{
+    "...props": {
+      description: "Any other props are spread to the body div.",
+      type: "React.HTMLAttributes<HTMLDivElement>",
+    },
+  }}
+/>
+
+### Attachments
+
+Attachment components have been moved to a separate module. See the [Attachment](/components/attachment) component documentation for details on `<Attachments />`, `<Attachment />`, `<AttachmentPreview />`, `<AttachmentInfo />`, and `<AttachmentRemove />`.
+
+### `<PromptInputActionMenu />`
+
+<TypeTable
+  type={{
+    "...props": {
+      description:
+        "Any other props are spread to the underlying DropdownMenu component.",
+      type: "React.ComponentProps<typeof DropdownMenu>",
+    },
+  }}
+/>
+
+### `<PromptInputActionMenuTrigger />`
+
+<TypeTable
+  type={{
+    "...props": {
+      description:
+        "Any other props are spread to the underlying Button component.",
+      type: "React.ComponentProps<typeof Button>",
+    },
+  }}
+/>
+
+### `<PromptInputActionMenuContent />`
+
+<TypeTable
+  type={{
+    "...props": {
+      description:
+        "Any other props are spread to the underlying DropdownMenuContent component.",
+      type: "React.ComponentProps<typeof DropdownMenuContent>",
+    },
+  }}
+/>
+
+### `<PromptInputActionMenuItem />`
+
+<TypeTable
+  type={{
+    "...props": {
+      description:
+        "Any other props are spread to the underlying DropdownMenuItem component.",
+      type: "React.ComponentProps<typeof DropdownMenuItem>",
+    },
+  }}
+/>
+
+### `<PromptInputActionAddAttachments />`
+
+<TypeTable
+  type={{
+    label: {
+      description: "Label for the menu item.",
+      type: "string",
+      default: '"Add photos or files"',
+    },
+    "...props": {
+      description:
+        "Any other props are spread to the underlying DropdownMenuItem component.",
+      type: "React.ComponentProps<typeof DropdownMenuItem>",
+    },
+  }}
+/>
+
+### `<PromptInputProvider />`
+
+<TypeTable
+  type={{
+    initialInput: {
+      description: "Initial text input value.",
+      type: "string",
+    },
+    children: {
+      description:
+        "Child components that will have access to the provider context.",
+      type: "React.ReactNode",
+    },
+  }}
+/>
+
+Optional global provider that lifts PromptInput state outside of PromptInput. When used, it allows you to access and control the input state from anywhere within the provider tree. If not used, PromptInput stays fully self-managed.
+
+### `<PromptInputHeader />`
+
+<TypeTable
+  type={{
+    "...props": {
+      description:
+        "Any other props (except align) are spread to the InputGroupAddon component.",
+      type: 'Omit<React.ComponentProps<typeof InputGroupAddon>, "align">',
+    },
+  }}
+/>
+
+### `<PromptInputHoverCard />`
+
+<TypeTable
+  type={{
+    openDelay: {
+      description: "Delay in milliseconds before opening.",
+      type: "number",
+      default: "0",
+    },
+    closeDelay: {
+      description: "Delay in milliseconds before closing.",
+      type: "number",
+      default: "0",
+    },
+    "...props": {
+      description: "Any other props are spread to the HoverCard component.",
+      type: "React.ComponentProps<typeof HoverCard>",
+    },
+  }}
+/>
+
+### `<PromptInputHoverCardTrigger />`
+
+<TypeTable
+  type={{
+    "...props": {
+      description:
+        "Any other props are spread to the HoverCardTrigger component.",
+      type: "React.ComponentProps<typeof HoverCardTrigger>",
+    },
+  }}
+/>
+
+### `<PromptInputHoverCardContent />`
+
+<TypeTable
+  type={{
+    align: {
+      description: "Alignment of the hover card content.",
+      type: '"start" | "center" | "end"',
+      default: '"start"',
+    },
+    "...props": {
+      description:
+        "Any other props are spread to the HoverCardContent component.",
+      type: "React.ComponentProps<typeof HoverCardContent>",
+    },
+  }}
+/>
+
+### `<PromptInputTabsList />`
+
+<TypeTable
+  type={{
+    "...props": {
+      description: "Any other props are spread to the div element.",
+      type: "React.HTMLAttributes<HTMLDivElement>",
+    },
+  }}
+/>
+
+### `<PromptInputTab />`
+
+<TypeTable
+  type={{
+    "...props": {
+      description: "Any other props are spread to the div element.",
+      type: "React.HTMLAttributes<HTMLDivElement>",
+    },
+  }}
+/>
+
+### `<PromptInputTabLabel />`
+
+<TypeTable
+  type={{
+    "...props": {
+      description: "Any other props are spread to the h3 element.",
+      type: "React.HTMLAttributes<HTMLHeadingElement>",
+    },
+  }}
+/>
+
+### `<PromptInputTabBody />`
+
+<TypeTable
+  type={{
+    "...props": {
+      description: "Any other props are spread to the div element.",
+      type: "React.HTMLAttributes<HTMLDivElement>",
+    },
+  }}
+/>
+
+### `<PromptInputTabItem />`
+
+<TypeTable
+  type={{
+    "...props": {
+      description: "Any other props are spread to the div element.",
+      type: "React.HTMLAttributes<HTMLDivElement>",
+    },
+  }}
+/>
+
+### `<PromptInputCommand />`
+
+<TypeTable
+  type={{
+    "...props": {
+      description: "Any other props are spread to the Command component.",
+      type: "React.ComponentProps<typeof Command>",
+    },
+  }}
+/>
+
+### `<PromptInputCommandInput />`
+
+<TypeTable
+  type={{
+    "...props": {
+      description: "Any other props are spread to the CommandInput component.",
+      type: "React.ComponentProps<typeof CommandInput>",
+    },
+  }}
+/>
+
+### `<PromptInputCommandList />`
+
+<TypeTable
+  type={{
+    "...props": {
+      description: "Any other props are spread to the CommandList component.",
+      type: "React.ComponentProps<typeof CommandList>",
+    },
+  }}
+/>
+
+### `<PromptInputCommandEmpty />`
+
+<TypeTable
+  type={{
+    "...props": {
+      description: "Any other props are spread to the CommandEmpty component.",
+      type: "React.ComponentProps<typeof CommandEmpty>",
+    },
+  }}
+/>
+
+### `<PromptInputCommandGroup />`
+
+<TypeTable
+  type={{
+    "...props": {
+      description: "Any other props are spread to the CommandGroup component.",
+      type: "React.ComponentProps<typeof CommandGroup>",
+    },
+  }}
+/>
+
+### `<PromptInputCommandItem />`
+
+<TypeTable
+  type={{
+    "...props": {
+      description: "Any other props are spread to the CommandItem component.",
+      type: "React.ComponentProps<typeof CommandItem>",
+    },
+  }}
+/>
+
+### `<PromptInputCommandSeparator />`
+
+<TypeTable
+  type={{
+    "...props": {
+      description:
+        "Any other props are spread to the CommandSeparator component.",
+      type: "React.ComponentProps<typeof CommandSeparator>",
+    },
+  }}
+/>
+
+## Hooks
+
+### `usePromptInputAttachments`
+
+Access and manage file attachments within a PromptInput context.
+
+```tsx
+const attachments = usePromptInputAttachments();
+
+// Available methods:
+attachments.files; // Array of current attachments
+attachments.add(files); // Add new files
+attachments.remove(id); // Remove an attachment by ID
+attachments.clear(); // Clear all attachments
+attachments.openFileDialog(); // Open file selection dialog
+```
+
+### `usePromptInputController`
+
+Access the full PromptInput controller from a PromptInputProvider. Only available when using the provider.
+
+```tsx
+const controller = usePromptInputController();
+
+// Available methods:
+controller.textInput.value; // Current text input value
+controller.textInput.setInput(value); // Set text input value
+controller.textInput.clear(); // Clear text input
+controller.attachments; // Same as usePromptInputAttachments
+```
+
+### `useProviderAttachments`
+
+Access attachments context from a PromptInputProvider. Only available when using the provider.
+
+```tsx
+const attachments = useProviderAttachments();
+
+// Same interface as usePromptInputAttachments
+```
+
+### `usePromptInputReferencedSources`
+
+Access referenced sources context within a PromptInput.
+
+```tsx
+const sources = usePromptInputReferencedSources();
+
+// Available methods:
+sources.sources; // Array of current referenced sources
+sources.add(sources); // Add new source(s)
+sources.remove(id); // Remove a source by ID
+sources.clear(); // Clear all sources
+```

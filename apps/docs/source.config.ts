@@ -21,6 +21,32 @@ export const docs = defineDocs({
   },
 });
 
+export const components = defineDocs({
+  dir: "content/components",
+  docs: {
+    schema: frontmatterSchema,
+    postprocess: {
+      includeProcessedMarkdown: true,
+    },
+  },
+  meta: {
+    schema: metaSchema,
+  },
+});
+
+export const examples = defineDocs({
+  dir: "content/examples",
+  docs: {
+    schema: frontmatterSchema,
+    postprocess: {
+      includeProcessedMarkdown: true,
+    },
+  },
+  meta: {
+    schema: metaSchema,
+  },
+});
+
 export default defineConfig({
   mdxOptions: {
     remarkPlugins: [remarkMdxMermaid],

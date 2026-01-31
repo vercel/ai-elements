@@ -1,0 +1,58 @@
+---
+title: Workflow
+description: An example of how to use the AI Elements to build a workflow visualization with interactive nodes and animated connections.
+full: true
+---
+
+<Preview path="workflow" type="block" className="p-0" />
+
+## Tutorial
+
+Let's walk through how to build a workflow visualization using AI Elements. Our example will include custom nodes with headers, content, and footers, along with animated and temporary edge types.
+
+### Setup
+
+First, set up a new Next.js repo and cd into it by running the following command (make sure you choose to use Tailwind in the project setup):
+
+```package-install
+npx create-next-app@latest ai-workflow && cd ai-workflow
+```
+
+Run the following command to install AI Elements. This will also set up shadcn/ui if you haven't already configured it:
+
+```package-install
+npx ai-elements@latest
+```
+
+Now, install the required dependencies:
+
+```package-install
+npm i @xyflow/react
+```
+
+We're now ready to start building our workflow!
+
+### Client
+
+Let's build the workflow visualization step by step. We'll create the component structure, define our nodes and edges, and configure the canvas.
+
+#### Import the components
+
+First, let's build the interface:
+
+<SourceCode path="workflow" />
+
+### Key Features
+
+The workflow visualization demonstrates several powerful features:
+
+- **Custom Node Components**: Each node uses the compound components (`NodeHeader`, `NodeTitle`, `NodeDescription`, `NodeContent`, `NodeFooter`) for consistent, structured layouts.
+- **Node Toolbars**: The `Toolbar` component attaches contextual actions (like Edit and Delete buttons) to individual nodes, appearing when hovering or selecting them.
+- **Handle Configuration**: Nodes can have source and/or target handles, controlling which connections are possible.
+- **Multiple Edge Types**: The `animated` type shows active data flow, while `temporary` indicates conditional or error paths.
+- **Custom Connection Lines**: The `Connection` component provides styled bezier curves when dragging new connections between nodes.
+- **Interactive Controls**: The `Controls` component adds zoom in/out and fit view buttons with a modern, themed design.
+- **Custom UI Panels**: The `Panel` component allows you to position custom UI elements (like buttons, filters, or legends) anywhere on the canvas.
+- **Automatic Layout**: The `Canvas` component auto-fits the view and provides pan/zoom controls out of the box.
+
+You now have a working workflow visualization! Feel free to explore dynamic workflows by connecting this to AI-generated process flows, or extend it with interactive editing capabilities using React Flow's built-in features.

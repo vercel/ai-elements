@@ -1,4 +1,3 @@
-import { withMicrofrontends } from "@vercel/microfrontends/next/config";
 import { createMDX } from "fumadocs-mdx/next";
 
 const withMDX = createMDX();
@@ -7,27 +6,21 @@ const withMDX = createMDX();
 const config = {
   reactStrictMode: true,
 
-  basePath: "/elements",
-
   images: {
     remotePatterns: [
       {
         protocol: "https",
         hostname: "github.com",
       },
+      {
+        protocol: "https",
+        hostname: "placehold.co",
+      },
     ],
   },
 
   rewrites() {
     return [
-      {
-        source: "/elements/:lang/:path*.mdx",
-        destination: "/elements/:lang/llms.mdx/:path*",
-      },
-      {
-        source: "/elements/:lang/:path*.md",
-        destination: "/elements/:lang/llms.mdx/:path*",
-      },
       {
         source: "/:lang/:path*.mdx",
         destination: "/:lang/llms.mdx/:path*",
@@ -47,8 +40,13 @@ const config = {
         permanent: true,
       },
       {
+        source: "/examples",
+        destination: "/examples/chatbot",
+        permanent: true,
+      },
+      {
         source: "/components",
-        destination: "/components/chain-of-thought",
+        destination: "/components/attachments",
         permanent: true,
       },
       {
@@ -56,8 +54,13 @@ const config = {
         destination: "/examples/chatbot",
         permanent: true,
       },
+      {
+        source: "/components/loader",
+        destination: "https://ui.shadcn.com/docs/components/radix/spinner",
+        permanent: true,
+      },
     ];
   },
 };
 
-export default withMDX(withMicrofrontends(config));
+export default withMDX(config);

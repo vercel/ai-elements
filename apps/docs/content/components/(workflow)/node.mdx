@@ -1,0 +1,135 @@
+---
+title: Node
+description: A composable node component for React Flow-based canvases with Card-based styling.
+path: elements/components/node
+---
+
+The `Node` component provides a composable, Card-based node for React Flow canvases. It includes support for connection handles, structured layouts, and consistent styling using shadcn/ui components.
+
+<Callout>
+  The Node component is designed to be used with the
+  [Canvas](/components/canvas) component. See the [Workflow](/examples/workflow)
+  demo for a full example.
+</Callout>
+
+## Installation
+
+<ElementsInstaller path="node" />
+
+## Features
+
+- Built on shadcn/ui Card components for consistent styling
+- Automatic handle placement (left for target, right for source)
+- Composable sub-components (Header, Title, Description, Action, Content, Footer)
+- Semantic structure for organizing node information
+- Pre-styled sections with borders and backgrounds
+- Responsive sizing with fixed small width
+- Full TypeScript support with proper type definitions
+- Compatible with React Flow's node system
+
+## Props
+
+### `<Node />`
+
+<TypeTable
+  type={{
+    handles: {
+      description:
+        "Configuration for connection handles. Target renders on the left, source on the right.",
+      type: "{ target: boolean; source: boolean; }",
+    },
+    className: {
+      description: "Additional CSS classes to apply to the node.",
+      type: "string",
+    },
+    "...props": {
+      description:
+        "Any other props are spread to the underlying Card component.",
+      type: "ComponentProps<typeof Card>",
+    },
+  }}
+/>
+
+### `<NodeHeader />`
+
+<TypeTable
+  type={{
+    className: {
+      description: "Additional CSS classes to apply to the header.",
+      type: "string",
+    },
+    "...props": {
+      description:
+        "Any other props are spread to the underlying CardHeader component.",
+      type: "ComponentProps<typeof CardHeader>",
+    },
+  }}
+/>
+
+### `<NodeTitle />`
+
+<TypeTable
+  type={{
+    "...props": {
+      description:
+        "Any other props are spread to the underlying CardTitle component.",
+      type: "ComponentProps<typeof CardTitle>",
+    },
+  }}
+/>
+
+### `<NodeDescription />`
+
+<TypeTable
+  type={{
+    "...props": {
+      description:
+        "Any other props are spread to the underlying CardDescription component.",
+      type: "ComponentProps<typeof CardDescription>",
+    },
+  }}
+/>
+
+### `<NodeAction />`
+
+<TypeTable
+  type={{
+    "...props": {
+      description:
+        "Any other props are spread to the underlying CardAction component.",
+      type: "ComponentProps<typeof CardAction>",
+    },
+  }}
+/>
+
+### `<NodeContent />`
+
+<TypeTable
+  type={{
+    className: {
+      description: "Additional CSS classes to apply to the content.",
+      type: "string",
+    },
+    "...props": {
+      description:
+        "Any other props are spread to the underlying CardContent component.",
+      type: "ComponentProps<typeof CardContent>",
+    },
+  }}
+/>
+
+### `<NodeFooter />`
+
+<TypeTable
+  type={{
+    className: {
+      description: "Additional CSS classes to apply to the footer.",
+      type: "string",
+    },
+    "...props": {
+      description:
+        "Any other props are spread to the underlying CardFooter component.",
+      type: "ComponentProps<typeof CardFooter>",
+    },
+  }}
+/>

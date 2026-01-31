@@ -2,7 +2,8 @@
 
 import { Button } from "@repo/shadcn-ui/components/ui/button";
 import { cn } from "@repo/shadcn-ui/lib/utils";
-import { LoaderIcon, MicIcon, SquareIcon } from "lucide-react";
+import { Spinner } from "@repo/shadcn-ui/components/ui/spinner";
+import { MicIcon, SquareIcon } from "lucide-react";
 import {
   type ComponentProps,
   useCallback,
@@ -291,7 +292,7 @@ export const SpeechInput = ({
         onClick={toggleListening}
         {...props}
       >
-        {isProcessing && <LoaderIcon className="size-4 animate-spin" />}
+        {isProcessing && <Spinner />}
         {!isProcessing && isListening && <SquareIcon className="size-4" />}
         {!(isProcessing || isListening) && <MicIcon className="size-4" />}
       </Button>

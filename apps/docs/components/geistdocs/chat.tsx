@@ -268,7 +268,6 @@ const ChatInner = ({ basePath, suggestions }: ChatProps) => {
                       className="text-wrap"
                       rehypePlugins={[
                         defaultRehypePlugins.raw,
-                        defaultRehypePlugins.katex,
                         [
                           harden,
                           {

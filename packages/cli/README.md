@@ -1,6 +1,6 @@
 # ▲ AI Elements
 
-A command-line interface for installing [AI Elements](https://ai-sdk.dev/elements) components - a component library built on top of [shadcn/ui](https://ui.shadcn.com/) to help you build AI-native applications faster.
+A command-line interface for installing [AI Elements](https://elements.ai-sdk.dev) components - a component library built on top of [shadcn/ui](https://ui.shadcn.com/) to help you build AI-native applications faster.
 
 ## Overview
 
@@ -15,7 +15,7 @@ You can use the AI Elements CLI directly with npx, or install it globally:
 npx ai-elements@latest
 
 # Or using shadcn cli
-npx shadcn@latest add https://ai-sdk.dev/elements/api/registry/all.json
+npx shadcn@latest add https://elements.ai-sdk.dev/api/registry/all.json
 ```
 
 ## Prerequisites
@@ -38,6 +38,7 @@ npx ai-elements@latest
 ```
 
 This command will:
+
 - Set up shadcn/ui if not already configured
 - Install all AI Elements components to your configured components directory
 - Add necessary dependencies to your project
@@ -51,6 +52,7 @@ npx ai-elements@latest add <component-name>
 ```
 
 Examples:
+
 ```bash
 # Install the message component
 npx ai-elements@latest add message
@@ -68,54 +70,54 @@ You can also install components using the standard shadcn/ui CLI:
 
 ```bash
 # Install all components
-npx shadcn@latest add https://ai-sdk.dev/elements/api/registry/all.json
+npx shadcn@latest add https://elements.ai-sdk.dev/api/registry/all.json
 
 # Install a specific component
-npx shadcn@latest add https://ai-sdk.dev/elements/api/registry/message.json
+npx shadcn@latest add https://elements.ai-sdk.dev/api/registry/message.json
 ```
 
 ## Available Components
 
 AI Elements includes the following components:
 
-| Component | Description |
-|-----------|-------------|
-| `actions` | Interactive action buttons for AI responses |
-| `branch` | Branch visualization for conversation flows |
-| `code-block` | Syntax-highlighted code display with copy functionality |
-| `conversation` | Container for chat conversations |
-| `image` | AI-generated image display component |
-| `inline-citation` | Inline source citations |
-| `loader` | Loading states for AI operations |
-| `message` | Individual chat messages with avatars |
-| `prompt-form` | Controlled form wrapper for prompt submission |
-| `prompt-input` | Advanced input component with model selection |
-| `prompt-input-attachments` | Opt-in file/image attachments for prompt input |
-| `reasoning` | Display AI reasoning and thought processes |
-| `response` | Formatted AI response display |
-| `source` | Source attribution component |
-| `suggestion` | Quick action suggestions |
-| `task` | Task completion tracking |
-| `tool` | Tool usage visualization |
-| `web-preview` | Embedded web page previews |
+| Component                  | Description                                             |
+| -------------------------- | ------------------------------------------------------- |
+| `actions`                  | Interactive action buttons for AI responses             |
+| `branch`                   | Branch visualization for conversation flows             |
+| `code-block`               | Syntax-highlighted code display with copy functionality |
+| `conversation`             | Container for chat conversations                        |
+| `image`                    | AI-generated image display component                    |
+| `inline-citation`          | Inline source citations                                 |
+| `loader`                   | Loading states for AI operations                        |
+| `message`                  | Individual chat messages with avatars                   |
+| `prompt-form`              | Controlled form wrapper for prompt submission           |
+| `prompt-input`             | Advanced input component with model selection           |
+| `prompt-input-attachments` | Opt-in file/image attachments for prompt input          |
+| `reasoning`                | Display AI reasoning and thought processes              |
+| `response`                 | Formatted AI response display                           |
+| `source`                   | Source attribution component                            |
+| `suggestion`               | Quick action suggestions                                |
+| `task`                     | Task completion tracking                                |
+| `tool`                     | Tool usage visualization                                |
+| `web-preview`              | Embedded web page previews                              |
 
 ## Quick Start Example
 
 After installing components, you can use them in your React application:
 
 ```tsx
-'use client';
+"use client";
 
-import { useChat } from '@ai-sdk/react';
+import { useChat } from "@ai-sdk/react";
 import {
   Conversation,
   ConversationContent,
-} from '@/components/ai-elements/conversation';
+} from "@/components/ai-elements/conversation";
 import {
   Message,
   MessageContent,
   MessageResponse,
-} from '@/components/ai-elements/message';
+} from "@/components/ai-elements/message";
 
 export default function Chat() {
   const { messages } = useChat();
@@ -141,7 +143,7 @@ export default function Chat() {
 The AI Elements CLI:
 
 1. **Detects your package manager** (npm, pnpm, yarn, or bun) automatically
-2. **Fetches component registry** from `https://ai-sdk.dev/elements/api/registry/registry.json`
+2. **Fetches component registry** from `https://elements.ai-sdk.dev/api/registry/registry.json`
 3. **Installs components** using the shadcn/ui CLI under the hood
 4. **Adds dependencies** and integrates with your existing shadcn/ui setup
 
