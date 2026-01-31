@@ -24,9 +24,50 @@ interface Chat {
   demo: string;
 }
 
+const mockChatHistory = [
+  {
+    id: "1",
+    type: "user" as const,
+    content: "Build me an agent skills website with a modern dark theme",
+  },
+  {
+    id: "2",
+    type: "assistant" as const,
+    content:
+      "I'll create a sleek agent skills website with a dark theme. The design will feature a clean layout showcasing various AI agent capabilities with smooth animations.",
+  },
+  {
+    id: "3",
+    type: "user" as const,
+    content: "Add a hero section with a catchy tagline about AI skills",
+  },
+  {
+    id: "4",
+    type: "assistant" as const,
+    content:
+      "Done! I've added a hero section with the tagline 'Supercharge your AI agents with powerful skills'. The section includes a gradient background and animated elements.",
+  },
+  {
+    id: "5",
+    type: "user" as const,
+    content: "Can you add a grid of skill cards showing different capabilities?",
+  },
+  {
+    id: "6",
+    type: "assistant" as const,
+    content:
+      "I've added a skills grid featuring cards for Web Search, Code Execution, File Management, API Integration, and more. Each card has an icon and description. Check the preview!",
+  },
+];
+
+const mockChat: Chat = {
+  id: "mock-chat-1",
+  demo: "https://skills.sh/",
+};
+
 export default function Home() {
   const [message, setMessage] = useState("");
-  const [currentChat, setCurrentChat] = useState<Chat | null>(null);
+  const [currentChat, setCurrentChat] = useState<Chat | null>(mockChat);
   const [isLoading, setIsLoading] = useState(false);
   const [chatHistory, setChatHistory] = useState<
     Array<{
@@ -34,7 +75,7 @@ export default function Home() {
       type: "user" | "assistant";
       content: string;
     }>
-  >([]);
+  >(mockChatHistory);
 
   const handleSendMessage = async (promptMessage: PromptInputMessage) => {
     const hasText = Boolean(promptMessage.text);
@@ -97,7 +138,7 @@ export default function Home() {
   };
 
   return (
-    <div className="flex h-[800px]">
+    <div className="flex size-full">
       {/* Chat Panel */}
       <div className="flex w-1/2 flex-col border-r">
         {/* Header */}

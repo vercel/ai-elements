@@ -703,7 +703,7 @@ const Example = () => {
         <Suggestions className="px-4">
           {suggestions.map(({ icon: Icon, text, color }) => (
             <Suggestion
-              className="font-normal"
+              className="font-normal text-foreground"
               key={text}
               onClick={() => handleSuggestionClick(text)}
               suggestion={text}
