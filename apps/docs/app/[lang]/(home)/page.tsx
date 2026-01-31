@@ -74,11 +74,7 @@ const textGridSection = [
 
 const HomePage = () => (
   <div className="container mx-auto max-w-5xl">
-    <Hero
-      badge="AI Elements v2 is now live!"
-      description={description}
-      title={title}
-    >
+    <Hero description={description} title={title}>
       <div className="mx-auto inline-flex w-fit items-center gap-3">
         <Button asChild className="px-4" size="lg">
           <DynamicLink href="/[lang]/components">
