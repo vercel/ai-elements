@@ -1,5 +1,16 @@
 # ai-elements
 
+## 1.8.2
+
+### Patch Changes
+
+- cf793dd: Add new IDE example
+- cf793dd: Deprecate Loader component for shadcn/ui Spinner
+- ce1606a: Fix Tool padding
+- cf793dd: code-block.tsx: TokensResult fg/bg are optional in Shiki types, but TokenizedCode requires string (strictNullChecks error)
+- d78b009: Fix chain-of-thoughts dropdown arrow alignment by replacing `max-w-prose` with `w-full` for proper responsive layout.
+- abeda54: Fix relative registry dependency links
+
 ## 1.8.1
 
 ### Patch Changes
