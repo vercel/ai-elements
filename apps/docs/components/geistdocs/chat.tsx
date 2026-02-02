@@ -3,6 +3,12 @@
 import type { UIMessage } from "@ai-sdk/react";
 import { useChat } from "@ai-sdk/react";
 import {
+  Attachment,
+  AttachmentPreview,
+  AttachmentRemove,
+  Attachments,
+} from "@repo/elements/attachments";
+import {
   Conversation,
   ConversationContent,
   ConversationScrollButton,
@@ -14,14 +20,14 @@ import {
 } from "@repo/elements/message";
 import {
   PromptInput,
-  // PromptInputAttachment,
-  // PromptInputAttachments,
   PromptInputBody,
   PromptInputFooter,
+  PromptInputHeader,
   type PromptInputProps,
   PromptInputProvider,
   PromptInputSubmit,
   PromptInputTextarea,
+  usePromptInputAttachments,
 } from "@repo/elements/prompt-input";
 import { Suggestion, Suggestions } from "@repo/elements/suggestion";
 import { Button } from "@repo/shadcn-ui/components/ui/button";
@@ -45,14 +51,23 @@ import { useLiveQuery } from "dexie-react-hooks";
 import { ChevronRightIcon, MessagesSquareIcon, Trash } from "lucide-react";
 import { Portal } from "radix-ui";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { harden } from "rehype-harden";
 import { toast } from "sonner";
-import { defaultRehypePlugins } from "streamdown";
 import type { MyUIMessage } from "@/app/api/chat/types";
 import { useChatContext } from "@/hooks/geistdocs/use-chat";
 import { db } from "@/lib/geistdocs/db";
 import { CopyChat } from "./copy-chat";
 import { MessageMetadata } from "./message-metadata";
+
+const isFromPreviousDay = (timestamp: number): boolean => {
+  const messageDate = new Date(timestamp);
+  const today = new Date();
+
+  return (
+    messageDate.getFullYear() !== today.getFullYear() ||
+    messageDate.getMonth() !== today.getMonth() ||
+    messageDate.getDate() !== today.getDate()
+  );
+};
 
 export const useChatPersistence = () => {
   const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(
@@ -64,8 +79,23 @@ export const useChatPersistence = () => {
     db.messages.orderBy("sequence").toArray()
   );
 
+  // Clear messages if they're from a previous day
+  useEffect(() => {
+    if (storedMessages && storedMessages.length > 0) {
+      const firstMessage = storedMessages[0];
+      if (firstMessage && isFromPreviousDay(firstMessage.timestamp)) {
+        db.messages.clear();
+      }
+    }
+  }, [storedMessages]);
+
+  // Filter out stale messages from previous days
+  const freshMessages = storedMessages?.filter(
+    (msg) => !isFromPreviousDay(msg.timestamp)
+  );
+
   const initialMessages =
-    storedMessages?.map(({ timestamp, sequence, ...message }) => message) ?? [];
+    freshMessages?.map(({ timestamp, sequence, ...message }) => message) ?? [];
 
   const isLoading = storedMessages === undefined;
 
@@ -121,12 +151,40 @@ export const useChatPersistence = () => {
   };
 };
 
-interface ChatProps {
+const PromptInputAttachmentsDisplay = () => {
+  const attachments = usePromptInputAttachments();
+
+  if (attachments.files.length === 0) {
+    return null;
+  }
+
+  return (
+    <Attachments variant="inline">
+      {attachments.files.map((attachment) => (
+        <Attachment
+          data={attachment}
+          key={attachment.id}
+          onRemove={() => attachments.remove(attachment.id)}
+        >
+          <AttachmentPreview />
+          <AttachmentRemove />
+        </Attachment>
+      ))}
+    </Attachments>
+  );
+};
+
+type ChatProps = {
   basePath: string | undefined;
   suggestions: string[];
-}
+};
 
-const ChatInner = ({ basePath, suggestions }: ChatProps) => {
+type ChatInnerProps = ChatProps & {
+  isOpen: boolean;
+};
+
+const ChatInner = ({ basePath, suggestions, isOpen }: ChatInnerProps) => {
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [isInitialized, setIsInitialized] = useState(false);
   const [localPrompt, setLocalPrompt] = useState("");
   const [providerKey, setProviderKey] = useState(0);
@@ -134,7 +192,7 @@ const ChatInner = ({ basePath, suggestions }: ChatProps) => {
   const { initialMessages, isLoading, saveMessages, clearMessages } =
     useChatPersistence();
 
-  const { messages, sendMessage, status, setMessages } = useChat({
+  const { messages, sendMessage, status, setMessages, stop } = useChat({
     transport: new DefaultChatTransport({
       api: basePath ? `${basePath}/api/chat` : "/api/chat",
     }),
@@ -171,14 +229,32 @@ const ChatInner = ({ basePath, suggestions }: ChatProps) => {
     }
   }, [messages, saveMessages, isInitialized]);
 
-  const handleSuggestionClick = async (suggestion: string) => {
-    await sendMessage({ text: suggestion });
+  // Focus textarea when chat opens
+  useEffect(() => {
+    if (isOpen) {
+      // Small delay to ensure the panel/drawer animation has started
+      const timer = setTimeout(() => {
+        textareaRef.current?.focus();
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [isOpen]);
+
+  const handleSuggestionClick = async (text: string) => {
+    if (status === "streaming" || status === "submitted") {
+      return;
+    }
     setLocalPrompt("");
     setPrompt("");
+    await sendMessage({ text });
   };
 
   const handleSubmit: PromptInputProps["onSubmit"] = async (message, event) => {
     event.preventDefault();
+
+    if (status === "streaming" || status === "submitted") {
+      return;
+    }
 
     const { text } = message;
 
@@ -186,9 +262,9 @@ const ChatInner = ({ basePath, suggestions }: ChatProps) => {
       return;
     }
 
-    await sendMessage({ text });
     setLocalPrompt("");
     setPrompt("");
+    await sendMessage({ text });
   };
 
   const handleClearChat = async () => {
@@ -257,27 +333,14 @@ const ChatInner = ({ basePath, suggestions }: ChatProps) => {
               key={message.id}
             >
               <MessageMetadata
-                inProgress={status === "submitted"}
+                inProgress={status === "submitted" || status === "streaming"}
                 parts={message.parts as MyUIMessage["parts"]}
               />
               {message.parts
                 .filter((part) => part.type === "text")
                 .map((part, index) => (
                   <MessageContent key={`${message.id}-${part.type}-${index}`}>
-                    <MessageResponse
-                      className="text-wrap"
-                      rehypePlugins={[
-                        defaultRehypePlugins.raw,
-                        [
-                          harden,
-                          {
-                            defaultOrigin:
-                              process.env
-                                .NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL,
-                          },
-                        ],
-                      ]}
-                    >
+                    <MessageResponse className="text-wrap">
                       {part.text}
                     </MessageResponse>
                   </MessageContent>
@@ -318,9 +381,9 @@ const ChatInner = ({ basePath, suggestions }: ChatProps) => {
         )}
         <PromptInputProvider initialInput={localPrompt} key={providerKey}>
           <PromptInput globalDrop multiple onSubmit={handleSubmit}>
-            {/* <PromptInputAttachments>
-              {(attachment) => <PromptInputAttachment data={attachment} />}
-            </PromptInputAttachments> */}
+            <PromptInputHeader>
+              <PromptInputAttachmentsDisplay />
+            </PromptInputHeader>
             <PromptInputBody>
               <PromptInputTextarea
                 maxLength={1000}
@@ -328,13 +391,24 @@ const ChatInner = ({ basePath, suggestions }: ChatProps) => {
                   setLocalPrompt(e.target.value);
                   setPrompt(e.target.value);
                 }}
+                ref={textareaRef}
               />
             </PromptInputBody>
             <PromptInputFooter>
               <p className="text-muted-foreground text-xs">
                 {localPrompt.length} / 1000
               </p>
-              <PromptInputSubmit status={status} />
+              <PromptInputSubmit
+                onClick={
+                  status === "streaming"
+                    ? (e) => {
+                        e.preventDefault();
+                        stop();
+                      }
+                    : undefined
+                }
+                status={status}
+              />
             </PromptInputFooter>
           </PromptInput>
         </PromptInputProvider>
@@ -390,7 +464,11 @@ export const Chat = ({ basePath, suggestions }: ChatProps) => {
           )}
           data-state={isOpen ? "open" : "closed"}
         >
-          <ChatInner basePath={basePath} suggestions={suggestions} />
+          <ChatInner
+            basePath={basePath}
+            isOpen={isOpen}
+            suggestions={suggestions}
+          />
         </div>
       </Portal.Root>
       <div className="md:hidden">
@@ -405,7 +483,11 @@ export const Chat = ({ basePath, suggestions }: ChatProps) => {
             </Button>
           </DrawerTrigger>
           <DrawerContent className="h-[80dvh]">
-            <ChatInner basePath={basePath} suggestions={suggestions} />
+            <ChatInner
+              basePath={basePath}
+              isOpen={isOpen}
+              suggestions={suggestions}
+            />
           </DrawerContent>
         </Drawer>
       </div>
