@@ -1002,10 +1002,10 @@ export const PromptInputPastedContentCard = ({
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = attachment.filename ?? PASTED_TEXT_FILENAME;
+    a.download = PASTED_TEXT_FILENAME;
     a.click();
     URL.revokeObjectURL(url);
-  }, [content, attachment.filename]);
+  }, [content]);
 
   const handleCardClick = useCallback(() => {
     setModalOpen(true);
@@ -1043,11 +1043,7 @@ export const PromptInputPastedContentCard = ({
         <Button
           aria-label="Remove pasted content"
           className="size-6 shrink-0 rounded p-0 opacity-70 hover:opacity-100"
-          onClick={(e) => {
-            e.stopPropagation();
-            onRemove();
-          }}
-          onKeyDown={(e) => e.stopPropagation()}
+          onClick={onRemove}
           size="icon-sm"
           type="button"
           variant="ghost"
@@ -1061,7 +1057,7 @@ export const PromptInputPastedContentCard = ({
           showCloseButton
         >
           <DialogHeader>
-            <DialogTitle>{attachment.filename ?? PASTED_TEXT_FILENAME}</DialogTitle>
+            <DialogTitle>{PASTED_TEXT_FILENAME}</DialogTitle>
           </DialogHeader>
           <div className="min-h-0 flex-1 overflow-auto rounded-md border bg-muted/30 p-3">
             {content === null ? (
