@@ -21,7 +21,7 @@
     "@repo/typescript-config": "workspace:*",
     "@types/node": "^25.0.9",
     "@types/react": "19.2.8",
-    "shiki": "3.21.0",
+    "shiki": "3.22.0",
     "typescript": "^5.9.3"
   }
 }
