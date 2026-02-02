@@ -1,7 +1,9 @@
 import { createTokenizer as createTokenizerJapanese } from "@orama/tokenizers/japanese";
 import { createTokenizer as createTokenizerMandarin } from "@orama/tokenizers/mandarin";
-import { createSearchAPI } from "fumadocs-core/search/server";
+import type { StructuredData } from "fumadocs-core/mdx-plugins/remark-structure";
+import { createI18nSearchAPI } from "fumadocs-core/search/server";
 import { translations } from "@/geistdocs";
+import { i18n } from "@/lib/geistdocs/i18n";
 import {
   componentsSource,
   docsSource,
@@ -52,15 +54,56 @@ if ("jp" in translations) {
   };
 }
 
-export const { GET } = createSearchAPI("advanced", {
-  indexes: [docsSource, componentsSource, examplesSource].flatMap((source) =>
-    source.getPages().map((page) => ({
+const indexes: {
+  title: string;
+  description: string | undefined;
+  structuredData: StructuredData;
+  url: string;
+  id: string;
+  locale: string;
+}[] = [];
+
+for (const lang of docsSource.getLanguages()) {
+  for (const page of lang.pages) {
+    indexes.push({
       title: page.data.title,
       description: page.data.description,
+      structuredData: page.data.structuredData,
       url: page.url,
       id: page.url,
+      locale: lang.language,
+    });
+  }
+}
+
+for (const lang of componentsSource.getLanguages()) {
+  for (const page of lang.pages) {
+    indexes.push({
+      title: page.data.title,
+      description: page.data.description,
       structuredData: page.data.structuredData,
-    }))
-  ),
+      url: page.url,
+      id: page.url,
+      locale: lang.language,
+    });
+  }
+}
+
+for (const lang of examplesSource.getLanguages()) {
+  for (const page of lang.pages) {
+    indexes.push({
+      title: page.data.title,
+      description: page.data.description,
+      structuredData: page.data.structuredData,
+      url: page.url,
+      id: page.url,
+      locale: lang.language,
+    });
+  }
+}
+
+export const { GET } = createI18nSearchAPI("advanced", {
+  i18n,
+  indexes,
   localeMap,
 });

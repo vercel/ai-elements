@@ -1,5 +1,5 @@
+import type { Node, Root } from "fumadocs-core/page-tree";
 import { type InferPageType, loader } from "fumadocs-core/source";
-import type { PageTree } from "fumadocs-core/server";
 import { lucideIconsPlugin } from "fumadocs-core/source/lucide-icons";
 import { components, docs, examples } from "@/.source/server";
 import { basePath } from "@/geistdocs";
@@ -44,10 +44,7 @@ export const getAllPages = (lang?: string) => {
 };
 
 // Helper to get page by URL across all sources
-export const getPageByHref = (
-  url: string,
-  options?: { language?: string }
-) => {
+export const getPageByHref = (url: string, options?: { language?: string }) => {
   for (const source of allSources) {
     const result = source.getPageByHref(url, options);
     if (result?.page) {
@@ -58,10 +55,7 @@ export const getPageByHref = (
 };
 
 // Helper to prefix $id in page tree nodes to avoid key collisions
-const prefixTreeIds = (
-  nodes: PageTree.Node[],
-  prefix: string
-): PageTree.Node[] =>
+const prefixTreeIds = (nodes: Node[], prefix: string): Node[] =>
   nodes.map((node) => {
     const prefixedId = `${prefix}:${node.$id}`;
 
@@ -77,7 +71,7 @@ const prefixTreeIds = (
   });
 
 // Helper to get combined page tree for a language
-export const getCombinedPageTree = (lang: string): PageTree.Root => ({
+export const getCombinedPageTree = (lang: string): Root => ({
   name: "Root",
   children: [
     ...prefixTreeIds(docsSource.pageTree[lang].children, "docs"),
