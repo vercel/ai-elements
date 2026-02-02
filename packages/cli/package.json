@@ -10,7 +10,7 @@
     "README.md",
     "LICENSE"
   ],
-  "homepage": "https://ai-sdk.dev/elements",
+  "homepage": "https://elements.ai-sdk.dev",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/vercel/ai-elements.git",
