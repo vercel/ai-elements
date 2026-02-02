@@ -99,7 +99,7 @@ const HomePage = () => (
         description="Mix and match components to build chat experiences, workflows, IDEs, voice agents and more."
         title="Components to build anything"
       >
-        <div className="relative aspect-video">
+        <div className="pointer-events-none relative aspect-video sm:pointer-events-auto">
           <div className="grid items-start gap-4 sm:absolute sm:-inset-40 sm:top-8 sm:rotate-3 sm:-skew-x-12 sm:grid-cols-3">
             <div className="grid gap-4">
               <div className="rounded-lg border bg-background p-4">
