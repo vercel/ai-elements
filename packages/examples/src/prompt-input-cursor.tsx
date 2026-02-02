@@ -23,6 +23,7 @@ import {
 } from "@repo/elements/model-selector";
 import {
   PromptInput,
+  PromptInputAttachmentsDisplay,
   PromptInputBody,
   PromptInputButton,
   PromptInputCommand,
@@ -46,8 +47,7 @@ import {
   PromptInputTabLabel,
   PromptInputTextarea,
   PromptInputTools,
-  usePromptInputAttachments,
-  usePromptInputReferencedSources,
+  usePromptInputReferencedSources
 } from "@repo/elements/prompt-input";
 import { Button } from "@repo/shadcn-ui/components/ui/button";
 import type { SourceDocumentUIPart } from "ai";
@@ -136,29 +136,6 @@ const sampleTabs = {
     { path: "packages/elements/src/queue.tsx" },
     { path: "apps/test/app/examples/queue.tsx" },
   ],
-};
-
-const PromptInputAttachmentsDisplay = () => {
-  const attachments = usePromptInputAttachments();
-
-  if (attachments.files.length === 0) {
-    return null;
-  }
-
-  return (
-    <Attachments variant="inline">
-      {attachments.files.map((attachment) => (
-        <Attachment
-          data={attachment}
-          key={attachment.id}
-          onRemove={() => attachments.remove(attachment.id)}
-        >
-          <AttachmentPreview />
-          <AttachmentRemove />
-        </Attachment>
-      ))}
-    </Attachments>
-  );
 };
 
 const PromptInputReferencedSourcesDisplay = () => {

@@ -1,12 +1,6 @@
 "use client";
 
 import {
-  Attachment,
-  AttachmentPreview,
-  AttachmentRemove,
-  Attachments,
-} from "@repo/elements/attachments";
-import {
   Conversation,
   ConversationContent,
   ConversationScrollButton,
@@ -41,6 +35,7 @@ import {
   PromptInputActionMenu,
   PromptInputActionMenuContent,
   PromptInputActionMenuTrigger,
+  PromptInputAttachmentsDisplay,
   PromptInputBody,
   PromptInputButton,
   PromptInputFooter,
@@ -49,7 +44,6 @@ import {
   PromptInputSubmit,
   PromptInputTextarea,
   PromptInputTools,
-  usePromptInputAttachments,
 } from "@repo/elements/prompt-input";
 import {
   Reasoning,
@@ -332,29 +326,6 @@ const mockResponses = [
   "Great choice of topic! This is something that many developers encounter. The approach I'd suggest is to start with the fundamentals and then build up to more complex scenarios.",
   "That's definitely worth exploring. From what I can see, the best way to handle this is to consider both the theoretical aspects and practical implementation details.",
 ];
-
-const PromptInputAttachmentsDisplay = () => {
-  const attachments = usePromptInputAttachments();
-
-  if (attachments.files.length === 0) {
-    return null;
-  }
-
-  return (
-    <Attachments variant="inline">
-      {attachments.files.map((attachment) => (
-        <Attachment
-          data={attachment}
-          key={attachment.id}
-          onRemove={() => attachments.remove(attachment.id)}
-        >
-          <AttachmentPreview />
-          <AttachmentRemove />
-        </Attachment>
-      ))}
-    </Attachments>
-  );
-};
 
 const Example = () => {
   const [model, setModel] = useState<string>(models[0].id);

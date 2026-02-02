@@ -1,6 +1,13 @@
 "use client";
 
 import {
+  Attachment,
+  AttachmentPreview,
+  AttachmentRemove,
+  Attachments,
+} from "@repo/elements/attachments";
+import { Button } from "@repo/shadcn-ui/components/ui/button";
+import {
   Command,
   CommandEmpty,
   CommandGroup,
@@ -9,6 +16,13 @@ import {
   CommandList,
   CommandSeparator,
 } from "@repo/shadcn-ui/components/ui/command";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@repo/shadcn-ui/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -37,7 +51,10 @@ import { Spinner } from "@repo/shadcn-ui/components/ui/spinner";
 import { cn } from "@repo/shadcn-ui/lib/utils";
 import type { ChatStatus, FileUIPart, SourceDocumentUIPart } from "ai";
 import {
+  CopyIcon,
   CornerDownLeftIcon,
+  DownloadIcon,
+  FileTextIcon,
   ImageIcon,
   PlusIcon,
   SquareIcon,
@@ -82,6 +99,18 @@ export interface TextInputContext {
   value: string;
   setInput: (v: string) => void;
   clear: () => void;
+}
+
+/** Minimum pasted text length to show as attachment card instead of inline */
+const PASTE_CARD_THRESHOLD = 2000;
+const PASTED_TEXT_FILENAME = "pasted-text.txt";
+
+function isPastedTextAttachment(file: FileUIPart & { id: string }): boolean {
+  return (
+    file.type === "file" &&
+    file.mediaType === "text/plain" &&
+    file.filename === PASTED_TEXT_FILENAME
+  );
 }
 
 export interface PromptInputControllerProps {
@@ -311,7 +340,7 @@ export const PromptInputActionAddAttachments = ({
   return (
     <DropdownMenuItem
       {...props}
-      onSelect={(e) => {
+      onSelect={(e: Event) => {
         e.preventDefault();
         attachments.openFileDialog();
       }}
@@ -878,6 +907,17 @@ export const PromptInputTextarea = ({
     if (files.length > 0) {
       event.preventDefault();
       attachments.add(files);
+      return;
+    }
+
+    // Handle long text paste as file attachment
+    const text = event.clipboardData.getData("text/plain");
+    if (text.length > PASTE_CARD_THRESHOLD) {
+      event.preventDefault();
+      const textFile = new File([text], PASTED_TEXT_FILENAME, {
+        type: "text/plain",
+      });
+      attachments.add([textFile]);
     }
   };
 
@@ -905,6 +945,208 @@ export const PromptInputTextarea = ({
       {...props}
       {...controlledProps}
     />
+  );
+};
+
+// ============================================================================
+// Pasted content card + modal
+// ============================================================================
+
+export interface PromptInputPastedContentCardProps {
+  attachment: FileUIPart & { id: string };
+  onRemove: () => void;
+}
+
+export const PromptInputPastedContentCard = ({
+  attachment,
+  onRemove,
+}: PromptInputPastedContentCardProps) => {
+  const [content, setContent] = useState<string | null>(null);
+  const [modalOpen, setModalOpen] = useState(false);
+
+  useEffect(() => {
+    if (!attachment.url) {
+      return;
+    }
+    let cancelled = false;
+    const load = async () => {
+      try {
+        const res = await fetch(attachment.url ?? "");
+        const text = await res.text();
+        if (!cancelled) {
+          setContent(text);
+        }
+      } catch {
+        if (!cancelled) {
+          setContent("");
+        }
+      }
+    };
+    load();
+    return () => {
+      cancelled = true;
+    };
+  }, [attachment.url]);
+
+  const handleCopy = useCallback(() => {
+    if (content !== null) {
+      navigator.clipboard.writeText(content).catch(() => undefined);
+    }
+  }, [content]);
+
+  const handleDownload = useCallback(() => {
+    if (content === null) {
+      return;
+    }
+    const blob = new Blob([content], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = attachment.filename ?? PASTED_TEXT_FILENAME;
+    a.click();
+    URL.revokeObjectURL(url);
+  }, [content, attachment.filename]);
+
+  const handleCardClick = useCallback(() => {
+    setModalOpen(true);
+  }, []);
+
+  const handleCardKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      setModalOpen(true);
+    }
+  }, []);
+
+  return (
+    <>
+      <div
+        className={cn(
+          "group relative flex cursor-pointer select-none items-center gap-1 rounded-md font-medium text-sm transition-all",
+          "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
+          "h-8 border border-border px-1.5"
+          )}>
+        <button
+          aria-label="View pasted content"
+          className={cn(
+            "flex items-center gap-1 min-w-0 flex-1",
+          )}
+          onClick={handleCardClick}
+          onKeyDown={handleCardKeyDown}
+          type="button"
+        >
+          <FileTextIcon className="size-3 text-muted-foreground" />
+          <span className="min-w-0 flex-1 truncate text-xs">
+            {PASTED_TEXT_FILENAME}
+          </span>
+        </button>
+        <Button
+          aria-label="Remove pasted content"
+          className="size-6 shrink-0 rounded p-0 opacity-70 hover:opacity-100"
+          onClick={(e) => {
+            e.stopPropagation();
+            onRemove();
+          }}
+          onKeyDown={(e) => e.stopPropagation()}
+          size="icon-sm"
+          type="button"
+          variant="ghost"
+        >
+          <XIcon className="size-3" />
+        </Button>
+      </div>
+      <Dialog onOpenChange={setModalOpen} open={modalOpen}>
+        <DialogContent
+          className="flex max-h-[85vh] flex-col gap-4 sm:max-w-[90vw]"
+          showCloseButton
+        >
+          <DialogHeader>
+            <DialogTitle>{attachment.filename ?? PASTED_TEXT_FILENAME}</DialogTitle>
+          </DialogHeader>
+          <div className="min-h-0 flex-1 overflow-auto rounded-md border bg-muted/30 p-3">
+            {content === null ? (
+              <pre className="font-mono text-sm">Loading…</pre>
+            ) : (
+              <div className="flex flex-col font-mono text-sm">
+                {content.split("\n").map((line, i) => (
+                  <div className="flex" key={i}>
+                    <span
+                      aria-hidden
+                      className="shrink-0 select-none pr-3 text-right text-muted-foreground"
+                    >
+                      {i + 1}
+                    </span>
+                    <pre className="min-w-max flex-1 whitespace-pre">
+                      {line}
+                    </pre>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+          <DialogFooter>
+            <Button
+              disabled={content === null}
+              onClick={handleCopy}
+              type="button"
+              variant="outline"
+            >
+              <CopyIcon className="size-4" />
+            </Button>
+            <Button
+              disabled={content === null}
+              onClick={handleDownload}
+              type="button"
+              variant="outline"
+            >
+              <DownloadIcon className="size-4" />
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
+  );
+};
+
+// ============================================================================
+// Attachments display (files + pasted content cards)
+// ============================================================================
+
+export const PromptInputAttachmentsDisplay = ({
+  className,
+  ...props
+}: HTMLAttributes<HTMLDivElement>) => {
+  const attachments = usePromptInputAttachments();
+
+  if (attachments.files.length === 0) {
+    return null;
+  }
+
+  const pastedFiles = attachments.files.filter(isPastedTextAttachment);
+  const otherFiles = attachments.files.filter(
+    (f) => !isPastedTextAttachment(f)
+  );
+
+  return (
+    <Attachments className={cn(className)} variant="inline" {...props}>
+      {pastedFiles.map((attachment) => (
+        <PromptInputPastedContentCard
+          attachment={attachment}
+          key={attachment.id}
+          onRemove={() => attachments.remove(attachment.id)}
+        />
+      ))}
+      {otherFiles.map((attachment) => (
+        <Attachment
+          data={attachment}
+          key={attachment.id}
+          onRemove={() => attachments.remove(attachment.id)}
+        >
+          <AttachmentPreview />
+          <AttachmentRemove />
+        </Attachment>
+      ))}
+    </Attachments>
   );
 };
 
