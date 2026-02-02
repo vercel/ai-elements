@@ -23,7 +23,7 @@
     "ai": "^6.0.68",
     "ansi-to-react": "^6.2.6",
     "class-variance-authority": "^0.7.1",
-    "katex": "^0.16.27",
+    "katex": "^0.16.28",
     "lucide-react": "^0.562.0",
     "media-chrome": "^4.17.2",
     "motion": "^12.26.2",
