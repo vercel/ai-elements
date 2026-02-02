@@ -20,7 +20,7 @@
     "@streamdown/math": "^1.0.1",
     "@streamdown/mermaid": "^1.0.1",
     "@xyflow/react": "^12.10.0",
-    "ai": "^6.0.39",
+    "ai": "^6.0.68",
     "ansi-to-react": "^6.2.6",
     "class-variance-authority": "^0.7.1",
     "katex": "^0.16.27",

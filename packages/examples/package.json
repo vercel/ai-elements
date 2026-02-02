@@ -10,7 +10,7 @@
     "@icons-pack/react-simple-icons": "^13.8.0",
     "@repo/elements": "workspace:*",
     "@xyflow/react": "^12.10.0",
-    "ai": "^6.0.39",
+    "ai": "^6.0.68",
     "lucide-react": "^0.562.0",
     "nanoid": "^5.1.6",
     "react": "19.2.3",
