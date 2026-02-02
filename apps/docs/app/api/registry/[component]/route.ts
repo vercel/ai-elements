@@ -398,7 +398,7 @@ export const GET = async (request: NextRequest, { params }: RequestProps) => {
         if (relativePath) {
           usedRegistryDependencies.add(
             new URL(
-              `/elements/api/registry/${relativePath}.json`,
+              `/api/registry/${relativePath}.json`,
               registryUrl
             ).toString()
           );
