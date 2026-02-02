@@ -85,7 +85,7 @@ const HomePage = () => (
   <div className="container mx-auto max-w-5xl">
     <Hero description={description} title={title}>
       <div className="mx-auto inline-flex w-fit items-center gap-3">
-        <Button asChild className="px-4" size="lg">
+        <Button asChild className="hidden px-4 sm:flex" size="lg">
           <DynamicLink href="/[lang]/components">
             Explore Components
           </DynamicLink>
@@ -100,7 +100,7 @@ const HomePage = () => (
         title="Components to build anything"
       >
         <div className="relative aspect-video">
-          <div className="absolute -inset-40 top-8 grid rotate-3 -skew-x-12 grid-cols-3 items-start gap-4">
+          <div className="grid items-start gap-4 sm:absolute sm:-inset-40 sm:top-8 sm:rotate-3 sm:-skew-x-12 sm:grid-cols-3">
             <div className="grid gap-4">
               <div className="rounded-lg border bg-background p-4">
                 <Queue />
@@ -115,7 +115,7 @@ const HomePage = () => (
                 <Plan />
               </div>
             </div>
-            <div className="grid gap-4">
+            <div className="hidden gap-4 sm:grid">
               <div className="rounded-lg border bg-background p-4">
                 <Agent />
               </div>
@@ -123,7 +123,7 @@ const HomePage = () => (
                 <ChainOfThought />
               </div>
             </div>
-            <div className="grid gap-4">
+            <div className="hidden gap-4 sm:grid">
               <div className="rounded-lg border bg-background p-4">
                 <Task />
               </div>
