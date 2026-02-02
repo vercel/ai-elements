@@ -174,10 +174,10 @@ const PromptInputAttachmentsDisplay = () => {
   );
 };
 
-type ChatProps = {
+interface ChatProps {
   basePath: string | undefined;
   suggestions: string[];
-};
+}
 
 type ChatInnerProps = ChatProps & {
   isOpen: boolean;

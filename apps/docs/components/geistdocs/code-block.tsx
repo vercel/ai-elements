@@ -18,7 +18,7 @@ import {
 } from "react";
 import { toast } from "sonner";
 
-type CodeBlockProps = {
+interface CodeBlockProps {
   children: ReactNode;
   className?: string;
   icon?: ReactNode;
@@ -27,7 +27,7 @@ type CodeBlockProps = {
   title?: string;
   "data-line-numbers"?: string;
   "data-line-highlighting"?: string;
-};
+}
 
 export const CodeBlock = ({
   children,

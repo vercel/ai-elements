@@ -9,10 +9,10 @@ import { isToolUIPart } from "ai";
 import { BookmarkIcon } from "lucide-react";
 import type { MyUIMessage } from "@/app/api/chat/types";
 
-type MessageMetadataProps = {
+interface MessageMetadataProps {
   parts: MyUIMessage["parts"];
   inProgress: boolean;
-};
+}
 
 export const MessageMetadata = ({
   parts,
