@@ -6,8 +6,8 @@
     "dev": "turbo run dev",
     "test": "turbo run test",
     "test:coverage": "turbo run test:coverage",
-    "check": "npx ultracite@latest check",
-    "fix": "npx ultracite@latest fix",
+    "check": "ultracite check",
+    "fix": "ultracite fix",
     "bump-deps": "npx npm-check-updates --deep -u -x recharts,react-resizable-panels && pnpm install",
     "bump-ui": "npx shadcn@latest add --all --overwrite -c packages/shadcn-ui && npx shadcn@latest migrate radix -c packages/shadcn-ui",
     "changeset": "changeset"
