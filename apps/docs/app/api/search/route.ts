@@ -1,8 +1,12 @@
 import { createTokenizer as createTokenizerJapanese } from "@orama/tokenizers/japanese";
 import { createTokenizer as createTokenizerMandarin } from "@orama/tokenizers/mandarin";
-import { createFromSource } from "fumadocs-core/search/server";
+import { createSearchAPI } from "fumadocs-core/search/server";
 import { translations } from "@/geistdocs";
-import { source } from "@/lib/geistdocs/source";
+import {
+  componentsSource,
+  docsSource,
+  examplesSource,
+} from "@/lib/geistdocs/source";
 
 const localeMap: {
   [key: string]: {
@@ -48,4 +52,15 @@ if ("jp" in translations) {
   };
 }
 
-export const { GET } = createFromSource(source, { localeMap });
+export const { GET } = createSearchAPI("advanced", {
+  indexes: [docsSource, componentsSource, examplesSource].flatMap((source) =>
+    source.getPages().map((page) => ({
+      title: page.data.title,
+      description: page.data.description,
+      url: page.url,
+      id: page.url,
+      structuredData: page.data.structuredData,
+    }))
+  ),
+  localeMap,
+});
