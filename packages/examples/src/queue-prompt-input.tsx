@@ -1,12 +1,6 @@
 "use client";
 
 import {
-  Attachment,
-  AttachmentPreview,
-  AttachmentRemove,
-  Attachments,
-} from "@repo/elements/attachments";
-import {
   ModelSelector,
   ModelSelectorContent,
   ModelSelectorEmpty,
@@ -25,6 +19,7 @@ import {
   PromptInputActionMenu,
   PromptInputActionMenuContent,
   PromptInputActionMenuTrigger,
+  PromptInputAttachmentsDisplay,
   PromptInputBody,
   PromptInputButton,
   PromptInputFooter,
@@ -32,8 +27,7 @@ import {
   type PromptInputMessage,
   PromptInputSubmit,
   PromptInputTextarea,
-  PromptInputTools,
-  usePromptInputAttachments,
+  PromptInputTools
 } from "@repo/elements/prompt-input";
 import {
   Queue,
@@ -122,29 +116,6 @@ const sampleTodos: QueueTodo[] = [
     status: "pending",
   },
 ];
-
-const PromptInputAttachmentsDisplay = () => {
-  const attachments = usePromptInputAttachments();
-
-  if (attachments.files.length === 0) {
-    return null;
-  }
-
-  return (
-    <Attachments variant="inline">
-      {attachments.files.map((attachment) => (
-        <Attachment
-          data={attachment}
-          key={attachment.id}
-          onRemove={() => attachments.remove(attachment.id)}
-        >
-          <AttachmentPreview />
-          <AttachmentRemove />
-        </Attachment>
-      ))}
-    </Attachments>
-  );
-};
 
 const Example = () => {
   const [todos, setTodos] = useState(sampleTodos);

@@ -1,12 +1,6 @@
 "use client";
 
 import {
-  Attachment,
-  AttachmentPreview,
-  AttachmentRemove,
-  Attachments,
-} from "@repo/elements/attachments";
-import {
   ModelSelector,
   ModelSelectorContent,
   ModelSelectorEmpty,
@@ -25,16 +19,18 @@ import {
   PromptInputActionMenu,
   PromptInputActionMenuContent,
   PromptInputActionMenuTrigger,
+  PromptInputAttachmentsDisplay,
   PromptInputBody,
   PromptInputButton,
   PromptInputFooter,
+  PromptInputHeader,
   type PromptInputMessage,
   PromptInputProvider,
   PromptInputSubmit,
   PromptInputTextarea,
   PromptInputTools,
   usePromptInputAttachments,
-  usePromptInputController,
+  usePromptInputController
 } from "@repo/elements/prompt-input";
 import { Button } from "@repo/shadcn-ui/components/ui/button";
 import { ButtonGroup } from "@repo/shadcn-ui/components/ui/button-group";
@@ -81,29 +77,6 @@ const models = [
 
 const SUBMITTING_TIMEOUT = 200;
 const STREAMING_TIMEOUT = 2000;
-
-const PromptInputAttachmentsDisplay = () => {
-  const attachments = usePromptInputAttachments();
-
-  if (attachments.files.length === 0) {
-    return null;
-  }
-
-  return (
-    <Attachments variant="inline">
-      {attachments.files.map((attachment) => (
-        <Attachment
-          data={attachment}
-          key={attachment.id}
-          onRemove={() => attachments.remove(attachment.id)}
-        >
-          <AttachmentPreview />
-          <AttachmentRemove />
-        </Attachment>
-      ))}
-    </Attachments>
-  );
-};
 
 const HeaderControls = () => {
   const controller = usePromptInputController();
@@ -153,13 +126,22 @@ const HeaderControls = () => {
   );
 };
 
+const AttachmentsHeader = () => {
+  const attachments = usePromptInputAttachments();
+  if (attachments.files.length === 0) return null;
+  return (
+    <PromptInputHeader>
+      <PromptInputAttachmentsDisplay />
+    </PromptInputHeader>
+  );
+};
+
 const Example = () => {
   const [model, setModel] = useState<string>(models[0].id);
   const [modelSelectorOpen, setModelSelectorOpen] = useState(false);
   const [status, setStatus] = useState<
     "submitted" | "streaming" | "ready" | "error"
   >("ready");
-
   const selectedModelData = models.find((m) => m.id === model);
 
   const handleSubmit = (message: PromptInputMessage) => {
@@ -188,7 +170,7 @@ const Example = () => {
     <div className="size-full">
       <PromptInputProvider>
         <PromptInput globalDrop multiple onSubmit={handleSubmit}>
-          <PromptInputAttachmentsDisplay />
+          <AttachmentsHeader />
           <PromptInputBody>
             <PromptInputTextarea />
           </PromptInputBody>
