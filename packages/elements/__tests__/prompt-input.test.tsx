@@ -182,7 +182,7 @@ describe(PromptInput, () => {
 
     await user.keyboard("{Enter}");
 
-    expect(onSubmit).toHaveBeenCalledTimes(1);
+    expect(onSubmit).toHaveBeenCalledOnce();
     const [message] = onSubmit.mock.calls[0];
     expect(message).toHaveProperty("text", "Hello");
     expect(message).toHaveProperty("files");
@@ -214,7 +214,7 @@ describe(PromptInput, () => {
 
     // Wait for async submission
     await vi.waitFor(() => {
-      expect(onSubmit).toHaveBeenCalledTimes(1);
+      expect(onSubmit).toHaveBeenCalledOnce();
     });
 
     // Verify textarea is cleared after submission
@@ -255,7 +255,7 @@ describe(PromptInput, () => {
 
     // Wait for async submission to complete
     await vi.waitFor(() => {
-      expect(onSubmit).toHaveBeenCalledTimes(1);
+      expect(onSubmit).toHaveBeenCalledOnce();
     });
 
     // Second message should still be there after async completion
@@ -315,7 +315,7 @@ describe(PromptInput, () => {
 
     // Wait for async submission to complete
     await vi.waitFor(() => {
-      expect(onSubmit).toHaveBeenCalledTimes(1);
+      expect(onSubmit).toHaveBeenCalledOnce();
     });
 
     // Verify that the URL was converted from blob: to data:
@@ -381,7 +381,7 @@ describe(PromptInput, () => {
 
     // Wait for async submission to complete
     await vi.waitFor(() => {
-      expect(onSubmit).toHaveBeenCalledTimes(1);
+      expect(onSubmit).toHaveBeenCalledOnce();
     });
 
     // Verify that the attachment is still there (not cleared due to error)
@@ -443,7 +443,7 @@ describe(PromptInput, () => {
 
     // Wait for async submission to be attempted
     await vi.waitFor(() => {
-      expect(onSubmit).toHaveBeenCalledTimes(1);
+      expect(onSubmit).toHaveBeenCalledOnce();
     });
 
     // Give some time for the promise rejection to be handled
@@ -506,7 +506,7 @@ describe(PromptInput, () => {
 
     // Wait for async submission to complete successfully
     await vi.waitFor(() => {
-      expect(onSubmit).toHaveBeenCalledTimes(1);
+      expect(onSubmit).toHaveBeenCalledOnce();
     });
 
     // Give some time for the promise resolution to be handled
@@ -2339,7 +2339,7 @@ describe("promptInputReferencedSources", () => {
 
     // Wait for async submission to complete
     await vi.waitFor(() => {
-      expect(onSubmit).toHaveBeenCalledTimes(1);
+      expect(onSubmit).toHaveBeenCalledOnce();
     });
 
     // Give time for promise resolution
@@ -2403,7 +2403,7 @@ describe("promptInputReferencedSources", () => {
 
     // Wait for submission attempt
     await vi.waitFor(() => {
-      expect(onSubmit).toHaveBeenCalledTimes(1);
+      expect(onSubmit).toHaveBeenCalledOnce();
     });
 
     // Verify referenced source was NOT cleared due to error
@@ -2464,7 +2464,7 @@ describe("promptInputReferencedSources", () => {
 
     // Wait for async submission attempt
     await vi.waitFor(() => {
-      expect(onSubmit).toHaveBeenCalledTimes(1);
+      expect(onSubmit).toHaveBeenCalledOnce();
     });
 
     // Give time for promise rejection
@@ -2543,7 +2543,7 @@ describe("promptInputReferencedSources", () => {
 
     // Wait for async submission
     await vi.waitFor(() => {
-      expect(onSubmit).toHaveBeenCalledTimes(1);
+      expect(onSubmit).toHaveBeenCalledOnce();
     });
 
     // Give time for promise resolution

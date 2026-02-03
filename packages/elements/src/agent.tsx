@@ -1,7 +1,6 @@
 "use client";
 
 import type { Tool } from "ai";
-import type { ComponentProps } from "react";
 
 import {
   Accordion,
@@ -12,7 +11,7 @@ import {
 import { Badge } from "@repo/shadcn-ui/components/ui/badge";
 import { cn } from "@repo/shadcn-ui/lib/utils";
 import { BotIcon } from "lucide-react";
-import { memo } from "react";
+import { type ComponentProps, memo } from "react";
 
 import { CodeBlock } from "./code-block";
 

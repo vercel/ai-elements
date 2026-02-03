@@ -202,11 +202,11 @@ describe("speechInput - Speech Recognition", () => {
         resultIndex: 0,
         results: {
           0: {
-            0: { transcript: "Hello world", confidence: 0.9 },
+            0: { confidence: 0.9, transcript: "Hello world" },
             isFinal: true,
             item: (_index: number) => ({
-              transcript: "Hello world",
               confidence: 0.9,
+              transcript: "Hello world",
             }),
             length: 1,
           },
@@ -252,11 +252,11 @@ describe("speechInput - Speech Recognition", () => {
         resultIndex: 0,
         results: {
           0: {
-            0: { transcript: "Hello", confidence: 0.5 },
+            0: { confidence: 0.5, transcript: "Hello" },
             isFinal: false,
             item: (_index: number) => ({
-              transcript: "Hello",
               confidence: 0.5,
+              transcript: "Hello",
             }),
             length: 1,
           },
@@ -345,9 +345,9 @@ describe("speechInput - Speech Recognition", () => {
         resultIndex: 0,
         results: {
           0: {
-            0: { transcript: "", confidence: 0.9 },
+            0: { confidence: 0.9, transcript: "" },
             isFinal: true,
-            item: (_index: number) => ({ transcript: "", confidence: 0.9 }),
+            item: (_index: number) => ({ confidence: 0.9, transcript: "" }),
             length: 1,
           },
           length: 1,

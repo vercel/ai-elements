@@ -25,7 +25,7 @@ const nodes = [
   {
     data: {
       description: "Initialize workflow",
-      handles: { target: false, source: true },
+      handles: { source: true, target: false },
       label: "Start",
     },
     id: nodeIds.start,
@@ -35,7 +35,7 @@ const nodes = [
   {
     data: {
       description: "Transform input",
-      handles: { target: true, source: true },
+      handles: { source: true, target: true },
       label: "Process Data",
     },
     id: nodeIds.process1,
@@ -45,7 +45,7 @@ const nodes = [
   {
     data: {
       description: "Route based on conditions",
-      handles: { target: true, source: true },
+      handles: { source: true, target: true },
       label: "Decision Point",
     },
     id: nodeIds.decision,
@@ -55,7 +55,7 @@ const nodes = [
   {
     data: {
       description: "Handle success case",
-      handles: { target: true, source: true },
+      handles: { source: true, target: true },
       label: "Success Path",
     },
     id: nodeIds.output1,
@@ -65,7 +65,7 @@ const nodes = [
   {
     data: {
       description: "Handle error case",
-      handles: { target: true, source: true },
+      handles: { source: true, target: true },
       label: "Error Path",
     },
     id: nodeIds.output2,
@@ -75,7 +75,7 @@ const nodes = [
   {
     data: {
       description: "Finalize workflow",
-      handles: { target: true, source: false },
+      handles: { source: false, target: true },
       label: "Complete",
     },
     id: nodeIds.process2,

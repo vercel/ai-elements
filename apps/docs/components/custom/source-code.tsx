@@ -25,8 +25,8 @@ export const SourceCode = async ({ path, className }: SourceCodeProps) => {
   );
 
   const parsedCode = code
-    .replaceAll('@repo/shadcn-ui/', "@/")
-    .replaceAll('@repo/elements/', "@/components/ai-elements/");
+    .replaceAll("@repo/shadcn-ui/", "@/")
+    .replaceAll("@repo/elements/", "@/components/ai-elements/");
 
   const highlightedCode = await codeToHtml(parsedCode, {
     lang: "tsx",

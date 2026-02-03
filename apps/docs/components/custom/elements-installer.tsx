@@ -34,8 +34,8 @@ export const ElementsInstaller = async ({ path }: ElementsInstallerProps) => {
       );
 
       sourceCode = code
-        .replaceAll('@ai-studio/shadcn-ui/', "@/")
-        .replaceAll('@ai-studio/', "@/components/ai-elements/");
+        .replaceAll("@ai-studio/shadcn-ui/", "@/")
+        .replaceAll("@ai-studio/", "@/components/ai-elements/");
     } catch (error) {
       console.error(`Failed to load component from path: ${path}`, error);
     }

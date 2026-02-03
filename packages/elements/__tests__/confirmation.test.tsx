@@ -181,7 +181,7 @@ describe(ConfirmationActions, () => {
     );
 
     await user.click(screen.getByText("Accept"));
-    expect(handleAccept).toHaveBeenCalledTimes(1);
+    expect(handleAccept).toHaveBeenCalledOnce();
   });
 
   it("calls onClick when reject button is clicked", async () => {
@@ -199,7 +199,7 @@ describe(ConfirmationActions, () => {
     );
 
     await user.click(screen.getByText("Reject"));
-    expect(handleReject).toHaveBeenCalledTimes(1);
+    expect(handleReject).toHaveBeenCalledOnce();
   });
 
   it("disables buttons when disabled prop is true", () => {

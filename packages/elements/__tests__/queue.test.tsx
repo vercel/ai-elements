@@ -132,7 +132,7 @@ describe(QueueItemAction, () => {
     render(<QueueItemAction onClick={handleClick}>Action</QueueItemAction>);
 
     await user.click(screen.getByRole("button", { name: "Action" }));
-    expect(handleClick).toHaveBeenCalledTimes(1);
+    expect(handleClick).toHaveBeenCalledOnce();
   });
 });
 

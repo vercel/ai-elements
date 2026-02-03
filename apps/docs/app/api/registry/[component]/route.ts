@@ -62,7 +62,7 @@ dependenciesSet.add("ai");
 dependenciesSet.add("@ai-sdk/react");
 dependenciesSet.add("zod");
 
-const dependencies = new Set([...dependenciesSet]);
+const dependencies = new Set(dependenciesSet);
 const devDependencies = [...devDependenciesSet];
 
 // Normalize to package root (supports scoped and deep subpath imports)
@@ -111,11 +111,8 @@ const fileContents = await Promise.all(
     const filePath = join(srcDir, tsxFile.name);
     const content = await fs.readFile(filePath, "utf8");
     const parsedContent = content
-      .replaceAll(
-        /@repo\/shadcn-ui\/components\/ui\//g,
-        "@/registry/default/ui/"
-      )
-      .replaceAll(/@repo\/shadcn-ui\/lib\//g, "@/lib/");
+      .replaceAll("@repo/shadcn-ui/components/ui/", "@/registry/default/ui/")
+      .replaceAll("@repo/shadcn-ui/lib/", "@/lib/");
 
     return {
       content: parsedContent,
@@ -130,12 +127,9 @@ const exampleContents = await Promise.all(
     const filePath = join(examplesDir, exampleFile.name);
     const content = await fs.readFile(filePath, "utf8");
     const parsedContent = content
-      .replaceAll(
-        /@repo\/shadcn-ui\/components\/ui\//g,
-        "@/registry/default/ui/"
-      )
-      .replaceAll(/@repo\/shadcn-ui\/lib\//g, "@/lib/")
-      .replaceAll(/@repo\/elements\//g, "@/components/ai-elements/");
+      .replaceAll("@repo/shadcn-ui/components/ui/", "@/registry/default/ui/")
+      .replaceAll("@repo/shadcn-ui/lib/", "@/lib/")
+      .replaceAll("@repo/elements/", "@/components/ai-elements/");
 
     return {
       content: parsedContent,
@@ -186,8 +180,8 @@ const componentItems: RegistryItem[] = tsxFiles.map((componentFile) => {
     files: [
       {
         path: `registry/default/ai-elements/${componentFile.name}`,
-        type: "registry:component",
         target: `components/ai-elements/${componentFile.name}.tsx`,
+        type: "registry:component",
       },
     ],
     name: componentName,
@@ -209,8 +203,8 @@ const exampleItems: RegistryItem[] = exampleTsxFiles.map((exampleFile) => {
     files: [
       {
         path: `registry/default/examples/${exampleFile.name}`,
-        type: "registry:block",
         target: `components/ai-elements/examples/${exampleFile.name}.tsx`,
+        type: "registry:block",
       },
     ],
     name: `example-${exampleName}`,
@@ -327,12 +321,12 @@ export const GET = async (request: NextRequest, { params }: RequestProps) => {
 
     const allComponentsItem: RegistryItem = {
       $schema: "https://ui.shadcn.com/schema/registry-item.json",
-      dependencies: Array.from(allDependencies),
+      dependencies: [...allDependencies],
       description: "Bundle containing all AI-powered components.",
-      devDependencies: Array.from(allDevDependencies),
+      devDependencies: [...allDevDependencies],
       files: allFiles,
       name: "all",
-      registryDependencies: Array.from(allRegistryDependencies),
+      registryDependencies: [...allRegistryDependencies],
       title: "All AI Elements",
       type: "registry:component",
     };

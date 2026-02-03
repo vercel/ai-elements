@@ -39,8 +39,8 @@ export const Preview = async ({ path, className }: ComponentPreviewProps) => {
   );
 
   const parsedCode = code
-    .replaceAll('@repo/shadcn-ui/', "@/")
-    .replaceAll('@repo/elements/', "@/components/ai-elements/");
+    .replaceAll("@repo/shadcn-ui/", "@/")
+    .replaceAll("@repo/elements/", "@/components/ai-elements/");
 
   return (
     <CodeBlockTabs defaultValue="preview">

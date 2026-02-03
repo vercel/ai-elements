@@ -25,19 +25,19 @@ export default defineConfig({
   test: {
     browser: {
       enabled: true,
-      provider: playwright(),
       headless: true,
       instances: [{ browser: "chromium" }],
+      provider: playwright(),
     },
     coverage: {
-      provider: "v8",
-      reporter: ["text", "json", "html"],
       exclude: [
         "node_modules/",
         "__tests__/**",
         "**/*.config.{ts,js,mts}",
         "**/style-mock.js",
       ],
+      provider: "v8",
+      reporter: ["text", "json", "html"],
     },
     globals: true,
     include: ["__tests__/**/*.test.{ts,tsx}"],

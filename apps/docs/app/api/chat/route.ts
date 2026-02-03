@@ -88,7 +88,7 @@ User question: ${userQuestion}`,
           model: "openai/gpt-4.1-mini",
           prepareStep: ({ stepNumber }) => {
             if (stepNumber === 0) {
-              return { toolChoice: { type: "tool", toolName: "search_docs" } };
+              return { toolChoice: { toolName: "search_docs", type: "tool" } };
             }
           },
           stopWhen: stepCountIs(10),

@@ -229,8 +229,8 @@ ${transformComponentMdx(fileContent)}
         "utf8"
       );
       const transformedContent = exampleContent
-        .replaceAll('@repo/shadcn-ui/', "@/")
-        .replaceAll('@repo/elements/', "@/components/ai-elements/");
+        .replaceAll("@repo/shadcn-ui/", "@/")
+        .replaceAll("@repo/elements/", "@/components/ai-elements/");
       await writeFile(join(scriptsDir, example), transformedContent);
     }
   }
