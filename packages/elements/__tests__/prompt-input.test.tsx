@@ -664,6 +664,67 @@ describe("PromptInputButton", () => {
     );
     expect(screen.getByRole("button", { name: "Action" })).toBeInTheDocument();
   });
+
+  it("renders button with string tooltip", async () => {
+    const onSubmit = vi.fn();
+    const user = userEvent.setup();
+
+    render(
+      <PromptInput onSubmit={onSubmit}>
+        <PromptInputBody>
+          <PromptInputButton tooltip="Search the web">Search</PromptInputButton>
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    const button = screen.getByRole("button", { name: "Search" });
+    expect(button).toBeInTheDocument();
+
+    await user.hover(button);
+
+    await vi.waitFor(() => {
+      expect(screen.getByText("Search the web")).toBeInTheDocument();
+    });
+  });
+
+  it("renders button with object tooltip containing shortcut", async () => {
+    const onSubmit = vi.fn();
+    const user = userEvent.setup();
+
+    render(
+      <PromptInput onSubmit={onSubmit}>
+        <PromptInputBody>
+          <PromptInputButton
+            tooltip={{ content: "Search", shortcut: "⌘K", side: "bottom" }}
+          >
+            Search
+          </PromptInputButton>
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    const button = screen.getByRole("button", { name: "Search" });
+    await user.hover(button);
+
+    await vi.waitFor(() => {
+      expect(screen.getByText("Search")).toBeInTheDocument();
+      expect(screen.getByText("⌘K")).toBeInTheDocument();
+    });
+  });
+
+  it("does not render tooltip when prop is not provided", () => {
+    const onSubmit = vi.fn();
+
+    render(
+      <PromptInput onSubmit={onSubmit}>
+        <PromptInputBody>
+          <PromptInputButton>Action</PromptInputButton>
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    expect(screen.queryByRole("tooltip")).not.toBeInTheDocument();
+  });
 });
 
 describe("PromptInputSubmit", () => {

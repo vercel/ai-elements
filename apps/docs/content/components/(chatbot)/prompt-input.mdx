@@ -172,6 +172,7 @@ const InputDemo = () => {
               </PromptInputActionMenu>
               <PromptInputButton
                 onClick={() => setUseWebSearch(!useWebSearch)}
+                tooltip={{ content: "Search the web", shortcut: "⌘K" }}
                 variant={useWebSearch ? "default" : "ghost"}
               >
                 <GlobeIcon size={16} />
@@ -260,6 +261,12 @@ export async function POST(req: Request) {
 
 <Preview path="prompt-input-cursor" />
 
+### Button tooltips
+
+Buttons can display tooltips with optional keyboard shortcut hints. Hover over the buttons below to see the tooltips.
+
+<Preview path="prompt-input-tooltip" />
+
 ## Props
 
 ### `<PromptInput />`
@@ -346,6 +353,11 @@ export async function POST(req: Request) {
 
 <TypeTable
   type={{
+    tooltip: {
+      description:
+        "Optional tooltip to display on hover. Can be a string or an object with content, shortcut, and side properties.",
+      type: 'string | { content: ReactNode; shortcut?: string; side?: "top" | "right" | "bottom" | "left" }',
+    },
     "...props": {
       description:
         "Any other props are spread to the underlying shadcn/ui Button component.",
@@ -353,6 +365,25 @@ export async function POST(req: Request) {
     },
   }}
 />
+
+#### Tooltip Examples
+
+```tsx
+// Simple string tooltip
+<PromptInputButton tooltip="Search the web">
+  <GlobeIcon size={16} />
+</PromptInputButton>
+
+// Tooltip with keyboard shortcut hint
+<PromptInputButton tooltip={{ content: "Search", shortcut: "⌘K" }}>
+  <GlobeIcon size={16} />
+</PromptInputButton>
+
+// Tooltip with custom position
+<PromptInputButton tooltip={{ content: "Search", side: "bottom" }}>
+  <GlobeIcon size={16} />
+</PromptInputButton>
+```
 
 ### `<PromptInputSubmit />`
 

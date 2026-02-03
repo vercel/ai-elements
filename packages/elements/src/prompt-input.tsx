@@ -34,6 +34,11 @@ import {
   SelectValue,
 } from "@repo/shadcn-ui/components/ui/select";
 import { Spinner } from "@repo/shadcn-ui/components/ui/spinner";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@repo/shadcn-ui/components/ui/tooltip";
 import { cn } from "@repo/shadcn-ui/lib/utils";
 import type { ChatStatus, FileUIPart, SourceDocumentUIPart } from "ai";
 import {
@@ -56,6 +61,7 @@ import {
   type HTMLAttributes,
   type KeyboardEventHandler,
   type PropsWithChildren,
+  type ReactNode,
   type RefObject,
   useCallback,
   useContext,
@@ -949,18 +955,29 @@ export const PromptInputTools = ({
   <div className={cn("flex items-center gap-1", className)} {...props} />
 );
 
-export type PromptInputButtonProps = ComponentProps<typeof InputGroupButton>;
+export type PromptInputButtonTooltip =
+  | string
+  | {
+      content: ReactNode;
+      shortcut?: string;
+      side?: ComponentProps<typeof TooltipContent>["side"];
+    };
+
+export type PromptInputButtonProps = ComponentProps<typeof InputGroupButton> & {
+  tooltip?: PromptInputButtonTooltip;
+};
 
 export const PromptInputButton = ({
   variant = "ghost",
   className,
   size,
+  tooltip,
   ...props
 }: PromptInputButtonProps) => {
   const newSize =
     size ?? (Children.count(props.children) > 1 ? "sm" : "icon-sm");
 
-  return (
+  const button = (
     <InputGroupButton
       className={cn(className)}
       size={newSize}
@@ -968,6 +985,27 @@ export const PromptInputButton = ({
       variant={variant}
       {...props}
     />
+  );
+
+  if (!tooltip) {
+    return button;
+  }
+
+  const tooltipContent =
+    typeof tooltip === "string" ? tooltip : tooltip.content;
+  const shortcut = typeof tooltip === "string" ? undefined : tooltip.shortcut;
+  const side = typeof tooltip === "string" ? "top" : (tooltip.side ?? "top");
+
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>{button}</TooltipTrigger>
+      <TooltipContent side={side}>
+        {tooltipContent}
+        {shortcut && (
+          <span className="ml-2 text-muted-foreground">{shortcut}</span>
+        )}
+      </TooltipContent>
+    </Tooltip>
   );
 };
 
