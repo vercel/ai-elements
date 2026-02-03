@@ -14,7 +14,7 @@ import {
   ContextTrigger,
 } from "../src/context";
 
-describe(Context, () => {
+describe("context", () => {
   it("renders children", () => {
     render(
       <Context defaultOpen maxTokens={100} usedTokens={50}>
@@ -46,7 +46,7 @@ describe(Context, () => {
   });
 });
 
-describe(ContextTrigger, () => {
+describe("contextTrigger", () => {
   it("renders trigger button", () => {
     render(
       <Context maxTokens={100} usedTokens={25}>
@@ -66,7 +66,7 @@ describe(ContextTrigger, () => {
   });
 });
 
-describe(ContextContent, () => {
+describe("contextContent", () => {
   it("renders content", () => {
     render(
       <Context defaultOpen maxTokens={100} usedTokens={50}>
@@ -78,7 +78,7 @@ describe(ContextContent, () => {
   });
 });
 
-describe(ContextContentHeader, () => {
+describe("contextContentHeader", () => {
   it("renders default header with stats", () => {
     const { container } = render(
       <Context defaultOpen maxTokens={1000} usedTokens={500}>
@@ -104,7 +104,7 @@ describe(ContextContentHeader, () => {
   });
 });
 
-describe(ContextContentBody, () => {
+describe("contextContentBody", () => {
   it("renders body content", () => {
     render(
       <Context defaultOpen maxTokens={100} usedTokens={50}>
@@ -117,7 +117,7 @@ describe(ContextContentBody, () => {
   });
 });
 
-describe(ContextContentFooter, () => {
+describe("contextContentFooter", () => {
   it("renders default footer with cost", () => {
     render(
       <Context defaultOpen maxTokens={100} modelId="gpt-4" usedTokens={50}>
@@ -141,7 +141,7 @@ describe(ContextContentFooter, () => {
   });
 });
 
-describe(ContextInputUsage, () => {
+describe("contextInputUsage", () => {
   it("renders input usage", () => {
     render(
       <Context
@@ -200,7 +200,7 @@ describe(ContextInputUsage, () => {
   });
 });
 
-describe(ContextOutputUsage, () => {
+describe("contextOutputUsage", () => {
   it("renders output usage", () => {
     render(
       <Context
@@ -257,7 +257,7 @@ describe(ContextOutputUsage, () => {
   });
 });
 
-describe(ContextReasoningUsage, () => {
+describe("contextReasoningUsage", () => {
   it("renders reasoning usage", () => {
     render(
       <Context
@@ -314,7 +314,7 @@ describe(ContextReasoningUsage, () => {
   });
 });
 
-describe(ContextCacheUsage, () => {
+describe("contextCacheUsage", () => {
   it("renders cache usage", () => {
     render(
       <Context

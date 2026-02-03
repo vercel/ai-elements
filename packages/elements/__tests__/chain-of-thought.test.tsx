@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
+import { userEvent } from "@testing-library/user-event";
 import { DotIcon } from "lucide-react";
 import { describe, expect, it, vi } from "vitest";
 
@@ -13,7 +13,7 @@ import {
   ChainOfThoughtStep,
 } from "../src/chain-of-thought";
 
-describe(ChainOfThought, () => {
+describe("chainOfThought", () => {
   it("renders children", () => {
     render(<ChainOfThought>Content</ChainOfThought>);
     expect(screen.getByText("Content")).toBeInTheDocument();
@@ -71,7 +71,7 @@ describe(ChainOfThought, () => {
   });
 });
 
-describe(ChainOfThoughtHeader, () => {
+describe("chainOfThoughtHeader", () => {
   it("renders default text", () => {
     render(
       <ChainOfThought>
@@ -93,7 +93,7 @@ describe(ChainOfThoughtHeader, () => {
   });
 });
 
-describe(ChainOfThoughtStep, () => {
+describe("chainOfThoughtStep", () => {
   it("renders label", () => {
     render(
       <ChainOfThought>
@@ -143,7 +143,7 @@ describe(ChainOfThoughtStep, () => {
   });
 });
 
-describe(ChainOfThoughtSearchResults, () => {
+describe("chainOfThoughtSearchResults", () => {
   it("renders search results", () => {
     render(
       <ChainOfThought>
@@ -157,7 +157,7 @@ describe(ChainOfThoughtSearchResults, () => {
   });
 });
 
-describe(ChainOfThoughtSearchResult, () => {
+describe("chainOfThoughtSearchResult", () => {
   it("renders result badge", () => {
     render(
       <ChainOfThought>
@@ -169,7 +169,7 @@ describe(ChainOfThoughtSearchResult, () => {
   });
 });
 
-describe(ChainOfThoughtContent, () => {
+describe("chainOfThoughtContent", () => {
   it("renders content", () => {
     render(
       <ChainOfThought defaultOpen>
@@ -182,7 +182,7 @@ describe(ChainOfThoughtContent, () => {
   });
 });
 
-describe(ChainOfThoughtImage, () => {
+describe("chainOfThoughtImage", () => {
   it("renders image container", () => {
     render(
       <ChainOfThought>

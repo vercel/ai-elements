@@ -16,7 +16,7 @@ import {
   SchemaDisplayResponse,
 } from "../src/schema-display";
 
-describe(SchemaDisplay, () => {
+describe("schemaDisplay", () => {
   it("renders method and path", () => {
     render(<SchemaDisplay method="GET" path="/api/users" />);
     expect(screen.getByText("GET")).toBeInTheDocument();
@@ -42,7 +42,7 @@ describe(SchemaDisplay, () => {
   });
 });
 
-describe(SchemaDisplayMethod, () => {
+describe("schemaDisplayMethod", () => {
   it("renders GET with green styling", () => {
     render(
       <SchemaDisplay method="GET" path="/test">
@@ -74,7 +74,7 @@ describe(SchemaDisplayMethod, () => {
   });
 });
 
-describe(SchemaDisplayPath, () => {
+describe("schemaDisplayPath", () => {
   it("renders path with parameters highlighted", () => {
     const { container } = render(
       <SchemaDisplay method="GET" path="/api/users/{userId}/posts">

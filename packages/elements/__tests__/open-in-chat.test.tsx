@@ -23,7 +23,7 @@ import {
   OpenInv0,
 } from "../src/open-in-chat";
 
-describe(OpenIn, () => {
+describe("openIn", () => {
   it("renders children", () => {
     render(
       <OpenIn defaultOpen query="test query">
@@ -46,7 +46,7 @@ describe(OpenIn, () => {
   });
 });
 
-describe(OpenInTrigger, () => {
+describe("openInTrigger", () => {
   it("renders default trigger", () => {
     render(
       <OpenIn defaultOpen query="test">
@@ -70,7 +70,7 @@ describe(OpenInTrigger, () => {
   });
 });
 
-describe(OpenInContent, () => {
+describe("openInContent", () => {
   it("renders content", () => {
     render(
       <OpenIn defaultOpen query="test">
@@ -81,7 +81,7 @@ describe(OpenInContent, () => {
   });
 });
 
-describe(OpenInItem, () => {
+describe("openInItem", () => {
   it("renders menu item", () => {
     render(
       <OpenIn defaultOpen query="test">
@@ -94,7 +94,7 @@ describe(OpenInItem, () => {
   });
 });
 
-describe(OpenInLabel, () => {
+describe("openInLabel", () => {
   it("renders label", () => {
     render(
       <OpenIn defaultOpen query="test">
@@ -107,7 +107,7 @@ describe(OpenInLabel, () => {
   });
 });
 
-describe(OpenInSeparator, () => {
+describe("openInSeparator", () => {
   it("renders separator", () => {
     render(
       <OpenIn defaultOpen query="test">
@@ -120,7 +120,7 @@ describe(OpenInSeparator, () => {
   });
 });
 
-describe(OpenInChatGPT, () => {
+describe("openInChatGPT", () => {
   it("renders ChatGPT link", () => {
     render(
       <OpenIn defaultOpen query="test query">
@@ -139,7 +139,7 @@ describe(OpenInChatGPT, () => {
   });
 });
 
-describe(OpenInClaude, () => {
+describe("openInClaude", () => {
   it("renders Claude link", () => {
     render(
       <OpenIn defaultOpen query="test query">
@@ -154,7 +154,7 @@ describe(OpenInClaude, () => {
   });
 });
 
-describe(OpenInT3, () => {
+describe("openInT3", () => {
   it("renders T3 link", () => {
     render(
       <OpenIn defaultOpen query="test query">
@@ -169,7 +169,7 @@ describe(OpenInT3, () => {
   });
 });
 
-describe(OpenInScira, () => {
+describe("openInScira", () => {
   it("renders Scira link", () => {
     render(
       <OpenIn defaultOpen query="test query">
@@ -184,7 +184,7 @@ describe(OpenInScira, () => {
   });
 });
 
-describe(OpenInv0, () => {
+describe("openInv0", () => {
   it("renders V0 link", () => {
     render(
       <OpenIn defaultOpen query="test query">
@@ -199,7 +199,7 @@ describe(OpenInv0, () => {
   });
 });
 
-describe(OpenInCursor, () => {
+describe("openInCursor", () => {
   it("renders Cursor link", () => {
     render(
       <OpenIn defaultOpen query="test query">

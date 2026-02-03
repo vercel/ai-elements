@@ -8,7 +8,7 @@ import {
   ReasoningTrigger,
 } from "../src/reasoning";
 
-describe(Reasoning, () => {
+describe("reasoning", () => {
   it("renders children", () => {
     render(<Reasoning>Content</Reasoning>);
     expect(screen.getByText("Content")).toBeInTheDocument();
@@ -144,7 +144,7 @@ describe(Reasoning, () => {
   });
 });
 
-describe(ReasoningTrigger, () => {
+describe("reasoningTrigger", () => {
   it("renders default thinking message when streaming", () => {
     render(
       <Reasoning isStreaming>
@@ -228,7 +228,7 @@ describe(ReasoningTrigger, () => {
   });
 });
 
-describe(ReasoningContent, () => {
+describe("reasoningContent", () => {
   it("renders reasoning text", () => {
     render(
       <Reasoning defaultOpen>

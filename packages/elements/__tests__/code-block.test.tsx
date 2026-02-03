@@ -1,10 +1,10 @@
 import { render, screen, waitFor } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
+import { userEvent } from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 
 import { CodeBlock, CodeBlockCopyButton } from "../src/code-block";
 
-describe(CodeBlock, () => {
+describe("codeBlock", () => {
   it("renders code content", async () => {
     const { container } = render(
       <CodeBlock code="const foo = 'bar';" language="javascript" />
@@ -46,7 +46,7 @@ describe(CodeBlock, () => {
   });
 });
 
-describe(CodeBlockCopyButton, () => {
+describe("codeBlockCopyButton", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });

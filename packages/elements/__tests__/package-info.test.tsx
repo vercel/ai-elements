@@ -13,7 +13,7 @@ import {
   PackageInfoVersion,
 } from "../src/package-info";
 
-describe(PackageInfo, () => {
+describe("packageInfo", () => {
   it("renders package name", () => {
     render(<PackageInfo name="react" />);
     expect(screen.getByText("react")).toBeInTheDocument();
@@ -40,7 +40,7 @@ describe(PackageInfo, () => {
   });
 });
 
-describe(PackageInfoChangeType, () => {
+describe("packageInfoChangeType", () => {
   it("renders major change type", () => {
     render(
       <PackageInfo changeType="major" name="test">
@@ -87,7 +87,7 @@ describe(PackageInfoChangeType, () => {
   });
 });
 
-describe(PackageInfoDescription, () => {
+describe("packageInfoDescription", () => {
   it("renders description", () => {
     render(
       <PackageInfo name="react">
@@ -98,7 +98,7 @@ describe(PackageInfoDescription, () => {
   });
 });
 
-describe(PackageInfoDependencies, () => {
+describe("packageInfoDependencies", () => {
   it("renders dependencies list", () => {
     render(
       <PackageInfo name="react">

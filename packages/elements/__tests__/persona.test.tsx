@@ -53,7 +53,7 @@ beforeEach(() => {
   mockUseViewModelInstanceColor.mockReturnValue({ setRgb: vi.fn() });
 });
 
-describe(Persona, () => {
+describe("persona", () => {
   it("renders the Rive component", () => {
     const { getByTestId } = render(<Persona state="idle" />);
     expect(getByTestId("rive-component")).toBeInTheDocument();

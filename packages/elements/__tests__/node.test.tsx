@@ -11,7 +11,7 @@ import {
   NodeTitle,
 } from "../src/node";
 
-describe(Node, () => {
+describe("node", () => {
   it("renders children without handles", () => {
     render(
       <Node handles={{ source: false, target: false }}>
@@ -32,7 +32,7 @@ describe(Node, () => {
   });
 });
 
-describe(NodeHeader, () => {
+describe("nodeHeader", () => {
   it("renders children", () => {
     render(<NodeHeader>Header content</NodeHeader>);
     expect(screen.getByText("Header content")).toBeInTheDocument();
@@ -46,28 +46,28 @@ describe(NodeHeader, () => {
   });
 });
 
-describe(NodeTitle, () => {
+describe("nodeTitle", () => {
   it("renders title text", () => {
     render(<NodeTitle>Node Title</NodeTitle>);
     expect(screen.getByText("Node Title")).toBeInTheDocument();
   });
 });
 
-describe(NodeDescription, () => {
+describe("nodeDescription", () => {
   it("renders description text", () => {
     render(<NodeDescription>Node description</NodeDescription>);
     expect(screen.getByText("Node description")).toBeInTheDocument();
   });
 });
 
-describe(NodeAction, () => {
+describe("nodeAction", () => {
   it("renders action content", () => {
     render(<NodeAction>Action</NodeAction>);
     expect(screen.getByText("Action")).toBeInTheDocument();
   });
 });
 
-describe(NodeContent, () => {
+describe("nodeContent", () => {
   it("renders content", () => {
     render(<NodeContent>Main content</NodeContent>);
     expect(screen.getByText("Main content")).toBeInTheDocument();
@@ -81,7 +81,7 @@ describe(NodeContent, () => {
   });
 });
 
-describe(NodeFooter, () => {
+describe("nodeFooter", () => {
   it("renders footer content", () => {
     render(<NodeFooter>Footer content</NodeFooter>);
     expect(screen.getByText("Footer content")).toBeInTheDocument();

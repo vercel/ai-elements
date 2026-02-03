@@ -1,5 +1,5 @@
 import { render, screen, waitFor } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
+import { userEvent } from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 import { z } from "zod";
 
@@ -23,7 +23,7 @@ const mockTool = {
 // Zod v4 serializes schemas with "type": "object" format
 const ZOD_OBJECT_REGEX = /"type":\s*"object"/;
 
-describe(Agent, () => {
+describe("agent", () => {
   it("renders children", () => {
     render(<Agent>Content</Agent>);
     expect(screen.getByText("Content")).toBeInTheDocument();
@@ -35,7 +35,7 @@ describe(Agent, () => {
   });
 });
 
-describe(AgentHeader, () => {
+describe("agentHeader", () => {
   it("renders agent name", () => {
     render(<AgentHeader name="Research Assistant" />);
     expect(screen.getByText("Research Assistant")).toBeInTheDocument();
@@ -61,7 +61,7 @@ describe(AgentHeader, () => {
   });
 });
 
-describe(AgentContent, () => {
+describe("agentContent", () => {
   it("renders content", () => {
     render(<AgentContent>Content text</AgentContent>);
     expect(screen.getByText("Content text")).toBeInTheDocument();
@@ -75,7 +75,7 @@ describe(AgentContent, () => {
   });
 });
 
-describe(AgentInstructions, () => {
+describe("agentInstructions", () => {
   it("renders instructions label", () => {
     render(<AgentInstructions>Test instructions</AgentInstructions>);
     expect(screen.getByText("Instructions")).toBeInTheDocument();
@@ -98,7 +98,7 @@ describe(AgentInstructions, () => {
   });
 });
 
-describe(AgentTools, () => {
+describe("agentTools", () => {
   it("renders tools label", () => {
     render(
       <AgentTools>
@@ -109,7 +109,7 @@ describe(AgentTools, () => {
   });
 });
 
-describe(AgentTool, () => {
+describe("agentTool", () => {
   it("renders tool description as trigger", () => {
     render(
       <AgentTools>
@@ -178,7 +178,7 @@ describe(AgentTool, () => {
   });
 });
 
-describe(AgentOutput, () => {
+describe("agentOutput", () => {
   it("renders output schema label", () => {
     render(<AgentOutput schema="z.object({ name: z.string() })" />);
     expect(screen.getByText("Output Schema")).toBeInTheDocument();

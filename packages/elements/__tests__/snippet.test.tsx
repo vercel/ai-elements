@@ -4,7 +4,7 @@ import { describe, expect, it, vi } from "vitest";
 
 import { Snippet, SnippetCopyButton, SnippetInput } from "../src/snippet";
 
-describe(Snippet, () => {
+describe("snippet", () => {
   it("renders code via SnippetInput", () => {
     render(
       <Snippet code="npm install">
@@ -33,7 +33,7 @@ describe(Snippet, () => {
   });
 });
 
-describe(SnippetCopyButton, () => {
+describe("snippetCopyButton", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });

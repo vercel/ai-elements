@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
+import { userEvent } from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 
 // Mock use-stick-to-bottom with module-level state
@@ -37,7 +37,7 @@ import {
   messagesToMarkdown,
 } from "../src/conversation";
 
-describe(Conversation, () => {
+describe("conversation", () => {
   it("renders children", () => {
     render(
       <Conversation>
@@ -66,7 +66,7 @@ describe(Conversation, () => {
   });
 });
 
-describe(ConversationContent, () => {
+describe("conversationContent", () => {
   it("renders content", () => {
     render(
       <Conversation>
@@ -77,7 +77,7 @@ describe(ConversationContent, () => {
   });
 });
 
-describe(ConversationEmptyState, () => {
+describe("conversationEmptyState", () => {
   it("renders default empty state", () => {
     render(<ConversationEmptyState />);
     expect(screen.getByText("No messages yet")).toBeInTheDocument();
@@ -112,7 +112,7 @@ describe(ConversationEmptyState, () => {
   });
 });
 
-describe(ConversationScrollButton, () => {
+describe("conversationScrollButton", () => {
   it("renders scroll button when not at bottom", () => {
     mockState.isAtBottom = false;
 
@@ -237,7 +237,7 @@ describe(messagesToMarkdown, () => {
   });
 });
 
-describe(ConversationDownload, () => {
+describe("conversationDownload", () => {
   const mockMessages = [
     { content: "Hello", role: "user" as const },
     { content: "Hi there!", role: "assistant" as const },

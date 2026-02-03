@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 
 import { Shimmer } from "../src/shimmer";
 
-describe(Shimmer, () => {
+describe("shimmer", () => {
   it("renders text content", () => {
     render(<Shimmer>Loading...</Shimmer>);
     expect(screen.getByText("Loading...")).toBeInTheDocument();

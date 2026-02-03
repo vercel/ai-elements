@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
 import { Canvas } from "../src/canvas";
 import { Toolbar } from "../src/toolbar";
 
-describe(Toolbar, () => {
+describe("toolbar", () => {
   it("renders within Canvas context", () => {
     const { container } = render(
       <Canvas

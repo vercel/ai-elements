@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
 import { Canvas } from "../src/canvas";
 import { Controls } from "../src/controls";
 
-describe(Controls, () => {
+describe("controls", () => {
   it("renders within Canvas", () => {
     const { container } = render(
       <Canvas edges={[]} nodes={[]}>

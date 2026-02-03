@@ -13,7 +13,7 @@ import { render, screen } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 
-describe(EnvironmentVariables, () => {
+describe("environmentVariables", () => {
   it("renders children", () => {
     render(
       <EnvironmentVariables>
@@ -33,7 +33,7 @@ describe(EnvironmentVariables, () => {
   });
 });
 
-describe(EnvironmentVariablesHeader, () => {
+describe("environmentVariablesHeader", () => {
   it("renders header with title and toggle", () => {
     render(
       <EnvironmentVariables>
@@ -48,7 +48,7 @@ describe(EnvironmentVariablesHeader, () => {
   });
 });
 
-describe(EnvironmentVariable, () => {
+describe("environmentVariable", () => {
   it("renders variable name and masked value by default", () => {
     render(
       <EnvironmentVariables>
@@ -94,7 +94,7 @@ describe(EnvironmentVariable, () => {
   });
 });
 
-describe(EnvironmentVariableCopyButton, () => {
+describe("environmentVariableCopyButton", () => {
   it("copies value to clipboard", async () => {
     vi.clearAllMocks();
     const user = userEvent.setup();
@@ -161,7 +161,7 @@ describe(EnvironmentVariableCopyButton, () => {
   });
 });
 
-describe(EnvironmentVariableRequired, () => {
+describe("environmentVariableRequired", () => {
   it("renders required badge", () => {
     render(
       <EnvironmentVariables>

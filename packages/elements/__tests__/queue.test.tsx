@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
+import { userEvent } from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 
 import {
@@ -20,7 +20,7 @@ import {
   QueueSectionTrigger,
 } from "../src/queue";
 
-describe(Queue, () => {
+describe("queue", () => {
   it("renders queue container", () => {
     const { container } = render(<Queue>Content</Queue>);
     expect(container.firstChild).toBeInTheDocument();
@@ -35,7 +35,7 @@ describe(Queue, () => {
   });
 });
 
-describe(QueueItem, () => {
+describe("queueItem", () => {
   it("renders list item", () => {
     render(
       <ul>
@@ -55,7 +55,7 @@ describe(QueueItem, () => {
   });
 });
 
-describe(QueueItemIndicator, () => {
+describe("queueItemIndicator", () => {
   it("renders indicator", () => {
     const { container } = render(<QueueItemIndicator />);
     expect(container.firstChild).toBeInTheDocument();
@@ -72,7 +72,7 @@ describe(QueueItemIndicator, () => {
   });
 });
 
-describe(QueueItemContent, () => {
+describe("queueItemContent", () => {
   it("renders content text", () => {
     render(<QueueItemContent>Task content</QueueItemContent>);
     expect(screen.getByText("Task content")).toBeInTheDocument();
@@ -95,7 +95,7 @@ describe(QueueItemContent, () => {
   });
 });
 
-describe(QueueItemDescription, () => {
+describe("queueItemDescription", () => {
   it("renders description", () => {
     render(<QueueItemDescription>Description text</QueueItemDescription>);
     expect(screen.getByText("Description text")).toBeInTheDocument();
@@ -110,14 +110,14 @@ describe(QueueItemDescription, () => {
   });
 });
 
-describe(QueueItemActions, () => {
+describe("queueItemActions", () => {
   it("renders actions container", () => {
     render(<QueueItemActions>Actions</QueueItemActions>);
     expect(screen.getByText("Actions")).toBeInTheDocument();
   });
 });
 
-describe(QueueItemAction, () => {
+describe("queueItemAction", () => {
   it("renders action button", () => {
     render(<QueueItemAction>Click me</QueueItemAction>);
     expect(
@@ -136,14 +136,14 @@ describe(QueueItemAction, () => {
   });
 });
 
-describe(QueueItemAttachment, () => {
+describe("queueItemAttachment", () => {
   it("renders attachment container", () => {
     render(<QueueItemAttachment>Attachments</QueueItemAttachment>);
     expect(screen.getByText("Attachments")).toBeInTheDocument();
   });
 });
 
-describe(QueueItemImage, () => {
+describe("queueItemImage", () => {
   it("renders image", () => {
     render(<QueueItemImage alt="Test image" src="test.jpg" />);
     const img = screen.getByAltText("Test image");
@@ -159,14 +159,14 @@ describe(QueueItemImage, () => {
   });
 });
 
-describe(QueueItemFile, () => {
+describe("queueItemFile", () => {
   it("renders file name", () => {
     render(<QueueItemFile>document.pdf</QueueItemFile>);
     expect(screen.getByText("document.pdf")).toBeInTheDocument();
   });
 });
 
-describe(QueueList, () => {
+describe("queueList", () => {
   it("renders list container", () => {
     render(
       <QueueList>
@@ -179,7 +179,7 @@ describe(QueueList, () => {
   });
 });
 
-describe(QueueSection, () => {
+describe("queueSection", () => {
   it("renders collapsible section", () => {
     render(
       <QueueSection>
@@ -229,7 +229,7 @@ describe(QueueSection, () => {
   });
 });
 
-describe(QueueSectionTrigger, () => {
+describe("queueSectionTrigger", () => {
   it("renders trigger button", () => {
     render(
       <QueueSection>
@@ -243,7 +243,7 @@ describe(QueueSectionTrigger, () => {
   });
 });
 
-describe(QueueSectionLabel, () => {
+describe("queueSectionLabel", () => {
   it("renders label with count", () => {
     render(<QueueSectionLabel count={5} label="tasks" />);
     expect(screen.getByText("5 tasks")).toBeInTheDocument();
@@ -258,7 +258,7 @@ describe(QueueSectionLabel, () => {
   });
 });
 
-describe(QueueSectionContent, () => {
+describe("queueSectionContent", () => {
   it("renders content", () => {
     render(
       <QueueSection>

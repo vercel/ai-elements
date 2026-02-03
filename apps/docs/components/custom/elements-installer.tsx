@@ -2,14 +2,13 @@ import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { codeToHtml } from "shiki";
 
+import { CodeBlock } from "@/components/geistdocs/code-block";
 import {
   CodeBlockTab,
   CodeBlockTabs,
   CodeBlockTabsList,
   CodeBlockTabsTrigger,
 } from "@/components/geistdocs/code-block-tabs";
-
-import { CodeBlock } from "../geistdocs/code-block";
 
 interface ElementsInstallerProps {
   path?: string;

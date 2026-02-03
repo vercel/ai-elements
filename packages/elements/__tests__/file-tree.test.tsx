@@ -4,7 +4,7 @@ import { describe, expect, it, vi } from "vitest";
 
 import { FileTree, FileTreeFile, FileTreeFolder } from "../src/file-tree";
 
-describe(FileTree, () => {
+describe("fileTree", () => {
   it("renders children", () => {
     render(
       <FileTree>
@@ -33,7 +33,7 @@ describe(FileTree, () => {
   });
 });
 
-describe(FileTreeFolder, () => {
+describe("fileTreeFolder", () => {
   it("renders folder name", () => {
     render(
       <FileTree>
@@ -95,7 +95,7 @@ describe(FileTreeFolder, () => {
   });
 });
 
-describe(FileTreeFile, () => {
+describe("fileTreeFile", () => {
   it("renders file name", () => {
     render(
       <FileTree>

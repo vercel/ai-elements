@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from "vitest";
 
 import { Connection } from "../src/connection";
 
-describe(Connection, () => {
+describe("connection", () => {
   it("renders with basic props", () => {
     // Mock console.error to suppress React SVG warnings from @xyflow/react
     const consoleError = vi

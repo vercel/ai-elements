@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 
 import { Canvas } from "../src/canvas";
 
-describe(Canvas, () => {
+describe("canvas", () => {
   it("renders with default props", () => {
     const { container } = render(
       <Canvas edges={[]} nodes={[]}>

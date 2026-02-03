@@ -9,7 +9,7 @@ import {
   JSXPreviewError,
 } from "../src/jsx-preview";
 
-describe(JSXPreview, () => {
+describe("jsxPreview", () => {
   it("renders children", () => {
     render(
       <JSXPreview jsx="<div>Test</div>">
@@ -36,7 +36,7 @@ describe(JSXPreview, () => {
   });
 });
 
-describe(JSXPreviewContent, () => {
+describe("jsxPreviewContent", () => {
   it("renders simple JSX string", () => {
     render(
       <JSXPreview jsx="<div>Hello World</div>">
@@ -94,7 +94,7 @@ describe(JSXPreviewContent, () => {
   });
 });
 
-describe(JSXPreviewError, () => {
+describe("jsxPreviewError", () => {
   it("does not render when there is no error", () => {
     render(
       <JSXPreview jsx="<div>Valid</div>">

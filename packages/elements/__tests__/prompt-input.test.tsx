@@ -1,5 +1,5 @@
 import { act, render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
+import { userEvent } from "@testing-library/user-event";
 import React from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -146,7 +146,7 @@ beforeEach(() => {
   }) as unknown as typeof FileReader;
 });
 
-describe(PromptInput, () => {
+describe("promptInput", () => {
   it("renders form", () => {
     const onSubmit = vi.fn();
     const { container } = render(
@@ -517,7 +517,7 @@ describe(PromptInput, () => {
   });
 });
 
-describe(PromptInputBody, () => {
+describe("promptInputBody", () => {
   it("renders body content", () => {
     const onSubmit = vi.fn();
     render(
@@ -529,7 +529,7 @@ describe(PromptInputBody, () => {
   });
 });
 
-describe(PromptInputTextarea, () => {
+describe("promptInputTextarea", () => {
   it("renders textarea", () => {
     const onSubmit = vi.fn();
     render(
@@ -642,7 +642,7 @@ describe(PromptInputTextarea, () => {
   });
 });
 
-describe(PromptInputTools, () => {
+describe("promptInputTools", () => {
   it("renders tools", () => {
     const onSubmit = vi.fn();
     render(
@@ -656,7 +656,7 @@ describe(PromptInputTools, () => {
   });
 });
 
-describe(PromptInputButton, () => {
+describe("promptInputButton", () => {
   it("renders button", () => {
     const onSubmit = vi.fn();
     render(
@@ -741,7 +741,7 @@ describe(PromptInputButton, () => {
   });
 });
 
-describe(PromptInputSubmit, () => {
+describe("promptInputSubmit", () => {
   it("renders submit button", () => {
     const onSubmit = vi.fn();
     render(
@@ -780,7 +780,7 @@ describe(PromptInputSubmit, () => {
   });
 });
 
-describe(PromptInputActionMenu, () => {
+describe("promptInputActionMenu", () => {
   it("renders action menu", () => {
     const onSubmit = vi.fn();
     render(
@@ -799,7 +799,7 @@ describe(PromptInputActionMenu, () => {
   });
 });
 
-describe(PromptInputSelect, () => {
+describe("promptInputSelect", () => {
   it("renders model select", () => {
     const onSubmit = vi.fn();
     render(
@@ -2555,7 +2555,7 @@ describe("promptInputReferencedSources", () => {
   });
 });
 
-describe(PromptInputActionAddAttachments, () => {
+describe("promptInputActionAddAttachments", () => {
   it("opens file dialog when clicked", async () => {
     const onSubmit = vi.fn();
     const user = userEvent.setup();

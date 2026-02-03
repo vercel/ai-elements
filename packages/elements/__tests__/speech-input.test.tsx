@@ -50,7 +50,7 @@ beforeEach(() => {
   });
 });
 
-describe(SpeechInput, () => {
+describe("speechInput", () => {
   it("renders button with microphone icon", () => {
     render(<SpeechInput />);
     const button = screen.getByRole("button");

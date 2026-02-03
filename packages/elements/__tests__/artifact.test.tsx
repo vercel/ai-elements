@@ -13,7 +13,7 @@ import {
   ArtifactTitle,
 } from "../src/artifact";
 
-describe(Artifact, () => {
+describe("artifact", () => {
   it("renders children", () => {
     render(<Artifact>Content</Artifact>);
     expect(screen.getByText("Content")).toBeInTheDocument();
@@ -25,14 +25,14 @@ describe(Artifact, () => {
   });
 });
 
-describe(ArtifactHeader, () => {
+describe("artifactHeader", () => {
   it("renders children", () => {
     render(<ArtifactHeader>Header</ArtifactHeader>);
     expect(screen.getByText("Header")).toBeInTheDocument();
   });
 });
 
-describe(ArtifactClose, () => {
+describe("artifactClose", () => {
   it("renders default close icon", () => {
     const { container } = render(<ArtifactClose />);
     expect(container.querySelector("svg")).toBeInTheDocument();
@@ -49,21 +49,21 @@ describe(ArtifactClose, () => {
   });
 });
 
-describe(ArtifactTitle, () => {
+describe("artifactTitle", () => {
   it("renders title text", () => {
     render(<ArtifactTitle>My Title</ArtifactTitle>);
     expect(screen.getByText("My Title")).toBeInTheDocument();
   });
 });
 
-describe(ArtifactDescription, () => {
+describe("artifactDescription", () => {
   it("renders description text", () => {
     render(<ArtifactDescription>Description text</ArtifactDescription>);
     expect(screen.getByText("Description text")).toBeInTheDocument();
   });
 });
 
-describe(ArtifactActions, () => {
+describe("artifactActions", () => {
   it("renders action buttons", () => {
     render(
       <ArtifactActions>
@@ -74,7 +74,7 @@ describe(ArtifactActions, () => {
   });
 });
 
-describe(ArtifactAction, () => {
+describe("artifactAction", () => {
   it("renders with icon", () => {
     render(<ArtifactAction icon={XIcon} label="Close" />);
     expect(screen.getByText("Close")).toHaveClass("sr-only");
@@ -96,7 +96,7 @@ describe(ArtifactAction, () => {
   });
 });
 
-describe(ArtifactContent, () => {
+describe("artifactContent", () => {
   it("renders content", () => {
     render(<ArtifactContent>Main content</ArtifactContent>);
     expect(screen.getByText("Main content")).toBeInTheDocument();

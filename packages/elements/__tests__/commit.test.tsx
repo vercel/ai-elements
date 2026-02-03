@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
+import { userEvent } from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 
 import {
@@ -41,7 +41,7 @@ const mockCommit = {
   timestamp: new Date("2024-01-15T10:00:00Z"),
 };
 
-describe(Commit, () => {
+describe("commit", () => {
   it("renders commit message", () => {
     render(
       <Commit>
@@ -68,7 +68,7 @@ describe(Commit, () => {
   });
 });
 
-describe(CommitCopyButton, () => {
+describe("commitCopyButton", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -110,7 +110,7 @@ describe(CommitCopyButton, () => {
   });
 });
 
-describe(CommitFile, () => {
+describe("commitFile", () => {
   it("renders file path", () => {
     render(
       <CommitFile>
@@ -169,7 +169,7 @@ describe(CommitFile, () => {
   });
 });
 
-describe(CommitFiles, () => {
+describe("commitFiles", () => {
   it("renders all files", async () => {
     const user = userEvent.setup();
     const { container } = render(

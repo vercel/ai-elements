@@ -79,7 +79,7 @@ beforeEach(() => {
   });
 });
 
-describe(MicSelectorLabel, () => {
+describe("micSelectorLabel", () => {
   it("renders simple device label", () => {
     const device = mockDevices[1]; // External Microphone
     render(<MicSelectorLabel device={device} />);
@@ -427,7 +427,7 @@ describe("useAudioDevices hook", () => {
   });
 });
 
-describe(MicSelector, () => {
+describe("micSelector", () => {
   it("renders with default props", () => {
     render(
       <MicSelector>
@@ -605,7 +605,7 @@ describe(MicSelector, () => {
   });
 });
 
-describe(MicSelectorTrigger, () => {
+describe("micSelectorTrigger", () => {
   it("renders children", () => {
     render(
       <MicSelector>
@@ -632,7 +632,7 @@ describe(MicSelectorTrigger, () => {
   });
 });
 
-describe(MicSelectorContent, () => {
+describe("micSelectorContent", () => {
   it("renders with custom className", async () => {
     const user = userEvent.setup();
 
@@ -653,7 +653,7 @@ describe(MicSelectorContent, () => {
   });
 });
 
-describe(MicSelectorInput, () => {
+describe("micSelectorInput", () => {
   it("renders with default placeholder", async () => {
     const user = userEvent.setup();
 
@@ -695,7 +695,7 @@ describe(MicSelectorInput, () => {
   });
 });
 
-describe(MicSelectorEmpty, () => {
+describe("micSelectorEmpty", () => {
   it("renders default empty message", async () => {
     const user = userEvent.setup();
     mockEnumerateDevices.mockResolvedValueOnce([]);
@@ -739,7 +739,7 @@ describe(MicSelectorEmpty, () => {
   });
 });
 
-describe(MicSelectorValue, () => {
+describe("micSelectorValue", () => {
   it("shows placeholder when no value selected", () => {
     render(
       <MicSelector>

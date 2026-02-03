@@ -336,6 +336,7 @@ const mockResponses = [
 ];
 
 const delay = (ms: number): Promise<void> =>
+  // eslint-disable-next-line promise/avoid-new -- setTimeout requires a new Promise
   new Promise((resolve) => {
     setTimeout(resolve, ms);
   });
@@ -347,13 +348,19 @@ const AttachmentItem = ({
   onRemove,
 }: {
   attachment: { id: string; name: string; type: string; url: string };
-  onRemove: () => void;
-}) => (
-  <Attachment data={attachment} onRemove={onRemove}>
-    <AttachmentPreview />
-    <AttachmentRemove />
-  </Attachment>
-);
+  onRemove: (id: string) => void;
+}) => {
+  const handleRemove = useCallback(() => {
+    onRemove(attachment.id);
+  }, [onRemove, attachment.id]);
+
+  return (
+    <Attachment data={attachment} onRemove={handleRemove}>
+      <AttachmentPreview />
+      <AttachmentRemove />
+    </Attachment>
+  );
+};
 
 const PromptInputAttachmentsDisplay = () => {
   const attachments = usePromptInputAttachments();
@@ -375,7 +382,7 @@ const PromptInputAttachmentsDisplay = () => {
         <AttachmentItem
           attachment={attachment}
           key={attachment.id}
-          onRemove={() => handleRemove(attachment.id)}
+          onRemove={handleRemove}
         />
       ))}
     </Attachments>
@@ -387,8 +394,14 @@ const SuggestionItem = ({
   onClick,
 }: {
   suggestion: string;
-  onClick: () => void;
-}) => <Suggestion onClick={onClick} suggestion={suggestion} />;
+  onClick: (suggestion: string) => void;
+}) => {
+  const handleClick = useCallback(() => {
+    onClick(suggestion);
+  }, [onClick, suggestion]);
+
+  return <Suggestion onClick={handleClick} suggestion={suggestion} />;
+};
 
 const ModelItem = ({
   m,
@@ -397,23 +410,29 @@ const ModelItem = ({
 }: {
   m: (typeof models)[0];
   isSelected: boolean;
-  onSelect: () => void;
-}) => (
-  <ModelSelectorItem onSelect={onSelect} value={m.id}>
-    <ModelSelectorLogo provider={m.chefSlug} />
-    <ModelSelectorName>{m.name}</ModelSelectorName>
-    <ModelSelectorLogoGroup>
-      {m.providers.map((provider) => (
-        <ModelSelectorLogo key={provider} provider={provider} />
-      ))}
-    </ModelSelectorLogoGroup>
-    {isSelected ? (
-      <CheckIcon className="ml-auto size-4" />
-    ) : (
-      <div className="ml-auto size-4" />
-    )}
-  </ModelSelectorItem>
-);
+  onSelect: (id: string) => void;
+}) => {
+  const handleSelect = useCallback(() => {
+    onSelect(m.id);
+  }, [onSelect, m.id]);
+
+  return (
+    <ModelSelectorItem onSelect={handleSelect} value={m.id}>
+      <ModelSelectorLogo provider={m.chefSlug} />
+      <ModelSelectorName>{m.name}</ModelSelectorName>
+      <ModelSelectorLogoGroup>
+        {m.providers.map((provider) => (
+          <ModelSelectorLogo key={provider} provider={provider} />
+        ))}
+      </ModelSelectorLogoGroup>
+      {isSelected ? (
+        <CheckIcon className="ml-auto size-4" />
+      ) : (
+        <div className="ml-auto size-4" />
+      )}
+    </ModelSelectorItem>
+  );
+};
 
 const Example = () => {
   const [model, setModel] = useState<string>(models[0].id);
@@ -424,13 +443,30 @@ const Example = () => {
     "submitted" | "streaming" | "ready" | "error"
   >("ready");
   const [messages, setMessages] = useState<MessageType[]>(initialMessages);
-  const [_streamingMessageId, setStreamingMessageId] = useState<string | null>(
-    null
-  );
+  const [, setStreamingMessageId] = useState<string | null>(null);
 
   const selectedModelData = useMemo(
     () => models.find((m) => m.id === model),
     [model]
+  );
+
+  const updateMessageContent = useCallback(
+    (messageId: string, newContent: string) => {
+      setMessages((prev) =>
+        prev.map((msg) => {
+          if (msg.versions.some((v) => v.id === messageId)) {
+            return {
+              ...msg,
+              versions: msg.versions.map((v) =>
+                v.id === messageId ? { ...v, content: newContent } : v
+              ),
+            };
+          }
+          return msg;
+        })
+      );
+    },
+    []
   );
 
   const streamResponse = useCallback(
@@ -443,28 +479,14 @@ const Example = () => {
 
       for (const [i, word] of words.entries()) {
         currentContent += (i > 0 ? " " : "") + word;
-
-        setMessages((prev) =>
-          prev.map((msg) => {
-            if (msg.versions.some((v) => v.id === messageId)) {
-              return {
-                ...msg,
-                versions: msg.versions.map((v) =>
-                  v.id === messageId ? { ...v, content: currentContent } : v
-                ),
-              };
-            }
-            return msg;
-          })
-        );
-
+        updateMessageContent(messageId, currentContent);
         await delay(Math.random() * 100 + 50);
       }
 
       setStatus("ready");
       setStreamingMessageId(null);
     },
-    []
+    [updateMessageContent]
   );
 
   const addUserMessage = useCallback(
@@ -620,7 +642,7 @@ const Example = () => {
           {suggestions.map((suggestion) => (
             <SuggestionItem
               key={suggestion}
-              onClick={() => handleSuggestionClick(suggestion)}
+              onClick={handleSuggestionClick}
               suggestion={suggestion}
             />
           ))}
@@ -685,7 +707,7 @@ const Example = () => {
                                 isSelected={model === m.id}
                                 key={m.id}
                                 m={m}
-                                onSelect={() => handleModelSelect(m.id)}
+                                onSelect={handleModelSelect}
                               />
                             ))}
                         </ModelSelectorGroup>

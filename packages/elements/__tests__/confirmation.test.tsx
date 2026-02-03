@@ -12,7 +12,7 @@ import {
   ConfirmationRequest,
 } from "../src/confirmation";
 
-describe(Confirmation, () => {
+describe("confirmation", () => {
   it("renders children when approval is present", () => {
     render(
       <Confirmation approval={{ id: "test-id" }} state="approval-requested">
@@ -126,7 +126,7 @@ describe("confirmationRequest, ConfirmationAccepted, ConfirmationRejected", () =
   });
 });
 
-describe(ConfirmationActions, () => {
+describe("confirmationActions", () => {
   it("renders custom children buttons", () => {
     render(
       <Confirmation approval={{ id: "test-id" }} state="approval-requested">
@@ -233,7 +233,7 @@ describe(ConfirmationActions, () => {
   });
 });
 
-describe(ConfirmationAccepted, () => {
+describe("confirmationAccepted", () => {
   it("renders accepted status with icon", () => {
     render(
       <Confirmation
@@ -252,7 +252,7 @@ describe(ConfirmationAccepted, () => {
   });
 });
 
-describe(ConfirmationRejected, () => {
+describe("confirmationRejected", () => {
   it("renders rejected status with icon", () => {
     render(
       <Confirmation

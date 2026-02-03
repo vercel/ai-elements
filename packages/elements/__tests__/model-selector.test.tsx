@@ -25,7 +25,7 @@ beforeEach(() => {
   vi.spyOn(console, "error").mockImplementation(() => {});
 });
 
-describe(ModelSelector, () => {
+describe("modelSelector", () => {
   it("renders as a Dialog component", () => {
     const { container } = render(
       <ModelSelector>
@@ -74,7 +74,7 @@ describe(ModelSelector, () => {
   });
 });
 
-describe(ModelSelectorTrigger, () => {
+describe("modelSelectorTrigger", () => {
   it("renders trigger button with children", () => {
     render(
       <ModelSelector>
@@ -105,7 +105,7 @@ describe(ModelSelectorTrigger, () => {
   });
 });
 
-describe(ModelSelectorContent, () => {
+describe("modelSelectorContent", () => {
   it("renders content with Command wrapper", () => {
     render(
       <ModelSelector open={true}>
@@ -147,7 +147,7 @@ describe(ModelSelectorContent, () => {
   });
 });
 
-describe(ModelSelectorDialog, () => {
+describe("modelSelectorDialog", () => {
   it("renders as CommandDialog", () => {
     render(
       <ModelSelectorDialog open={true}>
@@ -174,7 +174,7 @@ describe(ModelSelectorDialog, () => {
   });
 });
 
-describe(ModelSelectorInput, () => {
+describe("modelSelectorInput", () => {
   it("renders search input", () => {
     render(
       <ModelSelector open={true}>
@@ -226,7 +226,7 @@ describe(ModelSelectorInput, () => {
   });
 });
 
-describe(ModelSelectorList, () => {
+describe("modelSelectorList", () => {
   it("renders list container", () => {
     render(
       <ModelSelector open={true}>
@@ -241,7 +241,7 @@ describe(ModelSelectorList, () => {
   });
 });
 
-describe(ModelSelectorEmpty, () => {
+describe("modelSelectorEmpty", () => {
   it("renders empty state message", () => {
     render(
       <ModelSelector open={true}>
@@ -256,7 +256,7 @@ describe(ModelSelectorEmpty, () => {
   });
 });
 
-describe(ModelSelectorGroup, () => {
+describe("modelSelectorGroup", () => {
   it("renders group with heading", () => {
     render(
       <ModelSelector open={true}>
@@ -288,7 +288,7 @@ describe(ModelSelectorGroup, () => {
   });
 });
 
-describe(ModelSelectorItem, () => {
+describe("modelSelectorItem", () => {
   it("renders selectable item", () => {
     render(
       <ModelSelector open={true}>
@@ -341,7 +341,7 @@ describe(ModelSelectorItem, () => {
   });
 });
 
-describe(ModelSelectorShortcut, () => {
+describe("modelSelectorShortcut", () => {
   it("renders keyboard shortcut", () => {
     render(
       <ModelSelector open={true}>
@@ -359,7 +359,7 @@ describe(ModelSelectorShortcut, () => {
   });
 });
 
-describe(ModelSelectorSeparator, () => {
+describe("modelSelectorSeparator", () => {
   it("renders separator", () => {
     render(
       <ModelSelector open={true}>
@@ -378,7 +378,7 @@ describe(ModelSelectorSeparator, () => {
   });
 });
 
-describe(ModelSelectorLogo, () => {
+describe("modelSelectorLogo", () => {
   it("renders logo image with correct attributes", () => {
     render(<ModelSelectorLogo provider="openai" />);
     const logo = screen.getByAltText("openai logo");
@@ -439,7 +439,7 @@ describe(ModelSelectorLogo, () => {
   });
 });
 
-describe(ModelSelectorLogoGroup, () => {
+describe("modelSelectorLogoGroup", () => {
   it("renders multiple logos in a group", () => {
     render(
       <ModelSelectorLogoGroup>
@@ -474,7 +474,7 @@ describe(ModelSelectorLogoGroup, () => {
   });
 });
 
-describe(ModelSelectorName, () => {
+describe("modelSelectorName", () => {
   it("renders model name text", () => {
     render(<ModelSelectorName>GPT-4 Turbo</ModelSelectorName>);
     expect(screen.getByText("GPT-4 Turbo")).toBeInTheDocument();

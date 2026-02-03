@@ -4,7 +4,7 @@ import { describe, expect, it, vi } from "vitest";
 
 import { Suggestion, Suggestions } from "../src/suggestion";
 
-describe(Suggestions, () => {
+describe("suggestions", () => {
   it("renders children", () => {
     render(
       <Suggestions>
@@ -24,7 +24,7 @@ describe(Suggestions, () => {
   });
 });
 
-describe(Suggestion, () => {
+describe("suggestion", () => {
   it("renders suggestion text", () => {
     render(<Suggestion suggestion="Click me" />);
     expect(screen.getByText("Click me")).toBeInTheDocument();

@@ -13,8 +13,8 @@ import {
   PlanTrigger,
 } from "../src/plan";
 
-describe(Plan, () => {
-  describe(Plan, () => {
+describe("plan", () => {
+  describe("plan", () => {
     it("renders with children", () => {
       render(
         <Plan>
@@ -78,7 +78,7 @@ describe(Plan, () => {
     });
   });
 
-  describe(PlanHeader, () => {
+  describe("planHeader", () => {
     it("renders with children", () => {
       render(
         <Plan>
@@ -124,7 +124,7 @@ describe(Plan, () => {
     });
   });
 
-  describe(PlanTitle, () => {
+  describe("planTitle", () => {
     it("renders text content", () => {
       render(
         <Plan>
@@ -189,7 +189,7 @@ describe(Plan, () => {
     });
   });
 
-  describe(PlanDescription, () => {
+  describe("planDescription", () => {
     it("renders text content", () => {
       render(
         <Plan>
@@ -279,7 +279,7 @@ describe(Plan, () => {
     });
   });
 
-  describe(PlanAction, () => {
+  describe("planAction", () => {
     it("renders with children", () => {
       render(
         <Plan>
@@ -309,7 +309,7 @@ describe(Plan, () => {
     });
   });
 
-  describe(PlanContent, () => {
+  describe("planContent", () => {
     it("renders with children", () => {
       render(
         <Plan defaultOpen>
@@ -356,7 +356,7 @@ describe(Plan, () => {
     });
   });
 
-  describe(PlanFooter, () => {
+  describe("planFooter", () => {
     it("renders with children", () => {
       render(
         <Plan>
@@ -380,7 +380,7 @@ describe(Plan, () => {
     });
   });
 
-  describe(PlanTrigger, () => {
+  describe("planTrigger", () => {
     it("renders toggle button", () => {
       render(
         <Plan>
