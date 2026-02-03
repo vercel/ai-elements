@@ -31,8 +31,10 @@ vi.mock("use-stick-to-bottom", () => {
 import {
   Conversation,
   ConversationContent,
+  ConversationDownload,
   ConversationEmptyState,
   ConversationScrollButton,
+  messagesToMarkdown,
 } from "../src/conversation";
 
 describe("Conversation", () => {
@@ -182,5 +184,134 @@ describe("ConversationScrollButton", () => {
     expect(mockScrollToBottom).toHaveBeenCalled();
 
     mockState.isAtBottom = true;
+  });
+});
+
+describe("messagesToMarkdown", () => {
+  it("converts messages to markdown format", () => {
+    const messages = [
+      { role: "user" as const, content: "Hello" },
+      { role: "assistant" as const, content: "Hi there!" },
+    ];
+
+    const result = messagesToMarkdown(messages);
+
+    expect(result).toBe("**User:** Hello\n\n**Assistant:** Hi there!");
+  });
+
+  it("handles empty messages array", () => {
+    const result = messagesToMarkdown([]);
+    expect(result).toBe("");
+  });
+
+  it("uses custom formatMessage function", () => {
+    const messages = [
+      { role: "user" as const, content: "Hello" },
+      { role: "assistant" as const, content: "Hi" },
+    ];
+
+    const customFormat = (msg: { role: string; content: string }) =>
+      `[${msg.role}]: ${msg.content}`;
+
+    const result = messagesToMarkdown(messages, customFormat);
+
+    expect(result).toBe("[user]: Hello\n\n[assistant]: Hi");
+  });
+
+  it("handles all role types", () => {
+    const messages = [
+      { role: "user" as const, content: "User msg" },
+      { role: "assistant" as const, content: "Assistant msg" },
+      { role: "system" as const, content: "System msg" },
+      { role: "tool" as const, content: "Tool msg" },
+      { role: "data" as const, content: "Data msg" },
+    ];
+
+    const result = messagesToMarkdown(messages);
+
+    expect(result).toContain("**User:** User msg");
+    expect(result).toContain("**Assistant:** Assistant msg");
+    expect(result).toContain("**System:** System msg");
+    expect(result).toContain("**Tool:** Tool msg");
+    expect(result).toContain("**Data:** Data msg");
+  });
+});
+
+describe("ConversationDownload", () => {
+  const mockMessages = [
+    { role: "user" as const, content: "Hello" },
+    { role: "assistant" as const, content: "Hi there!" },
+  ];
+
+  it("renders download button", () => {
+    render(
+      <Conversation>
+        <ConversationContent>
+          <div>Content</div>
+        </ConversationContent>
+        <ConversationDownload messages={mockMessages} />
+      </Conversation>
+    );
+
+    const button = screen.getByRole("button");
+    expect(button).toBeInTheDocument();
+  });
+
+  it("renders custom children", () => {
+    render(
+      <Conversation>
+        <ConversationDownload messages={mockMessages}>
+          Download Chat
+        </ConversationDownload>
+      </Conversation>
+    );
+
+    expect(screen.getByText("Download Chat")).toBeInTheDocument();
+  });
+
+  it("applies custom className", () => {
+    render(
+      <Conversation>
+        <ConversationDownload className="custom-class" messages={mockMessages} />
+      </Conversation>
+    );
+
+    const button = screen.getByRole("button");
+    expect(button).toHaveClass("custom-class");
+  });
+
+  it("triggers download on click", async () => {
+    const user = userEvent.setup();
+    const mockCreateObjectURL = vi.fn(() => "blob:test");
+    const mockRevokeObjectURL = vi.fn();
+    const mockClick = vi.fn();
+
+    global.URL.createObjectURL = mockCreateObjectURL;
+    global.URL.revokeObjectURL = mockRevokeObjectURL;
+
+    const originalCreateElement = document.createElement.bind(document);
+    vi.spyOn(document, "createElement").mockImplementation((tag: string) => {
+      if (tag === "a") {
+        const link = originalCreateElement("a");
+        link.click = mockClick;
+        return link;
+      }
+      return originalCreateElement(tag);
+    });
+
+    render(
+      <Conversation>
+        <ConversationDownload messages={mockMessages} />
+      </Conversation>
+    );
+
+    const button = screen.getByRole("button");
+    await user.click(button);
+
+    expect(mockCreateObjectURL).toHaveBeenCalled();
+    expect(mockClick).toHaveBeenCalled();
+    expect(mockRevokeObjectURL).toHaveBeenCalled();
+
+    vi.restoreAllMocks();
   });
 });

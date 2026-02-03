@@ -24,6 +24,7 @@ Add the following component to your frontend:
 import {
   Conversation,
   ConversationContent,
+  ConversationDownload,
   ConversationEmptyState,
   ConversationScrollButton,
 } from "@/components/ai-elements/conversation";
@@ -85,6 +86,7 @@ const ConversationDemo = () => {
               ))
             )}
           </ConversationContent>
+          <ConversationDownload messages={messages} />
           <ConversationScrollButton />
         </Conversation>
 
@@ -137,6 +139,7 @@ export async function POST(req: Request) {
 - Automatic scrolling to the bottom when new messages are added
 - Smooth scrolling behavior with configurable animation
 - Scroll button that appears when not at the bottom
+- Download conversation as Markdown
 - Responsive design with customizable padding and spacing
 - Flexible content layout with consistent message spacing
 - Accessible with proper ARIA roles for screen readers
@@ -226,3 +229,58 @@ export async function POST(req: Request) {
     },
   }}
 />
+
+### `<ConversationDownload />`
+
+A button that downloads the conversation as a Markdown file.
+
+```tsx
+import { ConversationDownload } from "@/components/ai-elements/conversation";
+
+<Conversation>
+  <ConversationContent>
+    {messages.map(...)}
+  </ConversationContent>
+  <ConversationDownload messages={messages} />
+  <ConversationScrollButton />
+</Conversation>
+```
+
+<TypeTable
+  type={{
+    messages: {
+      description: "Array of messages to include in the download.",
+      type: "ConversationMessage[]",
+      required: true,
+    },
+    filename: {
+      description: "The filename for the downloaded file.",
+      type: "string",
+      default: '"conversation.md"',
+    },
+    formatMessage: {
+      description: "Custom function to format each message in the output.",
+      type: "(message: ConversationMessage, index: number) => string",
+    },
+    "...props": {
+      description:
+        "Any other props are spread to the underlying shadcn/ui Button component.",
+      type: "Omit<ComponentProps<typeof Button>, 'onClick'>",
+    },
+  }}
+/>
+
+### `messagesToMarkdown`
+
+A utility function to convert messages to Markdown format. Useful for custom download implementations.
+
+```tsx
+import { messagesToMarkdown } from "@/components/ai-elements/conversation";
+
+const markdown = messagesToMarkdown(messages);
+
+// With custom formatter
+const customMarkdown = messagesToMarkdown(messages, (msg, i) =>
+  `[${msg.role}]: ${msg.content}`
+);
+```
