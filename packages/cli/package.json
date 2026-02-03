@@ -1,6 +1,6 @@
 {
   "name": "ai-elements",
-  "version": "1.8.1",
+  "version": "1.8.2",
   "description": "AI Elements is a component library and custom registry built on top of shadcn/ui to help you build AI-native applications faster.",
   "bin": {
     "elements": "index.js"
@@ -10,7 +10,7 @@
     "README.md",
     "LICENSE"
   ],
-  "homepage": "https://ai-sdk.dev/elements",
+  "homepage": "https://elements.ai-sdk.dev",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/vercel/ai-elements.git",

@@ -75,10 +75,10 @@ export const ElementsInstaller = async ({ path }: ElementsInstallerProps) => {
           )}
         </CodeBlockTabsList>
         <CodeBlockTab className="not-prose" value="ai-elements">
-          <CodeBlock className="px-2">{elementsCommand}</CodeBlock>
+          <CodeBlock className="px-4">{elementsCommand}</CodeBlock>
         </CodeBlockTab>
         <CodeBlockTab className="not-prose" value="shadcn">
-          <CodeBlock className="px-2">{shadcnCommand}</CodeBlock>
+          <CodeBlock className="px-4">{shadcnCommand}</CodeBlock>
         </CodeBlockTab>
         {sourceCode && (
           <CodeBlockTab className="not-prose" value="manual">

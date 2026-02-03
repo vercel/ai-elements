@@ -1,12 +1,11 @@
 import { type ToolSet, tool, type UIMessageStreamWriter } from "ai";
 import { initAdvancedSearch } from "fumadocs-core/search/server";
-import type { InferPageType } from "fumadocs-core/source";
 import z from "zod";
 import { i18n } from "@/lib/geistdocs/i18n";
-import { type docsSource, source } from "@/lib/geistdocs/source";
+import { getAllPages, getPageByHref } from "@/lib/geistdocs/source";
 
 const createSearchServer = (lang: string) => {
-  const pages = source.getPages(lang);
+  const pages = getAllPages(lang);
 
   return initAdvancedSearch({
     indexes: pages.map((page) => ({
@@ -14,8 +13,7 @@ const createSearchServer = (lang: string) => {
       description: page.data.description,
       url: page.url,
       id: page.url,
-      structuredData: (page as InferPageType<typeof docsSource>).data
-        .structuredData,
+      structuredData: page.data.structuredData,
     })),
   });
 };
@@ -48,14 +46,7 @@ const search_docs = (writer: UIMessageStreamWriter) =>
         log(`Found ${results.length} results`);
 
         if (results.length === 0) {
-          return {
-            content: [
-              {
-                type: "text",
-                text: `No documentation found for query: "${query}"`,
-              },
-            ],
-          };
+          return `No documentation found for query: "${query}"`;
         }
 
         log(`Processing ${results.length} results...`);
@@ -70,7 +61,7 @@ const search_docs = (writer: UIMessageStreamWriter) =>
 
           log(`Getting page for ${url}`);
 
-          const result = source.getPageByHref(url, { language: lang });
+          const result = getPageByHref(url, { language: lang });
 
           if (!result?.page) {
             log(`No page found for ${url}`);
@@ -83,13 +74,10 @@ const search_docs = (writer: UIMessageStreamWriter) =>
             `Found page for ${url}: ${page.data.title}, ${page.data.description}`
           );
 
-          const structuredData = (page as InferPageType<typeof docsSource>).data
-            .structuredData;
-
           return {
             title: page.data.title,
             description: page.data.description,
-            content: JSON.stringify(structuredData.contents),
+            content: JSON.stringify(page.data.structuredData.contents),
             slug: page.url,
           };
         });
@@ -173,28 +161,18 @@ const get_doc_page = tool({
   // biome-ignore lint/suspicious/useAwait: "tool calls must be async"
   execute: async ({ slug, lang }) => {
     log(`Getting all pages for language: ${lang}`);
-    const pages = source.getPages(lang);
+    const pages = getAllPages(lang);
 
     log(`Getting doc page for ${slug} in language: ${lang}`);
     const doc = pages.find((d) => d.url === slug || d.url.endsWith(slug));
 
     if (!doc) {
-      return {
-        content: [
-          {
-            type: "text",
-            text: `Documentation page not found: "${slug}"`,
-          },
-        ],
-      };
+      return `Documentation page not found: "${slug}"`;
     }
-
-    const structuredData = (doc as InferPageType<typeof docsSource>).data
-      .structuredData;
 
     return `# ${doc.data.title}\n\n${
       doc.data.description ? `${doc.data.description}\n\n` : ""
-    }${structuredData.contents}`;
+    }${doc.data.structuredData.contents}`;
   },
 });
 
@@ -210,7 +188,7 @@ const list_docs = tool({
   // biome-ignore lint/suspicious/useAwait: "tool calls must be async"
   execute: async ({ lang }) => {
     log(`Getting all pages for language: ${lang}`);
-    const pages = source.getPages(lang);
+    const pages = getAllPages(lang);
 
     const docsList = pages
       .map(

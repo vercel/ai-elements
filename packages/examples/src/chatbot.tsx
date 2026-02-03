@@ -70,10 +70,11 @@ import {
   SourcesContent,
   SourcesTrigger,
 } from "@repo/elements/sources";
+import { SpeechInput } from "@repo/elements/speech-input";
 import { Suggestion, Suggestions } from "@repo/elements/suggestion";
 import { Button } from "@repo/shadcn-ui/components/ui/button";
 import type { ToolUIPart } from "ai";
-import { CheckIcon, CopyIcon, DownloadIcon, GlobeIcon, MicIcon } from "lucide-react";
+import { CheckIcon, CopyIcon, DownloadIcon, GlobeIcon } from "lucide-react";
 import { nanoid } from "nanoid";
 import { useCallback, useState } from "react";
 import { toast } from "sonner";
@@ -434,7 +435,6 @@ const Example = () => {
   const [modelSelectorOpen, setModelSelectorOpen] = useState(false);
   const [text, setText] = useState<string>("");
   const [useWebSearch, setUseWebSearch] = useState<boolean>(false);
-  const [useMicrophone, setUseMicrophone] = useState<boolean>(false);
   const [status, setStatus] = useState<
     "submitted" | "streaming" | "ready" | "error"
   >("ready");
@@ -544,6 +544,10 @@ const Example = () => {
     addUserMessage(suggestion);
   };
 
+  const handleTranscriptionChange = useCallback((transcript: string) => {
+    setText((prev) => (prev ? `${prev} ${transcript}` : transcript));
+  }, []);
+
   return (
     <div className="relative flex size-full flex-col divide-y overflow-hidden">
       <Conversation>
@@ -625,13 +629,12 @@ const Example = () => {
                     <PromptInputActionAddAttachments />
                   </PromptInputActionMenuContent>
                 </PromptInputActionMenu>
-                <PromptInputButton
-                  onClick={() => setUseMicrophone(!useMicrophone)}
-                  variant={useMicrophone ? "default" : "ghost"}
-                >
-                  <MicIcon size={16} />
-                  <span className="sr-only">Microphone</span>
-                </PromptInputButton>
+                <SpeechInput
+                  className="shrink-0"
+                  onTranscriptionChange={handleTranscriptionChange}
+                  size="icon-sm"
+                  variant="ghost"
+                />
                 <PromptInputButton
                   onClick={() => setUseWebSearch(!useWebSearch)}
                   variant={useWebSearch ? "default" : "ghost"}

@@ -25,6 +25,8 @@ interface CodeBlockProps {
   style?: CSSProperties;
   tabIndex?: number;
   title?: string;
+  "data-line-numbers"?: string;
+  "data-line-highlighting"?: string;
 }
 
 export const CodeBlock = ({
@@ -34,9 +36,11 @@ export const CodeBlock = ({
   style,
   tabIndex,
   title,
+  ...rest
 }: CodeBlockProps) => {
   const ref = useRef<HTMLPreElement>(null);
   const [isCopied, setIsCopied] = useState(false);
+  const { "data-line-numbers": lineNumbers } = rest;
 
   const copyToClipboard = useCallback(async () => {
     if (typeof window === "undefined" || !navigator?.clipboard?.writeText) {
@@ -69,7 +73,7 @@ export const CodeBlock = ({
       <pre
         className={cn(
           "not-prose flex-1 overflow-x-auto rounded-sm border bg-background py-3 text-sm outline-none",
-          "[&>code]:grid",
+          "[&>code]:grid [&>code]:min-w-max",
           className,
           props.className
         )}
@@ -85,8 +89,10 @@ export const CodeBlock = ({
 
   if (!title) {
     return (
-      <div className={cn("relative mb-6", className)}>
-        <CodeBlockComponent />
+      <div className="relative mb-6">
+        <CodeBlockComponent
+          className={cn(lineNumbers ? "line-numbers" : "", className)}
+        />
         <Button
           className="absolute top-[5px] right-[5px] bg-background/80 backdrop-blur-sm"
           onClick={copyToClipboard}
@@ -102,13 +108,11 @@ export const CodeBlock = ({
   return (
     <Card className="not-prose mb-6 gap-0 overflow-hidden rounded-sm p-0 shadow-none">
       <CardHeader className="flex items-center gap-2 border-b bg-sidebar py-1.5! pr-1.5 pl-4 text-muted-foreground">
-        {icon && (
-          <div
-            className="size-3.5 shrink-0"
-            // biome-ignore lint/security/noDangerouslySetInnerHtml: "Required for icon prop."
-            dangerouslySetInnerHTML={{ __html: icon as unknown as TrustedHTML }}
-          />
-        )}
+        <div
+          className="size-3.5 shrink-0"
+          // biome-ignore lint/security/noDangerouslySetInnerHtml: "Required for icon prop."
+          dangerouslySetInnerHTML={{ __html: icon as unknown as TrustedHTML }}
+        />
         <CardTitle className="flex-1 font-mono font-normal text-sm tracking-tight">
           {title}
         </CardTitle>
@@ -121,8 +125,14 @@ export const CodeBlock = ({
           <Icon size={14} />
         </Button>
       </CardHeader>
-      <CardContent className={cn("p-0", className)}>
-        <CodeBlockComponent className="line-numbers rounded-none border-none" />
+      <CardContent className="p-0">
+        <CodeBlockComponent
+          className={cn(
+            "rounded-none border-none",
+            className,
+            lineNumbers ? "line-numbers" : ""
+          )}
+        />
       </CardContent>
     </Card>
   );

@@ -56,12 +56,12 @@ export const Reasoning = memo(
     children,
     ...props
   }: ReasoningProps) => {
-    const [isOpen, setIsOpen] = useControllableState({
+    const [isOpen, setIsOpen] = useControllableState<boolean>({
       prop: open,
       defaultProp: defaultOpen,
       onChange: onOpenChange,
     });
-    const [duration, setDuration] = useControllableState({
+    const [duration, setDuration] = useControllableState<number | undefined>({
       prop: durationProp,
       defaultProp: undefined,
     });

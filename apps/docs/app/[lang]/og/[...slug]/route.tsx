@@ -1,22 +1,15 @@
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
-import type { InferPageType } from "fumadocs-core/source";
 import { ImageResponse } from "next/og";
 import type { NextRequest } from "next/server";
-import {
-  type componentsSource,
-  type docsSource,
-  type examplesSource,
-  getPageImage,
-  source,
-} from "@/lib/geistdocs/source";
+import { getAllPages, getPage, getPageImage } from "@/lib/geistdocs/source";
 
 export const GET = async (
   _request: NextRequest,
   { params }: RouteContext<"/[lang]/og/[...slug]">
 ) => {
   const { slug, lang } = await params;
-  const page = source.getPage(slug.slice(0, -1), lang);
+  const page = getPage(slug.slice(0, -1), lang);
 
   if (!page) {
     return new Response("Not found", { status: 404 });
@@ -94,12 +87,8 @@ export const generateStaticParams = async ({
 }: RouteContext<"/[lang]/og/[...slug]">) => {
   const { lang } = await params;
 
-  return source.getPages(lang).map((page) => ({
+  return getAllPages(lang).map((page) => ({
     lang: page.locale,
-    slug: getPageImage(
-      page as InferPageType<
-        typeof docsSource | typeof componentsSource | typeof examplesSource
-      >
-    ).segments,
+    slug: getPageImage(page).segments,
   }));
 };

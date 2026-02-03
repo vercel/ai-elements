@@ -7,13 +7,11 @@ import {
 } from "next/server";
 import { i18n } from "@/lib/geistdocs/i18n";
 
-const { rewrite: rewriteLLM } = rewritePath("/*path", "/en/llms.mdx/*path");
+const { rewrite: rewriteLLM } = rewritePath("/*path", "/llms.mdx/*path");
 
 const internationalizer = createI18nMiddleware(i18n);
 
 const proxy = (request: NextRequest, context: NextFetchEvent) => {
-  console.log("[Proxy] Request pathname:", request.nextUrl.pathname);
-
   // First, handle Markdown preference rewrites
   if (isMarkdownPreferred(request)) {
     const result = rewriteLLM(request.nextUrl.pathname);
@@ -27,9 +25,10 @@ const proxy = (request: NextRequest, context: NextFetchEvent) => {
 };
 
 export const config = {
-  // Matcher ignoring `/_next/`, `/api/`, static assets, favicon, etc.
-  // Explicitly include root path and all other paths
-  matcher: ["/", "/((?!api|_next/static|_next/image|favicon.ico).*)"],
+  // Matcher ignoring `/_next/`, `/api/`, static assets, favicon, sitemap, robots, etc.
+  matcher: [
+    "/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)",
+  ],
 };
 
 export default proxy;

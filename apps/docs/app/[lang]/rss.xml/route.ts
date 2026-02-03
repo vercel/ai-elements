@@ -1,7 +1,11 @@
 import { Feed } from "feed";
 import type { NextRequest } from "next/server";
 import { title } from "@/geistdocs";
-import { source } from "@/lib/geistdocs/source";
+import {
+  componentsSource,
+  docsSource,
+  examplesSource,
+} from "@/lib/geistdocs/source";
 
 const protocol = process.env.NODE_ENV === "production" ? "https" : "http";
 const baseUrl = `${protocol}://${process.env.NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL}`;
@@ -21,11 +25,13 @@ export const GET = async (
     copyright: `All rights reserved ${new Date().getFullYear()}, Vercel`,
   });
 
-  for (const page of source.getPages(lang)) {
-    if (!(page.data.title && page.data.description)) {
-      continue;
-    }
+  const pages = [
+    ...docsSource.getPages(lang),
+    ...componentsSource.getPages(lang),
+    ...examplesSource.getPages(lang),
+  ];
 
+  for (const page of pages) {
     feed.addItem({
       id: page.url,
       title: page.data.title,
