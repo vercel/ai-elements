@@ -14,7 +14,9 @@ The `Reasoning` component displays AI reasoning content, automatically opening d
 
 ## Usage with AI SDK
 
-Build a chatbot with reasoning using Deepseek R1.
+Build a chatbot with reasoning using Deepseek R1 or other reasoning models.
+
+Some models (like GPT with high reasoning effort) return multiple reasoning parts instead of a single streaming block. The example below consolidates all reasoning parts into a single component to avoid displaying multiple "Thinking..." indicators.
 
 Add the following component to your frontend:
 
@@ -40,6 +42,47 @@ import { Spinner } from '@/components/ui/spinner';
 import { Message, MessageContent, MessageResponse } from '@/components/ai-elements/message';
 import { useState } from 'react';
 import { useChat } from '@ai-sdk/react';
+import type { UIMessage } from 'ai';
+
+const MessageParts = ({
+  message,
+  isLastMessage,
+  isStreaming,
+}: {
+  message: UIMessage;
+  isLastMessage: boolean;
+  isStreaming: boolean;
+}) => {
+  // Consolidate all reasoning parts into one block
+  const reasoningParts = message.parts.filter((part) => part.type === 'reasoning');
+  const reasoningText = reasoningParts.map((part) => part.text).join('\n\n');
+  const hasReasoning = reasoningParts.length > 0;
+
+  // Check if reasoning is still streaming (last part is reasoning on last message)
+  const lastPart = message.parts.at(-1);
+  const isReasoningStreaming = isLastMessage && isStreaming && lastPart?.type === 'reasoning';
+
+  return (
+    <>
+      {hasReasoning && (
+        <Reasoning className="w-full" isStreaming={isReasoningStreaming}>
+          <ReasoningTrigger />
+          <ReasoningContent>{reasoningText}</ReasoningContent>
+        </Reasoning>
+      )}
+      {message.parts.map((part, i) => {
+        if (part.type === 'text') {
+          return (
+            <MessageResponse key={`${message.id}-${i}`}>
+              {part.text}
+            </MessageResponse>
+          );
+        }
+        return null;
+      })}
+    </>
+  );
+};
 
 const ReasoningDemo = () => {
   const [input, setInput] = useState('');
@@ -52,35 +95,21 @@ const ReasoningDemo = () => {
     setInput('');
   };
 
+  const isStreaming = status === 'streaming';
+
   return (
     <div className="max-w-4xl mx-auto p-6 relative size-full rounded-lg border h-[600px]">
       <div className="flex flex-col h-full">
         <Conversation>
           <ConversationContent>
-            {messages.map((message) => (
+            {messages.map((message, index) => (
               <Message from={message.role} key={message.id}>
                 <MessageContent>
-                  {message.parts.map((part, i) => {
-                    switch (part.type) {
-                      case 'text':
-                        return (
-                          <MessageResponse key={`${message.id}-${i}`}>
-                            {part.text}
-                          </MessageResponse>
-                        );
-                      case 'reasoning':
-                        return (
-                          <Reasoning
-                            key={`${message.id}-${i}`}
-                            className="w-full"
-                            isStreaming={status === 'streaming' && i === message.parts.length - 1 && message.id === messages.at(-1)?.id}
-                          >
-                            <ReasoningTrigger />
-                            <ReasoningContent>{part.text}</ReasoningContent>
-                          </Reasoning>
-                        );
-                    }
-                  })}
+                  <MessageParts
+                    message={message}
+                    isLastMessage={index === messages.length - 1}
+                    isStreaming={isStreaming}
+                  />
                 </MessageContent>
               </Message>
             ))}
@@ -100,7 +129,7 @@ const ReasoningDemo = () => {
             className="pr-12"
           />
           <PromptInputSubmit
-            status={status === 'streaming' ? 'streaming' : 'ready'}
+            status={isStreaming ? 'streaming' : 'ready'}
             disabled={!input.trim()}
             className="absolute bottom-1 right-1"
           />
@@ -135,6 +164,12 @@ export async function POST(req: Request) {
   });
 }
 ```
+
+## Reasoning vs Chain of Thought
+
+Use the `Reasoning` component when your model outputs thinking content as a single block or continuous stream (Deepseek R1, Claude with extended thinking, etc.).
+
+If your model outputs discrete, labeled steps (search queries, tool calls, distinct thought stages), consider using the [Chain of Thought](/components/chain-of-thought) component instead for a more structured visual representation.
 
 ## Features
 
