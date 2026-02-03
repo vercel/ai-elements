@@ -1,6 +1,12 @@
 "use client";
 
 import {
+  Attachment,
+  AttachmentPreview,
+  AttachmentRemove,
+  Attachments,
+} from "@repo/elements/attachments";
+import {
   Conversation,
   ConversationContent,
   ConversationScrollButton,
@@ -30,12 +36,18 @@ import {
   ModelSelectorTrigger,
 } from "@repo/elements/model-selector";
 import {
+  PastedContent,
+  PastedContentModal,
+  PastedContentModalBody,
+  PastedContentModalFooter,
+  PastedContentModalHeader,
+  PastedContentRemove,
+  PastedContentTrigger,
   PromptInput,
   PromptInputActionAddAttachments,
   PromptInputActionMenu,
   PromptInputActionMenuContent,
   PromptInputActionMenuTrigger,
-  PromptInputAttachmentsDisplay,
   PromptInputBody,
   PromptInputButton,
   PromptInputFooter,
@@ -44,6 +56,8 @@ import {
   PromptInputSubmit,
   PromptInputTextarea,
   PromptInputTools,
+  usePastedContent,
+  usePromptInputAttachments
 } from "@repo/elements/prompt-input";
 import {
   Reasoning,
@@ -57,8 +71,9 @@ import {
   SourcesTrigger,
 } from "@repo/elements/sources";
 import { Suggestion, Suggestions } from "@repo/elements/suggestion";
+import { Button } from "@repo/shadcn-ui/components/ui/button";
 import type { ToolUIPart } from "ai";
-import { CheckIcon, GlobeIcon, MicIcon } from "lucide-react";
+import { CheckIcon, CopyIcon, DownloadIcon, GlobeIcon, MicIcon } from "lucide-react";
 import { nanoid } from "nanoid";
 import { useCallback, useState } from "react";
 import { toast } from "sonner";
@@ -327,6 +342,93 @@ const mockResponses = [
   "That's definitely worth exploring. From what I can see, the best way to handle this is to consider both the theoretical aspects and practical implementation details.",
 ];
 
+function isPastedTextAttachment(
+  file: { type: string; mediaType?: string; filename?: string }
+): boolean {
+  return (
+    file.type === "file" &&
+    file.mediaType === "text/plain" &&
+    file.filename === "pasted-text.txt"
+  );
+}
+
+
+function CustomPastedContentFooterActions() {
+  const { content, copy, download } = usePastedContent();
+  const disabled = content === null;
+
+  return (
+    <>
+      <Button
+        disabled={disabled}
+        onClick={copy}
+        type="button"
+        variant="outline"
+      >
+        <CopyIcon className="size-4" />
+        Copy
+      </Button>
+      <Button
+        disabled={disabled}
+        onClick={download}
+        type="button"
+        variant="outline"
+      >
+        <DownloadIcon className="size-4" />
+        Download
+      </Button>
+    </>
+  );
+}
+
+
+function CustomAttachmentsDisplay() {
+  const attachments = usePromptInputAttachments();
+  if (attachments.files.length === 0) {
+    return null;
+  }
+  const pastedFiles = attachments.files.filter(isPastedTextAttachment);
+  const otherFiles = attachments.files.filter(
+    (f) => !isPastedTextAttachment(f)
+  );
+
+  return (
+      <PromptInputHeader>
+        <Attachments variant="inline">
+        {pastedFiles.map((attachment) => (
+          <PastedContent
+            attachment={attachment}
+            key={attachment.id}
+            onRemove={() => attachments.remove(attachment.id)}
+          >
+            <div className="group relative flex h-8 cursor-pointer select-none items-center gap-1 rounded-md border border-dashed border-amber-500/50 bg-amber-500/5 px-1.5 font-medium text-sm transition-colors hover:border-amber-500 hover:bg-amber-500/10 dark:border-amber-400/40 dark:bg-amber-400/5 dark:hover:border-amber-400 dark:hover:bg-amber-400/10">
+              <PastedContentTrigger label="Pasted" />
+              <PastedContentRemove />
+            </div>
+            <PastedContentModal>
+              <PastedContentModalHeader title="Pasted content" />
+              <PastedContentModalBody />
+              <PastedContentModalFooter>
+                <CustomPastedContentFooterActions />
+              </PastedContentModalFooter>
+            </PastedContentModal>
+          </PastedContent>
+        ))}
+        {otherFiles.map((attachment) => (
+          <Attachment
+            data={attachment}
+            key={attachment.id}
+            onRemove={() => attachments.remove(attachment.id)}
+          >
+            <AttachmentPreview />
+            <AttachmentRemove />
+          </Attachment>
+        ))}
+        </Attachments>
+      </PromptInputHeader>
+  );
+}
+
 const Example = () => {
   const [model, setModel] = useState<string>(models[0].id);
   const [modelSelectorOpen, setModelSelectorOpen] = useState(false);
@@ -508,9 +610,7 @@ const Example = () => {
         </Suggestions>
         <div className="w-full px-4 pb-4">
           <PromptInput globalDrop multiple onSubmit={handleSubmit}>
-            <PromptInputHeader>
-              <PromptInputAttachmentsDisplay />
-            </PromptInputHeader>
+            <CustomAttachmentsDisplay />
             <PromptInputBody>
               <PromptInputTextarea
                 onChange={(event) => setText(event.target.value)}

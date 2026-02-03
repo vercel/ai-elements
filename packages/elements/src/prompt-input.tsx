@@ -949,18 +949,47 @@ export const PromptInputTextarea = ({
 };
 
 // ============================================================================
-// Pasted content card + modal
+// Pasted content – composable (context, hook, trigger, remove, modal + slots)
 // ============================================================================
 
-export interface PromptInputPastedContentCardProps {
-  attachment: FileUIPart & { id: string };
+export type PastedContentAttachment = FileUIPart & { id: string };
+
+export interface PastedContentContextValue {
+  attachment: PastedContentAttachment;
+  content: string | null;
+  loading: boolean;
+  modalOpen: boolean;
+  openModal: () => void;
+  setModalOpen: (open: boolean) => void;
+  copy: () => void;
+  download: () => void;
   onRemove: () => void;
 }
 
-export const PromptInputPastedContentCard = ({
+const PastedContentContext = createContext<PastedContentContextValue | null>(
+  null
+);
+
+export const usePastedContent = () => {
+  const ctx = useContext(PastedContentContext);
+  if (!ctx) {
+    throw new Error(
+      "PastedContent components must be used within <PastedContent>"
+    );
+  }
+  return ctx;
+};
+
+export interface PastedContentProps extends PropsWithChildren {
+  attachment: PastedContentAttachment;
+  onRemove: () => void;
+}
+
+export const PastedContent = ({
   attachment,
   onRemove,
-}: PromptInputPastedContentCardProps) => {
+  children,
+}: PastedContentProps) => {
   const [content, setContent] = useState<string | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -988,13 +1017,13 @@ export const PromptInputPastedContentCard = ({
     };
   }, [attachment.url]);
 
-  const handleCopy = useCallback(() => {
+  const copy = useCallback(() => {
     if (content !== null) {
       navigator.clipboard.writeText(content).catch(() => undefined);
     }
   }, [content]);
 
-  const handleDownload = useCallback(() => {
+  const download = useCallback(() => {
     if (content === null) {
       return;
     }
@@ -1007,102 +1036,272 @@ export const PromptInputPastedContentCard = ({
     URL.revokeObjectURL(url);
   }, [content]);
 
-  const handleCardClick = useCallback(() => {
+  const openModal = useCallback(() => {
     setModalOpen(true);
   }, []);
 
-  const handleCardKeyDown = useCallback((e: React.KeyboardEvent) => {
-    if (e.key === "Enter" || e.key === " ") {
-      e.preventDefault();
-      setModalOpen(true);
-    }
-  }, []);
+  const contextValue = useMemo<PastedContentContextValue>(
+    () => ({
+      attachment,
+      content,
+      loading: content === null && Boolean(attachment.url),
+      modalOpen,
+      openModal,
+      setModalOpen,
+      copy,
+      download,
+      onRemove,
+    }),
+    [attachment, content, modalOpen, openModal, copy, download, onRemove]
+  );
 
   return (
-    <>
-      <div
-        className={cn(
-          "group relative flex cursor-pointer select-none items-center gap-1 rounded-md font-medium text-sm transition-all",
-          "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
-          "h-8 border border-border px-1.5"
-          )}>
-        <button
-          aria-label="View pasted content"
-          className={cn(
-            "flex items-center gap-1 min-w-0 flex-1",
-          )}
-          onClick={handleCardClick}
-          onKeyDown={handleCardKeyDown}
-          type="button"
-        >
-          <FileTextIcon className="size-3 text-muted-foreground" />
-          <span className="min-w-0 flex-1 truncate text-xs">
-            {PASTED_TEXT_FILENAME}
-          </span>
-        </button>
-        <Button
-          aria-label="Remove pasted content"
-          className="size-6 shrink-0 rounded p-0 opacity-70 hover:opacity-100"
-          onClick={onRemove}
-          size="icon-sm"
-          type="button"
-          variant="ghost"
-        >
-          <XIcon className="size-3" />
-        </Button>
-      </div>
-      <Dialog onOpenChange={setModalOpen} open={modalOpen}>
-        <DialogContent
-          className="flex max-h-[85vh] flex-col gap-4 sm:max-w-[90vw]"
-          showCloseButton
-        >
-          <DialogHeader>
-            <DialogTitle>{PASTED_TEXT_FILENAME}</DialogTitle>
-          </DialogHeader>
-          <div className="min-h-0 flex-1 overflow-auto rounded-md border bg-muted/30 p-3">
-            {content === null ? (
-              <pre className="font-mono text-sm">Loading…</pre>
-            ) : (
-              <div className="flex flex-col font-mono text-sm">
-                {content.split("\n").map((line, i) => (
-                  <div className="flex" key={i}>
-                    <span
-                      aria-hidden
-                      className="shrink-0 select-none pr-3 text-right text-muted-foreground"
-                    >
-                      {i + 1}
-                    </span>
-                    <pre className="min-w-max flex-1 whitespace-pre">
-                      {line}
-                    </pre>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-          <DialogFooter>
-            <Button
-              disabled={content === null}
-              onClick={handleCopy}
-              type="button"
-              variant="outline"
-            >
-              <CopyIcon className="size-4" />
-            </Button>
-            <Button
-              disabled={content === null}
-              onClick={handleDownload}
-              type="button"
-              variant="outline"
-            >
-              <DownloadIcon className="size-4" />
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    </>
+    <PastedContentContext.Provider value={contextValue}>
+      {children}
+    </PastedContentContext.Provider>
   );
 };
+
+// ----------------------------------------------------------------------------
+// PastedContentTrigger – clickable card/chip that opens the modal
+// ----------------------------------------------------------------------------
+
+export type PastedContentTriggerProps = HTMLAttributes<HTMLButtonElement> & {
+  label?: string;
+};
+
+export const PastedContentTrigger = ({
+  label = PASTED_TEXT_FILENAME,
+  className,
+  children,
+  ...props
+}: PastedContentTriggerProps) => {
+  const { openModal } = usePastedContent();
+
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        openModal();
+      }
+    },
+    [openModal]
+  );
+
+  return (
+    <button
+      aria-label="View pasted content"
+      className={cn("flex items-center gap-1 min-w-0 flex-1", className)}
+      onClick={openModal}
+      onKeyDown={handleKeyDown}
+      type="button"
+      {...props}
+    >
+      {children ?? (
+        <>
+          <FileTextIcon className="size-3 text-muted-foreground" />
+          <span className="min-w-0 flex-1 truncate text-xs">{label}</span>
+        </>
+      )}
+    </button>
+  );
+};
+
+// ----------------------------------------------------------------------------
+// PastedContentRemove – remove button
+// ----------------------------------------------------------------------------
+
+export type PastedContentRemoveProps = ComponentProps<typeof Button>;
+
+export const PastedContentRemove = ({
+  className,
+  ...props
+}: PastedContentRemoveProps) => {
+  const { onRemove } = usePastedContent();
+
+  return (
+    <Button
+      aria-label="Remove pasted content"
+      className={cn("size-6 shrink-0 rounded p-0 opacity-70 hover:opacity-100", className)}
+      onClick={onRemove}
+      size="icon-sm"
+      type="button"
+      variant="ghost"
+      {...props}
+    >
+      <XIcon className="size-3" />
+    </Button>
+  );
+};
+
+// ----------------------------------------------------------------------------
+// PastedContentModal – dialog shell (open state from context)
+// ----------------------------------------------------------------------------
+
+export type PastedContentModalProps = Omit<
+  ComponentProps<typeof Dialog>,
+  "open" | "onOpenChange"
+> & {
+  contentClassName?: string;
+};
+
+export const PastedContentModal = ({
+  contentClassName,
+  children,
+  ...props
+}: PastedContentModalProps) => {
+  const { modalOpen, setModalOpen } = usePastedContent();
+
+  return (
+    <Dialog onOpenChange={setModalOpen} open={modalOpen} {...props}>
+      <DialogContent
+        className={cn(
+          "flex max-h-[85vh] flex-col gap-4 sm:max-w-[90vw]",
+          contentClassName
+        )}
+        showCloseButton
+      >
+        {children}
+      </DialogContent>
+    </Dialog>
+  );
+};
+
+// ----------------------------------------------------------------------------
+// PastedContentModalHeader – optional slot for title
+// ----------------------------------------------------------------------------
+
+export type PastedContentModalHeaderProps = HTMLAttributes<HTMLDivElement> & {
+  title?: string;
+};
+
+export const PastedContentModalHeader = ({
+  title = PASTED_TEXT_FILENAME,
+  children,
+  ...props
+}: PastedContentModalHeaderProps) => (
+  <DialogHeader {...props}>
+    {children ?? <DialogTitle>{title}</DialogTitle>}
+  </DialogHeader>
+);
+
+// ----------------------------------------------------------------------------
+// PastedContentModalBody – content area (default: numbered lines view)
+// ----------------------------------------------------------------------------
+
+export type PastedContentModalBodyProps = HTMLAttributes<HTMLDivElement>;
+
+export const PastedContentModalBody = ({
+  className,
+  children,
+  ...props
+}: PastedContentModalBodyProps) => {
+  const { content, loading } = usePastedContent();
+
+  return (
+    <div
+      className={cn(
+        "min-h-0 flex-1 overflow-auto rounded-md border bg-muted/30 p-3",
+        className
+      )}
+      {...props}
+    >
+      {children ??
+        (loading ? (
+          <pre className="font-mono text-sm">Loading…</pre>
+        ) : (
+          <div className="flex flex-col font-mono text-sm">
+            {(content ?? "")
+              .split("\n")
+              .map((line, i) => (
+                <div className="flex" key={i}>
+                  <span
+                    aria-hidden
+                    className="shrink-0 select-none pr-3 text-right text-muted-foreground"
+                  >
+                    {i + 1}
+                  </span>
+                  <pre className="min-w-max flex-1 whitespace-pre">
+                    {line}
+                  </pre>
+                </div>
+              ))}
+          </div>
+        ))}
+    </div>
+  );
+};
+
+// ----------------------------------------------------------------------------
+// PastedContentModalFooter – actions slot (default: Copy + Download)
+// ----------------------------------------------------------------------------
+
+export type PastedContentModalFooterProps = HTMLAttributes<HTMLDivElement>;
+
+export const PastedContentModalFooter = ({
+  children,
+  ...props
+}: PastedContentModalFooterProps) => {
+  const { content, copy, download } = usePastedContent();
+  const disabled = content === null;
+
+  return (
+    <DialogFooter {...props}>
+      {children ?? (
+        <>
+          <Button
+            disabled={disabled}
+            onClick={copy}
+            type="button"
+            variant="outline"
+          >
+            <CopyIcon className="size-4" />
+          </Button>
+          <Button
+            disabled={disabled}
+            onClick={download}
+            type="button"
+            variant="outline"
+          >
+            <DownloadIcon className="size-4" />
+          </Button>
+        </>
+      )}
+    </DialogFooter>
+  );
+};
+
+// ============================================================================
+// PromptInputPastedContentCard – default composition
+// ============================================================================
+
+export interface PromptInputPastedContentCardProps {
+  attachment: FileUIPart & { id: string };
+  onRemove: () => void;
+}
+
+export const PromptInputPastedContentCard = ({
+  attachment,
+  onRemove,
+}: PromptInputPastedContentCardProps) => (
+  <PastedContent attachment={attachment} onRemove={onRemove}>
+    <div
+      className={cn(
+        "group relative flex cursor-pointer select-none items-center gap-1 rounded-md font-medium text-sm transition-all",
+        "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
+        "h-8 border border-border px-1.5"
+      )}
+    >
+      <PastedContentTrigger />
+      <PastedContentRemove />
+    </div>
+    <PastedContentModal>
+      <PastedContentModalHeader />
+      <PastedContentModalBody />
+      <PastedContentModalFooter />
+    </PastedContentModal>
+  </PastedContent>
+);
 
 // ============================================================================
 // Attachments display (files + pasted content cards)
@@ -1124,25 +1323,27 @@ export const PromptInputAttachmentsDisplay = ({
   );
 
   return (
-    <Attachments className={cn(className)} variant="inline" {...props}>
-      {pastedFiles.map((attachment) => (
-        <PromptInputPastedContentCard
-          attachment={attachment}
-          key={attachment.id}
-          onRemove={() => attachments.remove(attachment.id)}
-        />
-      ))}
-      {otherFiles.map((attachment) => (
-        <Attachment
-          data={attachment}
-          key={attachment.id}
-          onRemove={() => attachments.remove(attachment.id)}
-        >
-          <AttachmentPreview />
-          <AttachmentRemove />
-        </Attachment>
-      ))}
-    </Attachments>
+      <PromptInputHeader>
+        <Attachments className={cn(className)} variant="inline" {...props}>
+        {pastedFiles.map((attachment) => (
+          <PromptInputPastedContentCard
+            attachment={attachment}
+            key={attachment.id}
+            onRemove={() => attachments.remove(attachment.id)}
+          />
+        ))}
+        {otherFiles.map((attachment) => (
+          <Attachment
+            data={attachment}
+            key={attachment.id}
+            onRemove={() => attachments.remove(attachment.id)}
+          >
+            <AttachmentPreview />
+            <AttachmentRemove />
+          </Attachment>
+        ))}
+        </Attachments>
+      </PromptInputHeader>
   );
 };
 
