@@ -5,10 +5,5 @@
     "./node_modules/ultracite/config/oxlint/next/.oxlintrc.json",
     "./node_modules/ultracite/config/oxlint/react/.oxlintrc.json"
   ],
-  "ignorePatterns": ["packages/shadcn-ui"],
-  "rules": {
-    "react/no-multi-comp": "off",
-    "vitest/prefer-called-times": "off",
-    "no-duplicate-imports": ["error", { "allowSeparateTypeImports": true }]
-  }
+  "ignorePatterns": ["packages/shadcn-ui"]
 }

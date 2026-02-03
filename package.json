@@ -20,7 +20,7 @@
     "oxlint": "^1.43.0",
     "turbo": "2.7.5-canary.13",
     "typescript": "5.9.3",
-    "ultracite": "7.1.3",
+    "ultracite": "7.1.4",
     "vitest": "^4.0.17"
   },
   "engines": {
