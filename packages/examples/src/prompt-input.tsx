@@ -34,10 +34,7 @@ import {
   PromptInputTextarea,
   PromptInputTools,
   usePromptInputAttachments,
-  usePromptInputController,
 } from "@repo/elements/prompt-input";
-import { Button } from "@repo/shadcn-ui/components/ui/button";
-import { ButtonGroup } from "@repo/shadcn-ui/components/ui/button-group";
 import { CheckIcon, GlobeIcon } from "lucide-react";
 import { useState } from "react";
 
@@ -102,54 +99,6 @@ const PromptInputAttachmentsDisplay = () => {
         </Attachment>
       ))}
     </Attachments>
-  );
-};
-
-const HeaderControls = () => {
-  const controller = usePromptInputController();
-
-  return (
-    <header className="mt-8 flex items-center justify-between">
-      <p className="text-sm">
-        Header Controls via{" "}
-        <code className="rounded-md bg-muted p-1 font-bold">
-          PromptInputProvider
-        </code>
-      </p>
-      <ButtonGroup>
-        <Button
-          onClick={() => {
-            controller.textInput.clear();
-          }}
-          size="sm"
-          type="button"
-          variant="outline"
-        >
-          Clear input
-        </Button>
-        <Button
-          onClick={() => {
-            controller.textInput.setInput("Inserted via PromptInputProvider");
-          }}
-          size="sm"
-          type="button"
-          variant="outline"
-        >
-          Set input
-        </Button>
-
-        <Button
-          onClick={() => {
-            controller.attachments.clear();
-          }}
-          size="sm"
-          type="button"
-          variant="outline"
-        >
-          Clear attachments
-        </Button>
-      </ButtonGroup>
-    </header>
   );
 };
 
@@ -265,8 +214,6 @@ const Example = () => {
             <PromptInputSubmit status={status} />
           </PromptInputFooter>
         </PromptInput>
-
-        <HeaderControls />
       </PromptInputProvider>
     </div>
   );

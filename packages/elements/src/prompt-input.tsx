@@ -952,7 +952,7 @@ export const PromptInputTools = ({
   className,
   ...props
 }: PromptInputToolsProps) => (
-  <div className={cn("flex items-center gap-1", className)} {...props} />
+  <div className={cn("flex min-w-0 items-center gap-1", className)} {...props} />
 );
 
 export type PromptInputButtonTooltip =
