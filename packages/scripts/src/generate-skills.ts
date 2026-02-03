@@ -4,8 +4,9 @@ import { basename, join } from "node:path";
 import matter from "gray-matter";
 
 const ROOT_DIR = join(import.meta.dirname, "../../..");
-const DOCS_DIR = join(ROOT_DIR, "apps/docs/content/docs");
-const COMPONENTS_DIR = join(DOCS_DIR, "components");
+const CONTENT_DIR = join(ROOT_DIR, "apps/docs/content");
+const DOCS_DIR = join(CONTENT_DIR, "docs");
+const COMPONENTS_DIR = join(CONTENT_DIR, "components");
 const EXAMPLES_DIR = join(ROOT_DIR, "packages/examples/src");
 const SKILLS_DIR = join(ROOT_DIR, "skills");
 const SKILL_DIR = join(SKILLS_DIR, "ai-elements");
