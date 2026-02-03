@@ -12,6 +12,10 @@ import {
 } from "@repo/elements/terminal";
 import { useEffect, useState } from "react";
 
+const handleTerminalCopy = () => {
+  console.log("Copied!");
+};
+
 const ansiOutput = `\u001B[32m✓\u001B[0m Compiled successfully in 1.2s
 
 \u001B[1m\u001B[34minfo\u001B[0m  - Collecting page data...
@@ -65,7 +69,7 @@ const Example = () => {
         <div className="flex items-center gap-1">
           <TerminalStatus />
           <TerminalActions>
-            <TerminalCopyButton onCopy={() => console.log("Copied!")} />
+            <TerminalCopyButton onCopy={handleTerminalCopy} />
             <TerminalClearButton />
           </TerminalActions>
         </div>

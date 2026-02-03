@@ -25,6 +25,10 @@ const variables = [
   { name: "PORT", required: false, value: "3000" },
 ];
 
+const handleCopy = () => {
+  console.log("Copied!");
+};
+
 const Example = () => (
   <EnvironmentVariables defaultShowValues={false}>
     <EnvironmentVariablesHeader>
@@ -46,7 +50,7 @@ const Example = () => (
             <EnvironmentVariableValue />
             <EnvironmentVariableCopyButton
               copyFormat="export"
-              onCopy={() => console.log("Copied!")}
+              onCopy={handleCopy}
             />
           </EnvironmentVariableGroup>
         </EnvironmentVariable>

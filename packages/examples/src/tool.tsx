@@ -21,6 +21,14 @@ import {
 import { CheckIcon, XIcon } from "lucide-react";
 import { nanoid } from "nanoid";
 
+const handleReject = () => {
+  // In production, call addConfirmationResponse
+};
+
+const handleAccept = () => {
+  // In production, call addConfirmationResponse
+};
+
 const toolCall: ToolUIPart = {
   errorText: undefined,
   input: {
@@ -78,20 +86,10 @@ const Example = () => (
             </ConfirmationRejected>
           </ConfirmationTitle>
           <ConfirmationActions>
-            <ConfirmationAction
-              onClick={() => {
-                // In production, call addConfirmationResponse
-              }}
-              variant="outline"
-            >
+            <ConfirmationAction onClick={handleReject} variant="outline">
               Reject
             </ConfirmationAction>
-            <ConfirmationAction
-              onClick={() => {
-                // In production, call addConfirmationResponse
-              }}
-              variant="default"
-            >
+            <ConfirmationAction onClick={handleAccept} variant="default">
               Accept
             </ConfirmationAction>
           </ConfirmationActions>

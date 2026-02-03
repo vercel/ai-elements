@@ -69,6 +69,14 @@ const languages: { value: Language; label: string }[] = [
   { label: "Go", value: "go" },
 ];
 
+const handleCopy = () => {
+  console.log("Copied code to clipboard");
+};
+
+const handleCopyError = () => {
+  console.error("Failed to copy code to clipboard");
+};
+
 const Example = () => {
   const [language, setLanguage] = useState<Language>("typescript");
   const { code, filename } = codeExamples[language];
@@ -99,10 +107,7 @@ const Example = () => {
               ))}
             </CodeBlockLanguageSelectorContent>
           </CodeBlockLanguageSelector>
-          <CodeBlockCopyButton
-            onCopy={() => console.log("Copied code to clipboard")}
-            onError={() => console.error("Failed to copy code to clipboard")}
-          />
+          <CodeBlockCopyButton onCopy={handleCopy} onError={handleCopyError} />
         </CodeBlockActions>
       </CodeBlockHeader>
     </CodeBlock>

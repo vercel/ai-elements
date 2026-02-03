@@ -25,6 +25,10 @@ import {
   CommitTimestamp,
 } from "@repo/elements/commit";
 
+const handleCopy = () => {
+  console.log("Copied hash!");
+};
+
 const hash = "a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0";
 const timestamp = new Date(Date.now() - 1000 * 60 * 60 * 2);
 
@@ -64,10 +68,7 @@ const Example = () => (
         </CommitMetadata>
       </CommitInfo>
       <CommitActions>
-        <CommitCopyButton
-          hash={hash}
-          onCopy={() => console.log("Copied hash!")}
-        />
+        <CommitCopyButton hash={hash} onCopy={handleCopy} />
       </CommitActions>
     </CommitHeader>
     <CommitContent>

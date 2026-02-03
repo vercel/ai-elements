@@ -8,6 +8,10 @@ import {
 import { Button } from "@repo/shadcn-ui/components/ui/button";
 import { useCallback, useEffect, useRef, useState } from "react";
 
+const handleError = (error: Error) => {
+  console.log("JSX Parse Error:", error);
+};
+
 const fullJsx = `<div className="rounded-lg border bg-card p-6 shadow-sm">
   <div className="flex items-center gap-4 mb-4">
     <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
@@ -88,7 +92,7 @@ const Example = () => {
         className="min-h-[200px]"
         isStreaming={isStreaming}
         jsx={streamedJsx}
-        onError={(error) => console.log("JSX Parse Error:", error)}
+        onError={handleError}
       >
         <JSXPreviewContent />
         <JSXPreviewError className="mt-2" />

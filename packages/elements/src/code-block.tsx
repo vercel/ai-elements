@@ -31,9 +31,12 @@ import { createHighlighter } from "shiki";
 
 // Shiki uses bitflags for font styles: 1=italic, 2=bold, 4=underline
 // biome-ignore lint/suspicious/noBitwiseOperators: shiki bitflag check
+// eslint-disable-next-line no-bitwise -- shiki bitflag check
 const isItalic = (fontStyle: number | undefined) => fontStyle && fontStyle & 1;
 // biome-ignore lint/suspicious/noBitwiseOperators: shiki bitflag check
+// eslint-disable-next-line no-bitwise -- shiki bitflag check
 const isBold = (fontStyle: number | undefined) => fontStyle && fontStyle & 2;
+// eslint-disable-next-line no-bitwise -- shiki bitflag check
 const isUnderline = (fontStyle: number | undefined) =>
   // biome-ignore lint/suspicious/noBitwiseOperators: shiki bitflag check
   fontStyle && fontStyle & 4;
@@ -167,11 +170,11 @@ const createRawTokens = (code: string): TokenizedCode => ({
 });
 
 // Synchronous highlight with callback for async results
-export function highlightCode(
+export const highlightCode = (
   code: string,
   language: BundledLanguage,
   callback?: (result: TokenizedCode) => void
-): TokenizedCode | null {
+): TokenizedCode | null => {
   const tokensCacheKey = getTokensCacheKey(code, language);
 
   // Return cached result if available
@@ -226,7 +229,7 @@ export function highlightCode(
     });
 
   return null;
-}
+};
 
 // Line number styles using CSS counters
 const LINE_NUMBER_CLASSES = cn(
