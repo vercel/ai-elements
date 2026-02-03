@@ -23,11 +23,13 @@ import {
   PromptInputBody,
   PromptInputButton,
   PromptInputFooter,
+  PromptInputHeader,
   type PromptInputMessage,
   PromptInputProvider,
   PromptInputSubmit,
   PromptInputTextarea,
   PromptInputTools,
+  usePromptInputAttachments,
   usePromptInputController
 } from "@repo/elements/prompt-input";
 import { Button } from "@repo/shadcn-ui/components/ui/button";
@@ -124,13 +126,22 @@ const HeaderControls = () => {
   );
 };
 
+const AttachmentsHeader = () => {
+  const attachments = usePromptInputAttachments();
+  if (attachments.files.length === 0) return null;
+  return (
+    <PromptInputHeader>
+      <PromptInputAttachmentsDisplay />
+    </PromptInputHeader>
+  );
+};
+
 const Example = () => {
   const [model, setModel] = useState<string>(models[0].id);
   const [modelSelectorOpen, setModelSelectorOpen] = useState(false);
   const [status, setStatus] = useState<
     "submitted" | "streaming" | "ready" | "error"
   >("ready");
-
   const selectedModelData = models.find((m) => m.id === model);
 
   const handleSubmit = (message: PromptInputMessage) => {
@@ -159,7 +170,7 @@ const Example = () => {
     <div className="size-full">
       <PromptInputProvider>
         <PromptInput globalDrop multiple onSubmit={handleSubmit}>
-          <PromptInputAttachmentsDisplay />
+          <AttachmentsHeader />
           <PromptInputBody>
             <PromptInputTextarea />
           </PromptInputBody>

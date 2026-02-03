@@ -1323,27 +1323,25 @@ export const PromptInputAttachmentsDisplay = ({
   );
 
   return (
-      <PromptInputHeader>
-        <Attachments className={cn(className)} variant="inline" {...props}>
-        {pastedFiles.map((attachment) => (
-          <PromptInputPastedContentCard
-            attachment={attachment}
-            key={attachment.id}
-            onRemove={() => attachments.remove(attachment.id)}
-          />
-        ))}
-        {otherFiles.map((attachment) => (
-          <Attachment
-            data={attachment}
-            key={attachment.id}
-            onRemove={() => attachments.remove(attachment.id)}
-          >
-            <AttachmentPreview />
-            <AttachmentRemove />
-          </Attachment>
-        ))}
-        </Attachments>
-      </PromptInputHeader>
+    <Attachments className={cn(className)} variant="inline" {...props}>
+    {pastedFiles.map((attachment) => (
+      <PromptInputPastedContentCard
+        attachment={attachment}
+        key={attachment.id}
+        onRemove={() => attachments.remove(attachment.id)}
+      />
+    ))}
+    {otherFiles.map((attachment) => (
+      <Attachment
+        data={attachment}
+        key={attachment.id}
+        onRemove={() => attachments.remove(attachment.id)}
+      >
+        <AttachmentPreview />
+        <AttachmentRemove />
+      </Attachment>
+    ))}
+    </Attachments>
   );
 };
 
@@ -1355,13 +1353,18 @@ export type PromptInputHeaderProps = Omit<
 export const PromptInputHeader = ({
   className,
   ...props
-}: PromptInputHeaderProps) => (
-  <InputGroupAddon
-    align="block-end"
-    className={cn("order-first flex-wrap gap-1", className)}
-    {...props}
-  />
-);
+}: PromptInputHeaderProps) => {
+  if (!props.children) {
+    return null;
+  }
+
+  return (
+    <InputGroupAddon
+      align="block-end"
+      className={cn("order-first flex-wrap gap-1", className)}
+      {...props}
+    />
+  )}
 
 export type PromptInputFooterProps = Omit<
   ComponentProps<typeof InputGroupAddon>,
