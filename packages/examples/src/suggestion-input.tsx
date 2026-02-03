@@ -43,21 +43,21 @@ const models = [
   { id: "mistral-7b", name: "Mistral 7B" },
 ];
 
+const handleSubmit = (message: PromptInputMessage) => {
+  const hasText = Boolean(message.text);
+  const hasAttachments = Boolean(message.files?.length);
+
+  if (!(hasText || hasAttachments)) {
+    return;
+  }
+
+  console.log("Submitted message:", message.text || "Sent with attachments");
+  console.log("Attached files:", message.files);
+};
+
 const Example = () => {
   const [model, setModel] = useState<string>(models[0].id);
   const [text, setText] = useState<string>("");
-
-  const handleSubmit = (message: PromptInputMessage) => {
-    const hasText = Boolean(message.text);
-    const hasAttachments = Boolean(message.files?.length);
-
-    if (!(hasText || hasAttachments)) {
-      return;
-    }
-
-    console.log("Submitted message:", message.text || "Sent with attachments");
-    console.log("Attached files:", message.files);
-  };
 
   const handleSuggestionClick = (suggestion: string) => {
     setText(suggestion);

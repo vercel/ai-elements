@@ -168,17 +168,17 @@ The beauty of hooks is that they let you reuse stateful logic without changing y
   },
 ];
 
+const handleCopy = (content: string) => {
+  navigator.clipboard.writeText(content);
+};
+
+const handleRetry = () => {
+  console.log("Retrying...");
+};
+
 const Example = () => {
   const [liked, setLiked] = useState<Record<string, boolean>>({});
   const [disliked, setDisliked] = useState<Record<string, boolean>>({});
-
-  const handleCopy = (content: string) => {
-    navigator.clipboard.writeText(content);
-  };
-
-  const handleRetry = () => {
-    console.log("Retrying...");
-  };
 
   return (
     <div className="flex flex-col gap-4">

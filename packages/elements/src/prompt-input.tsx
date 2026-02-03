@@ -166,17 +166,16 @@ export function PromptInputProvider({
       return;
     }
 
-    setAttachmentFiles((prev) =>
-      prev.concat(
-        incoming.map((file) => ({
-          filename: file.name,
-          id: nanoid(),
-          mediaType: file.type,
-          type: "file" as const,
-          url: URL.createObjectURL(file),
-        }))
-      )
-    );
+    setAttachmentFiles((prev) => [
+      ...prev,
+      ...incoming.map((file) => ({
+        filename: file.name,
+        id: nanoid(),
+        mediaType: file.type,
+        type: "file" as const,
+        url: URL.createObjectURL(file),
+      })),
+    ]);
   }, []);
 
   const remove = useCallback((id: string) => {
@@ -466,7 +465,7 @@ export const PromptInput = ({
             url: URL.createObjectURL(file),
           });
         }
-        return prev.concat(next);
+        return [...prev, ...next];
       });
     },
     [matchesAccept, maxFiles, maxFileSize, onError]
@@ -688,9 +687,10 @@ export const PromptInput = ({
     () => ({
       add: (incoming: SourceDocumentUIPart[] | SourceDocumentUIPart) => {
         const array = Array.isArray(incoming) ? incoming : [incoming];
-        setReferencedSources((prev) =>
-          prev.concat(array.map((s) => ({ ...s, id: nanoid() })))
-        );
+        setReferencedSources((prev) => [
+          ...prev,
+          ...array.map((s) => ({ ...s, id: nanoid() })),
+        ]);
       },
       clear: clearReferencedSources,
       remove: (id: string) => {

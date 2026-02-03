@@ -3,7 +3,7 @@
 const { spawnSync } = require("node:child_process");
 
 // Function to detect the command used to invoke this script
-function getCommandPrefix() {
+const getCommandPrefix = () => {
   // Check for common package manager environment variables
   if (process.env.npm_config_user_agent) {
     const userAgent = process.env.npm_config_user_agent;
@@ -21,7 +21,7 @@ function getCommandPrefix() {
 
   // Default fallback
   return "npx -y";
-}
+};
 
 const commandPrefix = getCommandPrefix();
 

@@ -111,14 +111,14 @@ const PromptInputReferencedSources = ({
 
 // Mock URL.createObjectURL and URL.revokeObjectURL for tests
 beforeEach(() => {
-  window.URL.createObjectURL = vi.fn(
+  vi.spyOn(window.URL, "createObjectURL").mockImplementation(
     (_blob) => `blob:mock-url-${Math.random()}`
   );
-  window.URL.revokeObjectURL = vi.fn();
+  vi.spyOn(window.URL, "revokeObjectURL").mockImplementation(() => {});
 
   // Mock fetch for blob URL conversion
-  window.fetch = vi.fn((url: string) => {
-    if (url.startsWith("blob:")) {
+  vi.spyOn(window, "fetch").mockImplementation((url) => {
+    if (typeof url === "string" && url.startsWith("blob:")) {
       const blob = new Blob(["test content"], { type: "text/plain" });
       return Promise.resolve({
         blob: () => Promise.resolve(blob),
@@ -2730,7 +2730,7 @@ describe("promptInputCommand", () => {
     const onSubmit = vi.fn();
 
     // Mock scrollIntoView for command
-    Element.prototype.scrollIntoView = vi.fn();
+    vi.spyOn(Element.prototype, "scrollIntoView").mockImplementation(() => {});
 
     render(
       <PromptInput onSubmit={onSubmit}>
@@ -2764,7 +2764,7 @@ describe("promptInputCommand", () => {
     const onSubmit = vi.fn();
 
     // Mock scrollIntoView for command
-    Element.prototype.scrollIntoView = vi.fn();
+    vi.spyOn(Element.prototype, "scrollIntoView").mockImplementation(() => {});
 
     render(
       <PromptInput onSubmit={onSubmit}>
@@ -2795,7 +2795,7 @@ describe("promptInputCommand", () => {
     const onSubmit = vi.fn();
 
     // Mock scrollIntoView for command
-    Element.prototype.scrollIntoView = vi.fn();
+    vi.spyOn(Element.prototype, "scrollIntoView").mockImplementation(() => {});
 
     const { container } = render(
       <PromptInput onSubmit={onSubmit}>
