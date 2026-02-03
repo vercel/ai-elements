@@ -1,13 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
-const CHATGPT_REGEX = /ChatGPT/i;
-const CLAUDE_REGEX = /Claude/i;
-const T3_REGEX = /T3/i;
-const SCIRA_REGEX = /Scira/i;
-const V0_REGEX = /v0/i;
-const CURSOR_REGEX = /Cursor/i;
-
 import {
   OpenIn,
   OpenInChatGPT,
@@ -22,6 +15,13 @@ import {
   OpenInTrigger,
   OpenInv0,
 } from "../src/open-in-chat";
+
+const CHATGPT_REGEX = /ChatGPT/i;
+const CLAUDE_REGEX = /Claude/i;
+const T3_REGEX = /T3/i;
+const SCIRA_REGEX = /Scira/i;
+const V0_REGEX = /v0/i;
+const CURSOR_REGEX = /Cursor/i;
 
 describe("openIn", () => {
   it("renders children", () => {

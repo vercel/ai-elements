@@ -1,5 +1,5 @@
 import { render, screen, waitFor } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
+import { userEvent } from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import {
@@ -29,7 +29,7 @@ beforeEach(() => {
   vi.spyOn(console, "error").mockImplementation(() => {});
 });
 
-describe(VoiceSelector, () => {
+describe("voiceSelector", () => {
   it("renders children", () => {
     render(
       <VoiceSelector>
@@ -170,7 +170,7 @@ describe(VoiceSelector, () => {
   });
 });
 
-describe(VoiceSelectorContent, () => {
+describe("voiceSelectorContent", () => {
   it("renders with default title", () => {
     render(
       <VoiceSelector defaultOpen>
@@ -207,7 +207,7 @@ describe(VoiceSelectorContent, () => {
   });
 });
 
-describe(VoiceSelectorInput, () => {
+describe("voiceSelectorInput", () => {
   it("renders search input", () => {
     render(
       <VoiceSelector defaultOpen>
@@ -238,7 +238,7 @@ describe(VoiceSelectorInput, () => {
   });
 });
 
-describe(VoiceSelectorList, () => {
+describe("voiceSelectorList", () => {
   it("renders list items", () => {
     render(
       <VoiceSelector defaultOpen>
@@ -256,7 +256,7 @@ describe(VoiceSelectorList, () => {
   });
 });
 
-describe(VoiceSelectorEmpty, () => {
+describe("voiceSelectorEmpty", () => {
   it("renders default empty message", () => {
     render(
       <VoiceSelector defaultOpen>
@@ -289,7 +289,7 @@ describe(VoiceSelectorEmpty, () => {
   });
 });
 
-describe(VoiceSelectorGroup, () => {
+describe("voiceSelectorGroup", () => {
   it("renders group heading", () => {
     render(
       <VoiceSelector defaultOpen>
@@ -307,7 +307,7 @@ describe(VoiceSelectorGroup, () => {
   });
 });
 
-describe(VoiceSelectorItem, () => {
+describe("voiceSelectorItem", () => {
   it("renders item content", () => {
     render(
       <VoiceSelector defaultOpen>
@@ -347,7 +347,7 @@ describe(VoiceSelectorItem, () => {
   });
 });
 
-describe(VoiceSelectorGender, () => {
+describe("voiceSelectorGender", () => {
   it("renders male icon", () => {
     const { container } = render(
       <VoiceSelector>
@@ -409,7 +409,7 @@ describe(VoiceSelectorGender, () => {
   });
 });
 
-describe(VoiceSelectorAccent, () => {
+describe("voiceSelectorAccent", () => {
   it("renders American flag emoji", () => {
     render(
       <VoiceSelector>
@@ -524,7 +524,7 @@ describe(VoiceSelectorAccent, () => {
   });
 });
 
-describe(VoiceSelectorAge, () => {
+describe("voiceSelectorAge", () => {
   it("renders age text", () => {
     render(
       <VoiceSelector>
@@ -547,7 +547,7 @@ describe(VoiceSelectorAge, () => {
   });
 });
 
-describe(VoiceSelectorName, () => {
+describe("voiceSelectorName", () => {
   it("renders voice name", () => {
     render(
       <VoiceSelector>
@@ -570,7 +570,7 @@ describe(VoiceSelectorName, () => {
   });
 });
 
-describe(VoiceSelectorDescription, () => {
+describe("voiceSelectorDescription", () => {
   it("renders description text", () => {
     render(
       <VoiceSelector>
@@ -584,7 +584,7 @@ describe(VoiceSelectorDescription, () => {
   });
 });
 
-describe(VoiceSelectorAttributes, () => {
+describe("voiceSelectorAttributes", () => {
   it("renders children", () => {
     render(
       <VoiceSelector>
@@ -600,7 +600,7 @@ describe(VoiceSelectorAttributes, () => {
   });
 });
 
-describe(VoiceSelectorBullet, () => {
+describe("voiceSelectorBullet", () => {
   it("renders bullet character", () => {
     render(
       <VoiceSelector>
@@ -623,7 +623,7 @@ describe(VoiceSelectorBullet, () => {
   });
 });
 
-describe(VoiceSelectorSeparator, () => {
+describe("voiceSelectorSeparator", () => {
   it("renders separator", () => {
     render(
       <VoiceSelector defaultOpen>
@@ -643,7 +643,7 @@ describe(VoiceSelectorSeparator, () => {
   });
 });
 
-describe(VoiceSelectorShortcut, () => {
+describe("voiceSelectorShortcut", () => {
   it("renders shortcut text", () => {
     render(
       <VoiceSelector defaultOpen>
@@ -661,7 +661,7 @@ describe(VoiceSelectorShortcut, () => {
   });
 });
 
-describe(VoiceSelectorPreview, () => {
+describe("voiceSelectorPreview", () => {
   it("renders play button by default", () => {
     render(
       <VoiceSelector>

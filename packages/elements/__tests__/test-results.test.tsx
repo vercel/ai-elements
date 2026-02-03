@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
+import { userEvent } from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 
 import {
@@ -27,7 +27,7 @@ const SKIPPED_1_REGEX = /1 skipped/;
 const PASSED_2_REGEX = /2 passed/;
 const FAILED_1_REGEX = /1 failed/;
 
-describe(TestResults, () => {
+describe("testResults", () => {
   it("renders with summary", () => {
     render(
       <TestResults
@@ -62,7 +62,7 @@ describe(TestResults, () => {
   });
 });
 
-describe(TestResultsProgress, () => {
+describe("testResultsProgress", () => {
   it("renders progress bar", () => {
     render(
       <TestResults summary={{ failed: 2, passed: 8, skipped: 0, total: 10 }}>
@@ -75,7 +75,7 @@ describe(TestResultsProgress, () => {
   });
 });
 
-describe(TestResultsDuration, () => {
+describe("testResultsDuration", () => {
   it("formats milliseconds", () => {
     render(
       <TestResults
@@ -99,7 +99,7 @@ describe(TestResultsDuration, () => {
   });
 });
 
-describe(TestSuite, () => {
+describe("testSuite", () => {
   it("renders suite name", () => {
     render(
       <TestResults>
@@ -137,7 +137,7 @@ describe(TestSuite, () => {
   });
 });
 
-describe(Test, () => {
+describe("testCase", () => {
   it("renders test name and status", () => {
     render(
       <TestResults>
@@ -197,7 +197,7 @@ describe(Test, () => {
   });
 });
 
-describe(TestError, () => {
+describe("testError", () => {
   it("renders error message", () => {
     render(
       <TestResults>

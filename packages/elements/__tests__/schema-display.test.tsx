@@ -85,7 +85,7 @@ describe("schemaDisplayPath", () => {
   });
 });
 
-describe(SchemaDisplayParameters, () => {
+describe("schemaDisplayParameters", () => {
   it("renders parameters", () => {
     render(
       <SchemaDisplay
@@ -127,7 +127,7 @@ describe(SchemaDisplayParameters, () => {
   });
 });
 
-describe(SchemaDisplayParameter, () => {
+describe("schemaDisplayParameter", () => {
   it("renders parameter with location", () => {
     render(
       <SchemaDisplay method="GET" path="/test">
@@ -146,7 +146,7 @@ describe(SchemaDisplayParameter, () => {
   });
 });
 
-describe(SchemaDisplayProperty, () => {
+describe("schemaDisplayProperty", () => {
   it("renders simple property", () => {
     render(
       <SchemaDisplay method="GET" path="/test">
@@ -185,7 +185,7 @@ describe(SchemaDisplayProperty, () => {
   });
 });
 
-describe(SchemaDisplayExample, () => {
+describe("schemaDisplayExample", () => {
   it("renders example code", () => {
     render(
       <SchemaDisplay method="GET" path="/test">

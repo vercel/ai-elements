@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
+import { userEvent } from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 
 import {
@@ -33,7 +33,7 @@ const nodeInternalTrace = `Error: ENOENT
     at readFile (node:fs:123:10)
     at internal/modules/cjs/loader.js:50:20`;
 
-describe(StackTrace, () => {
+describe("stackTrace", () => {
   it("renders children", () => {
     render(<StackTrace trace={sampleStackTrace}>Content</StackTrace>);
     expect(screen.getByText("Content")).toBeInTheDocument();
@@ -111,7 +111,7 @@ describe(StackTrace, () => {
   });
 });
 
-describe(StackTraceHeader, () => {
+describe("stackTraceHeader", () => {
   it("renders as clickable trigger", () => {
     const { container } = render(
       <StackTrace trace={sampleStackTrace}>
@@ -154,7 +154,7 @@ describe(StackTraceHeader, () => {
   });
 });
 
-describe(StackTraceError, () => {
+describe("stackTraceError", () => {
   it("renders children", () => {
     render(
       <StackTrace trace={sampleStackTrace}>
@@ -176,7 +176,7 @@ describe(StackTraceError, () => {
   });
 });
 
-describe(StackTraceErrorType, () => {
+describe("stackTraceErrorType", () => {
   it("renders parsed error type", () => {
     render(
       <StackTrace trace={sampleStackTrace}>
@@ -211,7 +211,7 @@ describe(StackTraceErrorType, () => {
   });
 });
 
-describe(StackTraceErrorMessage, () => {
+describe("stackTraceErrorMessage", () => {
   it("renders parsed error message", () => {
     render(
       <StackTrace trace={sampleStackTrace}>
@@ -235,7 +235,7 @@ describe(StackTraceErrorMessage, () => {
   });
 });
 
-describe(StackTraceActions, () => {
+describe("stackTraceActions", () => {
   it("renders children", () => {
     render(
       <StackTrace trace={sampleStackTrace}>
@@ -268,7 +268,7 @@ describe(StackTraceActions, () => {
   });
 });
 
-describe(StackTraceCopyButton, () => {
+describe("stackTraceCopyButton", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -366,7 +366,7 @@ describe(StackTraceCopyButton, () => {
   });
 });
 
-describe(StackTraceExpandButton, () => {
+describe("stackTraceExpandButton", () => {
   it("renders chevron icon", () => {
     const { container } = render(
       <StackTrace trace={sampleStackTrace}>
@@ -400,7 +400,7 @@ describe(StackTraceExpandButton, () => {
   });
 });
 
-describe(StackTraceContent, () => {
+describe("stackTraceContent", () => {
   it("renders content when open", () => {
     render(
       <StackTrace defaultOpen trace={sampleStackTrace}>
@@ -438,7 +438,7 @@ describe(StackTraceContent, () => {
   });
 });
 
-describe(StackTraceFrames, () => {
+describe("stackTraceFrames", () => {
   it("renders stack frames", () => {
     const { container } = render(
       <StackTrace defaultOpen trace={simpleStackTrace}>

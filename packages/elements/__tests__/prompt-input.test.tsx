@@ -3,10 +3,6 @@ import { userEvent } from "@testing-library/user-event";
 import React from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const DATA_PREFIX_REGEX = /^data:/;
-const BLOB_PREFIX_REGEX = /^blob:/;
-const SUBMIT_REGEX = /submit/i;
-
 import type { AttachmentData } from "../src/attachments";
 
 import {
@@ -36,6 +32,10 @@ import {
   usePromptInputAttachments,
   usePromptInputReferencedSources,
 } from "../src/prompt-input";
+
+const DATA_PREFIX_REGEX = /^data:/;
+const BLOB_PREFIX_REGEX = /^blob:/;
+const SUBMIT_REGEX = /submit/i;
 
 // Backwards-compatibility aliases for tests (these components were moved to attachment.tsx)
 const PromptInputAttachment = ({

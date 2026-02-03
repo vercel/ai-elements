@@ -1,14 +1,6 @@
 import { render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
+import { userEvent } from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
-
-const BOLD_REGEX = /Bold/;
-const NEXT_REGEX = /next/i;
-const PREVIOUS_REGEX = /previous/i;
-const TWO_OF_TWO_REGEX = /2 of 2/;
-const ONE_OF_TWO_REGEX = /1 of 2/;
-const ONE_OF_THREE_REGEX = /1 of 3/;
-const THREE_OF_THREE_REGEX = /3 of 3/;
 
 import {
   Message,
@@ -23,6 +15,14 @@ import {
   MessageContent,
   MessageResponse,
 } from "../src/message";
+
+const BOLD_REGEX = /Bold/;
+const NEXT_REGEX = /next/i;
+const PREVIOUS_REGEX = /previous/i;
+const TWO_OF_TWO_REGEX = /2 of 2/;
+const ONE_OF_TWO_REGEX = /1 of 2/;
+const ONE_OF_THREE_REGEX = /1 of 3/;
+const THREE_OF_THREE_REGEX = /3 of 3/;
 
 describe("message", () => {
   it("renders children", () => {

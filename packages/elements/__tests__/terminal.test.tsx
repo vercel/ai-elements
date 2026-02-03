@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
+import { userEvent } from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 
 import {
@@ -13,7 +13,7 @@ import {
   TerminalTitle,
 } from "../src/terminal";
 
-describe(Terminal, () => {
+describe("terminal", () => {
   it("renders output text", () => {
     render(<Terminal output="Hello World" />);
     expect(screen.getByText("Hello World")).toBeInTheDocument();
@@ -41,7 +41,7 @@ describe(Terminal, () => {
   });
 });
 
-describe(TerminalHeader, () => {
+describe("terminalHeader", () => {
   it("renders custom title", () => {
     render(
       <Terminal output="">
@@ -54,7 +54,7 @@ describe(TerminalHeader, () => {
   });
 });
 
-describe(TerminalStatus, () => {
+describe("terminalStatus", () => {
   it("shows shimmer when streaming", () => {
     const { container } = render(
       <Terminal isStreaming={true} output="">
@@ -82,7 +82,7 @@ describe(TerminalStatus, () => {
   });
 });
 
-describe(TerminalCopyButton, () => {
+describe("terminalCopyButton", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -128,7 +128,7 @@ describe(TerminalCopyButton, () => {
   });
 });
 
-describe(TerminalClearButton, () => {
+describe("terminalClearButton", () => {
   it("calls onClear when clicked", async () => {
     const onClear = vi.fn();
     const user = userEvent.setup();
@@ -164,7 +164,7 @@ describe(TerminalClearButton, () => {
   });
 });
 
-describe(TerminalContent, () => {
+describe("terminalContent", () => {
   it("renders ANSI colored text", () => {
     const ansiText = "\u001B[32mGreen Text\u001B[0m";
     render(<Terminal output={ansiText} />);

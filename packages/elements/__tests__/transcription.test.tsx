@@ -1,7 +1,7 @@
 import type { Experimental_TranscriptionResult as TranscriptionResult } from "ai";
 
 import { render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
+import { userEvent } from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 
 import { Transcription, TranscriptionSegment } from "../src/transcription";
@@ -52,8 +52,8 @@ const mockSegmentsWithEmpty: TranscriptionResult["segments"] = [
   },
 ];
 
-describe(Transcription, () => {
-  describe(Transcription, () => {
+describe("transcription", () => {
+  describe("transcriptionComponent", () => {
     it("renders with render props children", () => {
       render(
         <Transcription segments={mockSegments}>
@@ -280,7 +280,7 @@ describe(Transcription, () => {
     });
   });
 
-  describe(TranscriptionSegment, () => {
+  describe("transcriptionSegment", () => {
     it("renders segment text", () => {
       render(
         <Transcription segments={mockSegments}>

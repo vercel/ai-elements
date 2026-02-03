@@ -17,6 +17,7 @@
     "skills"
   ],
   "rules": {
-    "import/no-relative-parent-imports": "off"
+    "import/no-relative-parent-imports": "off",
+    "nextjs/no-img-element": "off"
   }
 }
