@@ -1,19 +1,18 @@
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
+import { CodeBlock } from "@repo/elements/src/code-block";
 import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
 } from "@repo/shadcn-ui/components/ui/resizable";
 import { cn } from "@repo/shadcn-ui/lib/utils";
-import { codeToHtml } from "shiki";
 import {
   CodeBlockTab,
   CodeBlockTabs,
   CodeBlockTabsList,
   CodeBlockTabsTrigger,
 } from "@/components/geistdocs/code-block-tabs";
-import { CodeBlock } from "../geistdocs/code-block";
 
 interface ComponentPreviewProps {
   path: string;
@@ -42,42 +41,6 @@ export const Preview = async ({ path, className }: ComponentPreviewProps) => {
     .replace(/@repo\/shadcn-ui\//g, "@/")
     .replace(/@repo\/elements\//g, "@/components/ai-elements/");
 
-  const sourceComponentNames =
-    parsedCode
-      .match(/@\/components\/ai-elements\/([^'"`]+)/g)
-      ?.map((match) => match.replace("@/components/ai-elements/", "")) || [];
-
-  const sourceComponents: { name: string; source: string }[] = [];
-
-  for (const component of sourceComponentNames) {
-    const fileName = component.includes("/")
-      ? `${component}.tsx`
-      : `${component}/index.tsx`;
-
-    try {
-      const source = await readFile(
-        join(process.cwd(), "..", "..", "packages", fileName),
-        "utf-8"
-      );
-
-      if (sourceComponents.some((s) => s.name === component)) {
-        continue;
-      }
-
-      sourceComponents.push({ name: component, source });
-    } catch {
-      // skip packages that fail
-    }
-  }
-
-  const highlightedCode = await codeToHtml(parsedCode, {
-    lang: "tsx",
-    themes: {
-      light: "github-light",
-      dark: "github-dark",
-    },
-  });
-
   return (
     <CodeBlockTabs defaultValue="preview">
       <CodeBlockTabsList>
@@ -100,10 +63,11 @@ export const Preview = async ({ path, className }: ComponentPreviewProps) => {
       </CodeBlockTab>
       <CodeBlockTab className="p-0" value="code">
         <div className="not-prose h-[600px] overflow-y-auto">
-          <CodeBlock>
-            {/** biome-ignore lint/security/noDangerouslySetInnerHtml: "this is needed." */}
-            <pre dangerouslySetInnerHTML={{ __html: highlightedCode }} />
-          </CodeBlock>
+          <CodeBlock
+            className="rounded-none border-0"
+            code={parsedCode}
+            language="tsx"
+          />
         </div>
       </CodeBlockTab>
     </CodeBlockTabs>
