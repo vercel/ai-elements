@@ -6,7 +6,8 @@
       "@repo/*": ["../*"],
       "@/components/*": ["../shadcn-ui/components/*"],
       "@/lib/*": ["../shadcn-ui/lib/*"]
-    }
+    },
+    "strictNullChecks": true
   },
   "include": ["**/*.ts", "**/*.tsx"],
   "exclude": ["node_modules"]

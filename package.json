@@ -13,10 +13,11 @@
     "changeset": "changeset"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.3.11",
     "@changesets/cli": "^2.29.8",
     "@vitest/browser-playwright": "^4.0.17",
     "@vitest/browser-preview": "^4.0.17",
+    "oxfmt": "^0.28.0",
+    "oxlint": "^1.43.0",
     "turbo": "2.7.5-canary.13",
     "typescript": "5.9.3",
     "ultracite": "7.1.3",

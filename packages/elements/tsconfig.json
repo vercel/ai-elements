@@ -7,7 +7,8 @@
       "@/components/*": ["../shadcn-ui/components/*"],
       "@/lib/*": ["../shadcn-ui/lib/*"]
     },
-    "types": ["vitest/globals", "@testing-library/jest-dom"]
+    "types": ["vitest/globals", "@testing-library/jest-dom"],
+    "strictNullChecks": true
   },
   "include": ["**/*.ts", "**/*.tsx"],
   "exclude": ["node_modules"]
