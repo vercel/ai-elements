@@ -146,7 +146,7 @@ describe("JSXPreview with custom components", () => {
   it("renders custom components", () => {
     // Custom components for testing
     const CustomButton = (props: { children?: React.ReactNode }) => (
-      <button type="button" data-testid="custom-button">
+      <button data-testid="custom-button" type="button">
         {props.children}
       </button>
     );
@@ -301,9 +301,9 @@ describe("JSXPreview integration", () => {
 
 describe("useJSXPreview hook", () => {
   it("throws error when used outside provider", () => {
-    const consoleError = vi
-      .spyOn(console, "error")
-      .mockImplementation(() => {});
+    const consoleError = vi.spyOn(console, "error").mockImplementation(() => {
+      // Suppress React error boundary logs during test
+    });
 
     expect(() => {
       render(<JSXPreviewContent />);

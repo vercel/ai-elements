@@ -5,9 +5,9 @@ import {
   PromptInputBody,
   PromptInputButton,
   PromptInputFooter,
+  PromptInputSubmit,
   PromptInputTextarea,
   PromptInputTools,
-  PromptInputSubmit,
 } from "@repo/elements/prompt-input";
 import { GlobeIcon, MicIcon, PaperclipIcon } from "lucide-react";
 

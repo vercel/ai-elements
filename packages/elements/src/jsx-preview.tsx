@@ -12,8 +12,8 @@ import {
   useRef,
   useState,
 } from "react";
-import JsxParser from "react-jsx-parser";
 import type { TProps as JsxParserProps } from "react-jsx-parser";
+import JsxParser from "react-jsx-parser";
 
 interface JSXPreviewContextValue {
   jsx: string;
@@ -26,6 +26,8 @@ interface JSXPreviewContextValue {
 }
 
 const JSXPreviewContext = createContext<JSXPreviewContextValue | null>(null);
+
+const TAG_REGEX = /<\/?([a-zA-Z][a-zA-Z0-9]*)\s*([^>]*?)(\/)?>/;
 
 export const useJSXPreview = () => {
   const context = useContext(JSXPreviewContext);
@@ -40,8 +42,7 @@ const matchJsxTag = (code: string) => {
     return null;
   }
 
-  const tagRegex = /<\/?([a-zA-Z][a-zA-Z0-9]*)\s*([^>]*?)(\/)?>/;
-  const match = code.match(tagRegex);
+  const match = code.match(TAG_REGEX);
 
   if (!match || typeof match.index === "undefined") {
     return null;
@@ -49,11 +50,14 @@ const matchJsxTag = (code: string) => {
 
   const [fullMatch, tagName, attributes, selfClosing] = match;
 
-  const type = selfClosing
-    ? "self-closing"
-    : fullMatch.startsWith("</")
-      ? "closing"
-      : "opening";
+  let type: "self-closing" | "closing" | "opening";
+  if (selfClosing) {
+    type = "self-closing";
+  } else if (fullMatch.startsWith("</")) {
+    type = "closing";
+  } else {
+    type = "opening";
+  }
 
   return {
     tag: fullMatch,
@@ -123,6 +127,7 @@ export const JSXPreview = memo(
     );
 
     // Clear error when jsx changes
+    // biome-ignore lint/correctness/useExhaustiveDependencies: jsx change should reset error
     useEffect(() => {
       setError(null);
     }, [jsx]);
@@ -149,10 +154,7 @@ export const JSXPreview = memo(
 
 JSXPreview.displayName = "JSXPreview";
 
-export type JSXPreviewContentProps = Omit<
-  ComponentProps<"div">,
-  "children"
->;
+export type JSXPreviewContentProps = Omit<ComponentProps<"div">, "children">;
 
 export const JSXPreviewContent = memo(
   ({ className, ...props }: JSXPreviewContentProps) => {
@@ -161,6 +163,7 @@ export const JSXPreviewContent = memo(
     const errorReportedRef = useRef<string | null>(null);
 
     // Reset error tracking when jsx changes
+    // biome-ignore lint/correctness/useExhaustiveDependencies: processedJsx change should reset tracking
     useEffect(() => {
       errorReportedRef.current = null;
     }, [processedJsx]);
@@ -178,9 +181,9 @@ export const JSXPreviewContent = memo(
     return (
       <div className={cn("jsx-preview-content", className)} {...props}>
         <JsxParser
-          jsx={processedJsx}
-          components={components}
           bindings={bindings}
+          components={components}
+          jsx={processedJsx}
           onError={handleError}
           renderInWrapper={false}
         />
@@ -193,6 +196,16 @@ JSXPreviewContent.displayName = "JSXPreviewContent";
 
 export type JSXPreviewErrorProps = ComponentProps<"div"> & {
   children?: ReactNode | ((error: Error) => ReactNode);
+};
+
+const renderChildren = (
+  children: ReactNode | ((error: Error) => ReactNode),
+  error: Error
+): ReactNode => {
+  if (typeof children === "function") {
+    return children(error);
+  }
+  return children;
 };
 
 export const JSXPreviewError = memo(
@@ -212,11 +225,7 @@ export const JSXPreviewError = memo(
         {...props}
       >
         {children ? (
-          typeof children === "function" ? (
-            children(error)
-          ) : (
-            children
-          )
+          renderChildren(children, error)
         ) : (
           <>
             <AlertCircle className="size-4 shrink-0" />

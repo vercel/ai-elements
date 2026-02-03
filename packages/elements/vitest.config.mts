@@ -33,17 +33,17 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "./src"),
+      "@": path.resolve(import.meta.dirname, "./src"),
       "@repo/shadcn-ui/lib/utils": path.resolve(
-        __dirname,
+        import.meta.dirname,
         "../shadcn-ui/lib/utils.ts"
       ),
       "@repo/shadcn-ui/components": path.resolve(
-        __dirname,
+        import.meta.dirname,
         "../shadcn-ui/components"
       ),
       "katex/dist/katex.min.css": path.resolve(
-        __dirname,
+        import.meta.dirname,
         "./__tests__/style-mock.js"
       ),
     },

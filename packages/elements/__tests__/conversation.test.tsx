@@ -272,7 +272,10 @@ describe("ConversationDownload", () => {
   it("applies custom className", () => {
     render(
       <Conversation>
-        <ConversationDownload className="custom-class" messages={mockMessages} />
+        <ConversationDownload
+          className="custom-class"
+          messages={mockMessages}
+        />
       </Conversation>
     );
 
