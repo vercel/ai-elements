@@ -68,7 +68,7 @@ import { SpeechInput } from "@repo/elements/speech-input";
 import { Suggestion, Suggestions } from "@repo/elements/suggestion";
 import { CheckIcon, GlobeIcon } from "lucide-react";
 import { nanoid } from "nanoid";
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { toast } from "sonner";
 
 interface MessageType {
@@ -335,8 +335,35 @@ const mockResponses = [
   "That's definitely worth exploring. From what I can see, the best way to handle this is to consider both the theoretical aspects and practical implementation details.",
 ];
 
+const delay = (ms: number): Promise<void> =>
+  new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+
+const chefs = ["OpenAI", "Anthropic", "Google"];
+
+const AttachmentItem = ({
+  attachment,
+  onRemove,
+}: {
+  attachment: { id: string; name: string; type: string; url: string };
+  onRemove: () => void;
+}) => (
+  <Attachment data={attachment} onRemove={onRemove}>
+    <AttachmentPreview />
+    <AttachmentRemove />
+  </Attachment>
+);
+
 const PromptInputAttachmentsDisplay = () => {
   const attachments = usePromptInputAttachments();
+
+  const handleRemove = useCallback(
+    (id: string) => {
+      attachments.remove(id);
+    },
+    [attachments]
+  );
 
   if (attachments.files.length === 0) {
     return null;
@@ -345,18 +372,48 @@ const PromptInputAttachmentsDisplay = () => {
   return (
     <Attachments variant="inline">
       {attachments.files.map((attachment) => (
-        <Attachment
-          data={attachment}
+        <AttachmentItem
+          attachment={attachment}
           key={attachment.id}
-          onRemove={() => attachments.remove(attachment.id)}
-        >
-          <AttachmentPreview />
-          <AttachmentRemove />
-        </Attachment>
+          onRemove={() => handleRemove(attachment.id)}
+        />
       ))}
     </Attachments>
   );
 };
+
+const SuggestionItem = ({
+  suggestion,
+  onClick,
+}: {
+  suggestion: string;
+  onClick: () => void;
+}) => <Suggestion onClick={onClick} suggestion={suggestion} />;
+
+const ModelItem = ({
+  m,
+  isSelected,
+  onSelect,
+}: {
+  m: (typeof models)[0];
+  isSelected: boolean;
+  onSelect: () => void;
+}) => (
+  <ModelSelectorItem onSelect={onSelect} value={m.id}>
+    <ModelSelectorLogo provider={m.chefSlug} />
+    <ModelSelectorName>{m.name}</ModelSelectorName>
+    <ModelSelectorLogoGroup>
+      {m.providers.map((provider) => (
+        <ModelSelectorLogo key={provider} provider={provider} />
+      ))}
+    </ModelSelectorLogoGroup>
+    {isSelected ? (
+      <CheckIcon className="ml-auto size-4" />
+    ) : (
+      <div className="ml-auto size-4" />
+    )}
+  </ModelSelectorItem>
+);
 
 const Example = () => {
   const [model, setModel] = useState<string>(models[0].id);
@@ -371,7 +428,10 @@ const Example = () => {
     null
   );
 
-  const selectedModelData = models.find((m) => m.id === model);
+  const selectedModelData = useMemo(
+    () => models.find((m) => m.id === model),
+    [model]
+  );
 
   const streamResponse = useCallback(
     async (messageId: string, content: string) => {
@@ -381,8 +441,8 @@ const Example = () => {
       const words = content.split(" ");
       let currentContent = "";
 
-      for (let i = 0; i < words.length; i++) {
-        currentContent += (i > 0 ? " " : "") + words[i];
+      for (const [i, word] of words.entries()) {
+        currentContent += (i > 0 ? " " : "") + word;
 
         setMessages((prev) =>
           prev.map((msg) => {
@@ -398,9 +458,7 @@ const Example = () => {
           })
         );
 
-        await new Promise((resolve) =>
-          setTimeout(resolve, Math.random() * 100 + 50)
-        );
+        await delay(Math.random() * 100 + 50);
       }
 
       setStatus("ready");
@@ -447,34 +505,61 @@ const Example = () => {
     [streamResponse]
   );
 
-  const handleSubmit = (message: PromptInputMessage) => {
-    const hasText = Boolean(message.text);
-    const hasAttachments = Boolean(message.files?.length);
+  const handleSubmit = useCallback(
+    (message: PromptInputMessage) => {
+      const hasText = Boolean(message.text);
+      const hasAttachments = Boolean(message.files?.length);
 
-    if (!(hasText || hasAttachments)) {
-      return;
-    }
+      if (!(hasText || hasAttachments)) {
+        return;
+      }
 
-    setStatus("submitted");
+      setStatus("submitted");
 
-    if (message.files?.length) {
-      toast.success("Files attached", {
-        description: `${message.files.length} file(s) attached to message`,
-      });
-    }
+      if (message.files?.length) {
+        toast.success("Files attached", {
+          description: `${message.files.length} file(s) attached to message`,
+        });
+      }
 
-    addUserMessage(message.text || "Sent with attachments");
-    setText("");
-  };
+      addUserMessage(message.text || "Sent with attachments");
+      setText("");
+    },
+    [addUserMessage]
+  );
 
-  const handleSuggestionClick = (suggestion: string) => {
-    setStatus("submitted");
-    addUserMessage(suggestion);
-  };
+  const handleSuggestionClick = useCallback(
+    (suggestion: string) => {
+      setStatus("submitted");
+      addUserMessage(suggestion);
+    },
+    [addUserMessage]
+  );
 
   const handleTranscriptionChange = useCallback((transcript: string) => {
     setText((prev) => (prev ? `${prev} ${transcript}` : transcript));
   }, []);
+
+  const handleTextChange = useCallback(
+    (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+      setText(event.target.value);
+    },
+    []
+  );
+
+  const toggleWebSearch = useCallback(() => {
+    setUseWebSearch((prev) => !prev);
+  }, []);
+
+  const handleModelSelect = useCallback((modelId: string) => {
+    setModel(modelId);
+    setModelSelectorOpen(false);
+  }, []);
+
+  const isSubmitDisabled = useMemo(
+    () => !(text.trim() || status) || status === "streaming",
+    [text, status]
+  );
 
   return (
     <div className="relative flex size-full flex-col divide-y overflow-hidden">
@@ -533,7 +618,7 @@ const Example = () => {
       <div className="grid shrink-0 gap-4 pt-4">
         <Suggestions className="px-4">
           {suggestions.map((suggestion) => (
-            <Suggestion
+            <SuggestionItem
               key={suggestion}
               onClick={() => handleSuggestionClick(suggestion)}
               suggestion={suggestion}
@@ -546,10 +631,7 @@ const Example = () => {
               <PromptInputAttachmentsDisplay />
             </PromptInputHeader>
             <PromptInputBody>
-              <PromptInputTextarea
-                onChange={(event) => setText(event.target.value)}
-                value={text}
-              />
+              <PromptInputTextarea onChange={handleTextChange} value={text} />
             </PromptInputBody>
             <PromptInputFooter>
               <PromptInputTools>
@@ -566,7 +648,7 @@ const Example = () => {
                   variant="ghost"
                 />
                 <PromptInputButton
-                  onClick={() => setUseWebSearch(!useWebSearch)}
+                  onClick={toggleWebSearch}
                   variant={useWebSearch ? "default" : "ghost"}
                 >
                   <GlobeIcon size={16} />
@@ -594,35 +676,17 @@ const Example = () => {
                     <ModelSelectorInput placeholder="Search models..." />
                     <ModelSelectorList>
                       <ModelSelectorEmpty>No models found.</ModelSelectorEmpty>
-                      {["OpenAI", "Anthropic", "Google"].map((chef) => (
+                      {chefs.map((chef) => (
                         <ModelSelectorGroup heading={chef} key={chef}>
                           {models
                             .filter((m) => m.chef === chef)
                             .map((m) => (
-                              <ModelSelectorItem
+                              <ModelItem
+                                isSelected={model === m.id}
                                 key={m.id}
-                                onSelect={() => {
-                                  setModel(m.id);
-                                  setModelSelectorOpen(false);
-                                }}
-                                value={m.id}
-                              >
-                                <ModelSelectorLogo provider={m.chefSlug} />
-                                <ModelSelectorName>{m.name}</ModelSelectorName>
-                                <ModelSelectorLogoGroup>
-                                  {m.providers.map((provider) => (
-                                    <ModelSelectorLogo
-                                      key={provider}
-                                      provider={provider}
-                                    />
-                                  ))}
-                                </ModelSelectorLogoGroup>
-                                {model === m.id ? (
-                                  <CheckIcon className="ml-auto size-4" />
-                                ) : (
-                                  <div className="ml-auto size-4" />
-                                )}
-                              </ModelSelectorItem>
+                                m={m}
+                                onSelect={() => handleModelSelect(m.id)}
+                              />
                             ))}
                         </ModelSelectorGroup>
                       ))}
@@ -630,10 +694,7 @@ const Example = () => {
                   </ModelSelectorContent>
                 </ModelSelector>
               </PromptInputTools>
-              <PromptInputSubmit
-                disabled={!(text.trim() || status) || status === "streaming"}
-                status={status}
-              />
+              <PromptInputSubmit disabled={isSubmitDisabled} status={status} />
             </PromptInputFooter>
           </PromptInput>
         </div>

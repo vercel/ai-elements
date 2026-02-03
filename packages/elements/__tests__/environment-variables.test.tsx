@@ -1,7 +1,3 @@
-import { render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
-import { describe, expect, it, vi } from "vitest";
-
 import {
   EnvironmentVariable,
   EnvironmentVariableCopyButton,
@@ -12,7 +8,10 @@ import {
   EnvironmentVariablesHeader,
   EnvironmentVariablesTitle,
   EnvironmentVariablesToggle,
-} from "../src/environment-variables";
+} from "#src/environment-variables";
+import { render, screen } from "@testing-library/react";
+import { userEvent } from "@testing-library/user-event";
+import { describe, expect, it, vi } from "vitest";
 
 describe(EnvironmentVariables, () => {
   it("renders children", () => {
@@ -96,11 +95,8 @@ describe(EnvironmentVariable, () => {
 });
 
 describe(EnvironmentVariableCopyButton, () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
   it("copies value to clipboard", async () => {
+    vi.clearAllMocks();
     const user = userEvent.setup();
     const writeTextSpy = vi.spyOn(navigator.clipboard, "writeText");
 
@@ -122,6 +118,7 @@ describe(EnvironmentVariableCopyButton, () => {
   });
 
   it("copies export format to clipboard", async () => {
+    vi.clearAllMocks();
     const user = userEvent.setup();
     const writeTextSpy = vi.spyOn(navigator.clipboard, "writeText");
 
@@ -143,6 +140,7 @@ describe(EnvironmentVariableCopyButton, () => {
   });
 
   it("calls onCopy callback", async () => {
+    vi.clearAllMocks();
     const onCopy = vi.fn();
     const user = userEvent.setup();
 
