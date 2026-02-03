@@ -50,15 +50,17 @@ export const Reasoning = memo(
     className,
     isStreaming = false,
     open,
-    defaultOpen = true,
+    defaultOpen,
     onOpenChange,
     duration: durationProp,
     children,
     ...props
   }: ReasoningProps) => {
+    const resolvedDefaultOpen = defaultOpen ?? isStreaming;
+
     const [isOpen, setIsOpen] = useControllableState<boolean>({
       prop: open,
-      defaultProp: defaultOpen,
+      defaultProp: resolvedDefaultOpen,
       onChange: onOpenChange,
     });
     const [duration, setDuration] = useControllableState<number | undefined>({
@@ -66,8 +68,16 @@ export const Reasoning = memo(
       defaultProp: undefined,
     });
 
+    const [hasEverStreamed, setHasEverStreamed] = useState(isStreaming);
     const [hasAutoClosed, setHasAutoClosed] = useState(false);
     const [startTime, setStartTime] = useState<number | null>(null);
+
+    // Track when streaming starts
+    useEffect(() => {
+      if (isStreaming && !hasEverStreamed) {
+        setHasEverStreamed(true);
+      }
+    }, [isStreaming, hasEverStreamed]);
 
     // Track duration when streaming starts and ends
     useEffect(() => {
@@ -81,9 +91,16 @@ export const Reasoning = memo(
       }
     }, [isStreaming, startTime, setDuration]);
 
-    // Auto-open when streaming starts, auto-close when streaming ends (once only)
+    // Auto-open when streaming starts
     useEffect(() => {
-      if (defaultOpen && !isStreaming && isOpen && !hasAutoClosed) {
+      if (isStreaming && !isOpen) {
+        setIsOpen(true);
+      }
+    }, [isStreaming, isOpen, setIsOpen]);
+
+    // Auto-close when streaming ends (once only, and only if it ever streamed)
+    useEffect(() => {
+      if (hasEverStreamed && !isStreaming && isOpen && !hasAutoClosed) {
         // Add a small delay before closing to allow user to see the content
         const timer = setTimeout(() => {
           setIsOpen(false);
@@ -92,7 +109,7 @@ export const Reasoning = memo(
 
         return () => clearTimeout(timer);
       }
-    }, [isStreaming, isOpen, defaultOpen, setIsOpen, hasAutoClosed]);
+    }, [hasEverStreamed, isStreaming, isOpen, setIsOpen, hasAutoClosed]);
 
     const handleOpenChange = (newOpen: boolean) => {
       setIsOpen(newOpen);

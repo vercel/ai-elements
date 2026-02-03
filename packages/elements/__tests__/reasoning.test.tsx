@@ -24,9 +24,19 @@ describe("Reasoning", () => {
     spy.mockRestore();
   });
 
-  it("starts open by default", () => {
+  it("starts closed by default when not streaming (old messages)", () => {
     render(
       <Reasoning>
+        <ReasoningTrigger />
+        <ReasoningContent>Reasoning content</ReasoningContent>
+      </Reasoning>
+    );
+    expect(screen.queryByText("Reasoning content")).not.toBeInTheDocument();
+  });
+
+  it("starts open when streaming", () => {
+    render(
+      <Reasoning isStreaming>
         <ReasoningTrigger />
         <ReasoningContent>Reasoning content</ReasoningContent>
       </Reasoning>
@@ -34,9 +44,19 @@ describe("Reasoning", () => {
     expect(screen.getByText("Reasoning content")).toBeVisible();
   });
 
-  it("can start closed", () => {
+  it("can be forced open with defaultOpen", () => {
     render(
-      <Reasoning defaultOpen={false}>
+      <Reasoning defaultOpen>
+        <ReasoningTrigger />
+        <ReasoningContent>Visible content</ReasoningContent>
+      </Reasoning>
+    );
+    expect(screen.getByText("Visible content")).toBeVisible();
+  });
+
+  it("can be forced closed with defaultOpen={false}", () => {
+    render(
+      <Reasoning defaultOpen={false} isStreaming>
         <ReasoningTrigger />
         <ReasoningContent>Hidden content</ReasoningContent>
       </Reasoning>
@@ -64,7 +84,7 @@ describe("Reasoning", () => {
   it("auto-closes after delay when streaming stops", async () => {
     vi.useFakeTimers();
     const { rerender } = render(
-      <Reasoning defaultOpen isStreaming>
+      <Reasoning isStreaming>
         <ReasoningTrigger />
         <ReasoningContent>Reasoning content</ReasoningContent>
       </Reasoning>
@@ -75,7 +95,7 @@ describe("Reasoning", () => {
 
     // Stop streaming
     rerender(
-      <Reasoning defaultOpen isStreaming={false}>
+      <Reasoning isStreaming={false}>
         <ReasoningTrigger />
         <ReasoningContent>Reasoning content</ReasoningContent>
       </Reasoning>
@@ -84,15 +104,47 @@ describe("Reasoning", () => {
     // Should still be open immediately
     expect(screen.getByText("Reasoning content")).toBeVisible();
 
-    // Advance time past AUTO_CLOSE_DELAY (3000ms)
+    // Advance time past AUTO_CLOSE_DELAY (1000ms)
     act(() => {
-      vi.advanceTimersByTime(3100);
+      vi.advanceTimersByTime(1100);
     });
 
     // Should auto-close
     await vi.waitFor(() => {
       expect(screen.queryByText("Reasoning content")).not.toBeInTheDocument();
     });
+
+    vi.useRealTimers();
+  });
+
+  it("does not auto-close old messages when manually opened - #86", async () => {
+    vi.useFakeTimers();
+    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
+
+    render(
+      <Reasoning isStreaming={false}>
+        <ReasoningTrigger />
+        <ReasoningContent>Old reasoning content</ReasoningContent>
+      </Reasoning>
+    );
+
+    // Initially closed (old message, not streaming)
+    expect(screen.queryByText("Old reasoning content")).not.toBeInTheDocument();
+
+    // User manually opens
+    const trigger = screen.getByRole("button");
+    await user.click(trigger);
+
+    // Should be open
+    expect(screen.getByText("Old reasoning content")).toBeVisible();
+
+    // Advance time past AUTO_CLOSE_DELAY
+    act(() => {
+      vi.advanceTimersByTime(2000);
+    });
+
+    // Should still be open (no auto-close for old messages)
+    expect(screen.getByText("Old reasoning content")).toBeVisible();
 
     vi.useRealTimers();
   });
@@ -185,7 +237,7 @@ describe("ReasoningTrigger", () => {
 describe("ReasoningContent", () => {
   it("renders reasoning text", () => {
     render(
-      <Reasoning>
+      <Reasoning defaultOpen>
         <ReasoningContent>The reasoning process</ReasoningContent>
       </Reasoning>
     );
@@ -194,7 +246,7 @@ describe("ReasoningContent", () => {
 
   it("applies custom className", () => {
     const { container } = render(
-      <Reasoning>
+      <Reasoning defaultOpen>
         <ReasoningContent className="custom">Content</ReasoningContent>
       </Reasoning>
     );
