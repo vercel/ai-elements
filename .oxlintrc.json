@@ -9,6 +9,10 @@
     "packages/shadcn-ui",
     "apps/docs/components/geistdocs",
     "apps/docs/lib/geistdocs",
-    "apps/docs/hooks/geistdocs"
+    "apps/docs/hooks/geistdocs",
+    "apps/docs/app",
+    "apps/docs/geistdocs.tsx",
+    "apps/docs/proxy.ts",
+    "apps/docs/source.config.ts"
   ]
 }
