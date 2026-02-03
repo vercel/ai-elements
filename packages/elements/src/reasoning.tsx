@@ -57,6 +57,8 @@ export const Reasoning = memo(
     ...props
   }: ReasoningProps) => {
     const resolvedDefaultOpen = defaultOpen ?? isStreaming;
+    // Track if defaultOpen was explicitly set to false (to prevent auto-open)
+    const isExplicitlyClosed = defaultOpen === false;
 
     const [isOpen, setIsOpen] = useControllableState<boolean>({
       prop: open,
@@ -91,12 +93,12 @@ export const Reasoning = memo(
       }
     }, [isStreaming, startTime, setDuration]);
 
-    // Auto-open when streaming starts
+    // Auto-open when streaming starts (unless explicitly closed)
     useEffect(() => {
-      if (isStreaming && !isOpen) {
+      if (isStreaming && !isOpen && !isExplicitlyClosed) {
         setIsOpen(true);
       }
-    }, [isStreaming, isOpen, setIsOpen]);
+    }, [isStreaming, isOpen, setIsOpen, isExplicitlyClosed]);
 
     // Auto-close when streaming ends (once only, and only if it ever streamed)
     useEffect(() => {

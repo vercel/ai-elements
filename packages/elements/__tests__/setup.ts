@@ -25,6 +25,14 @@ failOnConsole({
     if (message.includes("ReactDOM.render is deprecated since React 18")) {
       return true;
     }
+    // Silence Sonner deprecation warnings
+    if (message.includes("toastOptions.className")) {
+      return true;
+    }
+    // Silence React act() warnings from Radix UI tooltip timing
+    if (message.includes("was not wrapped in act")) {
+      return true;
+    }
     return false;
   },
 });

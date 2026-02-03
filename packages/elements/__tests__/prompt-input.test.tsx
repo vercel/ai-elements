@@ -683,7 +683,12 @@ describe("PromptInputButton", () => {
     await user.hover(button);
 
     await vi.waitFor(() => {
-      expect(screen.getByText("Search the web")).toBeInTheDocument();
+      // Check tooltip content element (not the hidden screen reader span)
+      const tooltipContent = document.querySelector(
+        '[data-slot="tooltip-content"]'
+      );
+      expect(tooltipContent).toBeTruthy();
+      expect(tooltipContent?.textContent).toContain("Search the web");
     });
   });
 
@@ -695,7 +700,7 @@ describe("PromptInputButton", () => {
       <PromptInput onSubmit={onSubmit}>
         <PromptInputBody>
           <PromptInputButton
-            tooltip={{ content: "Search", shortcut: "⌘K", side: "bottom" }}
+            tooltip={{ content: "Open Search", shortcut: "⌘K", side: "bottom" }}
           >
             Search
           </PromptInputButton>
@@ -707,8 +712,13 @@ describe("PromptInputButton", () => {
     await user.hover(button);
 
     await vi.waitFor(() => {
-      expect(screen.getByText("Search")).toBeInTheDocument();
-      expect(screen.getByText("⌘K")).toBeInTheDocument();
+      // Check tooltip content element (not the hidden screen reader span)
+      const tooltipContent = document.querySelector(
+        '[data-slot="tooltip-content"]'
+      );
+      expect(tooltipContent).toBeTruthy();
+      expect(tooltipContent?.textContent).toContain("Open Search");
+      expect(tooltipContent?.textContent).toContain("⌘K");
     });
   });
 

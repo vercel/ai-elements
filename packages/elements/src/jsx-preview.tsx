@@ -77,9 +77,14 @@ const completeJsxTag = (code: string) => {
   while (currentPosition < code.length) {
     const match = matchJsxTag(code.slice(currentPosition));
     if (!match) {
+      // No more tags found, append remaining content
+      result += code.slice(currentPosition);
       break;
     }
     const { tagName, type, endIndex } = match;
+
+    // Include any text content before this tag
+    result += code.slice(currentPosition, currentPosition + endIndex);
 
     if (type === "opening") {
       stack.push(tagName);
@@ -87,7 +92,6 @@ const completeJsxTag = (code: string) => {
       stack.pop();
     }
 
-    result += code.slice(currentPosition, currentPosition + endIndex);
     currentPosition += endIndex;
   }
 

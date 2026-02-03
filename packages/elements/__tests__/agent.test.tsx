@@ -19,7 +19,8 @@ const mockTool = {
   }),
 };
 
-const ZOD_OBJECT_REGEX = /"ZodObject"/;
+// Zod v4 serializes schemas with "type": "object" format
+const ZOD_OBJECT_REGEX = /"type":\s*"object"/;
 
 describe("Agent", () => {
   it("renders children", () => {
@@ -122,7 +123,7 @@ describe("AgentTool", () => {
   it("shows inputSchema when expanded", async () => {
     const user = userEvent.setup();
 
-    render(
+    const { container } = render(
       <AgentTools>
         <AgentTool tool={mockTool} value="search" />
       </AgentTools>
@@ -131,9 +132,12 @@ describe("AgentTool", () => {
     const trigger = screen.getByText("Search the web for information");
     await user.click(trigger);
 
-    // Zod schemas serialize to internal structure with _def and typeName
+    // Wait for accordion to expand and check that JSON content is rendered
+    // Text is split across syntax highlighting spans, so check textContent
     await waitFor(() => {
-      expect(screen.getByText(ZOD_OBJECT_REGEX)).toBeInTheDocument();
+      const codeContent = container.querySelector("pre code");
+      expect(codeContent).toBeTruthy();
+      expect(codeContent?.textContent).toMatch(ZOD_OBJECT_REGEX);
     });
   });
 

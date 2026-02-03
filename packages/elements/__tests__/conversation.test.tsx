@@ -287,19 +287,32 @@ describe("ConversationDownload", () => {
     const user = userEvent.setup();
     const mockCreateObjectURL = vi.fn(() => "blob:test");
     const mockRevokeObjectURL = vi.fn();
-    const mockClick = vi.fn();
 
-    global.URL.createObjectURL = mockCreateObjectURL;
-    global.URL.revokeObjectURL = mockRevokeObjectURL;
+    // Store original methods
+    const originalCreateObjectURL = URL.createObjectURL;
+    const originalRevokeObjectURL = URL.revokeObjectURL;
 
-    const originalCreateElement = document.createElement.bind(document);
-    vi.spyOn(document, "createElement").mockImplementation((tag: string) => {
-      if (tag === "a") {
-        const link = originalCreateElement("a");
-        link.click = mockClick;
-        return link;
+    // Override URL methods
+    URL.createObjectURL = mockCreateObjectURL;
+    URL.revokeObjectURL = mockRevokeObjectURL;
+
+    // Track if a link was clicked by checking if an anchor was added/removed
+    let linkClicked = false;
+    const originalAppendChild = document.body.appendChild.bind(document.body);
+    const originalRemoveChild = document.body.removeChild.bind(document.body);
+
+    vi.spyOn(document.body, "appendChild").mockImplementation((node: Node) => {
+      if (node instanceof HTMLAnchorElement) {
+        // Intercept click
+        node.click = () => {
+          linkClicked = true;
+        };
       }
-      return originalCreateElement(tag);
+      return originalAppendChild(node);
+    });
+
+    vi.spyOn(document.body, "removeChild").mockImplementation((node: Node) => {
+      return originalRemoveChild(node);
     });
 
     render(
@@ -312,9 +325,12 @@ describe("ConversationDownload", () => {
     await user.click(button);
 
     expect(mockCreateObjectURL).toHaveBeenCalled();
-    expect(mockClick).toHaveBeenCalled();
+    expect(linkClicked).toBe(true);
     expect(mockRevokeObjectURL).toHaveBeenCalled();
 
+    // Restore
+    URL.createObjectURL = originalCreateObjectURL;
+    URL.revokeObjectURL = originalRevokeObjectURL;
     vi.restoreAllMocks();
   });
 });
