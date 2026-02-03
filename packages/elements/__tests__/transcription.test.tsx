@@ -369,7 +369,8 @@ describe("transcription", () => {
 
       const activeSegment = container.querySelector('[data-active="true"]');
       expect(activeSegment).toHaveClass("text-primary");
-      expect(activeSegment).toHaveTextContent("from"); // 2-3s
+      // 2-3s
+      expect(activeSegment).toHaveTextContent("from");
     });
 
     it("applies past styling when segment is past", () => {
@@ -402,7 +403,8 @@ describe("transcription", () => {
         </Transcription>
       );
 
-      const futureSegment = screen.getByText("world"); // 1-2s
+      // 1-2s
+      const futureSegment = screen.getByText("world");
       expect(futureSegment).toHaveClass("text-muted-foreground/60");
     });
 
@@ -459,7 +461,8 @@ describe("transcription", () => {
       const thirdSegment = screen.getByText("from");
       await user.click(thirdSegment);
 
-      expect(onSeek).toHaveBeenCalledWith(2); // startSecond of "from"
+      // startSecond of "from"
+      expect(onSeek).toHaveBeenCalledWith(2);
     });
 
     it("does not call onSeek when not provided", async () => {
@@ -770,7 +773,8 @@ describe("transcription", () => {
       );
 
       const activeSegment = container.querySelector('[data-active="true"]');
-      expect(activeSegment).toHaveTextContent("Hello"); // Default 0
+      // Default 0
+      expect(activeSegment).toHaveTextContent("Hello");
     });
 
     it("works in controlled mode", () => {
@@ -787,7 +791,8 @@ describe("transcription", () => {
       );
 
       const activeSegment = container.querySelector('[data-active="true"]');
-      expect(activeSegment).toHaveTextContent("from"); // Controlled 2.5s
+      // Controlled 2.5s
+      expect(activeSegment).toHaveTextContent("from");
     });
   });
 });

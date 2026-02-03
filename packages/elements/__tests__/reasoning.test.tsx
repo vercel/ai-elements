@@ -134,7 +134,9 @@ describe("reasoning", () => {
     expect(screen.getByText("Old reasoning content")).toBeVisible();
 
     // Wait past AUTO_CLOSE_DELAY (1000ms) - use real timer
-    await new Promise((resolve) => setTimeout(resolve, 1200));
+    await new Promise((resolve) => {
+      setTimeout(resolve, 1200);
+    });
 
     // Should still be open (no auto-close for messages that never streamed)
     expect(screen.getByText("Old reasoning content")).toBeVisible();

@@ -415,7 +415,8 @@ export const SchemaDisplayProperty = ({
       {...props}
     >
       <div className="flex items-center gap-2">
-        <span className="size-4" /> {/* Spacer for alignment */}
+        {/* Spacer for alignment */}
+        <span className="size-4" />
         <span className="font-mono text-sm">{name}</span>
         <Badge className="text-xs" variant="outline">
           {type}

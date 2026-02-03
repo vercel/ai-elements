@@ -71,8 +71,7 @@ const parseTypeTableProps = (
   const matches = typeContent.matchAll(PROP_REGEX);
 
   for (const match of matches) {
-    const propName = match[1];
-    const propBody = match[2];
+    const [, propName, propBody] = match;
 
     const descMatch = propBody.match(DESC_REGEX);
     const typeMatch = propBody.match(TYPE_REGEX);

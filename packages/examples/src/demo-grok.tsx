@@ -338,7 +338,7 @@ const Example = () => {
     const words = reasoningContent.split(" ");
     let currentContent = "";
 
-    for (let i = 0; i < words.length; i++) {
+    for (let i = 0; i < words.length; i += 1) {
       currentContent += (i > 0 ? " " : "") + words[i];
 
       setMessages((prev) =>
@@ -355,9 +355,9 @@ const Example = () => {
         })
       );
 
-      await new Promise((resolve) =>
-        setTimeout(resolve, Math.random() * 30 + 20)
-      );
+      await new Promise((resolve) => {
+        setTimeout(resolve, Math.random() * 30 + 20);
+      });
     }
 
     // Mark reasoning as complete
@@ -383,7 +383,7 @@ const Example = () => {
     const words = content.split(" ");
     let currentContent = "";
 
-    for (let i = 0; i < words.length; i++) {
+    for (let i = 0; i < words.length; i += 1) {
       currentContent += (i > 0 ? " " : "") + words[i];
 
       setMessages((prev) =>
@@ -400,9 +400,9 @@ const Example = () => {
         })
       );
 
-      await new Promise((resolve) =>
-        setTimeout(resolve, Math.random() * 50 + 25)
-      );
+      await new Promise((resolve) => {
+        setTimeout(resolve, Math.random() * 50 + 25);
+      });
     }
 
     // Mark content as complete
@@ -430,7 +430,10 @@ const Example = () => {
       // First stream the reasoning if it exists
       if (reasoning) {
         await streamReasoning(messageKey, versionId, reasoning.content);
-        await new Promise((resolve) => setTimeout(resolve, 500)); // Pause between reasoning and content
+        // Pause between reasoning and content
+        await new Promise((resolve) => {
+          setTimeout(resolve, 500);
+        });
       }
 
       // Then stream the content
@@ -464,7 +467,7 @@ const Example = () => {
       setMessages((prev) => [...prev, newMessage]);
 
       // Get the first version for streaming
-      const firstVersion = message.versions[0];
+      const [firstVersion] = message.versions;
       if (!firstVersion) {
         return;
       }
@@ -545,11 +548,13 @@ const Example = () => {
     setMessages([]);
 
     const processMessages = async () => {
-      for (let i = 0; i < mockMessages.length; i++) {
+      for (let i = 0; i < mockMessages.length; i += 1) {
         await streamMessage(mockMessages[i]);
 
         if (i < mockMessages.length - 1) {
-          await new Promise((resolve) => setTimeout(resolve, 1000));
+          await new Promise((resolve) => {
+            setTimeout(resolve, 1000);
+          });
         }
       }
     };

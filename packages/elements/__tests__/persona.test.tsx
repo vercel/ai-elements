@@ -669,7 +669,9 @@ describe("persona - Dynamic Color", () => {
     render(<Persona state="idle" variant="mana" />);
 
     // Wait a bit to ensure effect has run
-    await new Promise((resolve) => setTimeout(resolve, 50));
+    await new Promise((resolve) => {
+      setTimeout(resolve, 50);
+    });
 
     expect(mockSetRgb).not.toHaveBeenCalled();
   });

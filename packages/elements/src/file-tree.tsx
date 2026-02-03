@@ -197,7 +197,8 @@ export const FileTreeFile = ({
       >
         {children ?? (
           <>
-            <span className="size-4" /> {/* Spacer for alignment */}
+            {/* Spacer for alignment */}
+            <span className="size-4" />
             <FileTreeIcon>
               {icon ?? <FileIcon className="size-4 text-muted-foreground" />}
             </FileTreeIcon>

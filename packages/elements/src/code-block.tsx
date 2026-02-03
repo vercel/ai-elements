@@ -296,6 +296,8 @@ const CodeBlockBody = memo(
     prevProps.className === nextProps.className
 );
 
+CodeBlockBody.displayName = "CodeBlockBody";
+
 export const CodeBlockContainer = ({
   className,
   language,

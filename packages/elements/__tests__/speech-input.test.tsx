@@ -266,7 +266,9 @@ describe("speechInput - Speech Recognition", () => {
     }
 
     // Wait a bit to ensure callback wasn't called
-    await new Promise((resolve) => setTimeout(resolve, 100));
+    await new Promise((resolve) => {
+      setTimeout(resolve, 100);
+    });
     expect(handleTranscription).not.toHaveBeenCalled();
   });
 
@@ -356,7 +358,9 @@ describe("speechInput - Speech Recognition", () => {
     }
 
     // Wait to ensure callback wasn't called for empty transcript
-    await new Promise((resolve) => setTimeout(resolve, 100));
+    await new Promise((resolve) => {
+      setTimeout(resolve, 100);
+    });
     expect(handleTranscription).not.toHaveBeenCalled();
   });
 
@@ -524,7 +528,7 @@ describe("speechInput - MediaRecorder Fallback", () => {
       expect(mediaRecorderInstances.length).toBeGreaterThan(0);
     });
 
-    const recorder = mediaRecorderInstances[0];
+    const [recorder] = mediaRecorderInstances;
 
     // Simulate data available
     if (recorder.ondataavailable) {
@@ -566,7 +570,7 @@ describe("speechInput - MediaRecorder Fallback", () => {
       expect(mediaRecorderInstances.length).toBeGreaterThan(0);
     });
 
-    const recorder = mediaRecorderInstances[0];
+    const [recorder] = mediaRecorderInstances;
 
     // Simulate data available
     if (recorder.ondataavailable) {
@@ -613,7 +617,7 @@ describe("speechInput - MediaRecorder Fallback", () => {
       expect(mediaRecorderInstances.length).toBeGreaterThan(0);
     });
 
-    const recorder = mediaRecorderInstances[0];
+    const [recorder] = mediaRecorderInstances;
 
     // Simulate data available
     if (recorder.ondataavailable) {

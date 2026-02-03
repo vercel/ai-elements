@@ -183,7 +183,7 @@ describe("promptInput", () => {
     await user.keyboard("{Enter}");
 
     expect(onSubmit).toHaveBeenCalledOnce();
-    const [message] = onSubmit.mock.calls[0];
+    const [[message]] = onSubmit.mock.calls;
     expect(message).toHaveProperty("text", "Hello");
     expect(message).toHaveProperty("files");
   });
@@ -247,7 +247,8 @@ describe("promptInput", () => {
     expect(textarea.value).toBe("");
 
     // Immediately type a second message (without waiting for async completion)
-    await user.clear(textarea); // Explicitly clear before typing
+    // Explicitly clear before typing
+    await user.clear(textarea);
     await user.type(textarea, "Second message");
 
     // Verify the second message is still there (not cleared by race condition)
@@ -319,7 +320,7 @@ describe("promptInput", () => {
     });
 
     // Verify that the URL was converted from blob: to data:
-    const [message] = onSubmit.mock.calls[0];
+    const [[message]] = onSubmit.mock.calls;
     expect(message.files).toHaveLength(1);
     expect(message.files[0].url).toMatch(DATA_PREFIX_REGEX);
     expect(message.files[0].url).not.toMatch(BLOB_PREFIX_REGEX);
@@ -447,7 +448,9 @@ describe("promptInput", () => {
     });
 
     // Give some time for the promise rejection to be handled
-    await new Promise((resolve) => setTimeout(resolve, 100));
+    await new Promise((resolve) => {
+      setTimeout(resolve, 100);
+    });
 
     // Verify that the attachment is still there (not cleared due to rejection)
     expect(screen.getByText("test.txt")).toBeInTheDocument();
@@ -510,7 +513,9 @@ describe("promptInput", () => {
     });
 
     // Give some time for the promise resolution to be handled
-    await new Promise((resolve) => setTimeout(resolve, 100));
+    await new Promise((resolve) => {
+      setTimeout(resolve, 100);
+    });
 
     // Verify that the attachment was cleared after successful async submission
     expect(screen.queryByText("test.txt")).not.toBeInTheDocument();
@@ -2343,7 +2348,9 @@ describe("promptInputReferencedSources", () => {
     });
 
     // Give time for promise resolution
-    await new Promise((resolve) => setTimeout(resolve, 100));
+    await new Promise((resolve) => {
+      setTimeout(resolve, 100);
+    });
 
     // Verify referenced source was cleared
     expect(screen.queryByText("Test Source")).not.toBeInTheDocument();
@@ -2468,7 +2475,9 @@ describe("promptInputReferencedSources", () => {
     });
 
     // Give time for promise rejection
-    await new Promise((resolve) => setTimeout(resolve, 100));
+    await new Promise((resolve) => {
+      setTimeout(resolve, 100);
+    });
 
     // Verify referenced source was NOT cleared due to rejection
     expect(screen.getByText("Test Source")).toBeInTheDocument();
@@ -2547,7 +2556,9 @@ describe("promptInputReferencedSources", () => {
     });
 
     // Give time for promise resolution
-    await new Promise((resolve) => setTimeout(resolve, 100));
+    await new Promise((resolve) => {
+      setTimeout(resolve, 100);
+    });
 
     // Verify both were cleared
     expect(screen.queryByText("test.txt")).not.toBeInTheDocument();

@@ -81,13 +81,15 @@ beforeEach(() => {
 
 describe("micSelectorLabel", () => {
   it("renders simple device label", () => {
-    const device = mockDevices[1]; // External Microphone
+    // External Microphone
+    const [, device] = mockDevices;
     render(<MicSelectorLabel device={device} />);
     expect(screen.getByText("External Microphone")).toBeInTheDocument();
   });
 
   it("parses device ID from label", () => {
-    const device = mockDevices[0]; // MacBook Pro Microphone (1a2b:3c4d)
+    // MacBook Pro Microphone (1a2b:3c4d)
+    const [device] = mockDevices;
     const { container } = render(<MicSelectorLabel device={device} />);
 
     expect(container.textContent).toContain("MacBook Pro Microphone");
@@ -95,7 +97,8 @@ describe("micSelectorLabel", () => {
   });
 
   it("applies muted styling to device ID", () => {
-    const device = mockDevices[2]; // USB Microphone (4e5f:6a7b)
+    // USB Microphone (4e5f:6a7b)
+    const [, , device] = mockDevices;
     const { container } = render(<MicSelectorLabel device={device} />);
 
     const mutedSpan = container.querySelector(".text-muted-foreground");
@@ -104,7 +107,7 @@ describe("micSelectorLabel", () => {
   });
 
   it("accepts custom className prop", () => {
-    const device = mockDevices[1];
+    const [, device] = mockDevices;
     render(<MicSelectorLabel className="custom-label" device={device} />);
 
     // Verify component renders

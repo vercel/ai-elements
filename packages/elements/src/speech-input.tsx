@@ -135,7 +135,7 @@ export const SpeechInput = ({
     speechRecognition.onresult = (event) => {
       let finalTranscript = "";
 
-      for (let i = event.resultIndex; i < event.results.length; i++) {
+      for (let i = event.resultIndex; i < event.results.length; i += 1) {
         const result = event.results[i];
         if (result.isFinal) {
           finalTranscript += result[0]?.transcript ?? "";

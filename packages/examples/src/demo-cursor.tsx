@@ -378,7 +378,7 @@ const Example = () => {
       const words = content.split(" ");
       let currentContent = "";
 
-      for (let i = 0; i < words.length; i++) {
+      for (let i = 0; i < words.length; i += 1) {
         currentContent += (i > 0 ? " " : "") + words[i];
         const finalContent = currentContent;
 
@@ -388,9 +388,9 @@ const Example = () => {
           )
         );
 
-        await new Promise((resolve) =>
-          setTimeout(resolve, Math.random() * 40 + 20)
-        );
+        await new Promise((resolve) => {
+          setTimeout(resolve, Math.random() * 40 + 20);
+        });
       }
     },
     []
@@ -399,7 +399,8 @@ const Example = () => {
   // Stream message
   const streamMessage = useCallback(
     async (message: MessageType) => {
-      const newKey = nanoid(); // Generate fresh key to avoid duplicates
+      // Generate fresh key to avoid duplicates
+      const newKey = nanoid();
       if (message.from === "user") {
         setMessages((prev) => [...prev, { ...message, key: newKey }]);
         return;
@@ -424,7 +425,9 @@ const Example = () => {
     for (const line of mockTerminalLines) {
       output += `${line}\n`;
       setTerminalOutput(output);
-      await new Promise((resolve) => setTimeout(resolve, 100));
+      await new Promise((resolve) => {
+        setTimeout(resolve, 100);
+      });
     }
 
     setIsTerminalStreaming(false);
@@ -434,15 +437,21 @@ const Example = () => {
   useEffect(() => {
     const runAnimation = async () => {
       // Wait a bit before starting
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      await new Promise((resolve) => {
+        setTimeout(resolve, 500);
+      });
 
       // Stream first message (user)
       await streamMessage(mockMessages[0]);
-      await new Promise((resolve) => setTimeout(resolve, 800));
+      await new Promise((resolve) => {
+        setTimeout(resolve, 800);
+      });
 
       // Stream second message (assistant)
       await streamMessage(mockMessages[1]);
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      await new Promise((resolve) => {
+        setTimeout(resolve, 500);
+      });
 
       // Update task status
       setTasks((prev) =>
@@ -455,7 +464,9 @@ const Example = () => {
       await streamTerminal();
 
       // Show checkpoint
-      await new Promise((resolve) => setTimeout(resolve, 300));
+      await new Promise((resolve) => {
+        setTimeout(resolve, 300);
+      });
       setShowCheckpoint(true);
     };
 

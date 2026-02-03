@@ -22,7 +22,7 @@ const Example = () => {
     const interval = setInterval(() => {
       if (lineIndex < lines.length) {
         setOutput((prev) => prev + (prev ? "\n" : "") + lines[lineIndex]);
-        lineIndex++;
+        lineIndex += 1;
       } else {
         setIsStreaming(false);
         clearInterval(interval);

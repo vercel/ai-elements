@@ -339,7 +339,8 @@ export type PromptInputProps = Omit<
   HTMLAttributes<HTMLFormElement>,
   "onSubmit" | "onError"
 > & {
-  accept?: string; // e.g., "image/*" or leave undefined for any
+  // e.g., "image/*" or leave undefined for any
+  accept?: string;
   multiple?: boolean;
   // When true, accepts drops anywhere on document. Default false (opt-in).
   globalDrop?: boolean;
@@ -347,7 +348,8 @@ export type PromptInputProps = Omit<
   syncHiddenInput?: boolean;
   // Minimal constraints
   maxFiles?: number;
-  maxFileSize?: number; // bytes
+  // bytes
+  maxFileSize?: number;
   onError?: (err: {
     code: "max_files" | "max_file_size" | "accept";
     message: string;
@@ -409,7 +411,8 @@ export const PromptInput = ({
 
       return patterns.some((pattern) => {
         if (pattern.endsWith("/*")) {
-          const prefix = pattern.slice(0, -1); // e.g: image/* -> image/
+          // e.g: image/* -> image/
+          const prefix = pattern.slice(0, -1);
           return f.type.startsWith(prefix);
         }
         return f.type === pattern;
@@ -579,7 +582,8 @@ export const PromptInput = ({
       return;
     }
     if (globalDrop) {
-      return; // when global drop is on, let the document-level handler own drops
+      // when global drop is on, let the document-level handler own drops
+      return;
     }
 
     const onDragOver = (e: DragEvent) => {

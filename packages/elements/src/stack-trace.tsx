@@ -127,8 +127,9 @@ const parseStackTrace = (trace: string): ParsedStackTrace => {
   // Try to extract error type from "ErrorType: message" format
   const errorMatch = firstLine.match(ERROR_TYPE_REGEX);
   if (errorMatch) {
-    errorType = errorMatch[1];
-    errorMessage = errorMatch[2] || "";
+    const [, type, msg] = errorMatch;
+    errorType = type;
+    errorMessage = msg || "";
   }
 
   // Parse stack frames (lines starting with "at")

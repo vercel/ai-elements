@@ -159,6 +159,8 @@ const PersonaWithModel = memo(
   }
 );
 
+PersonaWithModel.displayName = "PersonaWithModel";
+
 interface PersonaWithoutModelProps {
   children: ReactNode;
 }
@@ -166,6 +168,8 @@ interface PersonaWithoutModelProps {
 const PersonaWithoutModel = memo(
   ({ children }: PersonaWithoutModelProps) => children
 );
+
+PersonaWithoutModel.displayName = "PersonaWithoutModel";
 
 export const Persona: FC<PersonaProps> = memo(
   ({
@@ -269,3 +273,5 @@ export const Persona: FC<PersonaProps> = memo(
     );
   }
 );
+
+Persona.displayName = "Persona";
