@@ -5,5 +5,10 @@
     "./node_modules/ultracite/config/oxlint/next/.oxlintrc.json",
     "./node_modules/ultracite/config/oxlint/react/.oxlintrc.json"
   ],
-  "ignorePatterns": ["packages/shadcn-ui"]
+  "ignorePatterns": [
+    "packages/shadcn-ui",
+    "apps/docs/components/geistdocs",
+    "apps/docs/lib/geistdocs",
+    "apps/docs/hooks/geistdocs"
+  ]
 }
