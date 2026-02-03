@@ -1,13 +1,15 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
+
 import type { JSXPreviewProps } from "../src/jsx-preview";
+
 import {
   JSXPreview,
   JSXPreviewContent,
   JSXPreviewError,
 } from "../src/jsx-preview";
 
-describe("JSXPreview", () => {
+describe(JSXPreview, () => {
   it("renders children", () => {
     render(
       <JSXPreview jsx="<div>Test</div>">
@@ -34,7 +36,7 @@ describe("JSXPreview", () => {
   });
 });
 
-describe("JSXPreviewContent", () => {
+describe(JSXPreviewContent, () => {
   it("renders simple JSX string", () => {
     render(
       <JSXPreview jsx="<div>Hello World</div>">
@@ -92,7 +94,7 @@ describe("JSXPreviewContent", () => {
   });
 });
 
-describe("JSXPreviewError", () => {
+describe(JSXPreviewError, () => {
   it("does not render when there is no error", () => {
     render(
       <JSXPreview jsx="<div>Valid</div>">
@@ -130,7 +132,7 @@ describe("JSXPreviewError", () => {
   });
 });
 
-describe("JSXPreview onError callback", () => {
+describe("jSXPreview onError callback", () => {
   it("calls onError when parse error occurs", () => {
     const onError = vi.fn();
     render(
@@ -142,7 +144,7 @@ describe("JSXPreview onError callback", () => {
   });
 });
 
-describe("JSXPreview with custom components", () => {
+describe("jSXPreview with custom components", () => {
   it("renders custom components", () => {
     // Custom components for testing
     const CustomButton = (props: { children?: React.ReactNode }) => (
@@ -175,7 +177,7 @@ describe("JSXPreview with custom components", () => {
       <span data-testid="badge">{props.children}</span>
     );
 
-    const components = { Card, Badge } as JSXPreviewProps["components"];
+    const components = { Badge, Card } as JSXPreviewProps["components"];
 
     render(
       <JSXPreview components={components} jsx="<Card><Badge>New</Badge></Card>">
@@ -188,7 +190,7 @@ describe("JSXPreview with custom components", () => {
   });
 });
 
-describe("JSXPreview with bindings", () => {
+describe("jSXPreview with bindings", () => {
   it("provides variables to JSX scope", () => {
     render(
       <JSXPreview bindings={{ greeting: "Hello" }} jsx="<div>{greeting}</div>">
@@ -211,7 +213,7 @@ describe("JSXPreview with bindings", () => {
   });
 });
 
-describe("JSXPreview streaming mode", () => {
+describe("jSXPreview streaming mode", () => {
   it("auto-closes single unclosed tag", () => {
     render(
       <JSXPreview isStreaming jsx="<div>Content">
@@ -250,7 +252,7 @@ describe("JSXPreview streaming mode", () => {
   });
 });
 
-describe("JSXPreview integration", () => {
+describe("jSXPreview integration", () => {
   it("renders complete composition", () => {
     render(
       <JSXPreview className="preview-container" jsx="<div>Test content</div>">

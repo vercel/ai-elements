@@ -1,5 +1,20 @@
 "use client";
 
+import type { ChatStatus, FileUIPart, SourceDocumentUIPart } from "ai";
+import type {
+  ChangeEvent,
+  ChangeEventHandler,
+  ClipboardEventHandler,
+  ComponentProps,
+  FormEvent,
+  FormEventHandler,
+  HTMLAttributes,
+  KeyboardEventHandler,
+  PropsWithChildren,
+  ReactNode,
+  RefObject,
+} from "react";
+
 import {
   Command,
   CommandEmpty,
@@ -40,7 +55,6 @@ import {
   TooltipTrigger,
 } from "@repo/shadcn-ui/components/ui/tooltip";
 import { cn } from "@repo/shadcn-ui/lib/utils";
-import type { ChatStatus, FileUIPart, SourceDocumentUIPart } from "ai";
 import {
   CornerDownLeftIcon,
   ImageIcon,
@@ -50,19 +64,8 @@ import {
 } from "lucide-react";
 import { nanoid } from "nanoid";
 import {
-  type ChangeEvent,
-  type ChangeEventHandler,
   Children,
-  type ClipboardEventHandler,
-  type ComponentProps,
   createContext,
-  type FormEvent,
-  type FormEventHandler,
-  type HTMLAttributes,
-  type KeyboardEventHandler,
-  type PropsWithChildren,
-  type ReactNode,
-  type RefObject,
   useCallback,
   useContext,
   useEffect,
@@ -155,10 +158,10 @@ export function PromptInputProvider({
     (FileUIPart & { id: string })[]
   >([]);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const openRef = useRef<() => void>(() => undefined);
+  const openRef = useRef<() => void>(() => {});
 
   const add = useCallback((files: File[] | FileList) => {
-    const incoming = Array.from(files);
+    const incoming = [...files];
     if (incoming.length === 0) {
       return;
     }
@@ -166,11 +169,11 @@ export function PromptInputProvider({
     setAttachmentFiles((prev) =>
       prev.concat(
         incoming.map((file) => ({
+          filename: file.name,
           id: nanoid(),
+          mediaType: file.type,
           type: "file" as const,
           url: URL.createObjectURL(file),
-          mediaType: file.type,
-          filename: file.name,
         }))
       )
     );
@@ -219,12 +222,12 @@ export function PromptInputProvider({
 
   const attachments = useMemo<AttachmentsContext>(
     () => ({
-      files: attachmentFiles,
       add,
-      remove,
       clear,
-      openFileDialog,
       fileInputRef,
+      files: attachmentFiles,
+      openFileDialog,
+      remove,
     }),
     [attachmentFiles, add, remove, clear, openFileDialog]
   );
@@ -239,13 +242,13 @@ export function PromptInputProvider({
 
   const controller = useMemo<PromptInputControllerProps>(
     () => ({
-      textInput: {
-        value: textInput,
-        setInput: setTextInput,
-        clear: clearInput,
-      },
-      attachments,
       __registerFileInput,
+      attachments,
+      textInput: {
+        clear: clearInput,
+        setInput: setTextInput,
+        value: textInput,
+      },
     }),
     [textInput, clearInput, attachments, __registerFileInput]
   );
@@ -417,7 +420,7 @@ export const PromptInput = ({
 
   const addLocal = useCallback(
     (fileList: File[] | FileList) => {
-      const incoming = Array.from(fileList);
+      const incoming = [...fileList];
       const accepted = incoming.filter((f) => matchesAccept(f));
       if (incoming.length && accepted.length === 0) {
         onError?.({
@@ -453,11 +456,11 @@ export const PromptInput = ({
         const next: (FileUIPart & { id: string })[] = [];
         for (const file of capped) {
           next.push({
+            filename: file.name,
             id: nanoid(),
+            mediaType: file.type,
             type: "file",
             url: URL.createObjectURL(file),
-            mediaType: file.type,
-            filename: file.name,
           });
         }
         return prev.concat(next);
@@ -481,7 +484,7 @@ export const PromptInput = ({
   // Wrapper that validates files before calling provider's add
   const addWithProviderValidation = useCallback(
     (fileList: File[] | FileList) => {
-      const incoming = Array.from(fileList);
+      const incoming = [...fileList];
       const accepted = incoming.filter((f) => matchesAccept(f));
       if (incoming.length && accepted.length === 0) {
         onError?.({
@@ -667,29 +670,29 @@ export const PromptInput = ({
 
   const attachmentsCtx = useMemo<AttachmentsContext>(
     () => ({
-      files: files.map((item) => ({ ...item, id: item.id })),
       add,
-      remove,
       clear: clearAttachments,
-      openFileDialog,
       fileInputRef: inputRef,
+      files: files.map((item) => ({ ...item, id: item.id })),
+      openFileDialog,
+      remove,
     }),
     [files, add, remove, clearAttachments, openFileDialog]
   );
 
   const refsCtx = useMemo<ReferencedSourcesContext>(
     () => ({
-      sources: referencedSources,
       add: (incoming: SourceDocumentUIPart[] | SourceDocumentUIPart) => {
         const array = Array.isArray(incoming) ? incoming : [incoming];
         setReferencedSources((prev) =>
           prev.concat(array.map((s) => ({ ...s, id: nanoid() })))
         );
       },
+      clear: clearReferencedSources,
       remove: (id: string) => {
         setReferencedSources((prev) => prev.filter((s) => s.id !== id));
       },
-      clear: clearReferencedSources,
+      sources: referencedSources,
     }),
     [referencedSources, clearReferencedSources]
   );
@@ -727,7 +730,7 @@ export const PromptInput = ({
     )
       .then((convertedFiles: FileUIPart[]) => {
         try {
-          const result = onSubmit({ text, files: convertedFiles }, event);
+          const result = onSubmit({ files: convertedFiles, text }, event);
 
           // Handle both sync and async onSubmit
           if (result instanceof Promise) {
@@ -838,7 +841,7 @@ export const PromptInputTextarea = ({
       e.preventDefault();
 
       // Check if the submit button is disabled before submitting
-      const form = e.currentTarget.form;
+      const { form } = e.currentTarget;
       const submitButton = form?.querySelector(
         'button[type="submit"]'
       ) as HTMLButtonElement | null;
@@ -889,11 +892,11 @@ export const PromptInputTextarea = ({
 
   const controlledProps = controller
     ? {
-        value: controller.textInput.value,
         onChange: (e: ChangeEvent<HTMLTextAreaElement>) => {
           controller.textInput.setInput(e.currentTarget.value);
           onChange?.(e);
         },
+        value: controller.textInput.value,
       }
     : {
         onChange,

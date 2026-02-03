@@ -1,9 +1,10 @@
 "use client";
 
-import { useControllableState } from "@radix-ui/react-use-controllable-state";
-import { cn } from "@repo/shadcn-ui/lib/utils";
 import type { Experimental_TranscriptionResult as TranscriptionResult } from "ai";
 import type { ComponentProps, ReactNode } from "react";
+
+import { useControllableState } from "@radix-ui/react-use-controllable-state";
+import { cn } from "@repo/shadcn-ui/lib/utils";
 import { createContext, useContext } from "react";
 
 type TranscriptionSegment = TranscriptionResult["segments"][number];
@@ -45,18 +46,18 @@ export const Transcription = ({
   ...props
 }: TranscriptionProps) => {
   const [currentTime, setCurrentTime] = useControllableState({
-    prop: externalCurrentTime,
     defaultProp: 0,
     onChange: onSeek,
+    prop: externalCurrentTime,
   });
 
   return (
     <TranscriptionContext.Provider
       value={{
-        segments,
         currentTime,
-        onTimeUpdate: setCurrentTime,
         onSeek,
+        onTimeUpdate: setCurrentTime,
+        segments,
       }}
     >
       <div

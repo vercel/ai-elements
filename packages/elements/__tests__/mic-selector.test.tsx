@@ -1,6 +1,7 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+
 import {
   MicSelector,
   MicSelectorContent,
@@ -45,9 +46,9 @@ const mockGetUserMedia = vi.fn();
 const MACBOOK_PRO_MIC_REGEX = /MacBook Pro Microphone/;
 
 beforeEach(() => {
-  vi.spyOn(console, "warn").mockImplementation(() => undefined);
-  vi.spyOn(console, "error").mockImplementation(() => undefined);
-  vi.spyOn(console, "log").mockImplementation(() => undefined);
+  vi.spyOn(console, "warn").mockImplementation(() => {});
+  vi.spyOn(console, "error").mockImplementation(() => {});
+  vi.spyOn(console, "log").mockImplementation(() => {});
 
   // Mock ResizeObserver as a proper class
   class ResizeObserverMock {
@@ -59,14 +60,14 @@ beforeEach(() => {
 
   // Setup navigator.mediaDevices mock
   Object.defineProperty(navigator, "mediaDevices", {
-    writable: true,
     configurable: true,
     value: {
+      addEventListener: vi.fn(),
       enumerateDevices: mockEnumerateDevices,
       getUserMedia: mockGetUserMedia,
-      addEventListener: vi.fn(),
       removeEventListener: vi.fn(),
     },
+    writable: true,
   });
 
   mockEnumerateDevices.mockResolvedValue(mockDevices);
@@ -78,7 +79,7 @@ beforeEach(() => {
   });
 });
 
-describe("MicSelectorLabel", () => {
+describe(MicSelectorLabel, () => {
   it("renders simple device label", () => {
     const device = mockDevices[1]; // External Microphone
     render(<MicSelectorLabel device={device} />);
@@ -291,14 +292,14 @@ describe("useAudioDevices hook", () => {
     const removeEventListener = vi.fn();
 
     Object.defineProperty(navigator, "mediaDevices", {
-      writable: true,
       configurable: true,
       value: {
+        addEventListener,
         enumerateDevices: mockEnumerateDevices,
         getUserMedia: mockGetUserMedia,
-        addEventListener,
         removeEventListener,
       },
+      writable: true,
     });
 
     const TestComponent = () => {
@@ -356,7 +357,7 @@ describe("useAudioDevices hook", () => {
     // Should only call getUserMedia once per actual load
     await waitFor(
       () => {
-        expect(mockGetUserMedia).toHaveBeenCalled();
+        expect(mockGetUserMedia).toHaveBeenCalledWith();
       },
       { timeout: 3000 }
     );
@@ -426,7 +427,7 @@ describe("useAudioDevices hook", () => {
   });
 });
 
-describe("MicSelector", () => {
+describe(MicSelector, () => {
   it("renders with default props", () => {
     render(
       <MicSelector>
@@ -599,12 +600,12 @@ describe("MicSelector", () => {
     await user.click(screen.getByText("External Microphone"));
 
     await waitFor(() => {
-      expect(onValueChange).toHaveBeenCalled();
+      expect(onValueChange).toHaveBeenCalledWith();
     });
   });
 });
 
-describe("MicSelectorTrigger", () => {
+describe(MicSelectorTrigger, () => {
   it("renders children", () => {
     render(
       <MicSelector>
@@ -631,7 +632,7 @@ describe("MicSelectorTrigger", () => {
   });
 });
 
-describe("MicSelectorContent", () => {
+describe(MicSelectorContent, () => {
   it("renders with custom className", async () => {
     const user = userEvent.setup();
 
@@ -652,7 +653,7 @@ describe("MicSelectorContent", () => {
   });
 });
 
-describe("MicSelectorInput", () => {
+describe(MicSelectorInput, () => {
   it("renders with default placeholder", async () => {
     const user = userEvent.setup();
 
@@ -694,7 +695,7 @@ describe("MicSelectorInput", () => {
   });
 });
 
-describe("MicSelectorEmpty", () => {
+describe(MicSelectorEmpty, () => {
   it("renders default empty message", async () => {
     const user = userEvent.setup();
     mockEnumerateDevices.mockResolvedValueOnce([]);
@@ -738,7 +739,7 @@ describe("MicSelectorEmpty", () => {
   });
 });
 
-describe("MicSelectorValue", () => {
+describe(MicSelectorValue, () => {
   it("shows placeholder when no value selected", () => {
     render(
       <MicSelector>

@@ -1,18 +1,13 @@
 "use client";
 
+import type { ComponentProps, HTMLAttributes } from "react";
+
 import { Button } from "@repo/shadcn-ui/components/ui/button";
 import { cn } from "@repo/shadcn-ui/lib/utils";
 import Ansi from "ansi-to-react";
 import { CheckIcon, CopyIcon, TerminalIcon, Trash2Icon } from "lucide-react";
-import {
-  type ComponentProps,
-  createContext,
-  type HTMLAttributes,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { createContext, useContext, useEffect, useRef, useState } from "react";
+
 import { Shimmer } from "./shimmer";
 
 interface TerminalContextType {
@@ -23,9 +18,9 @@ interface TerminalContextType {
 }
 
 const TerminalContext = createContext<TerminalContextType>({
-  output: "",
-  isStreaming: false,
   autoScroll: true,
+  isStreaming: false,
+  output: "",
 });
 
 export type TerminalProps = HTMLAttributes<HTMLDivElement> & {
@@ -45,7 +40,7 @@ export const Terminal = ({
   ...props
 }: TerminalProps) => (
   <TerminalContext.Provider
-    value={{ output, isStreaming, autoScroll, onClear }}
+    value={{ autoScroll, isStreaming, onClear, output }}
   >
     <div
       className={cn(

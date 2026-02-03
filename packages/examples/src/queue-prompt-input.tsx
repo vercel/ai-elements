@@ -1,5 +1,8 @@
 "use client";
 
+import type { PromptInputMessage } from "@repo/elements/prompt-input";
+import type { QueueTodo } from "@repo/elements/queue";
+
 import {
   Attachment,
   AttachmentPreview,
@@ -29,7 +32,6 @@ import {
   PromptInputButton,
   PromptInputFooter,
   PromptInputHeader,
-  type PromptInputMessage,
   PromptInputSubmit,
   PromptInputTextarea,
   PromptInputTools,
@@ -45,45 +47,44 @@ import {
   QueueItemIndicator,
   QueueSection,
   QueueSectionContent,
-  type QueueTodo,
 } from "@repo/elements/queue";
 import { CheckIcon, GlobeIcon, Trash2 } from "lucide-react";
 import { useRef, useState } from "react";
 
 const models = [
   {
+    chef: "OpenAI",
+    chefSlug: "openai",
     id: "gpt-4o",
     name: "GPT-4o",
-    chef: "OpenAI",
-    chefSlug: "openai",
     providers: ["openai", "azure"],
   },
   {
+    chef: "OpenAI",
+    chefSlug: "openai",
     id: "gpt-4o-mini",
     name: "GPT-4o Mini",
-    chef: "OpenAI",
-    chefSlug: "openai",
     providers: ["openai", "azure"],
   },
   {
+    chef: "Anthropic",
+    chefSlug: "anthropic",
     id: "claude-opus-4-20250514",
     name: "Claude 4 Opus",
-    chef: "Anthropic",
-    chefSlug: "anthropic",
     providers: ["anthropic", "azure", "google", "amazon-bedrock"],
   },
   {
+    chef: "Anthropic",
+    chefSlug: "anthropic",
     id: "claude-sonnet-4-20250514",
     name: "Claude 4 Sonnet",
-    chef: "Anthropic",
-    chefSlug: "anthropic",
     providers: ["anthropic", "azure", "google", "amazon-bedrock"],
   },
   {
-    id: "gemini-2.0-flash-exp",
-    name: "Gemini 2.0 Flash",
     chef: "Google",
     chefSlug: "google",
+    id: "gemini-2.0-flash-exp",
+    name: "Gemini 2.0 Flash",
     providers: ["google"],
   },
 ];
@@ -93,33 +94,33 @@ const STREAMING_TIMEOUT = 2000;
 
 const sampleTodos: QueueTodo[] = [
   {
-    id: "todo-1",
-    title: "Write project documentation",
     description: "Complete the README and API docs",
+    id: "todo-1",
     status: "completed",
+    title: "Write project documentation",
   },
   {
     id: "todo-2",
+    status: "pending",
     title: "Implement authentication",
-    status: "pending",
   },
   {
-    id: "todo-3",
-    title: "Fix bug #42",
     description: "Resolve crash on settings page",
+    id: "todo-3",
     status: "pending",
+    title: "Fix bug #42",
   },
   {
-    id: "todo-4",
-    title: "Refactor queue logic",
     description: "Unify queue and todo state management",
+    id: "todo-4",
     status: "pending",
+    title: "Refactor queue logic",
   },
   {
-    id: "todo-5",
-    title: "Add unit tests",
     description: "Increase test coverage for hooks",
+    id: "todo-5",
     status: "pending",
+    title: "Add unit tests",
   },
 ];
 

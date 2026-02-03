@@ -1,30 +1,34 @@
 import type { Node, Root } from "fumadocs-core/page-tree";
-import { type InferPageType, loader } from "fumadocs-core/source";
+import type { InferPageType } from "fumadocs-core/source";
+
+import { loader } from "fumadocs-core/source";
 import { lucideIconsPlugin } from "fumadocs-core/source/lucide-icons";
+
 import { components, docs, examples } from "@/.source/server";
 import { basePath } from "@/geistdocs";
+
 import { i18n } from "./i18n";
 
 // See https://fumadocs.dev/docs/headless/source-api for more info
 export const docsSource = loader({
-  i18n,
   baseUrl: "/docs",
-  source: docs.toFumadocsSource(),
+  i18n,
   plugins: [lucideIconsPlugin()],
+  source: docs.toFumadocsSource(),
 });
 
 export const componentsSource = loader({
-  i18n,
   baseUrl: "/components",
-  source: components.toFumadocsSource(),
+  i18n,
   plugins: [lucideIconsPlugin()],
+  source: components.toFumadocsSource(),
 });
 
 export const examplesSource = loader({
-  i18n,
   baseUrl: "/examples",
-  source: examples.toFumadocsSource(),
+  i18n,
   plugins: [lucideIconsPlugin()],
+  source: examples.toFumadocsSource(),
 });
 
 const allSources = [docsSource, componentsSource, examplesSource] as const;
@@ -37,11 +41,10 @@ export type AnySource =
 export type AnyPage = InferPageType<AnySource>;
 
 // Helper to get all pages across all sources
-export const getAllPages = (lang?: string) => {
-  return allSources.flatMap((source) =>
+export const getAllPages = (lang?: string) =>
+  allSources.flatMap((source) =>
     lang ? source.getPages(lang) : source.getPages()
   ) as AnyPage[];
-};
 
 // Helper to get page by URL across all sources
 export const getPageByHref = (url: string, options?: { language?: string }) => {
@@ -51,7 +54,7 @@ export const getPageByHref = (url: string, options?: { language?: string }) => {
       return result;
     }
   }
-  return undefined;
+  return;
 };
 
 // Helper to prefix $id in page tree nodes to avoid key collisions
@@ -72,12 +75,12 @@ const prefixTreeIds = (nodes: Node[], prefix: string): Node[] =>
 
 // Helper to get combined page tree for a language
 export const getCombinedPageTree = (lang: string): Root => ({
-  name: "Root",
   children: [
     ...prefixTreeIds(docsSource.pageTree[lang].children, "docs"),
     ...prefixTreeIds(componentsSource.pageTree[lang].children, "components"),
     ...prefixTreeIds(examplesSource.pageTree[lang].children, "examples"),
   ],
+  name: "Root",
 });
 
 // Helper to get a page by slug across all sources
@@ -88,13 +91,12 @@ export const getPage = (slugs: string[] | undefined, lang?: string) => {
       return page as AnyPage;
     }
   }
-  return undefined;
+  return;
 };
 
 // Helper to generate params across all sources
-export const generateParams = (lang?: string) => {
-  return allSources.flatMap((source) => source.generateParams(lang));
-};
+export const generateParams = (lang?: string) =>
+  allSources.flatMap((source) => source.generateParams(lang));
 
 export const getPageImage = (page: AnyPage) => {
   const segments = [...page.slugs, "image.png"];

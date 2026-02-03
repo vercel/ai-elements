@@ -30,22 +30,22 @@ const timestamp = new Date(Date.now() - 1000 * 60 * 60 * 2);
 
 const files = [
   {
-    path: "src/auth/login.tsx",
-    status: "added" as const,
     additions: 150,
     deletions: 0,
+    path: "src/auth/login.tsx",
+    status: "added" as const,
   },
   {
-    path: "src/auth/logout.tsx",
-    status: "added" as const,
     additions: 45,
     deletions: 0,
+    path: "src/auth/logout.tsx",
+    status: "added" as const,
   },
   {
-    path: "src/lib/session.ts",
-    status: "modified" as const,
     additions: 23,
     deletions: 8,
+    path: "src/lib/session.ts",
+    status: "modified" as const,
   },
 ];
 
@@ -58,7 +58,7 @@ const Example = () => (
       <CommitInfo>
         <CommitMessage>feat: Add user authentication flow</CommitMessage>
         <CommitMetadata>
-          <CommitHash>{hash.substring(0, 7)}</CommitHash>
+          <CommitHash>{hash.slice(0, 7)}</CommitHash>
           <CommitSeparator />
           <CommitTimestamp date={timestamp} />
         </CommitMetadata>

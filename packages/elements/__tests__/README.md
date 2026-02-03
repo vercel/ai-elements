@@ -84,16 +84,16 @@ These are minor issues that don't affect the core functionality tests.
 Each test file follows this pattern:
 
 ```typescript
-describe('ComponentName', () => {
-  it('renders children', () => {
+describe("ComponentName", () => {
+  it("renders children", () => {
     // Basic rendering test
   });
 
-  it('handles user interactions', async () => {
+  it("handles user interactions", async () => {
     // User event tests
   });
 
-  it('applies custom props', () => {
+  it("applies custom props", () => {
     // Props validation
   });
 });

@@ -1,7 +1,8 @@
+import { cn } from "@repo/shadcn-ui/lib/utils";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
-import { cn } from "@repo/shadcn-ui/lib/utils";
 import { codeToHtml } from "shiki";
+
 import { CodeBlock } from "../geistdocs/code-block";
 
 interface SourceCodeProps {
@@ -20,18 +21,18 @@ export const SourceCode = async ({ path, className }: SourceCodeProps) => {
       "src",
       `${path}.tsx`
     ),
-    "utf-8"
+    "utf8"
   );
 
   const parsedCode = code
-    .replace(/@repo\/shadcn-ui\//g, "@/")
-    .replace(/@repo\/elements\//g, "@/components/ai-elements/");
+    .replaceAll('@repo/shadcn-ui/', "@/")
+    .replaceAll('@repo/elements/', "@/components/ai-elements/");
 
   const highlightedCode = await codeToHtml(parsedCode, {
     lang: "tsx",
     themes: {
-      light: "github-light",
       dark: "github-dark",
+      light: "github-light",
     },
   });
 

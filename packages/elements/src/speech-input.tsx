@@ -1,16 +1,12 @@
 "use client";
 
+import type { ComponentProps } from "react";
+
 import { Button } from "@repo/shadcn-ui/components/ui/button";
 import { Spinner } from "@repo/shadcn-ui/components/ui/spinner";
 import { cn } from "@repo/shadcn-ui/lib/utils";
 import { MicIcon, SquareIcon } from "lucide-react";
-import {
-  type ComponentProps,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 interface SpeechRecognition extends EventTarget {
   continuous: boolean;
@@ -57,12 +53,8 @@ interface SpeechRecognitionErrorEvent extends Event {
 
 declare global {
   interface Window {
-    SpeechRecognition: {
-      new (): SpeechRecognition;
-    };
-    webkitSpeechRecognition: {
-      new (): SpeechRecognition;
-    };
+    SpeechRecognition: new () => SpeechRecognition;
+    webkitSpeechRecognition: new () => SpeechRecognition;
   }
 }
 

@@ -40,12 +40,13 @@ The `OpenIn` component provides a dropdown menu that allows users to open querie
 <TypeTable
   type={{
     query: {
-      description: 'The query text to be sent to all AI platforms.',
-      type: 'string',
+      description: "The query text to be sent to all AI platforms.",
+      type: "string",
     },
-    '...props': {
-      description: 'Props to spread to the underlying radix-ui DropdownMenu component.',
-      type: 'React.ComponentProps<typeof DropdownMenu>',
+    "...props": {
+      description:
+        "Props to spread to the underlying radix-ui DropdownMenu component.",
+      type: "React.ComponentProps<typeof DropdownMenu>",
     },
   }}
 />
@@ -55,13 +56,14 @@ The `OpenIn` component provides a dropdown menu that allows users to open querie
 <TypeTable
   type={{
     children: {
-      description: 'Custom trigger button.',
-      type: 'React.ReactNode',
+      description: "Custom trigger button.",
+      type: "React.ReactNode",
       default: '"Open in chat" button with chevron icon',
     },
-    '...props': {
-      description: 'Props to spread to the underlying DropdownMenuTrigger component.',
-      type: 'React.ComponentProps<typeof DropdownMenuTrigger>',
+    "...props": {
+      description:
+        "Props to spread to the underlying DropdownMenuTrigger component.",
+      type: "React.ComponentProps<typeof DropdownMenuTrigger>",
     },
   }}
 />
@@ -71,12 +73,13 @@ The `OpenIn` component provides a dropdown menu that allows users to open querie
 <TypeTable
   type={{
     className: {
-      description: 'Additional CSS classes to apply to the dropdown content.',
-      type: 'string',
+      description: "Additional CSS classes to apply to the dropdown content.",
+      type: "string",
     },
-    '...props': {
-      description: 'Props to spread to the underlying DropdownMenuContent component.',
-      type: 'React.ComponentProps<typeof DropdownMenuContent>',
+    "...props": {
+      description:
+        "Props to spread to the underlying DropdownMenuContent component.",
+      type: "React.ComponentProps<typeof DropdownMenuContent>",
     },
   }}
 />
@@ -85,9 +88,10 @@ The `OpenIn` component provides a dropdown menu that allows users to open querie
 
 <TypeTable
   type={{
-    '...props': {
-      description: 'Props to spread to the underlying DropdownMenuItem component. The query is automatically provided via context from the parent OpenIn component.',
-      type: 'React.ComponentProps<typeof DropdownMenuItem>',
+    "...props": {
+      description:
+        "Props to spread to the underlying DropdownMenuItem component. The query is automatically provided via context from the parent OpenIn component.",
+      type: "React.ComponentProps<typeof DropdownMenuItem>",
     },
   }}
 />

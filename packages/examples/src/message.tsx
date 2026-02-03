@@ -43,32 +43,31 @@ const messages: {
   }[];
 }[] = [
   {
-    key: nanoid(),
-    from: "user",
-    content: "How do React hooks work and when should I use them?",
     attachments: [
       {
+        filename: "palace-of-fine-arts.jpg",
         id: nanoid(),
+        mediaType: "image/jpeg",
         type: "file",
         url: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=400&fit=crop",
-        mediaType: "image/jpeg",
-        filename: "palace-of-fine-arts.jpg",
       },
       {
+        filename: "react-hooks-guide.pdf",
         id: nanoid(),
+        mediaType: "application/pdf",
         type: "file",
         url: "",
-        mediaType: "application/pdf",
-        filename: "react-hooks-guide.pdf",
       },
     ],
+    content: "How do React hooks work and when should I use them?",
+    from: "user",
+    key: nanoid(),
   },
   {
-    key: nanoid(),
     from: "assistant",
+    key: nanoid(),
     versions: [
       {
-        id: nanoid(),
         content: `# React Hooks Guide
 
 React hooks are functions that let you "hook into" React state and lifecycle features from function components. Here's what you need to know:
@@ -115,9 +114,9 @@ useEffect(() => {
 2. Only call hooks from **React functions** (components or custom hooks)
 
 Would you like to explore more advanced hooks like \`useCallback\` or \`useMemo\`?`,
+        id: nanoid(),
       },
       {
-        id: nanoid(),
         content: `React hooks are special functions that let you use React features in function components. The most common ones are:
 
 - **useState** - for managing component state
@@ -140,9 +139,9 @@ function Counter() {
 \`\`\`
 
 Which specific hook would you like to learn more about?`,
+        id: nanoid(),
       },
       {
-        id: nanoid(),
         content: `Absolutely! React hooks are a powerful feature introduced in React 16.8. They solve several problems:
 
 ## Key Benefits
@@ -163,6 +162,7 @@ Which specific hook would you like to learn more about?`,
 | useMemo | Memoize values |
 
 The beauty of hooks is that they let you reuse stateful logic without changing your component hierarchy. Want to dive into a specific hook?`,
+        id: nanoid(),
       },
     ],
   },

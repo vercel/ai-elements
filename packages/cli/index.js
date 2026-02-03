@@ -43,8 +43,8 @@ const targetUrls = components
 
 const fullCommand = `${commandPrefix} shadcn@latest add ${targetUrls}`;
 const result = spawnSync(fullCommand, {
-  stdio: "inherit",
   shell: true,
+  stdio: "inherit",
 });
 
 if (result.error) {

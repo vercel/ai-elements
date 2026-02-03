@@ -1,8 +1,11 @@
 "use client";
 
+import type { AttachmentData } from "@repo/elements/attachments";
+import type { PromptInputMessage } from "@repo/elements/prompt-input";
+import type { SourceDocumentUIPart } from "ai";
+
 import {
   Attachment,
-  type AttachmentData,
   AttachmentInfo,
   AttachmentPreview,
   AttachmentRemove,
@@ -37,7 +40,6 @@ import {
   PromptInputHoverCard,
   PromptInputHoverCardContent,
   PromptInputHoverCardTrigger,
-  type PromptInputMessage,
   PromptInputProvider,
   PromptInputSubmit,
   PromptInputTab,
@@ -50,7 +52,6 @@ import {
   usePromptInputReferencedSources,
 } from "@repo/elements/prompt-input";
 import { Button } from "@repo/shadcn-ui/components/ui/button";
-import type { SourceDocumentUIPart } from "ai";
 import {
   AtSignIcon,
   CheckIcon,
@@ -63,38 +64,38 @@ import { useState } from "react";
 
 const models = [
   {
+    chef: "OpenAI",
+    chefSlug: "openai",
     id: "gpt-4o",
     name: "GPT-4o",
-    chef: "OpenAI",
-    chefSlug: "openai",
     providers: ["openai", "azure"],
   },
   {
+    chef: "OpenAI",
+    chefSlug: "openai",
     id: "gpt-4o-mini",
     name: "GPT-4o Mini",
-    chef: "OpenAI",
-    chefSlug: "openai",
     providers: ["openai", "azure"],
   },
   {
+    chef: "Anthropic",
+    chefSlug: "anthropic",
     id: "claude-opus-4-20250514",
     name: "Claude 4 Opus",
-    chef: "Anthropic",
-    chefSlug: "anthropic",
     providers: ["anthropic", "azure", "google", "amazon-bedrock"],
   },
   {
+    chef: "Anthropic",
+    chefSlug: "anthropic",
     id: "claude-sonnet-4-20250514",
     name: "Claude 4 Sonnet",
-    chef: "Anthropic",
-    chefSlug: "anthropic",
     providers: ["anthropic", "azure", "google", "amazon-bedrock"],
   },
   {
-    id: "gemini-2.0-flash-exp",
-    name: "Gemini 2.0 Flash",
     chef: "Google",
     chefSlug: "google",
+    id: "gemini-2.0-flash-exp",
+    name: "Gemini 2.0 Flash",
     providers: ["google"],
   },
 ];
@@ -104,25 +105,25 @@ const STREAMING_TIMEOUT = 2000;
 
 const sampleSources: SourceDocumentUIPart[] = [
   {
-    type: "source-document",
+    filename: "packages/elements/src",
+    mediaType: "text/plain",
     sourceId: "1",
     title: "prompt-input.tsx",
-    filename: "packages/elements/src",
-    mediaType: "text/plain",
+    type: "source-document",
   },
   {
-    type: "source-document",
-    sourceId: "2",
-    title: "queue.tsx",
     filename: "apps/test/app/examples",
     mediaType: "text/plain",
+    sourceId: "2",
+    title: "queue.tsx",
+    type: "source-document",
   },
   {
-    type: "source-document",
-    sourceId: "3",
-    title: "queue.tsx",
     filename: "packages/elements/src",
     mediaType: "text/plain",
+    sourceId: "3",
+    title: "queue.tsx",
+    type: "source-document",
   },
 ];
 

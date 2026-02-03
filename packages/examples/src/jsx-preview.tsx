@@ -64,13 +64,14 @@ const Example = () => {
     }, 30);
   }, []);
 
-  useEffect(() => {
-    return () => {
+  useEffect(
+    () => () => {
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
       }
-    };
-  }, []);
+    },
+    []
+  );
 
   return (
     <div className="space-y-4">

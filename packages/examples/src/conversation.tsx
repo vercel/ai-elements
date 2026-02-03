@@ -18,104 +18,104 @@ const messages: {
   role: "user" | "assistant";
 }[] = [
   {
-    key: nanoid(),
     content: "Hello, how are you?",
+    key: nanoid(),
     role: "user",
   },
   {
-    key: nanoid(),
     content: "I'm good, thank you! How can I assist you today?",
+    key: nanoid(),
     role: "assistant",
   },
   {
-    key: nanoid(),
     content: "I'm looking for information about your services.",
+    key: nanoid(),
     role: "user",
   },
   {
-    key: nanoid(),
     content:
       "Sure! We offer a variety of AI solutions. What are you interested in?",
+    key: nanoid(),
     role: "assistant",
   },
   {
-    key: nanoid(),
     content: "I'm interested in natural language processing tools.",
+    key: nanoid(),
     role: "user",
   },
   {
-    key: nanoid(),
     content: "Great choice! We have several NLP APIs. Would you like a demo?",
+    key: nanoid(),
     role: "assistant",
   },
   {
-    key: nanoid(),
     content: "Yes, a demo would be helpful.",
+    key: nanoid(),
     role: "user",
   },
   {
-    key: nanoid(),
     content: "Alright, I can show you a sentiment analysis example. Ready?",
+    key: nanoid(),
     role: "assistant",
   },
   {
-    key: nanoid(),
     content: "Yes, please proceed.",
+    key: nanoid(),
     role: "user",
   },
   {
-    key: nanoid(),
     content: "Here is a sample: 'I love this product!' → Positive sentiment.",
+    key: nanoid(),
     role: "assistant",
   },
   {
-    key: nanoid(),
     content: "Impressive! Can it handle multiple languages?",
+    key: nanoid(),
     role: "user",
   },
   {
-    key: nanoid(),
     content: "Absolutely, our models support over 20 languages.",
+    key: nanoid(),
     role: "assistant",
   },
   {
-    key: nanoid(),
     content: "How do I get started with the API?",
+    key: nanoid(),
     role: "user",
   },
   {
-    key: nanoid(),
     content: "You can sign up on our website and get an API key instantly.",
+    key: nanoid(),
     role: "assistant",
   },
   {
-    key: nanoid(),
     content: "Is there a free trial available?",
+    key: nanoid(),
     role: "user",
   },
   {
-    key: nanoid(),
     content: "Yes, we offer a 14-day free trial with full access.",
+    key: nanoid(),
     role: "assistant",
   },
   {
-    key: nanoid(),
     content: "What kind of support do you provide?",
+    key: nanoid(),
     role: "user",
   },
   {
-    key: nanoid(),
     content: "We provide 24/7 chat and email support for all users.",
+    key: nanoid(),
     role: "assistant",
   },
   {
-    key: nanoid(),
     content: "Thank you for the information!",
+    key: nanoid(),
     role: "user",
   },
   {
-    key: nanoid(),
     content: "You're welcome! Let me know if you have any more questions.",
+    key: nanoid(),
     role: "assistant",
   },
 ];
@@ -137,8 +137,8 @@ const Example = () => {
         setVisibleMessages((prev) => [
           ...prev,
           {
-            key: currentMessage.key,
             content: currentMessage.content,
+            key: currentMessage.key,
             role: currentMessage.role,
           },
         ]);

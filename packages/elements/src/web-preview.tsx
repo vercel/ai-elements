@@ -1,5 +1,7 @@
 "use client";
 
+import type { ComponentProps, ReactNode } from "react";
+
 import { Button } from "@repo/shadcn-ui/components/ui/button";
 import {
   Collapsible,
@@ -15,7 +17,6 @@ import {
 } from "@repo/shadcn-ui/components/ui/tooltip";
 import { cn } from "@repo/shadcn-ui/lib/utils";
 import { ChevronDownIcon } from "lucide-react";
-import type { ComponentProps, ReactNode } from "react";
 import { createContext, useContext, useEffect, useState } from "react";
 
 export interface WebPreviewContextValue {
@@ -56,10 +57,10 @@ export const WebPreview = ({
   };
 
   const contextValue: WebPreviewContextValue = {
-    url,
-    setUrl: handleUrlChange,
     consoleOpen,
     setConsoleOpen,
+    setUrl: handleUrlChange,
+    url,
   };
 
   return (
@@ -192,11 +193,11 @@ export const WebPreviewBody = ({
 };
 
 export type WebPreviewConsoleProps = ComponentProps<"div"> & {
-  logs?: Array<{
+  logs?: {
     level: "log" | "warn" | "error";
     message: string;
     timestamp: Date;
-  }>;
+  }[];
 };
 
 export const WebPreviewConsole = ({

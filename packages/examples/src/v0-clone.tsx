@@ -1,10 +1,11 @@
 "use client";
 
+import type { PromptInputMessage } from "@repo/elements/prompt-input";
+
 import { Conversation, ConversationContent } from "@repo/elements/conversation";
 import { Message, MessageContent } from "@repo/elements/message";
 import {
   PromptInput,
-  type PromptInputMessage,
   PromptInputSubmit,
   PromptInputTextarea,
 } from "@repo/elements/prompt-input";
@@ -26,44 +27,44 @@ interface Chat {
 
 const mockChatHistory = [
   {
+    content: "Build me an agent skills website with a modern dark theme",
     id: "1",
     type: "user" as const,
-    content: "Build me an agent skills website with a modern dark theme",
   },
   {
-    id: "2",
-    type: "assistant" as const,
     content:
       "I'll create a sleek agent skills website with a dark theme. The design will feature a clean layout showcasing various AI agent capabilities with smooth animations.",
+    id: "2",
+    type: "assistant" as const,
   },
   {
+    content: "Add a hero section with a catchy tagline about AI skills",
     id: "3",
     type: "user" as const,
-    content: "Add a hero section with a catchy tagline about AI skills",
   },
   {
-    id: "4",
-    type: "assistant" as const,
     content:
       "Done! I've added a hero section with the tagline 'Supercharge your AI agents with powerful skills'. The section includes a gradient background and animated elements.",
+    id: "4",
+    type: "assistant" as const,
   },
   {
-    id: "5",
-    type: "user" as const,
     content:
       "Can you add a grid of skill cards showing different capabilities?",
+    id: "5",
+    type: "user" as const,
   },
   {
-    id: "6",
-    type: "assistant" as const,
     content:
       "I've added a skills grid featuring cards for Web Search, Code Execution, File Management, API Integration, and more. Each card has an icon and description. Check the preview!",
+    id: "6",
+    type: "assistant" as const,
   },
 ];
 
 const mockChat: Chat = {
-  id: "mock-chat-1",
   demo: "https://skills.sh/",
+  id: "mock-chat-1",
 };
 
 export default function Home() {
@@ -72,11 +73,11 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
   const [chatHistory, setChatHistory] =
     useState<
-      Array<{
+      {
         id: string;
         type: "user" | "assistant";
         content: string;
-      }>
+      }[]
     >(mockChatHistory);
 
   const handleSendMessage = async (promptMessage: PromptInputMessage) => {
@@ -93,19 +94,19 @@ export default function Home() {
 
     setChatHistory((prev) => [
       ...prev,
-      { id: nanoid(), type: "user", content: userMessage },
+      { content: userMessage, id: nanoid(), type: "user" },
     ]);
 
     try {
       const response = await fetch("/api/v0", {
-        method: "POST",
+        body: JSON.stringify({
+          chatId: currentChat?.id,
+          message: userMessage,
+        }),
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          message: userMessage,
-          chatId: currentChat?.id,
-        }),
+        method: "POST",
       });
 
       if (!response.ok) {
@@ -118,9 +119,9 @@ export default function Home() {
       setChatHistory((prev) => [
         ...prev,
         {
+          content: "Generated new app preview. Check the preview panel!",
           id: nanoid(),
           type: "assistant",
-          content: "Generated new app preview. Check the preview panel!",
         },
       ]);
     } catch (error) {
@@ -128,10 +129,10 @@ export default function Home() {
       setChatHistory((prev) => [
         ...prev,
         {
-          id: nanoid(),
-          type: "assistant",
           content:
             "Sorry, there was an error creating your app. Please try again.",
+          id: nanoid(),
+          type: "assistant",
         },
       ]);
     } finally {

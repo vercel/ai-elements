@@ -1,15 +1,16 @@
 import { render } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
+
 import { Canvas } from "../src/canvas";
 import { Toolbar } from "../src/toolbar";
 
-describe("Toolbar", () => {
+describe(Toolbar, () => {
   it("renders within Canvas context", () => {
     const { container } = render(
       <Canvas
         edges={[]}
         nodes={[
-          { id: "1", position: { x: 0, y: 0 }, data: { label: "Node 1" } },
+          { data: { label: "Node 1" }, id: "1", position: { x: 0, y: 0 } },
         ]}
         nodeTypes={{
           custom: () => (
@@ -31,10 +32,10 @@ describe("Toolbar", () => {
         edges={[]}
         nodes={[
           {
+            data: { label: "Node 1" },
             id: "1",
             position: { x: 0, y: 0 },
             type: "custom",
-            data: { label: "Node 1" },
           },
         ]}
         nodeTypes={{
@@ -57,10 +58,10 @@ describe("Toolbar", () => {
         edges={[]}
         nodes={[
           {
+            data: { label: "Node 1" },
             id: "1",
             position: { x: 0, y: 0 },
             type: "custom",
-            data: { label: "Node 1" },
           },
         ]}
         nodeTypes={{

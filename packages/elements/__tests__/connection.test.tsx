@@ -1,22 +1,23 @@
 import { render } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
+
 import { Connection } from "../src/connection";
 
-describe("Connection", () => {
+describe(Connection, () => {
   it("renders with basic props", () => {
     // Mock console.error to suppress React SVG warnings from @xyflow/react
     const consoleError = vi
       .spyOn(console, "error")
-      .mockImplementation(() => undefined);
+      .mockImplementation(() => {});
 
     const props = {
+      connectionStatus: null,
+      fromPosition: "right" as const,
       fromX: 0,
       fromY: 0,
+      toPosition: "left" as const,
       toX: 100,
       toY: 100,
-      fromPosition: "right" as const,
-      toPosition: "left" as const,
-      connectionStatus: null,
     };
 
     const { container } = render(<Connection {...props} />);
@@ -31,13 +32,13 @@ describe("Connection", () => {
 
   it("renders path with correct coordinates", () => {
     const props = {
+      connectionStatus: null,
+      fromPosition: "right" as const,
       fromX: 10,
       fromY: 20,
+      toPosition: "left" as const,
       toX: 100,
       toY: 120,
-      fromPosition: "right" as const,
-      toPosition: "left" as const,
-      connectionStatus: null,
     };
 
     const { container } = render(<Connection {...props} />);
@@ -51,13 +52,13 @@ describe("Connection", () => {
 
   it("renders circle at target position", () => {
     const props = {
+      connectionStatus: null,
+      fromPosition: "right" as const,
       fromX: 0,
       fromY: 0,
+      toPosition: "left" as const,
       toX: 100,
       toY: 100,
-      fromPosition: "right" as const,
-      toPosition: "left" as const,
-      connectionStatus: null,
     };
 
     const { container } = render(<Connection {...props} />);
@@ -72,13 +73,13 @@ describe("Connection", () => {
 
   it("calculates correct bezier curve", () => {
     const props = {
+      connectionStatus: null,
+      fromPosition: "right" as const,
       fromX: 0,
       fromY: 50,
+      toPosition: "left" as const,
       toX: 200,
       toY: 50,
-      fromPosition: "right" as const,
-      toPosition: "left" as const,
-      connectionStatus: null,
     };
 
     const { container } = render(<Connection {...props} />);

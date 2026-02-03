@@ -22,20 +22,20 @@ interface MessageType {
 
 const initialMessages: MessageType[] = [
   {
+    content: "What is React?",
     id: nanoid(),
     role: "user",
-    content: "What is React?",
   },
   {
-    id: nanoid(),
-    role: "assistant",
     content:
       "React is a JavaScript library for building user interfaces. It was developed by Facebook and is now maintained by Meta and a community of developers.",
+    id: nanoid(),
+    role: "assistant",
   },
   {
+    content: "How does component state work?",
     id: nanoid(),
     role: "user",
-    content: "How does component state work?",
   },
 ];
 

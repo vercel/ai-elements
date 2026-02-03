@@ -1,8 +1,9 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
+
 import { Canvas } from "../src/canvas";
 
-describe("Canvas", () => {
+describe(Canvas, () => {
   it("renders with default props", () => {
     const { container } = render(
       <Canvas edges={[]} nodes={[]}>
@@ -34,7 +35,7 @@ describe("Canvas", () => {
 
   it("renders with nodes and edges", () => {
     const nodes = [
-      { id: "1", position: { x: 0, y: 0 }, data: { label: "Node 1" } },
+      { data: { label: "Node 1" }, id: "1", position: { x: 0, y: 0 } },
     ];
     const edges = [{ id: "e1-2", source: "1", target: "2" }];
 

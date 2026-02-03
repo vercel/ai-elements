@@ -11,10 +11,10 @@ import {
 export const docs = defineDocs({
   dir: "content/docs",
   docs: {
-    schema: frontmatterSchema,
     postprocess: {
       includeProcessedMarkdown: true,
     },
+    schema: frontmatterSchema,
   },
   meta: {
     schema: metaSchema,
@@ -24,10 +24,10 @@ export const docs = defineDocs({
 export const components = defineDocs({
   dir: "content/components",
   docs: {
-    schema: frontmatterSchema,
     postprocess: {
       includeProcessedMarkdown: true,
     },
+    schema: frontmatterSchema,
   },
   meta: {
     schema: metaSchema,
@@ -37,10 +37,10 @@ export const components = defineDocs({
 export const examples = defineDocs({
   dir: "content/examples",
   docs: {
-    schema: frontmatterSchema,
     postprocess: {
       includeProcessedMarkdown: true,
     },
+    schema: frontmatterSchema,
   },
   meta: {
     schema: metaSchema,

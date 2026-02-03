@@ -23,7 +23,7 @@ import {
   OpenInv0,
 } from "../src/open-in-chat";
 
-describe("OpenIn", () => {
+describe(OpenIn, () => {
   it("renders children", () => {
     render(
       <OpenIn defaultOpen query="test query">
@@ -36,7 +36,7 @@ describe("OpenIn", () => {
 
   it("throws error when component used outside provider", () => {
     // Suppress console.error for this test
-    const spy = vi.spyOn(console, "error").mockImplementation(() => undefined);
+    const spy = vi.spyOn(console, "error").mockImplementation(() => {});
 
     expect(() => render(<OpenInChatGPT />)).toThrow(
       "OpenIn components must be used within an OpenIn provider"
@@ -46,7 +46,7 @@ describe("OpenIn", () => {
   });
 });
 
-describe("OpenInTrigger", () => {
+describe(OpenInTrigger, () => {
   it("renders default trigger", () => {
     render(
       <OpenIn defaultOpen query="test">
@@ -70,7 +70,7 @@ describe("OpenInTrigger", () => {
   });
 });
 
-describe("OpenInContent", () => {
+describe(OpenInContent, () => {
   it("renders content", () => {
     render(
       <OpenIn defaultOpen query="test">
@@ -81,7 +81,7 @@ describe("OpenInContent", () => {
   });
 });
 
-describe("OpenInItem", () => {
+describe(OpenInItem, () => {
   it("renders menu item", () => {
     render(
       <OpenIn defaultOpen query="test">
@@ -94,7 +94,7 @@ describe("OpenInItem", () => {
   });
 });
 
-describe("OpenInLabel", () => {
+describe(OpenInLabel, () => {
   it("renders label", () => {
     render(
       <OpenIn defaultOpen query="test">
@@ -107,7 +107,7 @@ describe("OpenInLabel", () => {
   });
 });
 
-describe("OpenInSeparator", () => {
+describe(OpenInSeparator, () => {
   it("renders separator", () => {
     render(
       <OpenIn defaultOpen query="test">
@@ -120,7 +120,7 @@ describe("OpenInSeparator", () => {
   });
 });
 
-describe("OpenInChatGPT", () => {
+describe(OpenInChatGPT, () => {
   it("renders ChatGPT link", () => {
     render(
       <OpenIn defaultOpen query="test query">
@@ -139,7 +139,7 @@ describe("OpenInChatGPT", () => {
   });
 });
 
-describe("OpenInClaude", () => {
+describe(OpenInClaude, () => {
   it("renders Claude link", () => {
     render(
       <OpenIn defaultOpen query="test query">
@@ -154,7 +154,7 @@ describe("OpenInClaude", () => {
   });
 });
 
-describe("OpenInT3", () => {
+describe(OpenInT3, () => {
   it("renders T3 link", () => {
     render(
       <OpenIn defaultOpen query="test query">
@@ -169,7 +169,7 @@ describe("OpenInT3", () => {
   });
 });
 
-describe("OpenInScira", () => {
+describe(OpenInScira, () => {
   it("renders Scira link", () => {
     render(
       <OpenIn defaultOpen query="test query">
@@ -184,7 +184,7 @@ describe("OpenInScira", () => {
   });
 });
 
-describe("OpenInv0", () => {
+describe(OpenInv0, () => {
   it("renders V0 link", () => {
     render(
       <OpenIn defaultOpen query="test query">
@@ -199,7 +199,7 @@ describe("OpenInv0", () => {
   });
 });
 
-describe("OpenInCursor", () => {
+describe(OpenInCursor, () => {
   it("renders Cursor link", () => {
     render(
       <OpenIn defaultOpen query="test query">

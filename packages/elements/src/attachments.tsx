@@ -1,5 +1,8 @@
 "use client";
 
+import type { FileUIPart, SourceDocumentUIPart } from "ai";
+import type { ComponentProps, HTMLAttributes, ReactNode } from "react";
+
 import { Button } from "@repo/shadcn-ui/components/ui/button";
 import {
   HoverCard,
@@ -7,7 +10,6 @@ import {
   HoverCardTrigger,
 } from "@repo/shadcn-ui/components/ui/hover-card";
 import { cn } from "@repo/shadcn-ui/lib/utils";
-import type { FileUIPart, SourceDocumentUIPart } from "ai";
 import {
   FileTextIcon,
   GlobeIcon,
@@ -17,7 +19,6 @@ import {
   VideoIcon,
   XIcon,
 } from "lucide-react";
-import type { ComponentProps, HTMLAttributes, ReactNode } from "react";
 import { createContext, useContext, useMemo } from "react";
 
 // ============================================================================
@@ -247,12 +248,12 @@ export const AttachmentPreview = ({
     }
 
     const iconMap: Record<AttachmentMediaCategory, typeof ImageIcon> = {
-      image: ImageIcon,
-      video: VideoIcon,
       audio: Music2Icon,
-      source: GlobeIcon,
       document: FileTextIcon,
+      image: ImageIcon,
+      source: GlobeIcon,
       unknown: PaperclipIcon,
+      video: VideoIcon,
     };
 
     const Icon = iconMap[mediaCategory];

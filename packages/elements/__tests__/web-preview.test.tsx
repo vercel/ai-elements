@@ -13,7 +13,7 @@ import {
   WebPreviewUrl,
 } from "../src/web-preview";
 
-describe("WebPreview", () => {
+describe(WebPreview, () => {
   it("renders children", () => {
     render(<WebPreview>Content</WebPreview>);
     expect(screen.getByText("Content")).toBeInTheDocument();
@@ -42,12 +42,12 @@ describe("WebPreview", () => {
     const input = screen.getByPlaceholderText("Enter URL...");
     await user.type(input, "https://test.com{Enter}");
 
-    expect(onUrlChange).toHaveBeenCalled();
+    expect(onUrlChange).toHaveBeenCalledWith();
   });
 
   it("throws error when component used outside provider", () => {
     // Suppress console.error for this test
-    const spy = vi.spyOn(console, "error").mockImplementation(() => undefined);
+    const spy = vi.spyOn(console, "error").mockImplementation(() => {});
 
     expect(() => render(<WebPreviewUrl />)).toThrow(
       "WebPreview components must be used within a WebPreview"
@@ -57,14 +57,14 @@ describe("WebPreview", () => {
   });
 });
 
-describe("WebPreviewNavigation", () => {
+describe(WebPreviewNavigation, () => {
   it("renders navigation", () => {
     render(<WebPreviewNavigation>Nav content</WebPreviewNavigation>);
     expect(screen.getByText("Nav content")).toBeInTheDocument();
   });
 });
 
-describe("WebPreviewNavigationButton", () => {
+describe(WebPreviewNavigationButton, () => {
   it("renders button with tooltip", () => {
     render(
       <WebPreviewNavigationButton tooltip="Back">
@@ -94,11 +94,11 @@ describe("WebPreviewNavigationButton", () => {
     );
 
     await user.click(screen.getByRole("button"));
-    expect(onClick).toHaveBeenCalled();
+    expect(onClick).toHaveBeenCalledWith();
   });
 });
 
-describe("WebPreviewUrl", () => {
+describe(WebPreviewUrl, () => {
   it("renders URL input", () => {
     render(
       <WebPreview>
@@ -129,7 +129,7 @@ describe("WebPreviewUrl", () => {
   });
 });
 
-describe("WebPreviewBody", () => {
+describe(WebPreviewBody, () => {
   it("renders iframe", () => {
     render(
       <WebPreview>
@@ -161,7 +161,7 @@ describe("WebPreviewBody", () => {
   });
 });
 
-describe("WebPreviewConsole", () => {
+describe(WebPreviewConsole, () => {
   it("renders console", () => {
     render(
       <WebPreview>

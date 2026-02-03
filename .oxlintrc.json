@@ -5,7 +5,5 @@
     "./node_modules/ultracite/config/oxlint/next/.oxlintrc.json",
     "./node_modules/ultracite/config/oxlint/react/.oxlintrc.json"
   ],
-  "ignorePatterns": [
-    "packages/shadcn-ui"
-  ]
+  "ignorePatterns": ["packages/shadcn-ui"]
 }

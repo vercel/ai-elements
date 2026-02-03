@@ -32,24 +32,26 @@ The `Context` component provides a comprehensive view of AI model usage through 
 <TypeTable
   type={{
     maxTokens: {
-      description: 'The total context window size in tokens.',
-      type: 'number',
+      description: "The total context window size in tokens.",
+      type: "number",
     },
     usedTokens: {
-      description: 'The number of tokens currently used.',
-      type: 'number',
+      description: "The number of tokens currently used.",
+      type: "number",
     },
     usage: {
-      description: 'Detailed token usage breakdown from the AI SDK (input, output, reasoning, cached tokens).',
-      type: 'LanguageModelUsage',
+      description:
+        "Detailed token usage breakdown from the AI SDK (input, output, reasoning, cached tokens).",
+      type: "LanguageModelUsage",
     },
     modelId: {
-      description: 'Model identifier for cost calculation (e.g., "openai:gpt-4", "anthropic:claude-3-opus").',
-      type: 'ModelId',
+      description:
+        'Model identifier for cost calculation (e.g., "openai:gpt-4", "anthropic:claude-3-opus").',
+      type: "ModelId",
     },
-    '...props': {
-      description: 'Any other props are spread to the HoverCard component.',
-      type: 'ComponentProps<HoverCard>',
+    "...props": {
+      description: "Any other props are spread to the HoverCard component.",
+      type: "ComponentProps<HoverCard>",
     },
   }}
 />
@@ -59,12 +61,13 @@ The `Context` component provides a comprehensive view of AI model usage through 
 <TypeTable
   type={{
     children: {
-      description: 'Custom trigger element. If not provided, renders a default button with percentage and icon.',
-      type: 'React.ReactNode',
+      description:
+        "Custom trigger element. If not provided, renders a default button with percentage and icon.",
+      type: "React.ReactNode",
     },
-    '...props': {
-      description: 'Props spread to the default button element.',
-      type: 'ComponentProps<Button>',
+    "...props": {
+      description: "Props spread to the default button element.",
+      type: "ComponentProps<Button>",
     },
   }}
 />
@@ -74,12 +77,12 @@ The `Context` component provides a comprehensive view of AI model usage through 
 <TypeTable
   type={{
     className: {
-      description: 'Additional CSS classes for the hover card content.',
-      type: 'string',
+      description: "Additional CSS classes for the hover card content.",
+      type: "string",
     },
-    '...props': {
-      description: 'Props spread to the HoverCardContent component.',
-      type: 'ComponentProps<HoverCardContent>',
+    "...props": {
+      description: "Props spread to the HoverCardContent component.",
+      type: "ComponentProps<HoverCardContent>",
     },
   }}
 />
@@ -89,12 +92,13 @@ The `Context` component provides a comprehensive view of AI model usage through 
 <TypeTable
   type={{
     children: {
-      description: 'Custom header content. If not provided, renders percentage and token count with progress bar.',
-      type: 'React.ReactNode',
+      description:
+        "Custom header content. If not provided, renders percentage and token count with progress bar.",
+      type: "React.ReactNode",
     },
-    '...props': {
-      description: 'Props spread to the header div element.',
-      type: 'ComponentProps<div>',
+    "...props": {
+      description: "Props spread to the header div element.",
+      type: "ComponentProps<div>",
     },
   }}
 />
@@ -104,12 +108,13 @@ The `Context` component provides a comprehensive view of AI model usage through 
 <TypeTable
   type={{
     children: {
-      description: 'Body content, typically containing usage breakdown components.',
-      type: 'React.ReactNode',
+      description:
+        "Body content, typically containing usage breakdown components.",
+      type: "React.ReactNode",
     },
-    '...props': {
-      description: 'Props spread to the body div element.',
-      type: 'ComponentProps<div>',
+    "...props": {
+      description: "Props spread to the body div element.",
+      type: "ComponentProps<div>",
     },
   }}
 />
@@ -119,12 +124,13 @@ The `Context` component provides a comprehensive view of AI model usage through 
 <TypeTable
   type={{
     children: {
-      description: 'Custom footer content. If not provided, renders total cost when modelId is provided.',
-      type: 'React.ReactNode',
+      description:
+        "Custom footer content. If not provided, renders total cost when modelId is provided.",
+      type: "React.ReactNode",
     },
-    '...props': {
-      description: 'Props spread to the footer div element.',
-      type: 'ComponentProps<div>',
+    "...props": {
+      description: "Props spread to the footer div element.",
+      type: "ComponentProps<div>",
     },
   }}
 />
@@ -136,16 +142,17 @@ All usage components (`ContextInputUsage`, `ContextOutputUsage`, `ContextReasoni
 <TypeTable
   type={{
     children: {
-      description: 'Custom content. If not provided, renders token count and cost for the respective usage type.',
-      type: 'React.ReactNode',
+      description:
+        "Custom content. If not provided, renders token count and cost for the respective usage type.",
+      type: "React.ReactNode",
     },
     className: {
-      description: 'Additional CSS classes.',
-      type: 'string',
+      description: "Additional CSS classes.",
+      type: "string",
     },
-    '...props': {
-      description: 'Props spread to the div element.',
-      type: 'ComponentProps<div>',
+    "...props": {
+      description: "Props spread to the div element.",
+      type: "ComponentProps<div>",
     },
   }}
 />

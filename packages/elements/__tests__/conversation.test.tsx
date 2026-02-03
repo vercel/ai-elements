@@ -6,7 +6,7 @@ import { describe, expect, it, vi } from "vitest";
 const mockState = { isAtBottom: true };
 const mockScrollToBottom = vi.fn();
 
-vi.mock("use-stick-to-bottom", () => {
+vi.mock<typeof import("use-stick-to-bottom")>("use-stick-to-bottom", () => {
   const StickToBottomMock = ({ children, ...props }: any) => (
     <div role="log" {...props}>
       {children}
@@ -37,7 +37,7 @@ import {
   messagesToMarkdown,
 } from "../src/conversation";
 
-describe("Conversation", () => {
+describe(Conversation, () => {
   it("renders children", () => {
     render(
       <Conversation>
@@ -66,7 +66,7 @@ describe("Conversation", () => {
   });
 });
 
-describe("ConversationContent", () => {
+describe(ConversationContent, () => {
   it("renders content", () => {
     render(
       <Conversation>
@@ -77,7 +77,7 @@ describe("ConversationContent", () => {
   });
 });
 
-describe("ConversationEmptyState", () => {
+describe(ConversationEmptyState, () => {
   it("renders default empty state", () => {
     render(<ConversationEmptyState />);
     expect(screen.getByText("No messages yet")).toBeInTheDocument();
@@ -112,7 +112,7 @@ describe("ConversationEmptyState", () => {
   });
 });
 
-describe("ConversationScrollButton", () => {
+describe(ConversationScrollButton, () => {
   it("renders scroll button when not at bottom", () => {
     mockState.isAtBottom = false;
 
@@ -181,17 +181,17 @@ describe("ConversationScrollButton", () => {
     const button = screen.getByRole("button");
     await user.click(button);
 
-    expect(mockScrollToBottom).toHaveBeenCalled();
+    expect(mockScrollToBottom).toHaveBeenCalledWith();
 
     mockState.isAtBottom = true;
   });
 });
 
-describe("messagesToMarkdown", () => {
+describe(messagesToMarkdown, () => {
   it("converts messages to markdown format", () => {
     const messages = [
-      { role: "user" as const, content: "Hello" },
-      { role: "assistant" as const, content: "Hi there!" },
+      { content: "Hello", role: "user" as const },
+      { content: "Hi there!", role: "assistant" as const },
     ];
 
     const result = messagesToMarkdown(messages);
@@ -206,8 +206,8 @@ describe("messagesToMarkdown", () => {
 
   it("uses custom formatMessage function", () => {
     const messages = [
-      { role: "user" as const, content: "Hello" },
-      { role: "assistant" as const, content: "Hi" },
+      { content: "Hello", role: "user" as const },
+      { content: "Hi", role: "assistant" as const },
     ];
 
     const customFormat = (msg: { role: string; content: string }) =>
@@ -220,11 +220,11 @@ describe("messagesToMarkdown", () => {
 
   it("handles all role types", () => {
     const messages = [
-      { role: "user" as const, content: "User msg" },
-      { role: "assistant" as const, content: "Assistant msg" },
-      { role: "system" as const, content: "System msg" },
-      { role: "tool" as const, content: "Tool msg" },
-      { role: "data" as const, content: "Data msg" },
+      { content: "User msg", role: "user" as const },
+      { content: "Assistant msg", role: "assistant" as const },
+      { content: "System msg", role: "system" as const },
+      { content: "Tool msg", role: "tool" as const },
+      { content: "Data msg", role: "data" as const },
     ];
 
     const result = messagesToMarkdown(messages);
@@ -237,10 +237,10 @@ describe("messagesToMarkdown", () => {
   });
 });
 
-describe("ConversationDownload", () => {
+describe(ConversationDownload, () => {
   const mockMessages = [
-    { role: "user" as const, content: "Hello" },
-    { role: "assistant" as const, content: "Hi there!" },
+    { content: "Hello", role: "user" as const },
+    { content: "Hi there!", role: "assistant" as const },
   ];
 
   it("renders download button", () => {
@@ -311,9 +311,9 @@ describe("ConversationDownload", () => {
       return originalAppendChild(node);
     });
 
-    vi.spyOn(document.body, "removeChild").mockImplementation((node: Node) => {
-      return originalRemoveChild(node);
-    });
+    vi.spyOn(document.body, "removeChild").mockImplementation((node: Node) =>
+      originalRemoveChild(node)
+    );
 
     render(
       <Conversation>
@@ -324,9 +324,9 @@ describe("ConversationDownload", () => {
     const button = screen.getByRole("button");
     await user.click(button);
 
-    expect(mockCreateObjectURL).toHaveBeenCalled();
-    expect(linkClicked).toBe(true);
-    expect(mockRevokeObjectURL).toHaveBeenCalled();
+    expect(mockCreateObjectURL).toHaveBeenCalledWith();
+    expect(linkClicked).toBeTruthy();
+    expect(mockRevokeObjectURL).toHaveBeenCalledWith();
 
     // Restore
     URL.createObjectURL = originalCreateObjectURL;

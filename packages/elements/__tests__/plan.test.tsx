@@ -1,6 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
+
 import {
   Plan,
   PlanAction,
@@ -12,8 +13,8 @@ import {
   PlanTrigger,
 } from "../src/plan";
 
-describe("Plan", () => {
-  describe("Plan", () => {
+describe(Plan, () => {
+  describe(Plan, () => {
     it("renders with children", () => {
       render(
         <Plan>
@@ -77,7 +78,7 @@ describe("Plan", () => {
     });
   });
 
-  describe("PlanHeader", () => {
+  describe(PlanHeader, () => {
     it("renders with children", () => {
       render(
         <Plan>
@@ -123,7 +124,7 @@ describe("Plan", () => {
     });
   });
 
-  describe("PlanTitle", () => {
+  describe(PlanTitle, () => {
     it("renders text content", () => {
       render(
         <Plan>
@@ -178,7 +179,7 @@ describe("Plan", () => {
       // Suppress console.error for this test
       const consoleSpy = vi
         .spyOn(console, "error")
-        .mockImplementation(() => undefined);
+        .mockImplementation(() => {});
 
       expect(() => {
         render(<PlanTitle>Title</PlanTitle>);
@@ -188,7 +189,7 @@ describe("Plan", () => {
     });
   });
 
-  describe("PlanDescription", () => {
+  describe(PlanDescription, () => {
     it("renders text content", () => {
       render(
         <Plan>
@@ -268,7 +269,7 @@ describe("Plan", () => {
     it("throws error when used outside Plan context", () => {
       const consoleSpy = vi
         .spyOn(console, "error")
-        .mockImplementation(() => undefined);
+        .mockImplementation(() => {});
 
       expect(() => {
         render(<PlanDescription>Description</PlanDescription>);
@@ -278,7 +279,7 @@ describe("Plan", () => {
     });
   });
 
-  describe("PlanAction", () => {
+  describe(PlanAction, () => {
     it("renders with children", () => {
       render(
         <Plan>
@@ -308,7 +309,7 @@ describe("Plan", () => {
     });
   });
 
-  describe("PlanContent", () => {
+  describe(PlanContent, () => {
     it("renders with children", () => {
       render(
         <Plan defaultOpen>
@@ -355,7 +356,7 @@ describe("Plan", () => {
     });
   });
 
-  describe("PlanFooter", () => {
+  describe(PlanFooter, () => {
     it("renders with children", () => {
       render(
         <Plan>
@@ -379,7 +380,7 @@ describe("Plan", () => {
     });
   });
 
-  describe("PlanTrigger", () => {
+  describe(PlanTrigger, () => {
     it("renders toggle button", () => {
       render(
         <Plan>
@@ -469,7 +470,7 @@ describe("Plan", () => {
     });
   });
 
-  describe("Integration", () => {
+  describe("integration", () => {
     it("renders complete plan structure", () => {
       render(
         <Plan defaultOpen>

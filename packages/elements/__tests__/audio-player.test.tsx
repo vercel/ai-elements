@@ -1,5 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+
 import {
   AudioPlayer,
   AudioPlayerControlBar,
@@ -16,11 +17,11 @@ import {
 
 // Mock console methods
 beforeEach(() => {
-  vi.spyOn(console, "warn").mockImplementation(() => undefined);
-  vi.spyOn(console, "error").mockImplementation(() => undefined);
+  vi.spyOn(console, "warn").mockImplementation(() => {});
+  vi.spyOn(console, "error").mockImplementation(() => {});
 });
 
-describe("AudioPlayer", () => {
+describe(AudioPlayer, () => {
   it("renders as MediaController", () => {
     const { container } = render(
       <AudioPlayer>
@@ -72,7 +73,7 @@ describe("AudioPlayer", () => {
   });
 });
 
-describe("AudioPlayerElement", () => {
+describe(AudioPlayerElement, () => {
   it("renders audio element with remote src", () => {
     const { container } = render(
       <AudioPlayerElement src="https://example.com/audio.mp3" />
@@ -84,9 +85,9 @@ describe("AudioPlayerElement", () => {
 
   it("renders audio element with base64 data", () => {
     const mockData = {
-      mediaType: "audio/mpeg",
       base64: "SGVsbG8gV29ybGQ=",
       format: "mp3" as const,
+      mediaType: "audio/mpeg",
       uint8Array: new Uint8Array([72, 101, 108, 108, 111]),
     };
 
@@ -117,7 +118,7 @@ describe("AudioPlayerElement", () => {
   });
 });
 
-describe("AudioPlayerControlBar", () => {
+describe(AudioPlayerControlBar, () => {
   it("renders control bar with ButtonGroup", () => {
     const { container } = render(
       <AudioPlayerControlBar>
@@ -143,7 +144,7 @@ describe("AudioPlayerControlBar", () => {
   });
 });
 
-describe("AudioPlayerPlayButton", () => {
+describe(AudioPlayerPlayButton, () => {
   it("renders play button", () => {
     const { container } = render(<AudioPlayerPlayButton />);
     const button = container.querySelector(
@@ -171,7 +172,7 @@ describe("AudioPlayerPlayButton", () => {
   });
 });
 
-describe("AudioPlayerSeekBackwardButton", () => {
+describe(AudioPlayerSeekBackwardButton, () => {
   it("renders seek backward button", () => {
     const { container } = render(<AudioPlayerSeekBackwardButton />);
     const button = container.querySelector(
@@ -199,7 +200,7 @@ describe("AudioPlayerSeekBackwardButton", () => {
   });
 });
 
-describe("AudioPlayerSeekForwardButton", () => {
+describe(AudioPlayerSeekForwardButton, () => {
   it("renders seek forward button", () => {
     const { container } = render(<AudioPlayerSeekForwardButton />);
     const button = container.querySelector(
@@ -227,7 +228,7 @@ describe("AudioPlayerSeekForwardButton", () => {
   });
 });
 
-describe("AudioPlayerTimeDisplay", () => {
+describe(AudioPlayerTimeDisplay, () => {
   it("renders time display", () => {
     const { container } = render(<AudioPlayerTimeDisplay />);
     const display = container.querySelector(
@@ -255,7 +256,7 @@ describe("AudioPlayerTimeDisplay", () => {
   });
 });
 
-describe("AudioPlayerTimeRange", () => {
+describe(AudioPlayerTimeRange, () => {
   it("renders time range slider", () => {
     const { container } = render(<AudioPlayerTimeRange />);
     const range = container.querySelector(
@@ -275,7 +276,7 @@ describe("AudioPlayerTimeRange", () => {
   });
 });
 
-describe("AudioPlayerDurationDisplay", () => {
+describe(AudioPlayerDurationDisplay, () => {
   it("renders duration display", () => {
     const { container } = render(<AudioPlayerDurationDisplay />);
     const display = container.querySelector(
@@ -303,7 +304,7 @@ describe("AudioPlayerDurationDisplay", () => {
   });
 });
 
-describe("AudioPlayerMuteButton", () => {
+describe(AudioPlayerMuteButton, () => {
   it("renders mute button", () => {
     const { container } = render(<AudioPlayerMuteButton />);
     const button = container.querySelector(
@@ -323,7 +324,7 @@ describe("AudioPlayerMuteButton", () => {
   });
 });
 
-describe("AudioPlayerVolumeRange", () => {
+describe(AudioPlayerVolumeRange, () => {
   it("renders volume range slider", () => {
     const { container } = render(<AudioPlayerVolumeRange />);
     const range = container.querySelector(
@@ -343,7 +344,7 @@ describe("AudioPlayerVolumeRange", () => {
   });
 });
 
-describe("Integration tests", () => {
+describe("integration tests", () => {
   it("renders complete audio player with all controls", () => {
     const { container } = render(
       <AudioPlayer>
@@ -398,9 +399,9 @@ describe("Integration tests", () => {
 
   it("handles AI SDK speech result data format", () => {
     const mockSpeechData = {
-      mediaType: "audio/mpeg",
       base64: "dGVzdA==",
       format: "mp3" as const,
+      mediaType: "audio/mpeg",
       uint8Array: new Uint8Array([116, 101, 115, 116]),
     };
 

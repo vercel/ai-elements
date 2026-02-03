@@ -32,17 +32,17 @@ The `Snippet` component provides a lightweight way to display terminal commands 
 <TypeTable
   type={{
     code: {
-      description: 'The code content to display.',
-      type: 'string',
+      description: "The code content to display.",
+      type: "string",
       required: true,
     },
     children: {
-      description: 'Child elements like SnippetAddon, SnippetInput, etc.',
-      type: 'React.ReactNode',
+      description: "Child elements like SnippetAddon, SnippetInput, etc.",
+      type: "React.ReactNode",
     },
-    '...props': {
-      description: 'Spread to the InputGroup component.',
-      type: 'React.ComponentProps<typeof InputGroup>',
+    "...props": {
+      description: "Spread to the InputGroup component.",
+      type: "React.ComponentProps<typeof InputGroup>",
     },
   }}
 />
@@ -51,9 +51,9 @@ The `Snippet` component provides a lightweight way to display terminal commands 
 
 <TypeTable
   type={{
-    '...props': {
-      description: 'Spread to the InputGroupAddon component.',
-      type: 'React.ComponentProps<typeof InputGroupAddon>',
+    "...props": {
+      description: "Spread to the InputGroupAddon component.",
+      type: "React.ComponentProps<typeof InputGroupAddon>",
     },
   }}
 />
@@ -62,9 +62,9 @@ The `Snippet` component provides a lightweight way to display terminal commands 
 
 <TypeTable
   type={{
-    '...props': {
-      description: 'Spread to the InputGroupText component.',
-      type: 'React.ComponentProps<typeof InputGroupText>',
+    "...props": {
+      description: "Spread to the InputGroupText component.",
+      type: "React.ComponentProps<typeof InputGroupText>",
     },
   }}
 />
@@ -73,8 +73,9 @@ The `Snippet` component provides a lightweight way to display terminal commands 
 
 <TypeTable
   type={{
-    '...props': {
-      description: 'Spread to the InputGroupInput component. Value and readOnly are set automatically.',
+    "...props": {
+      description:
+        "Spread to the InputGroupInput component. Value and readOnly are set automatically.",
       type: 'Omit<React.ComponentProps<typeof InputGroupInput>, "readOnly" | "value">',
     },
   }}
@@ -85,25 +86,25 @@ The `Snippet` component provides a lightweight way to display terminal commands 
 <TypeTable
   type={{
     onCopy: {
-      description: 'Callback fired after a successful copy.',
-      type: '() => void',
+      description: "Callback fired after a successful copy.",
+      type: "() => void",
     },
     onError: {
-      description: 'Callback fired if copying fails.',
-      type: '(error: Error) => void',
+      description: "Callback fired if copying fails.",
+      type: "(error: Error) => void",
     },
     timeout: {
-      description: 'How long to show the copied state (ms).',
-      type: 'number',
-      default: '2000',
+      description: "How long to show the copied state (ms).",
+      type: "number",
+      default: "2000",
     },
     children: {
-      description: 'Custom button content.',
-      type: 'React.ReactNode',
+      description: "Custom button content.",
+      type: "React.ReactNode",
     },
-    '...props': {
-      description: 'Spread to the InputGroupButton component.',
-      type: 'React.ComponentProps<typeof InputGroupButton>',
+    "...props": {
+      description: "Spread to the InputGroupButton component.",
+      type: "React.ComponentProps<typeof InputGroupButton>",
     },
   }}
 />

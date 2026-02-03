@@ -1,6 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
+
 import {
   Queue,
   QueueItem,
@@ -19,7 +20,7 @@ import {
   QueueSectionTrigger,
 } from "../src/queue";
 
-describe("Queue", () => {
+describe(Queue, () => {
   it("renders queue container", () => {
     const { container } = render(<Queue>Content</Queue>);
     expect(container.firstChild).toBeInTheDocument();
@@ -34,7 +35,7 @@ describe("Queue", () => {
   });
 });
 
-describe("QueueItem", () => {
+describe(QueueItem, () => {
   it("renders list item", () => {
     render(
       <ul>
@@ -54,7 +55,7 @@ describe("QueueItem", () => {
   });
 });
 
-describe("QueueItemIndicator", () => {
+describe(QueueItemIndicator, () => {
   it("renders indicator", () => {
     const { container } = render(<QueueItemIndicator />);
     expect(container.firstChild).toBeInTheDocument();
@@ -71,7 +72,7 @@ describe("QueueItemIndicator", () => {
   });
 });
 
-describe("QueueItemContent", () => {
+describe(QueueItemContent, () => {
   it("renders content text", () => {
     render(<QueueItemContent>Task content</QueueItemContent>);
     expect(screen.getByText("Task content")).toBeInTheDocument();
@@ -94,7 +95,7 @@ describe("QueueItemContent", () => {
   });
 });
 
-describe("QueueItemDescription", () => {
+describe(QueueItemDescription, () => {
   it("renders description", () => {
     render(<QueueItemDescription>Description text</QueueItemDescription>);
     expect(screen.getByText("Description text")).toBeInTheDocument();
@@ -109,14 +110,14 @@ describe("QueueItemDescription", () => {
   });
 });
 
-describe("QueueItemActions", () => {
+describe(QueueItemActions, () => {
   it("renders actions container", () => {
     render(<QueueItemActions>Actions</QueueItemActions>);
     expect(screen.getByText("Actions")).toBeInTheDocument();
   });
 });
 
-describe("QueueItemAction", () => {
+describe(QueueItemAction, () => {
   it("renders action button", () => {
     render(<QueueItemAction>Click me</QueueItemAction>);
     expect(
@@ -135,14 +136,14 @@ describe("QueueItemAction", () => {
   });
 });
 
-describe("QueueItemAttachment", () => {
+describe(QueueItemAttachment, () => {
   it("renders attachment container", () => {
     render(<QueueItemAttachment>Attachments</QueueItemAttachment>);
     expect(screen.getByText("Attachments")).toBeInTheDocument();
   });
 });
 
-describe("QueueItemImage", () => {
+describe(QueueItemImage, () => {
   it("renders image", () => {
     render(<QueueItemImage alt="Test image" src="test.jpg" />);
     const img = screen.getByAltText("Test image");
@@ -158,14 +159,14 @@ describe("QueueItemImage", () => {
   });
 });
 
-describe("QueueItemFile", () => {
+describe(QueueItemFile, () => {
   it("renders file name", () => {
     render(<QueueItemFile>document.pdf</QueueItemFile>);
     expect(screen.getByText("document.pdf")).toBeInTheDocument();
   });
 });
 
-describe("QueueList", () => {
+describe(QueueList, () => {
   it("renders list container", () => {
     render(
       <QueueList>
@@ -178,7 +179,7 @@ describe("QueueList", () => {
   });
 });
 
-describe("QueueSection", () => {
+describe(QueueSection, () => {
   it("renders collapsible section", () => {
     render(
       <QueueSection>
@@ -223,12 +224,12 @@ describe("QueueSection", () => {
       // Check if it's either not in the document or has been hidden
       expect(
         contentAfterCollapse === null || !contentAfterCollapse.offsetParent
-      ).toBe(true);
+      ).toBeTruthy();
     });
   });
 });
 
-describe("QueueSectionTrigger", () => {
+describe(QueueSectionTrigger, () => {
   it("renders trigger button", () => {
     render(
       <QueueSection>
@@ -242,7 +243,7 @@ describe("QueueSectionTrigger", () => {
   });
 });
 
-describe("QueueSectionLabel", () => {
+describe(QueueSectionLabel, () => {
   it("renders label with count", () => {
     render(<QueueSectionLabel count={5} label="tasks" />);
     expect(screen.getByText("5 tasks")).toBeInTheDocument();
@@ -257,7 +258,7 @@ describe("QueueSectionLabel", () => {
   });
 });
 
-describe("QueueSectionContent", () => {
+describe(QueueSectionContent, () => {
   it("renders content", () => {
     render(
       <QueueSection>
@@ -269,7 +270,7 @@ describe("QueueSectionContent", () => {
   });
 });
 
-describe("Queue integration", () => {
+describe("queue integration", () => {
   it("renders complete queue structure", () => {
     render(
       <Queue>

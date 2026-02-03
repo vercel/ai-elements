@@ -7,9 +7,10 @@ const DATA_PREFIX_REGEX = /^data:/;
 const BLOB_PREFIX_REGEX = /^blob:/;
 const SUBMIT_REGEX = /submit/i;
 
+import type { AttachmentData } from "../src/attachments";
+
 import {
   Attachment,
-  type AttachmentData,
   AttachmentInfo,
   AttachmentPreview,
   AttachmentRemove,
@@ -127,8 +128,11 @@ beforeEach(() => {
   });
 
   // Mock FileReader
-  window.FileReader = vi.fn(function (this: FileReader) {
-    this.readAsDataURL = vi.fn(function (this: FileReader, _blob: Blob) {
+  window.FileReader = vi.fn(function FileReader(this: FileReader) {
+    this.readAsDataURL = vi.fn(function readAsDataURL(
+      this: FileReader,
+      _blob: Blob
+    ) {
       // Simulate async file reading
       setTimeout(() => {
         this.result = "data:text/plain;base64,dGVzdCBjb250ZW50";
@@ -142,7 +146,7 @@ beforeEach(() => {
   }) as unknown as typeof FileReader;
 });
 
-describe("PromptInput", () => {
+describe(PromptInput, () => {
   it("renders form", () => {
     const onSubmit = vi.fn();
     const { container } = render(
@@ -513,7 +517,7 @@ describe("PromptInput", () => {
   });
 });
 
-describe("PromptInputBody", () => {
+describe(PromptInputBody, () => {
   it("renders body content", () => {
     const onSubmit = vi.fn();
     render(
@@ -525,7 +529,7 @@ describe("PromptInputBody", () => {
   });
 });
 
-describe("PromptInputTextarea", () => {
+describe(PromptInputTextarea, () => {
   it("renders textarea", () => {
     const onSubmit = vi.fn();
     render(
@@ -559,7 +563,7 @@ describe("PromptInputTextarea", () => {
     await user.type(textarea, "Test");
     await user.keyboard("{Enter}");
 
-    expect(onSubmit).toHaveBeenCalled();
+    expect(onSubmit).toHaveBeenCalledWith();
   });
 
   it("does not submit on Shift+Enter", async () => {
@@ -606,9 +610,9 @@ describe("PromptInputTextarea", () => {
 
     // Create a KeyboardEvent with isComposing = true
     const enterKeyDuringComposition = new KeyboardEvent("keydown", {
-      key: "Enter",
       bubbles: true,
       cancelable: true,
+      key: "Enter",
     });
 
     // Mock isComposing to true (simulates IME composition in progress)
@@ -638,7 +642,7 @@ describe("PromptInputTextarea", () => {
   });
 });
 
-describe("PromptInputTools", () => {
+describe(PromptInputTools, () => {
   it("renders tools", () => {
     const onSubmit = vi.fn();
     render(
@@ -652,7 +656,7 @@ describe("PromptInputTools", () => {
   });
 });
 
-describe("PromptInputButton", () => {
+describe(PromptInputButton, () => {
   it("renders button", () => {
     const onSubmit = vi.fn();
     render(
@@ -737,7 +741,7 @@ describe("PromptInputButton", () => {
   });
 });
 
-describe("PromptInputSubmit", () => {
+describe(PromptInputSubmit, () => {
   it("renders submit button", () => {
     const onSubmit = vi.fn();
     render(
@@ -776,7 +780,7 @@ describe("PromptInputSubmit", () => {
   });
 });
 
-describe("PromptInputActionMenu", () => {
+describe(PromptInputActionMenu, () => {
   it("renders action menu", () => {
     const onSubmit = vi.fn();
     render(
@@ -795,7 +799,7 @@ describe("PromptInputActionMenu", () => {
   });
 });
 
-describe("PromptInputSelect", () => {
+describe(PromptInputSelect, () => {
   it("renders model select", () => {
     const onSubmit = vi.fn();
     render(
@@ -816,12 +820,11 @@ describe("PromptInputSelect", () => {
   });
 });
 
-describe("PromptInputProvider", () => {
+describe("promptInputProvider", () => {
   it("provides context to children", async () => {
     const _onSubmit = vi.fn();
-    const { PromptInputProvider, usePromptInputController } = await import(
-      "../src/prompt-input"
-    );
+    const { PromptInputProvider, usePromptInputController } =
+      await import("../src/prompt-input");
 
     const TestComponent = () => {
       const controller = usePromptInputController();
@@ -856,7 +859,7 @@ describe("PromptInputProvider", () => {
     };
 
     // Suppress console.error for this test
-    const spy = vi.spyOn(console, "error").mockImplementation(() => undefined);
+    const spy = vi.spyOn(console, "error").mockImplementation(() => {});
 
     expect(() => render(<TestComponent />)).toThrow();
 
@@ -893,9 +896,8 @@ describe("PromptInputProvider", () => {
   });
 
   it("manages attachments globally", async () => {
-    const { PromptInputProvider, useProviderAttachments } = await import(
-      "../src/prompt-input"
-    );
+    const { PromptInputProvider, useProviderAttachments } =
+      await import("../src/prompt-input");
 
     const file = new File(["test"], "test.txt", { type: "text/plain" });
 
@@ -926,7 +928,7 @@ describe("PromptInputProvider", () => {
   });
 });
 
-describe("File validation", () => {
+describe("file validation", () => {
   it("enforces maxFiles limit", async () => {
     const onSubmit = vi.fn();
     const onError = vi.fn();
@@ -1788,7 +1790,7 @@ describe("File validation", () => {
   });
 });
 
-describe("Drag and drop", () => {
+describe("drag and drop", () => {
   it("renders with globalDrop prop", () => {
     const onSubmit = vi.fn();
 
@@ -1818,7 +1820,7 @@ describe("Drag and drop", () => {
   });
 });
 
-describe("Paste functionality", () => {
+describe("paste functionality", () => {
   it("adds files from clipboard", async () => {
     const onSubmit = vi.fn();
 
@@ -1853,8 +1855,8 @@ describe("Paste functionality", () => {
     pasteEvent.clipboardData = {
       items: [
         {
-          kind: "file",
           getAsFile: () => file,
+          kind: "file",
         },
       ],
     };
@@ -1898,14 +1900,14 @@ describe("Paste functionality", () => {
   });
 });
 
-describe("PromptInputAttachment", () => {
+describe("promptInputAttachment", () => {
   it("renders file attachment with icon", () => {
     const onSubmit = vi.fn();
     const file = {
-      id: "1",
-      type: "file" as const,
       filename: "document.pdf",
+      id: "1",
       mediaType: "application/pdf",
+      type: "file" as const,
       url: "blob:test",
     };
 
@@ -1925,10 +1927,10 @@ describe("PromptInputAttachment", () => {
   it("renders image attachment", () => {
     const onSubmit = vi.fn();
     const file = {
-      id: "1",
-      type: "file" as const,
       filename: "image.png",
+      id: "1",
       mediaType: "image/png",
+      type: "file" as const,
       url: "blob:test",
     };
 
@@ -2105,16 +2107,16 @@ describe("PromptInputAttachment", () => {
   });
 });
 
-describe("PromptInputReferencedSource", () => {
+describe("promptInputReferencedSource", () => {
   it("renders referenced source with globe icon", () => {
     const onSubmit = vi.fn();
     const source = {
+      filename: "doc.pdf",
       id: "1",
-      type: "source-document" as const,
+      mediaType: "application/pdf",
       sourceId: "source-1",
       title: "Test Document",
-      filename: "doc.pdf",
-      mediaType: "application/pdf",
+      type: "source-document" as const,
     };
 
     render(
@@ -2133,12 +2135,12 @@ describe("PromptInputReferencedSource", () => {
   it("falls back to filename when title is not provided", () => {
     const onSubmit = vi.fn();
     const source = {
+      filename: "document.pdf",
       id: "1",
-      type: "source-document" as const,
+      mediaType: "application/pdf",
       sourceId: "source-1",
       title: "",
-      filename: "document.pdf",
-      mediaType: "application/pdf",
+      type: "source-document" as const,
     };
 
     render(
@@ -2166,10 +2168,10 @@ describe("PromptInputReferencedSource", () => {
             data-testid="add-source"
             onClick={() =>
               refs.add({
-                type: "source-document",
+                mediaType: "text/plain",
                 sourceId: "source-1",
                 title: "Test Source",
-                mediaType: "text/plain",
+                type: "source-document",
               })
             }
             type="button"
@@ -2208,7 +2210,7 @@ describe("PromptInputReferencedSource", () => {
   });
 });
 
-describe("PromptInputReferencedSources", () => {
+describe("promptInputReferencedSources", () => {
   it("renders multiple referenced sources", async () => {
     const onSubmit = vi.fn();
     const user = userEvent.setup();
@@ -2222,16 +2224,16 @@ describe("PromptInputReferencedSources", () => {
             onClick={() =>
               refs.add([
                 {
-                  type: "source-document",
+                  mediaType: "text/plain",
                   sourceId: "s1",
                   title: "Source 1",
-                  mediaType: "text/plain",
+                  type: "source-document",
                 },
                 {
-                  type: "source-document",
+                  mediaType: "text/plain",
                   sourceId: "s2",
                   title: "Source 2",
-                  mediaType: "text/plain",
+                  type: "source-document",
                 },
               ])
             }
@@ -2297,10 +2299,10 @@ describe("PromptInputReferencedSources", () => {
             data-testid="add-source"
             onClick={() =>
               refs.add({
-                type: "source-document",
+                mediaType: "text/plain",
                 sourceId: "s1",
                 title: "Test Source",
-                mediaType: "text/plain",
+                type: "source-document",
               })
             }
             type="button"
@@ -2361,10 +2363,10 @@ describe("PromptInputReferencedSources", () => {
             data-testid="add-source"
             onClick={() =>
               refs.add({
-                type: "source-document",
+                mediaType: "text/plain",
                 sourceId: "s1",
                 title: "Test Source",
-                mediaType: "text/plain",
+                type: "source-document",
               })
             }
             type="button"
@@ -2422,10 +2424,10 @@ describe("PromptInputReferencedSources", () => {
             data-testid="add-source"
             onClick={() =>
               refs.add({
-                type: "source-document",
+                mediaType: "text/plain",
                 sourceId: "s1",
                 title: "Test Source",
-                mediaType: "text/plain",
+                type: "source-document",
               })
             }
             type="button"
@@ -2494,10 +2496,10 @@ describe("PromptInputReferencedSources", () => {
             data-testid="add-source"
             onClick={() =>
               refs.add({
-                type: "source-document",
+                mediaType: "text/plain",
                 sourceId: "s1",
                 title: "Test Source",
-                mediaType: "text/plain",
+                type: "source-document",
               })
             }
             type="button"
@@ -2553,7 +2555,7 @@ describe("PromptInputReferencedSources", () => {
   });
 });
 
-describe("PromptInputActionAddAttachments", () => {
+describe(PromptInputActionAddAttachments, () => {
   it("opens file dialog when clicked", async () => {
     const onSubmit = vi.fn();
     const user = userEvent.setup();
@@ -2604,7 +2606,7 @@ describe("PromptInputActionAddAttachments", () => {
   });
 });
 
-describe("PromptInputHeader", () => {
+describe("promptInputHeader", () => {
   it("renders header content", async () => {
     const { PromptInputHeader } = await import("../src/prompt-input");
     const onSubmit = vi.fn();
@@ -2640,7 +2642,7 @@ describe("PromptInputHeader", () => {
   });
 });
 
-describe("PromptInputFooter", () => {
+describe("promptInputFooter", () => {
   it("renders footer content", async () => {
     const { PromptInputFooter } = await import("../src/prompt-input");
     const onSubmit = vi.fn();
@@ -2676,7 +2678,7 @@ describe("PromptInputFooter", () => {
   });
 });
 
-describe("PromptInputHoverCard", () => {
+describe("promptInputHoverCard", () => {
   it("renders hover card", async () => {
     const {
       PromptInputHoverCard,
@@ -2704,7 +2706,7 @@ describe("PromptInputHoverCard", () => {
   });
 });
 
-describe("PromptInputCommand", () => {
+describe("promptInputCommand", () => {
   it("renders command input", async () => {
     const {
       PromptInputCommand,
@@ -2806,11 +2808,10 @@ describe("PromptInputCommand", () => {
   });
 });
 
-describe("PromptInputTab components", () => {
+describe("promptInputTab components", () => {
   it("renders tab list", async () => {
-    const { PromptInputTabsList, PromptInputTab } = await import(
-      "../src/prompt-input"
-    );
+    const { PromptInputTabsList, PromptInputTab } =
+      await import("../src/prompt-input");
     const onSubmit = vi.fn();
 
     render(
@@ -2857,7 +2858,7 @@ describe("PromptInputTab components", () => {
   });
 });
 
-describe("PromptInputSelect components", () => {
+describe("promptInputSelect components", () => {
   it("renders model select with all subcomponents", () => {
     const onSubmit = vi.fn();
 
@@ -2919,7 +2920,7 @@ describe("PromptInputSelect components", () => {
   });
 });
 
-describe("PromptInputActionMenu subcomponents", () => {
+describe("promptInputActionMenu subcomponents", () => {
   it("renders action menu content", async () => {
     const onSubmit = vi.fn();
     const user = userEvent.setup();
@@ -2976,15 +2977,14 @@ describe("PromptInputActionMenu subcomponents", () => {
       await user.click(menuItem);
     });
 
-    expect(onAction).toHaveBeenCalled();
+    expect(onAction).toHaveBeenCalledWith();
   });
 });
 
-describe("Integration tests", () => {
+describe("integration tests", () => {
   it("renders complete prompt input with all components", async () => {
-    const { PromptInputHeader, PromptInputFooter } = await import(
-      "../src/prompt-input"
-    );
+    const { PromptInputHeader, PromptInputFooter } =
+      await import("../src/prompt-input");
     const onSubmit = vi.fn();
 
     render(

@@ -1,5 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
+
 import {
   PackageInfo,
   PackageInfoChangeType,
@@ -12,7 +13,7 @@ import {
   PackageInfoVersion,
 } from "../src/package-info";
 
-describe("PackageInfo", () => {
+describe(PackageInfo, () => {
   it("renders package name", () => {
     render(<PackageInfo name="react" />);
     expect(screen.getByText("react")).toBeInTheDocument();
@@ -39,7 +40,7 @@ describe("PackageInfo", () => {
   });
 });
 
-describe("PackageInfoChangeType", () => {
+describe(PackageInfoChangeType, () => {
   it("renders major change type", () => {
     render(
       <PackageInfo changeType="major" name="test">
@@ -86,7 +87,7 @@ describe("PackageInfoChangeType", () => {
   });
 });
 
-describe("PackageInfoDescription", () => {
+describe(PackageInfoDescription, () => {
   it("renders description", () => {
     render(
       <PackageInfo name="react">
@@ -97,7 +98,7 @@ describe("PackageInfoDescription", () => {
   });
 });
 
-describe("PackageInfoDependencies", () => {
+describe(PackageInfoDependencies, () => {
   it("renders dependencies list", () => {
     render(
       <PackageInfo name="react">
@@ -115,7 +116,7 @@ describe("PackageInfoDependencies", () => {
   });
 });
 
-describe("Composability", () => {
+describe("composability", () => {
   it("renders with custom children", () => {
     render(
       <PackageInfo

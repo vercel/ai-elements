@@ -2,6 +2,7 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { DotIcon } from "lucide-react";
 import { describe, expect, it, vi } from "vitest";
+
 import {
   ChainOfThought,
   ChainOfThoughtContent,
@@ -12,7 +13,7 @@ import {
   ChainOfThoughtStep,
 } from "../src/chain-of-thought";
 
-describe("ChainOfThought", () => {
+describe(ChainOfThought, () => {
   it("renders children", () => {
     render(<ChainOfThought>Content</ChainOfThought>);
     expect(screen.getByText("Content")).toBeInTheDocument();
@@ -20,7 +21,7 @@ describe("ChainOfThought", () => {
 
   it("throws error when component used outside provider", () => {
     // Suppress console.error for this test
-    const spy = vi.spyOn(console, "error").mockImplementation(() => undefined);
+    const spy = vi.spyOn(console, "error").mockImplementation(() => {});
 
     expect(() =>
       render(<ChainOfThoughtHeader>Test</ChainOfThoughtHeader>)
@@ -66,11 +67,11 @@ describe("ChainOfThought", () => {
     const trigger = screen.getByRole("button");
     await user.click(trigger);
 
-    expect(onOpenChange).toHaveBeenCalled();
+    expect(onOpenChange).toHaveBeenCalledWith();
   });
 });
 
-describe("ChainOfThoughtHeader", () => {
+describe(ChainOfThoughtHeader, () => {
   it("renders default text", () => {
     render(
       <ChainOfThought>
@@ -92,7 +93,7 @@ describe("ChainOfThoughtHeader", () => {
   });
 });
 
-describe("ChainOfThoughtStep", () => {
+describe(ChainOfThoughtStep, () => {
   it("renders label", () => {
     render(
       <ChainOfThought>
@@ -142,7 +143,7 @@ describe("ChainOfThoughtStep", () => {
   });
 });
 
-describe("ChainOfThoughtSearchResults", () => {
+describe(ChainOfThoughtSearchResults, () => {
   it("renders search results", () => {
     render(
       <ChainOfThought>
@@ -156,7 +157,7 @@ describe("ChainOfThoughtSearchResults", () => {
   });
 });
 
-describe("ChainOfThoughtSearchResult", () => {
+describe(ChainOfThoughtSearchResult, () => {
   it("renders result badge", () => {
     render(
       <ChainOfThought>
@@ -168,7 +169,7 @@ describe("ChainOfThoughtSearchResult", () => {
   });
 });
 
-describe("ChainOfThoughtContent", () => {
+describe(ChainOfThoughtContent, () => {
   it("renders content", () => {
     render(
       <ChainOfThought defaultOpen>
@@ -181,7 +182,7 @@ describe("ChainOfThoughtContent", () => {
   });
 });
 
-describe("ChainOfThoughtImage", () => {
+describe(ChainOfThoughtImage, () => {
   it("renders image container", () => {
     render(
       <ChainOfThought>

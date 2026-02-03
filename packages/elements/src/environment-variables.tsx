@@ -1,17 +1,13 @@
 "use client";
 
+import type { ComponentProps, HTMLAttributes } from "react";
+
 import { Badge } from "@repo/shadcn-ui/components/ui/badge";
 import { Button } from "@repo/shadcn-ui/components/ui/button";
 import { Switch } from "@repo/shadcn-ui/components/ui/switch";
 import { cn } from "@repo/shadcn-ui/lib/utils";
 import { CheckIcon, CopyIcon, EyeIcon, EyeOffIcon } from "lucide-react";
-import {
-  type ComponentProps,
-  createContext,
-  type HTMLAttributes,
-  useContext,
-  useState,
-} from "react";
+import { createContext, useContext, useState } from "react";
 
 interface EnvironmentVariablesContextType {
   showValues: boolean;
@@ -20,8 +16,8 @@ interface EnvironmentVariablesContextType {
 
 const EnvironmentVariablesContext =
   createContext<EnvironmentVariablesContextType>({
+    setShowValues: () => {},
     showValues: false,
-    setShowValues: () => undefined,
   });
 
 export type EnvironmentVariablesProps = HTMLAttributes<HTMLDivElement> & {
@@ -48,7 +44,7 @@ export const EnvironmentVariables = ({
   };
 
   return (
-    <EnvironmentVariablesContext.Provider value={{ showValues, setShowValues }}>
+    <EnvironmentVariablesContext.Provider value={{ setShowValues, showValues }}>
       <div
         className={cn("rounded-lg border bg-background", className)}
         {...props}

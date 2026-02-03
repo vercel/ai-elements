@@ -24,7 +24,7 @@ import {
   MessageResponse,
 } from "../src/message";
 
-describe("Message", () => {
+describe(Message, () => {
   it("renders children", () => {
     render(<Message from="user">Content</Message>);
     expect(screen.getByText("Content")).toBeInTheDocument();
@@ -50,7 +50,7 @@ describe("Message", () => {
   });
 });
 
-describe("MessageContent", () => {
+describe(MessageContent, () => {
   it("renders content", () => {
     render(<MessageContent>Message text</MessageContent>);
     expect(screen.getByText("Message text")).toBeInTheDocument();
@@ -74,7 +74,7 @@ describe("MessageContent", () => {
   });
 });
 
-describe("MessageActions", () => {
+describe(MessageActions, () => {
   it("renders children", () => {
     render(
       <MessageActions>
@@ -94,7 +94,7 @@ describe("MessageActions", () => {
   });
 });
 
-describe("MessageAction", () => {
+describe(MessageAction, () => {
   it("renders button with children", () => {
     render(<MessageAction>Click me</MessageAction>);
     expect(screen.getByText("Click me")).toBeInTheDocument();
@@ -124,7 +124,7 @@ describe("MessageAction", () => {
   });
 });
 
-describe("MessageResponse", () => {
+describe(MessageResponse, () => {
   it("renders markdown content", () => {
     render(<MessageResponse>Plain text</MessageResponse>);
     expect(screen.getByText("Plain text")).toBeInTheDocument();
@@ -148,7 +148,7 @@ describe("MessageResponse", () => {
   });
 });
 
-describe("MessageBranch", () => {
+describe(MessageBranch, () => {
   it("renders children", () => {
     render(<MessageBranch>Content</MessageBranch>);
     expect(screen.getByText("Content")).toBeInTheDocument();
@@ -156,7 +156,7 @@ describe("MessageBranch", () => {
 
   it("throws error when components used outside MessageBranch provider", () => {
     // Suppress console.error for this test
-    const spy = vi.spyOn(console, "error").mockImplementation(() => undefined);
+    const spy = vi.spyOn(console, "error").mockImplementation(() => {});
 
     expect(() => render(<MessageBranchNext />)).toThrow(
       "MessageBranch components must be used within MessageBranch"
@@ -189,7 +189,7 @@ describe("MessageBranch", () => {
   });
 });
 
-describe("MessageBranchContent", () => {
+describe(MessageBranchContent, () => {
   it("renders active branch", () => {
     render(
       <MessageBranch>
@@ -204,7 +204,7 @@ describe("MessageBranchContent", () => {
   });
 });
 
-describe("MessageBranchSelector", () => {
+describe(MessageBranchSelector, () => {
   it("hides when only one branch", () => {
     render(
       <MessageBranch>
@@ -237,7 +237,7 @@ describe("MessageBranchSelector", () => {
   });
 });
 
-describe("MessageBranchPrevious", () => {
+describe(MessageBranchPrevious, () => {
   it("renders previous button", () => {
     render(
       <MessageBranch>
@@ -304,7 +304,7 @@ describe("MessageBranchPrevious", () => {
   });
 });
 
-describe("MessageBranchNext", () => {
+describe(MessageBranchNext, () => {
   it("renders next button", () => {
     render(
       <MessageBranch>
@@ -322,7 +322,7 @@ describe("MessageBranchNext", () => {
   });
 });
 
-describe("MessageBranchPage", () => {
+describe(MessageBranchPage, () => {
   it("displays current page count", () => {
     render(
       <MessageBranch>

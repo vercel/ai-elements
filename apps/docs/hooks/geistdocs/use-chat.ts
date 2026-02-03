@@ -15,9 +15,9 @@ export const useChatContext = () => {
   const [isOpen, setIsOpen] = useAtom(chatOpenAtom);
 
   return {
-    prompt,
-    setPrompt,
     isOpen,
+    prompt,
     setIsOpen,
+    setPrompt,
   };
 };

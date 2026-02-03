@@ -1,7 +1,9 @@
+import type { NextRequest } from "next/server";
+
+import { ImageResponse } from "next/og";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
-import { ImageResponse } from "next/og";
-import type { NextRequest } from "next/server";
+
 import { getAllPages, getPage, getPageImage } from "@/lib/geistdocs/source";
 
 export const GET = async (
@@ -64,20 +66,20 @@ export const GET = async (
       </div>
     </div>,
     {
-      width: 1200,
-      height: 628,
       fonts: [
         {
-          name: "Geist",
           data: regularFont,
+          name: "Geist",
           weight: 400,
         },
         {
-          name: "Geist",
           data: semiboldFont,
+          name: "Geist",
           weight: 500,
         },
       ],
+      height: 628,
+      width: 1200,
     }
   );
 };

@@ -4,60 +4,60 @@ const withMDX = createMDX();
 
 /** @type {import('next').NextConfig} */
 const config = {
-  reactStrictMode: true,
-
   images: {
     remotePatterns: [
       {
-        protocol: "https",
         hostname: "github.com",
+        protocol: "https",
       },
       {
-        protocol: "https",
         hostname: "placehold.co",
+        protocol: "https",
       },
     ],
+  },
+
+  reactStrictMode: true,
+
+  redirects() {
+    return [
+      {
+        destination: "/",
+        permanent: true,
+        source: "/overview",
+      },
+      {
+        destination: "/examples/chatbot",
+        permanent: true,
+        source: "/examples",
+      },
+      {
+        destination: "/components/attachments",
+        permanent: true,
+        source: "/components",
+      },
+      {
+        destination: "/examples/chatbot",
+        permanent: true,
+        source: "/components/chatbot",
+      },
+      {
+        destination: "https://ui.shadcn.com/docs/components/radix/spinner",
+        permanent: true,
+        source: "/components/loader",
+      },
+    ];
   },
 
   rewrites() {
     return [
       {
+        destination: "/:lang/llms.mdx/:path*",
         source: "/:lang/:path*.mdx",
-        destination: "/:lang/llms.mdx/:path*",
       },
       {
+        destination: "/:lang/llms.mdx/:path*",
         source: "/:lang/:path*.md",
-        destination: "/:lang/llms.mdx/:path*",
-      },
-    ];
-  },
-
-  redirects() {
-    return [
-      {
-        source: "/overview",
-        destination: "/",
-        permanent: true,
-      },
-      {
-        source: "/examples",
-        destination: "/examples/chatbot",
-        permanent: true,
-      },
-      {
-        source: "/components",
-        destination: "/components/attachments",
-        permanent: true,
-      },
-      {
-        source: "/components/chatbot",
-        destination: "/examples/chatbot",
-        permanent: true,
-      },
-      {
-        source: "/components/loader",
-        destination: "https://ui.shadcn.com/docs/components/radix/spinner",
-        permanent: true,
       },
     ];
   },

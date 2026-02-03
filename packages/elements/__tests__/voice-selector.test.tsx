@@ -1,6 +1,7 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+
 import {
   useVoiceSelector,
   VoiceSelector,
@@ -24,11 +25,11 @@ import {
 } from "../src/voice-selector";
 
 beforeEach(() => {
-  vi.spyOn(console, "warn").mockImplementation(() => undefined);
-  vi.spyOn(console, "error").mockImplementation(() => undefined);
+  vi.spyOn(console, "warn").mockImplementation(() => {});
+  vi.spyOn(console, "error").mockImplementation(() => {});
 });
 
-describe("VoiceSelector", () => {
+describe(VoiceSelector, () => {
   it("renders children", () => {
     render(
       <VoiceSelector>
@@ -154,7 +155,7 @@ describe("VoiceSelector", () => {
   });
 
   it("throws error when hook used outside provider", () => {
-    const spy = vi.spyOn(console, "error").mockImplementation(() => undefined);
+    const spy = vi.spyOn(console, "error").mockImplementation(() => {});
 
     const TestComponent = () => {
       useVoiceSelector();
@@ -169,7 +170,7 @@ describe("VoiceSelector", () => {
   });
 });
 
-describe("VoiceSelectorContent", () => {
+describe(VoiceSelectorContent, () => {
   it("renders with default title", () => {
     render(
       <VoiceSelector defaultOpen>
@@ -206,7 +207,7 @@ describe("VoiceSelectorContent", () => {
   });
 });
 
-describe("VoiceSelectorInput", () => {
+describe(VoiceSelectorInput, () => {
   it("renders search input", () => {
     render(
       <VoiceSelector defaultOpen>
@@ -237,7 +238,7 @@ describe("VoiceSelectorInput", () => {
   });
 });
 
-describe("VoiceSelectorList", () => {
+describe(VoiceSelectorList, () => {
   it("renders list items", () => {
     render(
       <VoiceSelector defaultOpen>
@@ -255,7 +256,7 @@ describe("VoiceSelectorList", () => {
   });
 });
 
-describe("VoiceSelectorEmpty", () => {
+describe(VoiceSelectorEmpty, () => {
   it("renders default empty message", () => {
     render(
       <VoiceSelector defaultOpen>
@@ -288,7 +289,7 @@ describe("VoiceSelectorEmpty", () => {
   });
 });
 
-describe("VoiceSelectorGroup", () => {
+describe(VoiceSelectorGroup, () => {
   it("renders group heading", () => {
     render(
       <VoiceSelector defaultOpen>
@@ -306,7 +307,7 @@ describe("VoiceSelectorGroup", () => {
   });
 });
 
-describe("VoiceSelectorItem", () => {
+describe(VoiceSelectorItem, () => {
   it("renders item content", () => {
     render(
       <VoiceSelector defaultOpen>
@@ -341,12 +342,12 @@ describe("VoiceSelectorItem", () => {
     await user.click(item);
 
     await waitFor(() => {
-      expect(onSelect).toHaveBeenCalled();
+      expect(onSelect).toHaveBeenCalledWith();
     });
   });
 });
 
-describe("VoiceSelectorGender", () => {
+describe(VoiceSelectorGender, () => {
   it("renders male icon", () => {
     const { container } = render(
       <VoiceSelector>
@@ -408,7 +409,7 @@ describe("VoiceSelectorGender", () => {
   });
 });
 
-describe("VoiceSelectorAccent", () => {
+describe(VoiceSelectorAccent, () => {
   it("renders American flag emoji", () => {
     render(
       <VoiceSelector>
@@ -482,33 +483,33 @@ describe("VoiceSelectorAccent", () => {
 
   it("renders all supported accents", () => {
     const accents = [
-      { value: "canadian", emoji: "🇨🇦" },
-      { value: "irish", emoji: "🇮🇪" },
-      { value: "scottish", emoji: "🏴󠁧󠁢󠁳󠁣󠁴󠁿" },
-      { value: "indian", emoji: "🇮🇳" },
-      { value: "south-african", emoji: "🇿🇦" },
-      { value: "new-zealand", emoji: "🇳🇿" },
-      { value: "spanish", emoji: "🇪🇸" },
-      { value: "french", emoji: "🇫🇷" },
-      { value: "german", emoji: "🇩🇪" },
-      { value: "italian", emoji: "🇮🇹" },
-      { value: "portuguese", emoji: "🇵🇹" },
-      { value: "brazilian", emoji: "🇧🇷" },
-      { value: "mexican", emoji: "🇲🇽" },
-      { value: "argentinian", emoji: "🇦🇷" },
-      { value: "japanese", emoji: "🇯🇵" },
-      { value: "chinese", emoji: "🇨🇳" },
-      { value: "korean", emoji: "🇰🇷" },
-      { value: "russian", emoji: "🇷🇺" },
-      { value: "arabic", emoji: "🇸🇦" },
-      { value: "dutch", emoji: "🇳🇱" },
-      { value: "swedish", emoji: "🇸🇪" },
-      { value: "norwegian", emoji: "🇳🇴" },
-      { value: "danish", emoji: "🇩🇰" },
-      { value: "finnish", emoji: "🇫🇮" },
-      { value: "polish", emoji: "🇵🇱" },
-      { value: "turkish", emoji: "🇹🇷" },
-      { value: "greek", emoji: "🇬🇷" },
+      { emoji: "🇨🇦", value: "canadian" },
+      { emoji: "🇮🇪", value: "irish" },
+      { emoji: "🏴󠁧󠁢󠁳󠁣󠁴󠁿", value: "scottish" },
+      { emoji: "🇮🇳", value: "indian" },
+      { emoji: "🇿🇦", value: "south-african" },
+      { emoji: "🇳🇿", value: "new-zealand" },
+      { emoji: "🇪🇸", value: "spanish" },
+      { emoji: "🇫🇷", value: "french" },
+      { emoji: "🇩🇪", value: "german" },
+      { emoji: "🇮🇹", value: "italian" },
+      { emoji: "🇵🇹", value: "portuguese" },
+      { emoji: "🇧🇷", value: "brazilian" },
+      { emoji: "🇲🇽", value: "mexican" },
+      { emoji: "🇦🇷", value: "argentinian" },
+      { emoji: "🇯🇵", value: "japanese" },
+      { emoji: "🇨🇳", value: "chinese" },
+      { emoji: "🇰🇷", value: "korean" },
+      { emoji: "🇷🇺", value: "russian" },
+      { emoji: "🇸🇦", value: "arabic" },
+      { emoji: "🇳🇱", value: "dutch" },
+      { emoji: "🇸🇪", value: "swedish" },
+      { emoji: "🇳🇴", value: "norwegian" },
+      { emoji: "🇩🇰", value: "danish" },
+      { emoji: "🇫🇮", value: "finnish" },
+      { emoji: "🇵🇱", value: "polish" },
+      { emoji: "🇹🇷", value: "turkish" },
+      { emoji: "🇬🇷", value: "greek" },
     ];
 
     for (const { value, emoji } of accents) {
@@ -523,7 +524,7 @@ describe("VoiceSelectorAccent", () => {
   });
 });
 
-describe("VoiceSelectorAge", () => {
+describe(VoiceSelectorAge, () => {
   it("renders age text", () => {
     render(
       <VoiceSelector>
@@ -546,7 +547,7 @@ describe("VoiceSelectorAge", () => {
   });
 });
 
-describe("VoiceSelectorName", () => {
+describe(VoiceSelectorName, () => {
   it("renders voice name", () => {
     render(
       <VoiceSelector>
@@ -569,7 +570,7 @@ describe("VoiceSelectorName", () => {
   });
 });
 
-describe("VoiceSelectorDescription", () => {
+describe(VoiceSelectorDescription, () => {
   it("renders description text", () => {
     render(
       <VoiceSelector>
@@ -583,7 +584,7 @@ describe("VoiceSelectorDescription", () => {
   });
 });
 
-describe("VoiceSelectorAttributes", () => {
+describe(VoiceSelectorAttributes, () => {
   it("renders children", () => {
     render(
       <VoiceSelector>
@@ -599,7 +600,7 @@ describe("VoiceSelectorAttributes", () => {
   });
 });
 
-describe("VoiceSelectorBullet", () => {
+describe(VoiceSelectorBullet, () => {
   it("renders bullet character", () => {
     render(
       <VoiceSelector>
@@ -622,7 +623,7 @@ describe("VoiceSelectorBullet", () => {
   });
 });
 
-describe("VoiceSelectorSeparator", () => {
+describe(VoiceSelectorSeparator, () => {
   it("renders separator", () => {
     render(
       <VoiceSelector defaultOpen>
@@ -642,7 +643,7 @@ describe("VoiceSelectorSeparator", () => {
   });
 });
 
-describe("VoiceSelectorShortcut", () => {
+describe(VoiceSelectorShortcut, () => {
   it("renders shortcut text", () => {
     render(
       <VoiceSelector defaultOpen>
@@ -660,7 +661,7 @@ describe("VoiceSelectorShortcut", () => {
   });
 });
 
-describe("VoiceSelectorPreview", () => {
+describe(VoiceSelectorPreview, () => {
   it("renders play button by default", () => {
     render(
       <VoiceSelector>
@@ -707,7 +708,7 @@ describe("VoiceSelectorPreview", () => {
     const button = screen.getByRole("button", { name: "Play preview" });
     await user.click(button);
 
-    expect(onPlay).toHaveBeenCalled();
+    expect(onPlay).toHaveBeenCalledWith();
   });
 
   it("does not trigger item selection when clicked", async () => {
@@ -732,7 +733,7 @@ describe("VoiceSelectorPreview", () => {
     await user.click(button);
 
     await waitFor(() => {
-      expect(onPlay).toHaveBeenCalled();
+      expect(onPlay).toHaveBeenCalledWith();
     });
 
     // onSelect should not be called when clicking the preview button
@@ -831,7 +832,7 @@ describe("useVoiceSelector hook", () => {
   });
 });
 
-describe("Integration tests", () => {
+describe("integration tests", () => {
   it("renders complete voice selector with all metadata", () => {
     render(
       <VoiceSelector defaultOpen>

@@ -1,5 +1,7 @@
 "use client";
 
+import type { ToolUIPart } from "ai";
+
 import { CodeBlock, CodeBlockCopyButton } from "@repo/elements/code-block";
 import {
   Sandbox,
@@ -24,7 +26,6 @@ import {
   StackTraceHeader,
 } from "@repo/elements/stack-trace";
 import { Button } from "@repo/shadcn-ui/components/ui/button";
-import type { ToolUIPart } from "ai";
 import { useState } from "react";
 
 const code = `import math
@@ -47,8 +48,8 @@ if __name__ == "__main__":
     print(primes)`;
 
 const outputs: Record<ToolUIPart["state"], string | undefined> = {
-  "input-streaming": undefined,
   "input-available": undefined,
+  "input-streaming": undefined,
   "output-available": `Found 15 prime numbers up to 50:
 [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47]`,
   "output-error": `TypeError: Cannot read properties of undefined (reading 'map')

@@ -1,8 +1,10 @@
 "use client";
 
+import type { ComponentProps, ReactNode } from "react";
+import type { TProps as JsxParserProps } from "react-jsx-parser";
+
 import { cn } from "@repo/shadcn-ui/lib/utils";
 import { AlertCircle } from "lucide-react";
-import type { ComponentProps, ReactNode } from "react";
 import {
   createContext,
   memo,
@@ -12,7 +14,6 @@ import {
   useRef,
   useState,
 } from "react";
-import type { TProps as JsxParserProps } from "react-jsx-parser";
 import JsxParser from "react-jsx-parser";
 
 interface JSXPreviewContextValue {
@@ -60,12 +61,12 @@ const matchJsxTag = (code: string) => {
   }
 
   return {
+    attributes: attributes.trim(),
+    endIndex: match.index + fullMatch.length,
+    startIndex: match.index,
     tag: fullMatch,
     tagName,
     type,
-    attributes: attributes.trim(),
-    startIndex: match.index,
-    endIndex: match.index + fullMatch.length,
   };
 };
 
@@ -98,7 +99,7 @@ const completeJsxTag = (code: string) => {
   return (
     result +
     stack
-      .reverse()
+      .toReversed()
       .map((tag) => `</${tag}>`)
       .join("")
   );
@@ -139,13 +140,13 @@ export const JSXPreview = memo(
     return (
       <JSXPreviewContext.Provider
         value={{
-          jsx,
-          processedJsx,
-          error,
-          setError,
-          components,
           bindings,
+          components,
+          error,
+          jsx,
           onErrorProp: onError,
+          processedJsx,
+          setError,
         }}
       >
         <div className={cn("relative", className)} {...props}>

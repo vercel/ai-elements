@@ -1,5 +1,7 @@
 "use client";
 
+import type { ComponentProps, ReactNode } from "react";
+
 import { useControllableState } from "@radix-ui/react-use-controllable-state";
 import {
   Collapsible,
@@ -12,9 +14,9 @@ import { code } from "@streamdown/code";
 import { math } from "@streamdown/math";
 import { mermaid } from "@streamdown/mermaid";
 import { BrainIcon, ChevronDownIcon } from "lucide-react";
-import type { ComponentProps, ReactNode } from "react";
 import { createContext, memo, useContext, useEffect, useState } from "react";
 import { Streamdown } from "streamdown";
+
 import { Shimmer } from "./shimmer";
 
 interface ReasoningContextValue {
@@ -61,13 +63,13 @@ export const Reasoning = memo(
     const isExplicitlyClosed = defaultOpen === false;
 
     const [isOpen, setIsOpen] = useControllableState<boolean>({
-      prop: open,
       defaultProp: resolvedDefaultOpen,
       onChange: onOpenChange,
+      prop: open,
     });
     const [duration, setDuration] = useControllableState<number | undefined>({
-      prop: durationProp,
       defaultProp: undefined,
+      prop: durationProp,
     });
 
     const [hasEverStreamed, setHasEverStreamed] = useState(isStreaming);
@@ -119,7 +121,7 @@ export const Reasoning = memo(
 
     return (
       <ReasoningContext.Provider
-        value={{ isStreaming, isOpen, setIsOpen, duration }}
+        value={{ duration, isOpen, isStreaming, setIsOpen }}
       >
         <Collapsible
           className={cn("not-prose mb-4", className)}
@@ -200,7 +202,7 @@ export const ReasoningContent = memo(
       )}
       {...props}
     >
-      <Streamdown plugins={{ code, mermaid, math, cjk }} {...props}>
+      <Streamdown plugins={{ cjk, code, math, mermaid }} {...props}>
         {children}
       </Streamdown>
     </CollapsibleContent>

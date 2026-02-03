@@ -1,8 +1,9 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
+
 import { Shimmer } from "../src/shimmer";
 
-describe("Shimmer", () => {
+describe(Shimmer, () => {
   it("renders text content", () => {
     render(<Shimmer>Loading...</Shimmer>);
     expect(screen.getByText("Loading...")).toBeInTheDocument();
@@ -21,7 +22,7 @@ describe("Shimmer", () => {
   it("renders as heading", () => {
     render(<Shimmer as="h1">Heading</Shimmer>);
     expect(
-      screen.getByRole("heading", { name: "Heading", level: 1 })
+      screen.getByRole("heading", { level: 1, name: "Heading" })
     ).toBeInTheDocument();
   });
 

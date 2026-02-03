@@ -1,5 +1,7 @@
 "use client";
 
+import type { ComponentProps, ReactNode } from "react";
+
 import { useControllableState } from "@radix-ui/react-use-controllable-state";
 import { Button } from "@repo/shadcn-ui/components/ui/button";
 import {
@@ -17,9 +19,7 @@ import {
 import { cn } from "@repo/shadcn-ui/lib/utils";
 import { ChevronsUpDownIcon } from "lucide-react";
 import {
-  type ComponentProps,
   createContext,
-  type ReactNode,
   useCallback,
   useContext,
   useEffect,
@@ -41,12 +41,12 @@ interface MicSelectorContextType {
 
 const MicSelectorContext = createContext<MicSelectorContextType>({
   data: [],
-  value: undefined,
+  onOpenChange: undefined,
   onValueChange: undefined,
   open: false,
-  onOpenChange: undefined,
-  width: 200,
   setWidth: undefined,
+  value: undefined,
+  width: 200,
 });
 
 export type MicSelectorProps = ComponentProps<typeof Popover> & {
@@ -68,13 +68,13 @@ export const MicSelector = ({
 }: MicSelectorProps) => {
   const [value, onValueChange] = useControllableState<string | undefined>({
     defaultProp: defaultValue,
-    prop: controlledValue,
     onChange: controlledOnValueChange,
+    prop: controlledValue,
   });
   const [open, onOpenChange] = useControllableState({
     defaultProp: defaultOpen,
-    prop: controlledOpen,
     onChange: controlledOnOpenChange,
+    prop: controlledOpen,
   });
   const [width, setWidth] = useState(200);
   const { devices, loading, hasPermission, loadDevices } = useAudioDevices();
@@ -89,12 +89,12 @@ export const MicSelector = ({
     <MicSelectorContext.Provider
       value={{
         data: devices,
-        value,
+        onOpenChange,
         onValueChange,
         open,
-        onOpenChange,
-        width,
         setWidth,
+        value,
+        width,
       }}
     >
       <Popover {...props} onOpenChange={onOpenChange} open={open} />
@@ -291,9 +291,9 @@ export const useAudioDevices = () => {
       );
 
       setDevices(audioInputs);
-    } catch (err) {
+    } catch (error) {
       const message =
-        err instanceof Error ? err.message : "Failed to get audio devices";
+        error instanceof Error ? error.message : "Failed to get audio devices";
 
       setError(message);
       console.error("Error getting audio devices:", message);
@@ -326,9 +326,9 @@ export const useAudioDevices = () => {
 
       setDevices(audioInputs);
       setHasPermission(true);
-    } catch (err) {
+    } catch (error) {
       const message =
-        err instanceof Error ? err.message : "Failed to get audio devices";
+        error instanceof Error ? error.message : "Failed to get audio devices";
 
       setError(message);
       console.error("Error getting audio devices:", message);
@@ -362,9 +362,9 @@ export const useAudioDevices = () => {
 
   return {
     devices,
-    loading,
     error,
     hasPermission,
     loadDevices: loadDevicesWithPermission,
+    loading,
   };
 };

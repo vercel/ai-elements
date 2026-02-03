@@ -1,5 +1,7 @@
 "use client";
 
+import type { ComponentProps, HTMLAttributes } from "react";
+
 import { Badge } from "@repo/shadcn-ui/components/ui/badge";
 import {
   Collapsible,
@@ -14,12 +16,7 @@ import {
   CircleIcon,
   XCircleIcon,
 } from "lucide-react";
-import {
-  type ComponentProps,
-  createContext,
-  type HTMLAttributes,
-  useContext,
-} from "react";
+import { createContext, useContext } from "react";
 
 type TestStatus = "passed" | "failed" | "skipped" | "running";
 
@@ -340,7 +337,7 @@ export const Test = ({
   children,
   ...props
 }: TestProps) => (
-  <TestContext.Provider value={{ name, status, duration }}>
+  <TestContext.Provider value={{ duration, name, status }}>
     <div
       className={cn("flex items-center gap-2 px-4 py-2 text-sm", className)}
       {...props}
@@ -357,17 +354,17 @@ export const Test = ({
 );
 
 const statusStyles: Record<TestStatus, string> = {
-  passed: "text-green-600 dark:text-green-400",
   failed: "text-red-600 dark:text-red-400",
-  skipped: "text-yellow-600 dark:text-yellow-400",
+  passed: "text-green-600 dark:text-green-400",
   running: "text-blue-600 dark:text-blue-400",
+  skipped: "text-yellow-600 dark:text-yellow-400",
 };
 
 const statusIcons: Record<TestStatus, React.ReactNode> = {
-  passed: <CheckCircle2Icon className="size-4" />,
   failed: <XCircleIcon className="size-4" />,
-  skipped: <CircleIcon className="size-4" />,
+  passed: <CheckCircle2Icon className="size-4" />,
   running: <CircleDotIcon className="size-4 animate-pulse" />,
+  skipped: <CircleIcon className="size-4" />,
 };
 
 const TestStatusIcon = ({ status }: { status: TestStatus }) => (

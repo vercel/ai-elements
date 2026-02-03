@@ -1,7 +1,7 @@
+import matter from "gray-matter";
 import { existsSync, mkdirSync, rmSync } from "node:fs";
 import { readdir, readFile, writeFile } from "node:fs/promises";
 import { basename, join } from "node:path";
-import matter from "gray-matter";
 
 const ROOT_DIR = join(import.meta.dirname, "../../..");
 const DOCS_DIR = join(ROOT_DIR, "apps/docs/content/docs");
@@ -26,27 +26,24 @@ const discoverMdxFiles = async (dir: string): Promise<string[]> => {
   return results;
 };
 
-const replacePreviews = (content: string): string => {
-  return content.replace(
+const replacePreviews = (content: string): string =>
+  content.replaceAll(
     /<Preview\s+path=["']([^"']+)["']\s*\/>/g,
     (_, path) => `See \`scripts/${path}.tsx\` for this example.`
   );
-};
 
-const removeCustomComponents = (content: string): string => {
-  return content
-    .replace(/<ElementsInstaller\s*\/>/g, "")
-    .replace(/<ElementsDemo\s*\/>/g, "")
-    .replace(/<Callout>\s*[\s\S]*?<\/Callout>/g, "");
-};
+const removeCustomComponents = (content: string): string =>
+  content
+    .replaceAll(/<ElementsInstaller\s*\/>/g, "")
+    .replaceAll(/<ElementsDemo\s*\/>/g, "")
+    .replaceAll(/<Callout>\s*[\s\S]*?<\/Callout>/g, "");
 
-const replaceInstaller = (content: string): string => {
-  return content.replace(
+const replaceInstaller = (content: string): string =>
+  content.replaceAll(
     /<ElementsInstaller\s+path=["']([^"']+)["']\s*\/>/g,
     (_, component) =>
       `\`\`\`bash\nnpx ai-elements@latest add ${component}\n\`\`\``
   );
-};
 
 const PROP_REGEX = /['"]?([^'":\s]+)['"]?\s*:\s*\{([^}]+)\}/g;
 const DESC_REGEX = /description:\s*['"]([^'"]+)['"]/;
@@ -56,20 +53,20 @@ const REQUIRED_REGEX = /required:\s*true/;
 
 const parseTypeTableProps = (
   typeContent: string
-): Array<{
+): {
   name: string;
   type: string;
   description: string;
   required?: boolean;
   default?: string;
-}> => {
-  const props: Array<{
+}[] => {
+  const props: {
     name: string;
     type: string;
     description: string;
     required?: boolean;
     default?: string;
-  }> = [];
+  }[] = [];
 
   const matches = typeContent.matchAll(PROP_REGEX);
 
@@ -83,11 +80,11 @@ const parseTypeTableProps = (
     const requiredMatch = propBody.match(REQUIRED_REGEX);
 
     props.push({
-      name: propName,
-      type: typeMatch?.[1] || "unknown",
-      description: descMatch?.[1] || "",
-      required: !!requiredMatch,
       default: defaultMatch?.[1],
+      description: descMatch?.[1] || "",
+      name: propName,
+      required: !!requiredMatch,
+      type: typeMatch?.[1] || "unknown",
     });
   }
 
@@ -124,9 +121,8 @@ const replaceTypeTables = (content: string): string => {
   });
 };
 
-const removeCallouts = (content: string): string => {
-  return content.replace(/<Callout[^>]*>[\s\S]*?<\/Callout>/g, "");
-};
+const removeCallouts = (content: string): string =>
+  content.replaceAll(/<Callout[^>]*>[\s\S]*?<\/Callout>/g, "");
 
 const transformComponentMdx = (fileContent: string): string => {
   const { content } = matter(fileContent);
@@ -171,11 +167,11 @@ const cleanSkillsDir = (): void => {
 };
 
 const generateOverviewSkill = async (): Promise<void> => {
-  const indexContent = await readFile(join(DOCS_DIR, "index.mdx"), "utf-8");
-  const usageContent = await readFile(join(DOCS_DIR, "usage.mdx"), "utf-8");
+  const indexContent = await readFile(join(DOCS_DIR, "index.mdx"), "utf8");
+  const usageContent = await readFile(join(DOCS_DIR, "usage.mdx"), "utf8");
   const troubleshootingContent = await readFile(
     join(DOCS_DIR, "troubleshooting.mdx"),
-    "utf-8"
+    "utf8"
   );
 
   const skillContent = `---
@@ -210,7 +206,7 @@ const processComponent = async (mdxPath: string): Promise<number> => {
   const referencesDir = join(SKILL_DIR, "references");
   const scriptsDir = join(SKILL_DIR, "scripts");
 
-  const fileContent = await readFile(mdxPath, "utf-8");
+  const fileContent = await readFile(mdxPath, "utf8");
   const { data } = matter(fileContent);
 
   const referenceContent = `# ${data.title}
@@ -230,11 +226,11 @@ ${transformComponentMdx(fileContent)}
     for (const example of examples) {
       const exampleContent = await readFile(
         join(EXAMPLES_DIR, example),
-        "utf-8"
+        "utf8"
       );
       const transformedContent = exampleContent
-        .replace(/@repo\/shadcn-ui\//g, "@/")
-        .replace(/@repo\/elements\//g, "@/components/ai-elements/");
+        .replaceAll('@repo/shadcn-ui/', "@/")
+        .replaceAll('@repo/elements/', "@/components/ai-elements/");
       await writeFile(join(scriptsDir, example), transformedContent);
     }
   }

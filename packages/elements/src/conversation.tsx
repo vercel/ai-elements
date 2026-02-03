@@ -1,9 +1,10 @@
 "use client";
 
+import type { ComponentProps } from "react";
+
 import { Button } from "@repo/shadcn-ui/components/ui/button";
 import { cn } from "@repo/shadcn-ui/lib/utils";
 import { ArrowDownIcon, DownloadIcon } from "lucide-react";
-import type { ComponentProps } from "react";
 import { useCallback } from "react";
 import { StickToBottom, useStickToBottomContext } from "use-stick-to-bottom";
 
@@ -142,7 +143,7 @@ export const ConversationDownload = ({
     const link = document.createElement("a");
     link.href = url;
     link.download = filename;
-    document.body.appendChild(link);
+    document.body.append(link);
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(url);

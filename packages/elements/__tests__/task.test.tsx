@@ -1,6 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
+
 import {
   Task,
   TaskContent,
@@ -9,7 +10,7 @@ import {
   TaskTrigger,
 } from "../src/task";
 
-describe("Task", () => {
+describe(Task, () => {
   it("renders children", () => {
     render(<Task>Content</Task>);
     expect(screen.getByText("Content")).toBeInTheDocument();
@@ -36,7 +37,7 @@ describe("Task", () => {
   });
 });
 
-describe("TaskTrigger", () => {
+describe(TaskTrigger, () => {
   it("renders title", () => {
     render(
       <Task>
@@ -84,7 +85,7 @@ describe("TaskTrigger", () => {
   });
 });
 
-describe("TaskContent", () => {
+describe(TaskContent, () => {
   it("renders content", () => {
     render(
       <Task>
@@ -106,7 +107,7 @@ describe("TaskContent", () => {
   });
 });
 
-describe("TaskItem", () => {
+describe(TaskItem, () => {
   it("renders task item", () => {
     render(<TaskItem>Task item text</TaskItem>);
     expect(screen.getByText("Task item text")).toBeInTheDocument();
@@ -118,7 +119,7 @@ describe("TaskItem", () => {
   });
 });
 
-describe("TaskItemFile", () => {
+describe(TaskItemFile, () => {
   it("renders file badge", () => {
     render(<TaskItemFile>file.txt</TaskItemFile>);
     expect(screen.getByText("file.txt")).toBeInTheDocument();

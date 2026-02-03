@@ -1,9 +1,10 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
+
 import { Snippet, SnippetCopyButton, SnippetInput } from "../src/snippet";
 
-describe("Snippet", () => {
+describe(Snippet, () => {
   it("renders code via SnippetInput", () => {
     render(
       <Snippet code="npm install">
@@ -32,7 +33,7 @@ describe("Snippet", () => {
   });
 });
 
-describe("SnippetCopyButton", () => {
+describe(SnippetCopyButton, () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -75,7 +76,7 @@ describe("SnippetCopyButton", () => {
     const button = screen.getByRole("button");
     await user.click(button);
 
-    expect(onCopy).toHaveBeenCalled();
+    expect(onCopy).toHaveBeenCalledWith();
   });
 
   it("calls onError when clipboard fails", async () => {

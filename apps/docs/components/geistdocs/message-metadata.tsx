@@ -7,6 +7,7 @@ import {
 } from "@repo/elements/sources";
 import { isToolUIPart } from "ai";
 import { BookmarkIcon } from "lucide-react";
+
 import type { MyUIMessage } from "@/app/api/chat/types";
 
 interface MessageMetadataProps {
@@ -30,13 +31,13 @@ export const MessageMetadata = ({
   const tool = isToolUIPart(lastPart) ? lastPart : null;
   const hasTextPart = parts.some((part) => part.type === "text");
 
-  const sources = Array.from(
-    new Map(
+  const sources = [
+    ...new Map(
       parts
         .filter((part) => part.type === "source-url")
         .map((part) => [part.url, part])
-    ).values()
-  );
+    ).values(),
+  ];
 
   // Show loading state when sources exist but text hasn't arrived yet
   if (sources.length > 0 && !hasTextPart && inProgress) {

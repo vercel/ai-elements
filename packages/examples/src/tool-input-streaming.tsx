@@ -4,16 +4,16 @@ import { Tool, ToolContent, ToolHeader, ToolInput } from "@repo/elements/tool";
 import { nanoid } from "nanoid";
 
 const toolCall = {
-  type: "tool-web_search" as const,
-  toolCallId: nanoid(),
-  state: "input-streaming" as const,
+  errorText: undefined,
   input: {
-    query: "latest AI market trends 2024",
-    max_results: 10,
     include_snippets: true,
+    max_results: 10,
+    query: "latest AI market trends 2024",
   },
   output: undefined,
-  errorText: undefined,
+  state: "input-streaming" as const,
+  toolCallId: nanoid(),
+  type: "tool-web_search" as const,
 };
 
 const Example = () => (

@@ -1,5 +1,7 @@
 "use client";
 
+import type { HTMLAttributes, ReactNode } from "react";
+
 import {
   Collapsible,
   CollapsibleContent,
@@ -12,13 +14,7 @@ import {
   FolderIcon,
   FolderOpenIcon,
 } from "lucide-react";
-import {
-  createContext,
-  type HTMLAttributes,
-  type ReactNode,
-  useContext,
-  useState,
-} from "react";
+import { createContext, useContext, useState } from "react";
 
 interface FileTreeContextType {
   expandedPaths: Set<string>;
@@ -29,7 +25,7 @@ interface FileTreeContextType {
 
 const FileTreeContext = createContext<FileTreeContextType>({
   expandedPaths: new Set(),
-  togglePath: () => undefined,
+  togglePath: () => {},
 });
 
 export type FileTreeProps = HTMLAttributes<HTMLDivElement> & {
@@ -66,7 +62,7 @@ export const FileTree = ({
 
   return (
     <FileTreeContext.Provider
-      value={{ expandedPaths, togglePath, selectedPath, onSelect }}
+      value={{ expandedPaths, onSelect, selectedPath, togglePath }}
     >
       <div
         className={cn(
@@ -89,9 +85,9 @@ interface FileTreeFolderContextType {
 }
 
 const FileTreeFolderContext = createContext<FileTreeFolderContextType>({
-  path: "",
-  name: "",
   isExpanded: false,
+  name: "",
+  path: "",
 });
 
 export type FileTreeFolderProps = HTMLAttributes<HTMLDivElement> & {
@@ -112,7 +108,7 @@ export const FileTreeFolder = ({
   const isSelected = selectedPath === path;
 
   return (
-    <FileTreeFolderContext.Provider value={{ path, name, isExpanded }}>
+    <FileTreeFolderContext.Provider value={{ isExpanded, name, path }}>
       <Collapsible onOpenChange={() => togglePath(path)} open={isExpanded}>
         <div
           className={cn("", className)}
@@ -160,8 +156,8 @@ interface FileTreeFileContextType {
 }
 
 const FileTreeFileContext = createContext<FileTreeFileContextType>({
-  path: "",
   name: "",
+  path: "",
 });
 
 export type FileTreeFileProps = HTMLAttributes<HTMLDivElement> & {
@@ -182,7 +178,7 @@ export const FileTreeFile = ({
   const isSelected = selectedPath === path;
 
   return (
-    <FileTreeFileContext.Provider value={{ path, name }}>
+    <FileTreeFileContext.Provider value={{ name, path }}>
       <div
         className={cn(
           "flex cursor-pointer items-center gap-1 rounded px-2 py-1 transition-colors hover:bg-muted/50",

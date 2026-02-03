@@ -1,6 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { XIcon } from "lucide-react";
 import { describe, expect, it } from "vitest";
+
 import {
   Artifact,
   ArtifactAction,
@@ -12,7 +13,7 @@ import {
   ArtifactTitle,
 } from "../src/artifact";
 
-describe("Artifact", () => {
+describe(Artifact, () => {
   it("renders children", () => {
     render(<Artifact>Content</Artifact>);
     expect(screen.getByText("Content")).toBeInTheDocument();
@@ -24,14 +25,14 @@ describe("Artifact", () => {
   });
 });
 
-describe("ArtifactHeader", () => {
+describe(ArtifactHeader, () => {
   it("renders children", () => {
     render(<ArtifactHeader>Header</ArtifactHeader>);
     expect(screen.getByText("Header")).toBeInTheDocument();
   });
 });
 
-describe("ArtifactClose", () => {
+describe(ArtifactClose, () => {
   it("renders default close icon", () => {
     const { container } = render(<ArtifactClose />);
     expect(container.querySelector("svg")).toBeInTheDocument();
@@ -48,21 +49,21 @@ describe("ArtifactClose", () => {
   });
 });
 
-describe("ArtifactTitle", () => {
+describe(ArtifactTitle, () => {
   it("renders title text", () => {
     render(<ArtifactTitle>My Title</ArtifactTitle>);
     expect(screen.getByText("My Title")).toBeInTheDocument();
   });
 });
 
-describe("ArtifactDescription", () => {
+describe(ArtifactDescription, () => {
   it("renders description text", () => {
     render(<ArtifactDescription>Description text</ArtifactDescription>);
     expect(screen.getByText("Description text")).toBeInTheDocument();
   });
 });
 
-describe("ArtifactActions", () => {
+describe(ArtifactActions, () => {
   it("renders action buttons", () => {
     render(
       <ArtifactActions>
@@ -73,7 +74,7 @@ describe("ArtifactActions", () => {
   });
 });
 
-describe("ArtifactAction", () => {
+describe(ArtifactAction, () => {
   it("renders with icon", () => {
     render(<ArtifactAction icon={XIcon} label="Close" />);
     expect(screen.getByText("Close")).toHaveClass("sr-only");
@@ -95,7 +96,7 @@ describe("ArtifactAction", () => {
   });
 });
 
-describe("ArtifactContent", () => {
+describe(ArtifactContent, () => {
   it("renders content", () => {
     render(<ArtifactContent>Main content</ArtifactContent>);
     expect(screen.getByText("Main content")).toBeInTheDocument();

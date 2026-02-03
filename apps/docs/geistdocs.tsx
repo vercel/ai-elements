@@ -11,16 +11,16 @@ export const github = {
 
 export const nav = [
   {
-    label: "Docs",
     href: "/docs",
+    label: "Docs",
   },
   {
-    label: "Components",
     href: "/components",
+    label: "Components",
   },
   {
-    label: "Examples",
     href: "/examples",
+    label: "Examples",
   },
 ];
 

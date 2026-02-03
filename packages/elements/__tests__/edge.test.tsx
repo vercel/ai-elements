@@ -1,10 +1,11 @@
 import { render } from "@testing-library/react";
 import { Position, ReactFlowProvider } from "@xyflow/react";
 import { describe, expect, it, vi } from "vitest";
+
 import { Canvas } from "../src/canvas";
 import { Edge } from "../src/edge";
 
-vi.mock("@xyflow/react", async () => {
+vi.mock<typeof import("@xyflow/react")>("@xyflow/react", async () => {
   const actual = await vi.importActual("@xyflow/react");
   return {
     ...actual,
@@ -13,29 +14,29 @@ vi.mock("@xyflow/react", async () => {
         return {
           id,
           internals: {
-            positionAbsolute: { x: 100, y: 100 },
             handleBounds: {
               source: [
                 {
+                  height: 10,
                   id: "source",
                   position: Position.Right,
+                  width: 10,
                   x: 50,
                   y: 25,
-                  width: 10,
-                  height: 10,
                 },
               ],
               target: [
                 {
+                  height: 10,
                   id: "target",
                   position: Position.Left,
+                  width: 10,
                   x: 5,
                   y: 25,
-                  width: 10,
-                  height: 10,
                 },
               ],
             },
+            positionAbsolute: { x: 100, y: 100 },
           },
         };
       }
@@ -44,11 +45,11 @@ vi.mock("@xyflow/react", async () => {
         return {
           id,
           internals: {
-            positionAbsolute: { x: 100, y: 100 },
             handleBounds: {
               source: [],
               target: [],
             },
+            positionAbsolute: { x: 100, y: 100 },
           },
         };
       }
@@ -57,29 +58,29 @@ vi.mock("@xyflow/react", async () => {
         return {
           id,
           internals: {
-            positionAbsolute: { x: 100, y: 100 },
             handleBounds: {
               source: [
                 {
+                  height: 10,
                   id: "source",
                   position: Position.Top,
+                  width: 10,
                   x: 50,
                   y: 25,
-                  width: 10,
-                  height: 10,
                 },
               ],
               target: [
                 {
+                  height: 10,
                   id: "target",
                   position: Position.Bottom,
+                  width: 10,
                   x: 5,
                   y: 25,
-                  width: 10,
-                  height: 10,
                 },
               ],
             },
+            positionAbsolute: { x: 100, y: 100 },
           },
         };
       }
@@ -88,16 +89,16 @@ vi.mock("@xyflow/react", async () => {
   };
 });
 
-describe("Edge.Temporary", () => {
+describe("edge.Temporary", () => {
   it("renders with basic props", () => {
     const props = {
       id: "temp-edge",
+      sourcePosition: Position.Right,
       sourceX: 0,
       sourceY: 0,
+      targetPosition: Position.Left,
       targetX: 100,
       targetY: 100,
-      sourcePosition: Position.Right,
-      targetPosition: Position.Left,
     };
 
     const edges = [props];
@@ -136,12 +137,12 @@ describe("Edge.Temporary", () => {
   it("renders with custom coordinates", () => {
     const props = {
       id: "temp-edge-2",
+      sourcePosition: Position.Right,
       sourceX: 50,
       sourceY: 50,
+      targetPosition: Position.Left,
       targetX: 200,
       targetY: 200,
-      sourcePosition: Position.Right,
-      targetPosition: Position.Left,
     };
 
     const edges = [props];
@@ -178,23 +179,23 @@ describe("Edge.Temporary", () => {
   });
 });
 
-describe("Edge.Animated", () => {
+describe("edge.Animated", () => {
   it("renders with source and target nodes", () => {
     const props = {
       id: "animated-edge",
       source: "1",
-      target: "2",
+      sourcePosition: Position.Right,
       sourceX: 0,
       sourceY: 0,
+      target: "2",
+      targetPosition: Position.Left,
       targetX: 100,
       targetY: 100,
-      sourcePosition: Position.Right,
-      targetPosition: Position.Left,
     };
 
     const nodes = [
-      { id: "1", position: { x: 0, y: 0 }, data: { label: "Node 1" } },
-      { id: "2", position: { x: 200, y: 0 }, data: { label: "Node 2" } },
+      { data: { label: "Node 1" }, id: "1", position: { x: 0, y: 0 } },
+      { data: { label: "Node 2" }, id: "2", position: { x: 200, y: 0 } },
     ];
 
     const edges = [props];
@@ -214,21 +215,21 @@ describe("Edge.Animated", () => {
   it("renders with markerEnd and style props", () => {
     const props = {
       id: "animated-edge-styled",
+      markerEnd: "url(#arrow)",
       source: "1",
-      target: "2",
+      sourcePosition: Position.Right,
       sourceX: 0,
       sourceY: 0,
+      style: { stroke: "red", strokeWidth: 2 },
+      target: "2",
+      targetPosition: Position.Left,
       targetX: 100,
       targetY: 100,
-      sourcePosition: Position.Right,
-      targetPosition: Position.Left,
-      markerEnd: "url(#arrow)",
-      style: { stroke: "red", strokeWidth: 2 },
     };
 
     const nodes = [
-      { id: "1", position: { x: 0, y: 0 }, data: { label: "Node 1" } },
-      { id: "2", position: { x: 200, y: 0 }, data: { label: "Node 2" } },
+      { data: { label: "Node 1" }, id: "1", position: { x: 0, y: 0 } },
+      { data: { label: "Node 2" }, id: "2", position: { x: 200, y: 0 } },
     ];
 
     const edges = [props];
@@ -249,17 +250,17 @@ describe("Edge.Animated", () => {
     const props = {
       id: "edge-no-source",
       source: "missing",
-      target: "2",
+      sourcePosition: Position.Right,
       sourceX: 0,
       sourceY: 0,
+      target: "2",
+      targetPosition: Position.Left,
       targetX: 100,
       targetY: 100,
-      sourcePosition: Position.Right,
-      targetPosition: Position.Left,
     };
 
     const nodes = [
-      { id: "2", position: { x: 200, y: 0 }, data: { label: "Node 2" } },
+      { data: { label: "Node 2" }, id: "2", position: { x: 200, y: 0 } },
     ];
 
     const edges = [props];
@@ -280,17 +281,17 @@ describe("Edge.Animated", () => {
     const props = {
       id: "edge-no-target",
       source: "1",
-      target: "missing",
+      sourcePosition: Position.Right,
       sourceX: 0,
       sourceY: 0,
+      target: "missing",
+      targetPosition: Position.Left,
       targetX: 100,
       targetY: 100,
-      sourcePosition: Position.Right,
-      targetPosition: Position.Left,
     };
 
     const nodes = [
-      { id: "1", position: { x: 0, y: 0 }, data: { label: "Node 1" } },
+      { data: { label: "Node 1" }, id: "1", position: { x: 0, y: 0 } },
     ];
 
     const edges = [props];

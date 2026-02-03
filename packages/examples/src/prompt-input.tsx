@@ -1,5 +1,7 @@
 "use client";
 
+import type { PromptInputMessage } from "@repo/elements/prompt-input";
+
 import {
   Attachment,
   AttachmentPreview,
@@ -28,7 +30,6 @@ import {
   PromptInputBody,
   PromptInputButton,
   PromptInputFooter,
-  type PromptInputMessage,
   PromptInputProvider,
   PromptInputSubmit,
   PromptInputTextarea,
@@ -40,38 +41,38 @@ import { useState } from "react";
 
 const models = [
   {
+    chef: "OpenAI",
+    chefSlug: "openai",
     id: "gpt-4o",
     name: "GPT-4o",
-    chef: "OpenAI",
-    chefSlug: "openai",
     providers: ["openai", "azure"],
   },
   {
+    chef: "OpenAI",
+    chefSlug: "openai",
     id: "gpt-4o-mini",
     name: "GPT-4o Mini",
-    chef: "OpenAI",
-    chefSlug: "openai",
     providers: ["openai", "azure"],
   },
   {
+    chef: "Anthropic",
+    chefSlug: "anthropic",
     id: "claude-opus-4-20250514",
     name: "Claude 4 Opus",
-    chef: "Anthropic",
-    chefSlug: "anthropic",
     providers: ["anthropic", "azure", "google", "amazon-bedrock"],
   },
   {
+    chef: "Anthropic",
+    chefSlug: "anthropic",
     id: "claude-sonnet-4-20250514",
     name: "Claude 4 Sonnet",
-    chef: "Anthropic",
-    chefSlug: "anthropic",
     providers: ["anthropic", "azure", "google", "amazon-bedrock"],
   },
   {
-    id: "gemini-2.0-flash-exp",
-    name: "Gemini 2.0 Flash",
     chef: "Google",
     chefSlug: "google",
+    id: "gemini-2.0-flash-exp",
+    name: "Gemini 2.0 Flash",
     providers: ["google"],
   },
 ];

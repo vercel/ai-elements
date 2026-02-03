@@ -1,5 +1,7 @@
 "use client";
 
+import type { ComponentProps } from "react";
+
 import { useControllableState } from "@radix-ui/react-use-controllable-state";
 import { Button } from "@repo/shadcn-ui/components/ui/button";
 import {
@@ -14,7 +16,6 @@ import {
   ChevronDownIcon,
   CopyIcon,
 } from "lucide-react";
-import type { ComponentProps } from "react";
 import { createContext, memo, useContext, useMemo, useState } from "react";
 
 // Regex patterns for parsing stack traces
@@ -69,12 +70,12 @@ const parseStackFrame = (line: string): StackFrame => {
       filePath.startsWith("node:") ||
       filePath.includes("internal/");
     return {
-      raw: trimmed,
-      functionName: functionName ?? null,
-      filePath: filePath ?? null,
-      lineNumber: lineNum ? Number.parseInt(lineNum, 10) : null,
       columnNumber: colNum ? Number.parseInt(colNum, 10) : null,
+      filePath: filePath ?? null,
+      functionName: functionName ?? null,
       isInternal,
+      lineNumber: lineNum ? Number.parseInt(lineNum, 10) : null,
+      raw: trimmed,
     };
   }
 
@@ -87,23 +88,23 @@ const parseStackFrame = (line: string): StackFrame => {
       (filePath?.startsWith("node:") ?? false) ||
       (filePath?.includes("internal/") ?? false);
     return {
-      raw: trimmed,
-      functionName: null,
-      filePath: filePath ?? null,
-      lineNumber: lineNum ? Number.parseInt(lineNum, 10) : null,
       columnNumber: colNum ? Number.parseInt(colNum, 10) : null,
+      filePath: filePath ?? null,
+      functionName: null,
       isInternal,
+      lineNumber: lineNum ? Number.parseInt(lineNum, 10) : null,
+      raw: trimmed,
     };
   }
 
   // Fallback: unparseable line
   return {
-    raw: trimmed,
-    functionName: null,
-    filePath: null,
-    lineNumber: null,
     columnNumber: null,
+    filePath: null,
+    functionName: null,
     isInternal: trimmed.includes("node_modules") || trimmed.includes("node:"),
+    lineNumber: null,
+    raw: trimmed,
   };
 };
 
@@ -112,8 +113,8 @@ const parseStackTrace = (trace: string): ParsedStackTrace => {
 
   if (lines.length === 0) {
     return {
-      errorType: null,
       errorMessage: trace,
+      errorType: null,
       frames: [],
       raw: trace,
     };
@@ -137,8 +138,8 @@ const parseStackTrace = (trace: string): ParsedStackTrace => {
     .map(parseStackFrame);
 
   return {
-    errorType,
     errorMessage,
+    errorType,
     frames,
     raw: trace,
   };
@@ -164,20 +165,20 @@ export const StackTrace = memo(
     ...props
   }: StackTraceProps) => {
     const [isOpen, setIsOpen] = useControllableState({
-      prop: open,
       defaultProp: defaultOpen,
       onChange: onOpenChange,
+      prop: open,
     });
 
     const parsedTrace = useMemo(() => parseStackTrace(trace), [trace]);
 
     const contextValue = useMemo(
       () => ({
-        trace: parsedTrace,
-        raw: trace,
         isOpen,
-        setIsOpen,
         onFilePathClick,
+        raw: trace,
+        setIsOpen,
+        trace: parsedTrace,
       }),
       [parsedTrace, trace, isOpen, setIsOpen, onFilePathClick]
     );

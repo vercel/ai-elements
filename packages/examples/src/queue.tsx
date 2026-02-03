@@ -1,5 +1,7 @@
 "use client";
 
+import type { QueueMessage, QueueTodo } from "@repo/elements/queue";
+
 import {
   Queue,
   QueueItem,
@@ -12,12 +14,10 @@ import {
   QueueItemImage,
   QueueItemIndicator,
   QueueList,
-  type QueueMessage,
   QueueSection,
   QueueSectionContent,
   QueueSectionLabel,
   QueueSectionTrigger,
-  type QueueTodo,
 } from "@repo/elements/queue";
 import { ArrowUp, Trash2 } from "lucide-react";
 import { useState } from "react";
@@ -25,71 +25,71 @@ import { useState } from "react";
 const sampleMessages: QueueMessage[] = [
   {
     id: "msg-1",
-    parts: [{ type: "text", text: "How do I set up the project?" }],
+    parts: [{ text: "How do I set up the project?", type: "text" }],
   },
   {
     id: "msg-2",
-    parts: [{ type: "text", text: "What is the roadmap for Q4?" }],
+    parts: [{ text: "What is the roadmap for Q4?", type: "text" }],
   },
   {
     id: "msg-3",
     parts: [
-      { type: "text", text: "Update the default logo to this png." },
+      { text: "Update the default logo to this png.", type: "text" },
       {
-        type: "file",
-        url: "https://github.com/haydenbleasel.png",
         filename: "setup-guide.png",
         mediaType: "image/png",
+        type: "file",
+        url: "https://github.com/haydenbleasel.png",
       },
     ],
   },
   {
     id: "msg-4",
-    parts: [{ type: "text", text: "Please generate a changelog." }],
+    parts: [{ text: "Please generate a changelog.", type: "text" }],
   },
   {
     id: "msg-5",
-    parts: [{ type: "text", text: "Add dark mode support." }],
+    parts: [{ text: "Add dark mode support.", type: "text" }],
   },
   {
     id: "msg-6",
-    parts: [{ type: "text", text: "Optimize database queries." }],
+    parts: [{ text: "Optimize database queries.", type: "text" }],
   },
   {
     id: "msg-7",
-    parts: [{ type: "text", text: "Set up CI/CD pipeline." }],
+    parts: [{ text: "Set up CI/CD pipeline.", type: "text" }],
   },
 ];
 
 const sampleTodos: QueueTodo[] = [
   {
-    id: "todo-1",
-    title: "Write project documentation",
     description: "Complete the README and API docs",
+    id: "todo-1",
     status: "completed",
+    title: "Write project documentation",
   },
   {
     id: "todo-2",
+    status: "pending",
     title: "Implement authentication",
-    status: "pending",
   },
   {
-    id: "todo-3",
-    title: "Fix bug #42",
     description: "Resolve crash on settings page",
+    id: "todo-3",
     status: "pending",
+    title: "Fix bug #42",
   },
   {
-    id: "todo-4",
-    title: "Refactor queue logic",
     description: "Unify queue and todo state management",
+    id: "todo-4",
     status: "pending",
+    title: "Refactor queue logic",
   },
   {
-    id: "todo-5",
-    title: "Add unit tests",
     description: "Increase test coverage for hooks",
+    id: "todo-5",
     status: "pending",
+    title: "Add unit tests",
   },
 ];
 

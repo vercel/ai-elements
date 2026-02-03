@@ -34,20 +34,20 @@ The `ChainOfThought` component provides a visual representation of an AI's reaso
 <TypeTable
   type={{
     open: {
-      description: 'Controlled open state of the collapsible.',
-      type: 'boolean',
+      description: "Controlled open state of the collapsible.",
+      type: "boolean",
     },
     defaultOpen: {
-      description: 'Default open state when uncontrolled.',
-      type: 'boolean',
-      default: 'false',
+      description: "Default open state when uncontrolled.",
+      type: "boolean",
+      default: "false",
     },
     onOpenChange: {
-      description: 'Callback when the open state changes.',
-      type: '(open: boolean) => void',
+      description: "Callback when the open state changes.",
+      type: "(open: boolean) => void",
     },
-    '...props': {
-      description: 'Any other props are spread to the root div element.',
+    "...props": {
+      description: "Any other props are spread to the root div element.",
       type: 'React.ComponentProps<"div">',
     },
   }}
@@ -58,13 +58,14 @@ The `ChainOfThought` component provides a visual representation of an AI's reaso
 <TypeTable
   type={{
     children: {
-      description: 'Custom header text.',
-      type: 'React.ReactNode',
+      description: "Custom header text.",
+      type: "React.ReactNode",
       default: '"Chain of Thought"',
     },
-    '...props': {
-      description: 'Any other props are spread to the CollapsibleTrigger component.',
-      type: 'React.ComponentProps<typeof CollapsibleTrigger>',
+    "...props": {
+      description:
+        "Any other props are spread to the CollapsibleTrigger component.",
+      type: "React.ComponentProps<typeof CollapsibleTrigger>",
     },
   }}
 />
@@ -74,25 +75,25 @@ The `ChainOfThought` component provides a visual representation of an AI's reaso
 <TypeTable
   type={{
     icon: {
-      description: 'Icon to display for the step.',
-      type: 'LucideIcon',
-      default: 'DotIcon',
+      description: "Icon to display for the step.",
+      type: "LucideIcon",
+      default: "DotIcon",
     },
     label: {
-      description: 'The main text label for the step.',
-      type: 'string',
+      description: "The main text label for the step.",
+      type: "string",
     },
     description: {
-      description: 'Optional description text shown below the label.',
-      type: 'string',
+      description: "Optional description text shown below the label.",
+      type: "string",
     },
     status: {
-      description: 'Visual status of the step.',
+      description: "Visual status of the step.",
       type: '"complete" | "active" | "pending"',
       default: '"complete"',
     },
-    '...props': {
-      description: 'Any other props are spread to the root div element.',
+    "...props": {
+      description: "Any other props are spread to the root div element.",
       type: 'React.ComponentProps<"div">',
     },
   }}
@@ -102,8 +103,8 @@ The `ChainOfThought` component provides a visual representation of an AI's reaso
 
 <TypeTable
   type={{
-    '...props': {
-      description: 'Any props are spread to the container div element.',
+    "...props": {
+      description: "Any props are spread to the container div element.",
       type: 'React.ComponentProps<"div">',
     },
   }}
@@ -113,9 +114,9 @@ The `ChainOfThought` component provides a visual representation of an AI's reaso
 
 <TypeTable
   type={{
-    '...props': {
-      description: 'Any props are spread to the Badge component.',
-      type: 'React.ComponentProps<typeof Badge>',
+    "...props": {
+      description: "Any props are spread to the Badge component.",
+      type: "React.ComponentProps<typeof Badge>",
     },
   }}
 />
@@ -124,9 +125,9 @@ The `ChainOfThought` component provides a visual representation of an AI's reaso
 
 <TypeTable
   type={{
-    '...props': {
-      description: 'Any props are spread to the CollapsibleContent component.',
-      type: 'React.ComponentProps<typeof CollapsibleContent>',
+    "...props": {
+      description: "Any props are spread to the CollapsibleContent component.",
+      type: "React.ComponentProps<typeof CollapsibleContent>",
     },
   }}
 />
@@ -136,11 +137,11 @@ The `ChainOfThought` component provides a visual representation of an AI's reaso
 <TypeTable
   type={{
     caption: {
-      description: 'Optional caption text displayed below the image.',
-      type: 'string',
+      description: "Optional caption text displayed below the image.",
+      type: "string",
     },
-    '...props': {
-      description: 'Any other props are spread to the container div element.',
+    "...props": {
+      description: "Any other props are spread to the container div element.",
       type: 'React.ComponentProps<"div">',
     },
   }}

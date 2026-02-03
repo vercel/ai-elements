@@ -1,12 +1,14 @@
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { codeToHtml } from "shiki";
+
 import {
   CodeBlockTab,
   CodeBlockTabs,
   CodeBlockTabsList,
   CodeBlockTabsTrigger,
 } from "@/components/geistdocs/code-block-tabs";
+
 import { CodeBlock } from "../geistdocs/code-block";
 
 interface ElementsInstallerProps {
@@ -28,12 +30,12 @@ export const ElementsInstaller = async ({ path }: ElementsInstallerProps) => {
           "src",
           `${path}.tsx`
         ),
-        "utf-8"
+        "utf8"
       );
 
       sourceCode = code
-        .replace(/@ai-studio\/shadcn-ui\//g, "@/")
-        .replace(/@ai-studio\//g, "@/components/ai-elements/");
+        .replaceAll('@ai-studio/shadcn-ui/', "@/")
+        .replaceAll('@ai-studio/', "@/components/ai-elements/");
     } catch (error) {
       console.error(`Failed to load component from path: ${path}`, error);
     }
@@ -57,8 +59,8 @@ export const ElementsInstaller = async ({ path }: ElementsInstallerProps) => {
   const highlightedCode = await codeToHtml(sourceCode, {
     lang: "tsx",
     themes: {
-      light: "github-light",
       dark: "github-dark",
+      light: "github-light",
     },
   });
 

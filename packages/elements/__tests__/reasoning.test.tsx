@@ -1,13 +1,14 @@
 import { act, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
+
 import {
   Reasoning,
   ReasoningContent,
   ReasoningTrigger,
 } from "../src/reasoning";
 
-describe("Reasoning", () => {
+describe(Reasoning, () => {
   it("renders children", () => {
     render(<Reasoning>Content</Reasoning>);
     expect(screen.getByText("Content")).toBeInTheDocument();
@@ -15,7 +16,7 @@ describe("Reasoning", () => {
 
   it("throws error when components used outside Reasoning provider", () => {
     // Suppress console.error for this test
-    const spy = vi.spyOn(console, "error").mockImplementation(() => undefined);
+    const spy = vi.spyOn(console, "error").mockImplementation(() => {});
 
     expect(() => render(<ReasoningTrigger />)).toThrow(
       "Reasoning components must be used within Reasoning"
@@ -78,7 +79,7 @@ describe("Reasoning", () => {
     const trigger = screen.getByRole("button");
     await user.click(trigger);
 
-    expect(onOpenChange).toHaveBeenCalled();
+    expect(onOpenChange).toHaveBeenCalledWith();
   });
 
   it("auto-closes after delay when streaming stops", async () => {
@@ -143,7 +144,7 @@ describe("Reasoning", () => {
   });
 });
 
-describe("ReasoningTrigger", () => {
+describe(ReasoningTrigger, () => {
   it("renders default thinking message when streaming", () => {
     render(
       <Reasoning isStreaming>
@@ -227,7 +228,7 @@ describe("ReasoningTrigger", () => {
   });
 });
 
-describe("ReasoningContent", () => {
+describe(ReasoningContent, () => {
   it("renders reasoning text", () => {
     render(
       <Reasoning defaultOpen>

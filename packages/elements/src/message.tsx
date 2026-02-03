@@ -1,5 +1,8 @@
 "use client";
 
+import type { UIMessage } from "ai";
+import type { ComponentProps, HTMLAttributes, ReactElement } from "react";
+
 import { Button } from "@repo/shadcn-ui/components/ui/button";
 import {
   ButtonGroup,
@@ -16,9 +19,7 @@ import { cjk } from "@streamdown/cjk";
 import { code } from "@streamdown/code";
 import { math } from "@streamdown/math";
 import { mermaid } from "@streamdown/mermaid";
-import type { UIMessage } from "ai";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
-import type { ComponentProps, HTMLAttributes, ReactElement } from "react";
 import { createContext, memo, useContext, useEffect, useState } from "react";
 import { Streamdown } from "streamdown";
 
@@ -162,12 +163,12 @@ export const MessageBranch = ({
   };
 
   const contextValue: MessageBranchContextType = {
-    currentBranch,
-    totalBranches: branches.length,
-    goToPrevious,
-    goToNext,
     branches,
+    currentBranch,
+    goToNext,
+    goToPrevious,
     setBranches,
+    totalBranches: branches.length,
   };
 
   return (
@@ -311,7 +312,7 @@ export const MessageResponse = memo(
         "size-full [&>*:first-child]:mt-0 [&>*:last-child]:mb-0",
         className
       )}
-      plugins={{ code, mermaid, math, cjk }}
+      plugins={{ cjk, code, math, mermaid }}
       {...props}
     />
   ),

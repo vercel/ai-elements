@@ -23,13 +23,13 @@ The `SchemaDisplay` component visualizes REST API endpoints with HTTP methods, p
 
 ## Method Colors
 
-| Method | Color |
-|--------|-------|
-| `GET` | Green |
-| `POST` | Blue |
-| `PUT` | Orange |
-| `PATCH` | Yellow |
-| `DELETE` | Red |
+| Method   | Color  |
+| -------- | ------ |
+| `GET`    | Green  |
+| `POST`   | Blue   |
+| `PUT`    | Orange |
+| `PATCH`  | Yellow |
+| `DELETE` | Red    |
 
 ## Examples
 
@@ -56,28 +56,28 @@ The `SchemaDisplay` component visualizes REST API endpoints with HTTP methods, p
 <TypeTable
   type={{
     method: {
-      description: 'HTTP method.',
+      description: "HTTP method.",
       type: '"GET" | "POST" | "PUT" | "PATCH" | "DELETE"',
     },
     path: {
-      description: 'API endpoint path.',
-      type: 'string',
+      description: "API endpoint path.",
+      type: "string",
     },
     description: {
-      description: 'Endpoint description.',
-      type: 'string',
+      description: "Endpoint description.",
+      type: "string",
     },
     parameters: {
-      description: 'URL/query parameters.',
-      type: 'SchemaParameter[]',
+      description: "URL/query parameters.",
+      type: "SchemaParameter[]",
     },
     requestBody: {
-      description: 'Request body properties.',
-      type: 'SchemaProperty[]',
+      description: "Request body properties.",
+      type: "SchemaProperty[]",
     },
     responseBody: {
-      description: 'Response body properties.',
-      type: 'SchemaProperty[]',
+      description: "Response body properties.",
+      type: "SchemaProperty[]",
     },
   }}
 />
@@ -103,7 +103,7 @@ interface SchemaProperty {
   required?: boolean;
   description?: string;
   properties?: SchemaProperty[]; // For objects
-  items?: SchemaProperty;        // For arrays
+  items?: SchemaProperty; // For arrays
 }
 ```
 

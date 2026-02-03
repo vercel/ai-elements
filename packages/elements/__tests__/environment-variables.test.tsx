@@ -1,6 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
+
 import {
   EnvironmentVariable,
   EnvironmentVariableCopyButton,
@@ -13,7 +14,7 @@ import {
   EnvironmentVariablesToggle,
 } from "../src/environment-variables";
 
-describe("EnvironmentVariables", () => {
+describe(EnvironmentVariables, () => {
   it("renders children", () => {
     render(
       <EnvironmentVariables>
@@ -33,7 +34,7 @@ describe("EnvironmentVariables", () => {
   });
 });
 
-describe("EnvironmentVariablesHeader", () => {
+describe(EnvironmentVariablesHeader, () => {
   it("renders header with title and toggle", () => {
     render(
       <EnvironmentVariables>
@@ -48,7 +49,7 @@ describe("EnvironmentVariablesHeader", () => {
   });
 });
 
-describe("EnvironmentVariable", () => {
+describe(EnvironmentVariable, () => {
   it("renders variable name and masked value by default", () => {
     render(
       <EnvironmentVariables>
@@ -94,7 +95,7 @@ describe("EnvironmentVariable", () => {
   });
 });
 
-describe("EnvironmentVariableCopyButton", () => {
+describe(EnvironmentVariableCopyButton, () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -158,11 +159,11 @@ describe("EnvironmentVariableCopyButton", () => {
     const button = screen.getByRole("button");
     await user.click(button);
 
-    expect(onCopy).toHaveBeenCalled();
+    expect(onCopy).toHaveBeenCalledWith();
   });
 });
 
-describe("EnvironmentVariableRequired", () => {
+describe(EnvironmentVariableRequired, () => {
   it("renders required badge", () => {
     render(
       <EnvironmentVariables>

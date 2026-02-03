@@ -1,5 +1,3 @@
-import { readFile } from "node:fs/promises";
-import { join } from "node:path";
 import { CodeBlock } from "@repo/elements/src/code-block";
 import {
   ResizableHandle,
@@ -7,6 +5,9 @@ import {
   ResizablePanelGroup,
 } from "@repo/shadcn-ui/components/ui/resizable";
 import { cn } from "@repo/shadcn-ui/lib/utils";
+import { readFile } from "node:fs/promises";
+import { join } from "node:path";
+
 import {
   CodeBlockTab,
   CodeBlockTabs,
@@ -30,7 +31,7 @@ export const Preview = async ({ path, className }: ComponentPreviewProps) => {
       "src",
       `${path}.tsx`
     ),
-    "utf-8"
+    "utf8"
   );
 
   const Component = await import(`@repo/examples/src/${path}.tsx`).then(
@@ -38,8 +39,8 @@ export const Preview = async ({ path, className }: ComponentPreviewProps) => {
   );
 
   const parsedCode = code
-    .replace(/@repo\/shadcn-ui\//g, "@/")
-    .replace(/@repo\/elements\//g, "@/components/ai-elements/");
+    .replaceAll('@repo/shadcn-ui/', "@/")
+    .replaceAll('@repo/elements/', "@/components/ai-elements/");
 
   return (
     <CodeBlockTabs defaultValue="preview">

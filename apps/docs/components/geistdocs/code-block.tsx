@@ -1,5 +1,7 @@
 "use client";
 
+import type { CSSProperties, ReactNode } from "react";
+
 import { Button } from "@repo/shadcn-ui/components/ui/button";
 import {
   Card,
@@ -9,13 +11,7 @@ import {
 } from "@repo/shadcn-ui/components/ui/card";
 import { cn } from "@repo/shadcn-ui/lib/utils";
 import { CheckIcon, CopyIcon } from "lucide-react";
-import {
-  type CSSProperties,
-  type ReactNode,
-  useCallback,
-  useRef,
-  useState,
-} from "react";
+import { useCallback, useRef, useState } from "react";
 import { toast } from "sonner";
 
 interface CodeBlockProps {
@@ -48,7 +44,7 @@ export const CodeBlock = ({
       return;
     }
 
-    const code = ref.current?.innerText;
+    const code = ref.current?.textContent;
 
     if (!code) {
       toast.error("No code to copy");

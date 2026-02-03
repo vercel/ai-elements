@@ -1,9 +1,10 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
+
 import { CodeBlock, CodeBlockCopyButton } from "../src/code-block";
 
-describe("CodeBlock", () => {
+describe(CodeBlock, () => {
   it("renders code content", async () => {
     const { container } = render(
       <CodeBlock code="const foo = 'bar';" language="javascript" />
@@ -45,7 +46,7 @@ describe("CodeBlock", () => {
   });
 });
 
-describe("CodeBlockCopyButton", () => {
+describe(CodeBlockCopyButton, () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -88,7 +89,7 @@ describe("CodeBlockCopyButton", () => {
     const button = screen.getByRole("button");
     await user.click(button);
 
-    expect(onCopy).toHaveBeenCalled();
+    expect(onCopy).toHaveBeenCalledWith();
   });
 
   it("calls onError when clipboard fails", async () => {
@@ -119,9 +120,9 @@ describe("CodeBlockCopyButton", () => {
     // Temporarily remove clipboard writeText method
     const originalClipboard = navigator.clipboard;
     Object.defineProperty(navigator, "clipboard", {
+      configurable: true,
       value: { writeText: undefined },
       writable: true,
-      configurable: true,
     });
 
     render(
@@ -141,9 +142,9 @@ describe("CodeBlockCopyButton", () => {
 
     // Restore clipboard API
     Object.defineProperty(navigator, "clipboard", {
+      configurable: true,
       value: originalClipboard,
       writable: true,
-      configurable: true,
     });
   });
 });

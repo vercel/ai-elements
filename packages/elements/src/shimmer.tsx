@@ -1,14 +1,10 @@
 "use client";
 
+import type { CSSProperties, ElementType, JSX } from "react";
+
 import { cn } from "@repo/shadcn-ui/lib/utils";
 import { motion } from "motion/react";
-import {
-  type CSSProperties,
-  type ElementType,
-  type JSX,
-  memo,
-  useMemo,
-} from "react";
+import { memo, useMemo } from "react";
 
 export interface TextShimmerProps {
   children: string;
@@ -51,9 +47,9 @@ const ShimmerComponent = ({
         } as CSSProperties
       }
       transition={{
-        repeat: Number.POSITIVE_INFINITY,
         duration,
         ease: "linear",
+        repeat: Number.POSITIVE_INFINITY,
       }}
     >
       {children}

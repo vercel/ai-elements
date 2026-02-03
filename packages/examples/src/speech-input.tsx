@@ -30,11 +30,11 @@ const Example = () => {
     const response = await fetch(
       "https://api.openai.com/v1/audio/transcriptions",
       {
-        method: "POST",
+        body: formData,
         headers: {
           Authorization: `Bearer ${process.env.NEXT_PUBLIC_OPENAI_API_KEY}`,
         },
-        body: formData,
+        method: "POST",
       }
     );
 

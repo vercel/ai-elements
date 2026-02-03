@@ -1,3 +1,5 @@
+import type { ComponentProps } from "react";
+
 import { cn } from "@repo/shadcn-ui/lib/utils";
 import {
   DocsBody as FumadocsDocsBody,
@@ -5,7 +7,6 @@ import {
   DocsPage as FumadocsDocsPage,
   DocsTitle as FumadocsDocsTitle,
 } from "fumadocs-ui/layouts/docs/page";
-import type { ComponentProps } from "react";
 
 type PageProps = ComponentProps<typeof FumadocsDocsPage>;
 

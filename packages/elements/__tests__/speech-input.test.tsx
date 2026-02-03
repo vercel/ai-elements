@@ -1,6 +1,7 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+
 import { SpeechInput } from "../src/speech-input";
 
 // Mock SpeechRecognition
@@ -28,8 +29,8 @@ class MockSpeechRecognition {
 
 // Mock console methods
 beforeEach(() => {
-  vi.spyOn(console, "warn").mockImplementation(() => undefined);
-  vi.spyOn(console, "error").mockImplementation(() => undefined);
+  vi.spyOn(console, "warn").mockImplementation(() => {});
+  vi.spyOn(console, "error").mockImplementation(() => {});
 
   // Reset window.SpeechRecognition - delete properties instead of setting to undefined
   // because `in` operator checks property existence, not value
@@ -43,13 +44,13 @@ beforeEach(() => {
   delete (window as any).MediaRecorder;
   // Also mock navigator.mediaDevices to be undefined
   Object.defineProperty(navigator, "mediaDevices", {
+    configurable: true,
     value: undefined,
     writable: true,
-    configurable: true,
   });
 });
 
-describe("SpeechInput", () => {
+describe(SpeechInput, () => {
   it("renders button with microphone icon", () => {
     render(<SpeechInput />);
     const button = screen.getByRole("button");
@@ -91,7 +92,7 @@ describe("SpeechInput", () => {
   });
 });
 
-describe("SpeechInput - Speech Recognition", () => {
+describe("speechInput - Speech Recognition", () => {
   beforeEach(() => {
     (window as any).SpeechRecognition = MockSpeechRecognition;
   });
@@ -119,7 +120,7 @@ describe("SpeechInput - Speech Recognition", () => {
     const button = screen.getByRole("button");
     await user.click(button);
 
-    expect(startSpy).toHaveBeenCalled();
+    expect(startSpy).toHaveBeenCalledWith();
   });
 
   it("stops listening when clicked again", async () => {
@@ -140,7 +141,7 @@ describe("SpeechInput - Speech Recognition", () => {
     // Stop listening
     await user.click(button);
 
-    expect(stopSpy).toHaveBeenCalled();
+    expect(stopSpy).toHaveBeenCalledWith();
   });
 
   it("applies pulse animation when listening", async () => {
@@ -155,14 +156,14 @@ describe("SpeechInput - Speech Recognition", () => {
     const button = screen.getByRole("button");
 
     // Should not have animate-ping divs initially
-    expect(container.querySelectorAll(".animate-ping").length).toBe(0);
+    expect(container.querySelectorAll(".animate-ping")).toHaveLength(0);
 
     await user.click(button);
 
     // Should have animate-ping divs when listening
     await waitFor(
       () => {
-        expect(container.querySelectorAll(".animate-ping").length).toBe(3);
+        expect(container.querySelectorAll(".animate-ping")).toHaveLength(3);
       },
       { timeout: 3000 }
     );
@@ -200,16 +201,16 @@ describe("SpeechInput - Speech Recognition", () => {
       recognitionInstance.onresult({
         resultIndex: 0,
         results: {
-          length: 1,
           0: {
             0: { transcript: "Hello world", confidence: 0.9 },
             isFinal: true,
-            length: 1,
             item: (_index: number) => ({
               transcript: "Hello world",
               confidence: 0.9,
             }),
+            length: 1,
           },
+          length: 1,
         },
       });
     }
@@ -250,16 +251,16 @@ describe("SpeechInput - Speech Recognition", () => {
       recognitionInstance.onresult({
         resultIndex: 0,
         results: {
-          length: 1,
           0: {
             0: { transcript: "Hello", confidence: 0.5 },
             isFinal: false,
-            length: 1,
             item: (_index: number) => ({
               transcript: "Hello",
               confidence: 0.5,
             }),
+            length: 1,
           },
+          length: 1,
         },
       });
     }
@@ -272,7 +273,7 @@ describe("SpeechInput - Speech Recognition", () => {
   it("handles speech recognition errors and logs them", async () => {
     const consoleErrorSpy = vi
       .spyOn(console, "error")
-      .mockImplementation(() => undefined);
+      .mockImplementation(() => {});
     let recognitionInstance: any = null;
 
     class TrackableMockSpeechRecognition extends MockSpeechRecognition {
@@ -343,13 +344,13 @@ describe("SpeechInput - Speech Recognition", () => {
       recognitionInstance.onresult({
         resultIndex: 0,
         results: {
-          length: 1,
           0: {
             0: { transcript: "", confidence: 0.9 },
             isFinal: true,
-            length: 1,
             item: (_index: number) => ({ transcript: "", confidence: 0.9 }),
+            length: 1,
           },
+          length: 1,
         },
       });
     }
@@ -389,11 +390,11 @@ describe("SpeechInput - Speech Recognition", () => {
 
     unmount();
 
-    expect(stopSpy).toHaveBeenCalled();
+    expect(stopSpy).toHaveBeenCalledWith();
   });
 });
 
-describe("SpeechInput - MediaRecorder Fallback", () => {
+describe("speechInput - MediaRecorder Fallback", () => {
   let mockTrack: any;
   let mockStream: any;
   let mediaRecorderInstances: any[];
@@ -445,11 +446,11 @@ describe("SpeechInput - MediaRecorder Fallback", () => {
 
     // Mock navigator.mediaDevices
     Object.defineProperty(navigator, "mediaDevices", {
+      configurable: true,
       value: {
         getUserMedia: vi.fn().mockResolvedValue(mockStream),
       },
       writable: true,
-      configurable: true,
     });
   });
 
@@ -494,7 +495,7 @@ describe("SpeechInput - MediaRecorder Fallback", () => {
 
     await waitFor(() => {
       expect(mediaRecorderInstances.length).toBeGreaterThan(0);
-      expect(mediaRecorderInstances[0].start).toHaveBeenCalled();
+      expect(mediaRecorderInstances[0].start).toHaveBeenCalledWith();
     });
   });
 
@@ -536,7 +537,7 @@ describe("SpeechInput - MediaRecorder Fallback", () => {
     await user.click(button);
 
     await waitFor(() => {
-      expect(handleAudioRecorded).toHaveBeenCalled();
+      expect(handleAudioRecorded).toHaveBeenCalledWith();
     });
 
     await waitFor(() => {
@@ -578,7 +579,7 @@ describe("SpeechInput - MediaRecorder Fallback", () => {
     await user.click(button);
 
     await waitFor(() => {
-      expect(mockTrack.stop).toHaveBeenCalled();
+      expect(mockTrack.stop).toHaveBeenCalledWith();
     });
   });
 
@@ -586,7 +587,7 @@ describe("SpeechInput - MediaRecorder Fallback", () => {
     const user = userEvent.setup();
     const consoleErrorSpy = vi
       .spyOn(console, "error")
-      .mockImplementation(() => undefined);
+      .mockImplementation(() => {});
     const handleAudioRecorded = vi
       .fn()
       .mockRejectedValue(new Error("Transcription failed"));

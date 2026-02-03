@@ -1,5 +1,8 @@
 "use client";
 
+import type { PromptInputMessage } from "@repo/elements/prompt-input";
+import type { ToolUIPart } from "ai";
+
 import {
   Conversation,
   ConversationContent,
@@ -33,7 +36,6 @@ import {
   PromptInput,
   PromptInputButton,
   PromptInputFooter,
-  type PromptInputMessage,
   PromptInputTextarea,
   PromptInputTools,
 } from "@repo/elements/prompt-input";
@@ -55,7 +57,6 @@ import {
   DropdownMenuTrigger,
 } from "@repo/shadcn-ui/components/ui/dropdown-menu";
 import { cn } from "@repo/shadcn-ui/lib/utils";
-import type { ToolUIPart } from "ai";
 import {
   AudioWaveformIcon,
   CameraIcon,
@@ -99,35 +100,35 @@ interface MessageType {
 
 const models = [
   {
-    id: "grok-3",
-    name: "Grok-3",
     chef: "xAI",
     chefSlug: "xai",
+    id: "grok-3",
+    name: "Grok-3",
     providers: ["xai"],
   },
   {
-    id: "grok-2-1212",
-    name: "Grok-2-1212",
     chef: "xAI",
     chefSlug: "xai",
+    id: "grok-2-1212",
+    name: "Grok-2-1212",
     providers: ["xai"],
   },
 ];
 
 const mockMessages: MessageType[] = [
   {
-    key: nanoid(),
     from: "user",
+    key: nanoid(),
     versions: [
       {
-        id: nanoid(),
         content: "Can you explain how to use React hooks effectively?",
+        id: nanoid(),
       },
     ],
   },
   {
-    key: nanoid(),
     from: "assistant",
+    key: nanoid(),
     sources: [
       {
         href: "https://react.dev/reference/react",
@@ -140,9 +141,9 @@ const mockMessages: MessageType[] = [
     ],
     tools: [
       {
-        name: "mcp",
         description: "Searching React documentation",
-        status: "input-available",
+        error: undefined,
+        name: "mcp",
         parameters: {
           query: "React hooks best practices",
           source: "react.dev",
@@ -167,12 +168,11 @@ const mockMessages: MessageType[] = [
     }
   ]
 }`,
-        error: undefined,
+        status: "input-available",
       },
     ],
     versions: [
       {
-        id: nanoid(),
         content: `# React Hooks Best Practices
 
 React hooks are a powerful feature that let you use state and other React features without writing classes. Here are some tips for using them effectively:
@@ -209,33 +209,34 @@ function ProfilePage({ userId }) {
 \`\`\`
 
 Would you like me to explain any specific hook in more detail?`,
+        id: nanoid(),
       },
     ],
   },
   {
-    key: nanoid(),
     from: "user",
+    key: nanoid(),
     versions: [
       {
-        id: nanoid(),
         content:
           "Yes, could you explain useCallback and useMemo in more detail? When should I use one over the other?",
+        id: nanoid(),
       },
       {
-        id: nanoid(),
         content:
           "I'm particularly interested in understanding the performance implications of useCallback and useMemo. Could you break down when each is most appropriate?",
+        id: nanoid(),
       },
       {
-        id: nanoid(),
         content:
           "Thanks for the overview! Could you dive deeper into the specific use cases where useCallback and useMemo make the biggest difference in React applications?",
+        id: nanoid(),
       },
     ],
   },
   {
-    key: nanoid(),
     from: "assistant",
+    key: nanoid(),
     reasoning: {
       content: `The user is asking for a detailed explanation of useCallback and useMemo. I should provide a clear and concise explanation of each hook's purpose and how they differ.
       
@@ -248,7 +249,6 @@ Both hooks help with performance optimization, but they serve different purposes
     },
     versions: [
       {
-        id: nanoid(),
         content: `## useCallback vs useMemo
 
 Both hooks help with **performance optimization**, but they serve _different purposes_:
@@ -300,6 +300,7 @@ Don't overuse these hooks! They come with their own overhead. Only use them when
 Remember that these ~~outdated approaches~~ should be avoided:
 - ~~Class components for simple state~~ - Use \`useState\` instead
 - ~~Manual event listener cleanup~~ - Let \`useEffect\` handle it`,
+        id: nanoid(),
       },
     ],
   },
@@ -451,13 +452,13 @@ const Example = () => {
       // Add empty assistant message with reasoning structure
       const newMessage = {
         ...message,
-        versions: message.versions.map((v) => ({ ...v, content: "" })),
+        isContentComplete: false,
+        isReasoningComplete: false,
+        isReasoningStreaming: !!message.reasoning,
         reasoning: message.reasoning
           ? { ...message.reasoning, content: "" }
           : undefined,
-        isReasoningComplete: false,
-        isContentComplete: false,
-        isReasoningStreaming: !!message.reasoning,
+        versions: message.versions.map((v) => ({ ...v, content: "" })),
       };
 
       setMessages((prev) => [...prev, newMessage]);
@@ -482,12 +483,12 @@ const Example = () => {
   const addUserMessage = useCallback(
     (content: string) => {
       const userMessage: MessageType = {
-        key: `user-${Date.now()}`,
         from: "user",
+        key: `user-${Date.now()}`,
         versions: [
           {
-            id: `user-${Date.now()}`,
             content,
+            id: `user-${Date.now()}`,
           },
         ],
       };
@@ -513,18 +514,18 @@ const Example = () => {
           : undefined;
 
         const assistantMessage: MessageType = {
-          key: assistantMessageKey,
           from: "assistant",
+          isContentComplete: false,
+          isReasoningComplete: false,
+          isReasoningStreaming: !!reasoning,
+          key: assistantMessageKey,
+          reasoning: reasoning ? { ...reasoning, content: "" } : undefined,
           versions: [
             {
-              id: assistantMessageId,
               content: "",
+              id: assistantMessageId,
             },
           ],
-          reasoning: reasoning ? { ...reasoning, content: "" } : undefined,
-          isReasoningComplete: false,
-          isContentComplete: false,
-          isReasoningStreaming: !!reasoning,
         };
 
         setMessages((prev) => [...prev, assistantMessage]);

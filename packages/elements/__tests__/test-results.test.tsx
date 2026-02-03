@@ -1,6 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
+
 import {
   Test,
   TestDuration,
@@ -26,16 +27,16 @@ const SKIPPED_1_REGEX = /1 skipped/;
 const PASSED_2_REGEX = /2 passed/;
 const FAILED_1_REGEX = /1 failed/;
 
-describe("TestResults", () => {
+describe(TestResults, () => {
   it("renders with summary", () => {
     render(
       <TestResults
         summary={{
-          passed: 10,
+          duration: 5000,
           failed: 2,
+          passed: 10,
           skipped: 1,
           total: 13,
-          duration: 5000,
         }}
       >
         <TestResultsHeader>
@@ -61,10 +62,10 @@ describe("TestResults", () => {
   });
 });
 
-describe("TestResultsProgress", () => {
+describe(TestResultsProgress, () => {
   it("renders progress bar", () => {
     render(
-      <TestResults summary={{ passed: 8, failed: 2, skipped: 0, total: 10 }}>
+      <TestResults summary={{ failed: 2, passed: 8, skipped: 0, total: 10 }}>
         <TestResultsProgress />
       </TestResults>
     );
@@ -74,11 +75,11 @@ describe("TestResultsProgress", () => {
   });
 });
 
-describe("TestResultsDuration", () => {
+describe(TestResultsDuration, () => {
   it("formats milliseconds", () => {
     render(
       <TestResults
-        summary={{ passed: 1, failed: 0, skipped: 0, total: 1, duration: 500 }}
+        summary={{ duration: 500, failed: 0, passed: 1, skipped: 0, total: 1 }}
       >
         <TestResultsDuration />
       </TestResults>
@@ -89,7 +90,7 @@ describe("TestResultsDuration", () => {
   it("formats seconds", () => {
     render(
       <TestResults
-        summary={{ passed: 1, failed: 0, skipped: 0, total: 1, duration: 3500 }}
+        summary={{ duration: 3500, failed: 0, passed: 1, skipped: 0, total: 1 }}
       >
         <TestResultsDuration />
       </TestResults>
@@ -98,7 +99,7 @@ describe("TestResultsDuration", () => {
   });
 });
 
-describe("TestSuite", () => {
+describe(TestSuite, () => {
   it("renders suite name", () => {
     render(
       <TestResults>
@@ -136,7 +137,7 @@ describe("TestSuite", () => {
   });
 });
 
-describe("Test", () => {
+describe(Test, () => {
   it("renders test name and status", () => {
     render(
       <TestResults>
@@ -196,7 +197,7 @@ describe("Test", () => {
   });
 });
 
-describe("TestError", () => {
+describe(TestError, () => {
   it("renders error message", () => {
     render(
       <TestResults>
@@ -220,11 +221,11 @@ describe("TestError", () => {
   });
 });
 
-describe("Composability", () => {
+describe("composability", () => {
   it("renders full test results structure", () => {
     render(
       <TestResults
-        summary={{ passed: 2, failed: 1, skipped: 0, total: 3, duration: 1000 }}
+        summary={{ duration: 1000, failed: 1, passed: 2, skipped: 0, total: 3 }}
       >
         <TestResultsHeader>
           <TestResultsSummary />

@@ -1,5 +1,7 @@
 "use client";
 
+import type { ComponentProps, HTMLAttributes } from "react";
+
 import { Avatar, AvatarFallback } from "@repo/shadcn-ui/components/ui/avatar";
 import { Button } from "@repo/shadcn-ui/components/ui/button";
 import {
@@ -16,13 +18,7 @@ import {
   MinusIcon,
   PlusIcon,
 } from "lucide-react";
-import {
-  type ComponentProps,
-  type HTMLAttributes,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { useEffect, useRef, useState } from "react";
 
 export type CommitProps = ComponentProps<typeof Collapsible>;
 
@@ -313,15 +309,15 @@ export const CommitFileInfo = ({
 
 const fileStatusStyles = {
   added: "text-green-600 dark:text-green-400",
-  modified: "text-yellow-600 dark:text-yellow-400",
   deleted: "text-red-600 dark:text-red-400",
+  modified: "text-yellow-600 dark:text-yellow-400",
   renamed: "text-blue-600 dark:text-blue-400",
 };
 
 const fileStatusLabels = {
   added: "A",
-  modified: "M",
   deleted: "D",
+  modified: "M",
   renamed: "R",
 };
 

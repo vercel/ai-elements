@@ -1,5 +1,7 @@
 "use client";
 
+import type { BundledLanguage } from "shiki";
+
 import {
   CodeBlock,
   CodeBlockActions,
@@ -15,36 +17,9 @@ import {
 } from "@repo/elements/code-block";
 import { FileIcon } from "lucide-react";
 import { useState } from "react";
-import type { BundledLanguage } from "shiki";
 
 const codeExamples = {
-  typescript: {
-    filename: "greet.ts",
-    code: `function greet(name: string): string {
-  return \`Hello, \${name}!\`;
-}
-
-console.log(greet("World"));`,
-  },
-  python: {
-    filename: "greet.py",
-    code: `def greet(name: str) -> str:
-    return f"Hello, {name}!"
-
-print(greet("World"))`,
-  },
-  rust: {
-    filename: "greet.rs",
-    code: `fn greet(name: &str) -> String {
-    format!("Hello, {}!", name)
-}
-
-fn main() {
-    println!("{}", greet("World"));
-}`,
-  },
   go: {
-    filename: "greet.go",
     code: `package main
 
 import "fmt"
@@ -56,16 +31,42 @@ func greet(name string) string {
 func main() {
     fmt.Println(greet("World"))
 }`,
+    filename: "greet.go",
+  },
+  python: {
+    code: `def greet(name: str) -> str:
+    return f"Hello, {name}!"
+
+print(greet("World"))`,
+    filename: "greet.py",
+  },
+  rust: {
+    code: `fn greet(name: &str) -> String {
+    format!("Hello, {}!", name)
+}
+
+fn main() {
+    println!("{}", greet("World"));
+}`,
+    filename: "greet.rs",
+  },
+  typescript: {
+    code: `function greet(name: string): string {
+  return \`Hello, \${name}!\`;
+}
+
+console.log(greet("World"));`,
+    filename: "greet.ts",
   },
 } as const;
 
 type Language = keyof typeof codeExamples;
 
 const languages: { value: Language; label: string }[] = [
-  { value: "typescript", label: "TypeScript" },
-  { value: "python", label: "Python" },
-  { value: "rust", label: "Rust" },
-  { value: "go", label: "Go" },
+  { label: "TypeScript", value: "typescript" },
+  { label: "Python", value: "python" },
+  { label: "Rust", value: "rust" },
+  { label: "Go", value: "go" },
 ];
 
 const Example = () => {

@@ -1,9 +1,10 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
+
 import { Suggestion, Suggestions } from "../src/suggestion";
 
-describe("Suggestions", () => {
+describe(Suggestions, () => {
   it("renders children", () => {
     render(
       <Suggestions>
@@ -23,7 +24,7 @@ describe("Suggestions", () => {
   });
 });
 
-describe("Suggestion", () => {
+describe(Suggestion, () => {
   it("renders suggestion text", () => {
     render(<Suggestion suggestion="Click me" />);
     expect(screen.getByText("Click me")).toBeInTheDocument();

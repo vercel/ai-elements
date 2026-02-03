@@ -1,10 +1,11 @@
+import type { UIMessage } from "ai";
+
 import { Button } from "@repo/shadcn-ui/components/ui/button";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@repo/shadcn-ui/components/ui/tooltip";
-import type { UIMessage } from "ai";
 import { CheckIcon, CopyIcon } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";

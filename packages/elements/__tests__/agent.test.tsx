@@ -2,6 +2,7 @@ import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 import { z } from "zod";
+
 import {
   Agent,
   AgentContent,
@@ -22,7 +23,7 @@ const mockTool = {
 // Zod v4 serializes schemas with "type": "object" format
 const ZOD_OBJECT_REGEX = /"type":\s*"object"/;
 
-describe("Agent", () => {
+describe(Agent, () => {
   it("renders children", () => {
     render(<Agent>Content</Agent>);
     expect(screen.getByText("Content")).toBeInTheDocument();
@@ -34,7 +35,7 @@ describe("Agent", () => {
   });
 });
 
-describe("AgentHeader", () => {
+describe(AgentHeader, () => {
   it("renders agent name", () => {
     render(<AgentHeader name="Research Assistant" />);
     expect(screen.getByText("Research Assistant")).toBeInTheDocument();
@@ -60,7 +61,7 @@ describe("AgentHeader", () => {
   });
 });
 
-describe("AgentContent", () => {
+describe(AgentContent, () => {
   it("renders content", () => {
     render(<AgentContent>Content text</AgentContent>);
     expect(screen.getByText("Content text")).toBeInTheDocument();
@@ -74,7 +75,7 @@ describe("AgentContent", () => {
   });
 });
 
-describe("AgentInstructions", () => {
+describe(AgentInstructions, () => {
   it("renders instructions label", () => {
     render(<AgentInstructions>Test instructions</AgentInstructions>);
     expect(screen.getByText("Instructions")).toBeInTheDocument();
@@ -97,7 +98,7 @@ describe("AgentInstructions", () => {
   });
 });
 
-describe("AgentTools", () => {
+describe(AgentTools, () => {
   it("renders tools label", () => {
     render(
       <AgentTools>
@@ -108,7 +109,7 @@ describe("AgentTools", () => {
   });
 });
 
-describe("AgentTool", () => {
+describe(AgentTool, () => {
   it("renders tool description as trigger", () => {
     render(
       <AgentTools>
@@ -177,7 +178,7 @@ describe("AgentTool", () => {
   });
 });
 
-describe("AgentOutput", () => {
+describe(AgentOutput, () => {
   it("renders output schema label", () => {
     render(<AgentOutput schema="z.object({ name: z.string() })" />);
     expect(screen.getByText("Output Schema")).toBeInTheDocument();
@@ -202,7 +203,7 @@ describe("AgentOutput", () => {
   });
 });
 
-describe("Agent integration", () => {
+describe("agent integration", () => {
   it("renders complete agent configuration", () => {
     const schema = `z.object({
   sentiment: z.enum(['positive', 'negative']),

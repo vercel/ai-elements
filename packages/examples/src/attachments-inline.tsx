@@ -17,32 +17,32 @@ import { useState } from "react";
 
 const initialAttachments = [
   {
+    filename: "mountain-landscape.jpg",
     id: nanoid(),
+    mediaType: "image/jpeg",
     type: "file" as const,
     url: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=400&fit=crop",
-    mediaType: "image/jpeg",
-    filename: "mountain-landscape.jpg",
   },
   {
-    id: nanoid(),
-    type: "file" as const,
-    url: "",
-    mediaType: "application/pdf",
     filename: "quarterly-report.pdf",
-  },
-  {
     id: nanoid(),
-    type: "source-document" as const,
-    title: "React Documentation",
-    url: "https://react.dev",
-    mediaType: "text/html",
-  },
-  {
-    id: nanoid(),
+    mediaType: "application/pdf",
     type: "file" as const,
     url: "",
-    mediaType: "audio/mp3",
+  },
+  {
+    id: nanoid(),
+    mediaType: "text/html",
+    title: "React Documentation",
+    type: "source-document" as const,
+    url: "https://react.dev",
+  },
+  {
     filename: "podcast-episode.mp3",
+    id: nanoid(),
+    mediaType: "audio/mp3",
+    type: "file" as const,
+    url: "",
   },
 ];
 

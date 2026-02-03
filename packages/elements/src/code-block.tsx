@@ -1,5 +1,13 @@
 "use client";
 
+import type { ComponentProps, CSSProperties, HTMLAttributes } from "react";
+import type {
+  BundledLanguage,
+  BundledTheme,
+  HighlighterGeneric,
+  ThemedToken,
+} from "shiki";
+
 import { Button } from "@repo/shadcn-ui/components/ui/button";
 import {
   Select,
@@ -11,10 +19,7 @@ import {
 import { cn } from "@repo/shadcn-ui/lib/utils";
 import { CheckIcon, CopyIcon } from "lucide-react";
 import {
-  type ComponentProps,
-  type CSSProperties,
   createContext,
-  type HTMLAttributes,
   memo,
   useContext,
   useEffect,
@@ -22,13 +27,7 @@ import {
   useRef,
   useState,
 } from "react";
-import {
-  type BundledLanguage,
-  type BundledTheme,
-  createHighlighter,
-  type HighlighterGeneric,
-  type ThemedToken,
-} from "shiki";
+import { createHighlighter } from "shiki";
 
 // Shiki uses bitflags for font styles: 1=italic, 2=bold, 4=underline
 // biome-ignore lint/suspicious/noBitwiseOperators: shiki bitflag check
@@ -53,8 +52,8 @@ const addKeysToTokens = (lines: ThemedToken[][]): KeyedLine[] =>
   lines.map((line, lineIdx) => ({
     key: `line-${lineIdx}`,
     tokens: line.map((token, tokenIdx) => ({
-      token,
       key: `line-${lineIdx}-${tokenIdx}`,
+      token,
     })),
   }));
 
@@ -143,8 +142,8 @@ const getHighlighter = (
   }
 
   const highlighterPromise = createHighlighter({
-    themes: ["github-light", "github-dark"],
     langs: [language],
+    themes: ["github-light", "github-dark"],
   });
 
   highlighterCache.set(language, highlighterPromise);
@@ -153,18 +152,18 @@ const getHighlighter = (
 
 // Create raw tokens for immediate display while highlighting loads
 const createRawTokens = (code: string): TokenizedCode => ({
+  bg: "transparent",
+  fg: "inherit",
   tokens: code.split("\n").map((line) =>
     line === ""
       ? []
       : [
           {
-            content: line,
             color: "inherit",
+            content: line,
           } as ThemedToken,
         ]
   ),
-  fg: "inherit",
-  bg: "transparent",
 });
 
 // Synchronous highlight with callback for async results
@@ -198,15 +197,15 @@ export function highlightCode(
       const result = highlighter.codeToTokens(code, {
         lang: langToUse,
         themes: {
-          light: "github-light",
           dark: "github-dark",
+          light: "github-light",
         },
       });
 
       const tokenized: TokenizedCode = {
-        tokens: result.tokens,
-        fg: result.fg ?? "inherit",
         bg: result.bg ?? "transparent",
+        fg: result.fg ?? "inherit",
+        tokens: result.tokens,
       };
 
       // Cache the result
@@ -310,8 +309,8 @@ export const CodeBlockContainer = ({
     )}
     data-language={language}
     style={{
-      contentVisibility: "auto",
       containIntrinsicSize: "auto 200px",
+      contentVisibility: "auto",
       ...style,
     }}
     {...props}
