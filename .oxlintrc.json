@@ -13,6 +13,10 @@
     "apps/docs/app",
     "apps/docs/geistdocs.tsx",
     "apps/docs/proxy.ts",
-    "apps/docs/source.config.ts"
-  ]
+    "apps/docs/source.config.ts",
+    "skills"
+  ],
+  "rules": {
+    "import/no-relative-parent-imports": "off"
+  }
 }
