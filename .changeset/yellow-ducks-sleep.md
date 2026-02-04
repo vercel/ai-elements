@@ -1,5 +1,5 @@
 ---
-"ai-elements": minor
+"ai-elements": patch
 ---
 
 JSX Preview component
