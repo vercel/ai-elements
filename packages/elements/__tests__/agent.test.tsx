@@ -203,33 +203,43 @@ describe("agentOutput", () => {
   });
 });
 
-describe("agent integration", () => {
-  it("renders complete agent configuration", () => {
-    const schema = `z.object({
+const agentSchema = `z.object({
   sentiment: z.enum(['positive', 'negative']),
   score: z.number(),
 })`;
 
-    render(
-      <Agent>
-        <AgentHeader
-          model="anthropic/claude-sonnet-4-5"
-          name="Sentiment Analyzer"
-        />
-        <AgentContent>
-          <AgentInstructions>Analyze sentiment of text.</AgentInstructions>
-          <AgentTools>
-            <AgentTool tool={mockTool} value="analyze" />
-          </AgentTools>
-          <AgentOutput schema={schema} />
-        </AgentContent>
-      </Agent>
-    );
+const renderCompleteAgent = () =>
+  render(
+    <Agent>
+      <AgentHeader
+        model="anthropic/claude-sonnet-4-5"
+        name="Sentiment Analyzer"
+      />
+      <AgentContent>
+        <AgentInstructions>Analyze sentiment of text.</AgentInstructions>
+        <AgentTools>
+          <AgentTool tool={mockTool} value="analyze" />
+        </AgentTools>
+        <AgentOutput schema={agentSchema} />
+      </AgentContent>
+    </Agent>
+  );
 
+describe("agent integration", () => {
+  it("renders agent header", () => {
+    renderCompleteAgent();
     expect(screen.getByText("Sentiment Analyzer")).toBeInTheDocument();
     expect(screen.getByText("anthropic/claude-sonnet-4-5")).toBeInTheDocument();
+  });
+
+  it("renders agent instructions", () => {
+    renderCompleteAgent();
     expect(screen.getByText("Instructions")).toBeInTheDocument();
     expect(screen.getByText("Analyze sentiment of text.")).toBeInTheDocument();
+  });
+
+  it("renders agent tools and output schema", () => {
+    renderCompleteAgent();
     expect(screen.getByText("Tools")).toBeInTheDocument();
     expect(
       screen.getByText("Search the web for information")

@@ -221,45 +221,59 @@ describe("testError", () => {
   });
 });
 
-describe("composability", () => {
-  it("renders full test results structure", () => {
-    render(
-      <TestResults
-        summary={{ duration: 1000, failed: 1, passed: 2, skipped: 0, total: 3 }}
-      >
-        <TestResultsHeader>
-          <TestResultsSummary />
-          <TestResultsDuration />
-        </TestResultsHeader>
-        <TestResultsContent>
-          <TestSuite defaultOpen={true} name="Suite" status="failed">
-            <TestSuiteName />
-            <TestSuiteContent>
-              <Test duration={10} name="test 1" status="passed">
-                <TestStatus />
-                <TestName />
-                <TestDuration />
-              </Test>
-              <Test duration={20} name="test 2" status="failed">
-                <TestStatus />
-                <TestName />
-                <TestDuration />
-                <TestError>
-                  <TestErrorMessage>Error!</TestErrorMessage>
-                </TestError>
-              </Test>
-            </TestSuiteContent>
-          </TestSuite>
-        </TestResultsContent>
-      </TestResults>
-    );
+const renderFullTestResults = () =>
+  render(
+    <TestResults
+      summary={{ duration: 1000, failed: 1, passed: 2, skipped: 0, total: 3 }}
+    >
+      <TestResultsHeader>
+        <TestResultsSummary />
+        <TestResultsDuration />
+      </TestResultsHeader>
+      <TestResultsContent>
+        <TestSuite defaultOpen={true} name="Suite" status="failed">
+          <TestSuiteName />
+          <TestSuiteContent>
+            <Test duration={10} name="test 1" status="passed">
+              <TestStatus />
+              <TestName />
+              <TestDuration />
+            </Test>
+            <Test duration={20} name="test 2" status="failed">
+              <TestStatus />
+              <TestName />
+              <TestDuration />
+              <TestError>
+                <TestErrorMessage>Error!</TestErrorMessage>
+              </TestError>
+            </Test>
+          </TestSuiteContent>
+        </TestSuite>
+      </TestResultsContent>
+    </TestResults>
+  );
 
+describe("composability", () => {
+  it("renders summary counts", () => {
+    renderFullTestResults();
     expect(screen.getByText(PASSED_2_REGEX)).toBeInTheDocument();
     expect(screen.getByText(FAILED_1_REGEX)).toBeInTheDocument();
+  });
+
+  it("renders duration", () => {
+    renderFullTestResults();
     expect(screen.getByText("1.00s")).toBeInTheDocument();
+  });
+
+  it("renders suite and test names", () => {
+    renderFullTestResults();
     expect(screen.getByText("Suite")).toBeInTheDocument();
     expect(screen.getByText("test 1")).toBeInTheDocument();
     expect(screen.getByText("test 2")).toBeInTheDocument();
+  });
+
+  it("renders error message", () => {
+    renderFullTestResults();
     expect(screen.getByText("Error!")).toBeInTheDocument();
   });
 });

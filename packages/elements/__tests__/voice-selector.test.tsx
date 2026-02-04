@@ -1,6 +1,6 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
 import {
   useVoiceSelector,
@@ -23,11 +23,6 @@ import {
   VoiceSelectorShortcut,
   VoiceSelectorTrigger,
 } from "../src/voice-selector";
-
-beforeEach(() => {
-  vi.spyOn(console, "warn").mockImplementation(() => {});
-  vi.spyOn(console, "error").mockImplementation(() => {});
-});
 
 describe("voiceSelector", () => {
   it("renders children", () => {

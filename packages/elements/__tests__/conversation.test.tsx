@@ -2,6 +2,15 @@ import { render, screen } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 
+import {
+  Conversation,
+  ConversationContent,
+  ConversationDownload,
+  ConversationEmptyState,
+  ConversationScrollButton,
+  messagesToMarkdown,
+} from "../src/conversation";
+
 // Mock use-stick-to-bottom with module-level state
 const mockState = { isAtBottom: true };
 const mockScrollToBottom = vi.fn();
@@ -27,15 +36,6 @@ vi.mock<typeof import("use-stick-to-bottom")>("use-stick-to-bottom", () => {
     }),
   };
 });
-
-import {
-  Conversation,
-  ConversationContent,
-  ConversationDownload,
-  ConversationEmptyState,
-  ConversationScrollButton,
-  messagesToMarkdown,
-} from "../src/conversation";
 
 describe("conversation", () => {
   it("renders children", () => {

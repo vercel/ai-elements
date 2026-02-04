@@ -83,11 +83,8 @@ describe("terminalStatus", () => {
 });
 
 describe("terminalCopyButton", () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
   it("copies output to clipboard", async () => {
+    vi.clearAllMocks();
     const user = userEvent.setup();
     const writeTextSpy = vi.spyOn(navigator.clipboard, "writeText");
 

@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
 import {
   ModelSelector,
@@ -18,12 +18,6 @@ import {
   ModelSelectorShortcut,
   ModelSelectorTrigger,
 } from "../src/model-selector";
-
-// Mock console.warn and console.error to suppress accessibility warnings in tests
-beforeEach(() => {
-  vi.spyOn(console, "warn").mockImplementation(() => {});
-  vi.spyOn(console, "error").mockImplementation(() => {});
-});
 
 describe("modelSelector", () => {
   it("renders as a Dialog component", () => {
@@ -502,41 +496,47 @@ describe("modelSelectorName", () => {
   });
 });
 
-describe("integration tests", () => {
-  it("renders complete model selector with all components", () => {
-    render(
-      <ModelSelector open={true}>
-        <ModelSelectorTrigger>Select Model</ModelSelectorTrigger>
-        <ModelSelectorContent aria-describedby="test-description">
-          <ModelSelectorInput placeholder="Search models..." />
-          <ModelSelectorList>
-            <ModelSelectorGroup heading="OpenAI">
-              <ModelSelectorItem value="gpt-4">
-                <ModelSelectorLogoGroup>
-                  <ModelSelectorLogo provider="openai" />
-                </ModelSelectorLogoGroup>
-                <ModelSelectorName>GPT-4</ModelSelectorName>
-                <ModelSelectorShortcut>⌘1</ModelSelectorShortcut>
-              </ModelSelectorItem>
-            </ModelSelectorGroup>
-            <ModelSelectorSeparator />
-            <ModelSelectorGroup heading="Anthropic">
-              <ModelSelectorItem value="claude">
-                <ModelSelectorLogoGroup>
-                  <ModelSelectorLogo provider="anthropic" />
-                </ModelSelectorLogoGroup>
-                <ModelSelectorName>Claude</ModelSelectorName>
-              </ModelSelectorItem>
-            </ModelSelectorGroup>
-            <ModelSelectorEmpty>No models found</ModelSelectorEmpty>
-          </ModelSelectorList>
-        </ModelSelectorContent>
-      </ModelSelector>
-    );
+const renderCompleteModelSelector = () =>
+  render(
+    <ModelSelector open={true}>
+      <ModelSelectorTrigger>Select Model</ModelSelectorTrigger>
+      <ModelSelectorContent aria-describedby="test-description">
+        <ModelSelectorInput placeholder="Search models..." />
+        <ModelSelectorList>
+          <ModelSelectorGroup heading="OpenAI">
+            <ModelSelectorItem value="gpt-4">
+              <ModelSelectorLogoGroup>
+                <ModelSelectorLogo provider="openai" />
+              </ModelSelectorLogoGroup>
+              <ModelSelectorName>GPT-4</ModelSelectorName>
+              <ModelSelectorShortcut>⌘1</ModelSelectorShortcut>
+            </ModelSelectorItem>
+          </ModelSelectorGroup>
+          <ModelSelectorSeparator />
+          <ModelSelectorGroup heading="Anthropic">
+            <ModelSelectorItem value="claude">
+              <ModelSelectorLogoGroup>
+                <ModelSelectorLogo provider="anthropic" />
+              </ModelSelectorLogoGroup>
+              <ModelSelectorName>Claude</ModelSelectorName>
+            </ModelSelectorItem>
+          </ModelSelectorGroup>
+          <ModelSelectorEmpty>No models found</ModelSelectorEmpty>
+        </ModelSelectorList>
+      </ModelSelectorContent>
+    </ModelSelector>
+  );
 
+describe("integration tests", () => {
+  it("renders search input and OpenAI group", () => {
+    renderCompleteModelSelector();
     expect(screen.getByPlaceholderText("Search models...")).toBeInTheDocument();
     expect(screen.getByText("OpenAI")).toBeInTheDocument();
     expect(screen.getByText("GPT-4")).toBeInTheDocument();
+  });
+
+  it("renders shortcuts and Anthropic group", () => {
+    renderCompleteModelSelector();
     expect(screen.getByText("⌘1")).toBeInTheDocument();
     expect(screen.getByText("Anthropic")).toBeInTheDocument();
     expect(screen.getByText("Claude")).toBeInTheDocument();
