@@ -37,13 +37,13 @@ export const Preview = async ({ path, className }: ComponentPreviewProps) => {
     "utf8"
   );
 
-  const Component = await import(`@repo/examples/${path}`).then(
+  const Component = await import(`@repo/examples/src/${path}.tsx`).then(
     (module) => module.default
   );
 
   if (!Component) {
     throw new Error(
-      `No default export found for example: ${path}. Check that @repo/examples/${path} exports a default component.`
+      `No default export found for example: ${path}. Check that @repo/examples/src/${path}.tsx exports a default component.`
     );
   }
 
