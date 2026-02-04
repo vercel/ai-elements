@@ -104,13 +104,7 @@ const SUBMITTING_TIMEOUT = 200;
 const STREAMING_TIMEOUT = 2000;
 
 interface AttachmentItemProps {
-  attachment: {
-    id: string;
-    type: "file";
-    filename?: string;
-    mediaType?: string;
-    url: string;
-  };
+  attachment: AttachmentData;
   onRemove: (id: string) => void;
 }
 

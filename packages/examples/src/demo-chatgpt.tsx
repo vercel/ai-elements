@@ -283,7 +283,7 @@ const suggestions = [
   { color: "#ea8444", icon: NotepadTextIcon, text: "Summarize text" },
   { color: "#6c71ff", icon: CodeSquareIcon, text: "Code" },
   { color: "#76d0eb", icon: GraduationCapIcon, text: "Get advice" },
-  { icon: null, text: "More" },
+  { text: "More" },
 ];
 
 const mockMessageResponses = [
