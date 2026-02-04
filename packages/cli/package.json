@@ -1,6 +1,6 @@
 {
   "name": "ai-elements",
-  "version": "1.8.2",
+  "version": "1.8.3",
   "description": "AI Elements is a component library and custom registry built on top of shadcn/ui to help you build AI-native applications faster.",
   "homepage": "https://elements.ai-sdk.dev",
   "license": "Apache-2.0",
