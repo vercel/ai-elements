@@ -85,8 +85,26 @@ export const getCombinedPageTree = (lang: string): Root => ({
 
 // Helper to get a page by slug across all sources
 export const getPage = (slugs: string[] | undefined, lang?: string) => {
-  for (const source of allSources) {
-    const page = source.getPage(slugs, lang);
+  if (!slugs || slugs.length === 0) return;
+
+  const [prefix, ...rest] = slugs;
+
+  // Map prefix to source for LLM markdown routes
+  const sourceMap: Record<string, AnySource> = {
+    docs: docsSource,
+    components: componentsSource,
+    examples: examplesSource,
+  };
+
+  const source = sourceMap[prefix];
+  if (source) {
+    const page = source.getPage(rest.length > 0 ? rest : undefined, lang);
+    if (page) return page as AnyPage;
+  }
+
+  // Fallback to existing behavior
+  for (const src of allSources) {
+    const page = src.getPage(slugs, lang);
     if (page) {
       return page as AnyPage;
     }
