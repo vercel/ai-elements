@@ -17,8 +17,6 @@ const config = {
     ],
   },
 
-  reactStrictMode: true,
-
   redirects() {
     return [
       {
