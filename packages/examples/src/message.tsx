@@ -27,7 +27,7 @@ import {
   ThumbsUpIcon,
 } from "lucide-react";
 import { nanoid } from "nanoid";
-import { useState } from "react";
+import { memo, useCallback, useState } from "react";
 
 const messages: {
   key: string;
@@ -176,9 +176,94 @@ const handleRetry = () => {
   console.log("Retrying...");
 };
 
+interface LikeActionProps {
+  messageKey: string;
+  isLiked: boolean;
+  onToggle: (key: string) => void;
+}
+
+const LikeAction = memo(
+  ({ messageKey, isLiked, onToggle }: LikeActionProps) => {
+    const handleClick = useCallback(
+      () => onToggle(messageKey),
+      [messageKey, onToggle]
+    );
+    return (
+      <MessageAction
+        label="Like"
+        onClick={handleClick}
+        tooltip="Like this response"
+      >
+        <ThumbsUpIcon
+          className="size-4"
+          fill={isLiked ? "currentColor" : "none"}
+        />
+      </MessageAction>
+    );
+  }
+);
+
+LikeAction.displayName = "LikeAction";
+
+interface DislikeActionProps {
+  messageKey: string;
+  isDisliked: boolean;
+  onToggle: (key: string) => void;
+}
+
+const DislikeAction = memo(
+  ({ messageKey, isDisliked, onToggle }: DislikeActionProps) => {
+    const handleClick = useCallback(
+      () => onToggle(messageKey),
+      [messageKey, onToggle]
+    );
+    return (
+      <MessageAction
+        label="Dislike"
+        onClick={handleClick}
+        tooltip="Dislike this response"
+      >
+        <ThumbsDownIcon
+          className="size-4"
+          fill={isDisliked ? "currentColor" : "none"}
+        />
+      </MessageAction>
+    );
+  }
+);
+
+DislikeAction.displayName = "DislikeAction";
+
+interface CopyActionProps {
+  content: string;
+}
+
+const CopyAction = memo(({ content }: CopyActionProps) => {
+  const handleClick = useCallback(() => handleCopy(content), [content]);
+  return (
+    <MessageAction
+      label="Copy"
+      onClick={handleClick}
+      tooltip="Copy to clipboard"
+    >
+      <CopyIcon className="size-4" />
+    </MessageAction>
+  );
+});
+
+CopyAction.displayName = "CopyAction";
+
 const Example = () => {
   const [liked, setLiked] = useState<Record<string, boolean>>({});
   const [disliked, setDisliked] = useState<Record<string, boolean>>({});
+
+  const handleToggleLike = useCallback((key: string) => {
+    setLiked((prev) => ({ ...prev, [key]: !prev[key] }));
+  }, []);
+
+  const handleToggleDislike = useCallback((key: string) => {
+    setDisliked((prev) => ({ ...prev, [key]: !prev[key] }));
+  }, []);
 
   return (
     <div className="flex flex-col gap-4">
@@ -209,47 +294,21 @@ const Example = () => {
                     >
                       <RefreshCcwIcon className="size-4" />
                     </MessageAction>
-                    <MessageAction
-                      label="Like"
-                      onClick={() =>
-                        setLiked((prev) => ({
-                          ...prev,
-                          [message.key]: !prev[message.key],
-                        }))
+                    <LikeAction
+                      isLiked={liked[message.key] ?? false}
+                      messageKey={message.key}
+                      onToggle={handleToggleLike}
+                    />
+                    <DislikeAction
+                      isDisliked={disliked[message.key] ?? false}
+                      messageKey={message.key}
+                      onToggle={handleToggleDislike}
+                    />
+                    <CopyAction
+                      content={
+                        message.versions?.find((v) => v.id)?.content || ""
                       }
-                      tooltip="Like this response"
-                    >
-                      <ThumbsUpIcon
-                        className="size-4"
-                        fill={liked[message.key] ? "currentColor" : "none"}
-                      />
-                    </MessageAction>
-                    <MessageAction
-                      label="Dislike"
-                      onClick={() =>
-                        setDisliked((prev) => ({
-                          ...prev,
-                          [message.key]: !prev[message.key],
-                        }))
-                      }
-                      tooltip="Dislike this response"
-                    >
-                      <ThumbsDownIcon
-                        className="size-4"
-                        fill={disliked[message.key] ? "currentColor" : "none"}
-                      />
-                    </MessageAction>
-                    <MessageAction
-                      label="Copy"
-                      onClick={() =>
-                        handleCopy(
-                          message.versions?.find((v) => v.id)?.content || ""
-                        )
-                      }
-                      tooltip="Copy to clipboard"
-                    >
-                      <CopyIcon className="size-4" />
-                    </MessageAction>
+                    />
                   </MessageActions>
                 </MessageToolbar>
               )}
@@ -282,43 +341,17 @@ const Example = () => {
                   >
                     <RefreshCcwIcon className="size-4" />
                   </MessageAction>
-                  <MessageAction
-                    label="Like"
-                    onClick={() =>
-                      setLiked((prev) => ({
-                        ...prev,
-                        [message.key]: !prev[message.key],
-                      }))
-                    }
-                    tooltip="Like this response"
-                  >
-                    <ThumbsUpIcon
-                      className="size-4"
-                      fill={liked[message.key] ? "currentColor" : "none"}
-                    />
-                  </MessageAction>
-                  <MessageAction
-                    label="Dislike"
-                    onClick={() =>
-                      setDisliked((prev) => ({
-                        ...prev,
-                        [message.key]: !prev[message.key],
-                      }))
-                    }
-                    tooltip="Dislike this response"
-                  >
-                    <ThumbsDownIcon
-                      className="size-4"
-                      fill={disliked[message.key] ? "currentColor" : "none"}
-                    />
-                  </MessageAction>
-                  <MessageAction
-                    label="Copy"
-                    onClick={() => handleCopy(message.content || "")}
-                    tooltip="Copy to clipboard"
-                  >
-                    <CopyIcon className="size-4" />
-                  </MessageAction>
+                  <LikeAction
+                    isLiked={liked[message.key] ?? false}
+                    messageKey={message.key}
+                    onToggle={handleToggleLike}
+                  />
+                  <DislikeAction
+                    isDisliked={disliked[message.key] ?? false}
+                    messageKey={message.key}
+                    onToggle={handleToggleDislike}
+                  />
+                  <CopyAction content={message.content || ""} />
                 </MessageActions>
               )}
             </div>

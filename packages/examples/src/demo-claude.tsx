@@ -69,7 +69,7 @@ import {
   Settings2Icon,
 } from "lucide-react";
 import { nanoid } from "nanoid";
-import { useCallback, useEffect, useState } from "react";
+import { memo, useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 
 interface MessageType {
@@ -319,6 +319,34 @@ const mockMessageResponses = [
   "Great choice of topic! This is something that many developers encounter. The approach I'd suggest is to start with the fundamentals and then build up to more complex scenarios.",
   "That's definitely worth exploring. From what I can see, the best way to handle this is to consider both the theoretical aspects and practical implementation details.",
 ];
+
+interface ModelItemProps {
+  m: (typeof models)[0];
+  selectedModel: string;
+  onSelect: (id: string) => void;
+}
+
+const ModelItem = memo(({ m, selectedModel, onSelect }: ModelItemProps) => {
+  const handleSelect = useCallback(() => onSelect(m.id), [onSelect, m.id]);
+  return (
+    <ModelSelectorItem key={m.id} onSelect={handleSelect} value={m.id}>
+      <ModelSelectorLogo provider={m.chefSlug} />
+      <ModelSelectorName>{m.name}</ModelSelectorName>
+      <ModelSelectorLogoGroup>
+        {m.providers.map((provider) => (
+          <ModelSelectorLogo key={provider} provider={provider} />
+        ))}
+      </ModelSelectorLogoGroup>
+      {selectedModel === m.id ? (
+        <CheckIcon className="ml-auto size-4" />
+      ) : (
+        <div className="ml-auto size-4" />
+      )}
+    </ModelSelectorItem>
+  );
+});
+
+ModelItem.displayName = "ModelItem";
 
 const Example = () => {
   const [model, setModel] = useState<string>(models[0].id);
@@ -585,18 +613,21 @@ const Example = () => {
     };
   }, [streamMessage]);
 
-  const handleSubmit = (message: PromptInputMessage) => {
-    const hasText = Boolean(message.text);
-    const hasAttachments = Boolean(message.files?.length);
+  const handleSubmit = useCallback(
+    (message: PromptInputMessage) => {
+      const hasText = Boolean(message.text);
+      const hasAttachments = Boolean(message.files?.length);
 
-    if (!(hasText || hasAttachments)) {
-      return;
-    }
+      if (!(hasText || hasAttachments)) {
+        return;
+      }
 
-    setStatus("submitted");
-    addUserMessage(message.text || "Sent with attachments");
-    setText("");
-  };
+      setStatus("submitted");
+      addUserMessage(message.text || "Sent with attachments");
+      setText("");
+    },
+    [addUserMessage]
+  );
 
   const handleFileAction = (action: string) => {
     toast.success("File action", {
@@ -608,6 +639,31 @@ const Example = () => {
     setStatus("submitted");
     addUserMessage(suggestion);
   };
+
+  const handleTextChange = useCallback(
+    (event: React.ChangeEvent<HTMLTextAreaElement>) =>
+      setText(event.target.value),
+    []
+  );
+
+  const handleUploadFile = useCallback(
+    () => handleFileAction("upload-file"),
+    []
+  );
+  const handleUploadPhoto = useCallback(
+    () => handleFileAction("upload-photo"),
+    []
+  );
+  const handleTakeScreenshot = useCallback(
+    () => handleFileAction("take-screenshot"),
+    []
+  );
+  const handleTakePhoto = useCallback(() => handleFileAction("take-photo"), []);
+
+  const handleModelSelect = useCallback((id: string) => {
+    setModel(id);
+    setModelSelectorOpen(false);
+  }, []);
 
   return (
     <div className="relative flex size-full flex-col divide-y overflow-hidden bg-[#faf9f5] dark:bg-background">
@@ -683,7 +739,7 @@ const Example = () => {
         >
           <PromptInputTextarea
             className="md:text-base"
-            onChange={(event) => setText(event.target.value)}
+            onChange={handleTextChange}
             placeholder="Reply to Claude..."
             value={text}
           />
@@ -697,27 +753,19 @@ const Example = () => {
                   </PromptInputButton>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="start">
-                  <DropdownMenuItem
-                    onClick={() => handleFileAction("upload-file")}
-                  >
+                  <DropdownMenuItem onClick={handleUploadFile}>
                     <FileIcon className="mr-2" size={16} />
                     Upload file
                   </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={() => handleFileAction("upload-photo")}
-                  >
+                  <DropdownMenuItem onClick={handleUploadPhoto}>
                     <ImageIcon className="mr-2" size={16} />
                     Upload photo
                   </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={() => handleFileAction("take-screenshot")}
-                  >
+                  <DropdownMenuItem onClick={handleTakeScreenshot}>
                     <ScreenShareIcon className="mr-2" size={16} />
                     Take screenshot
                   </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={() => handleFileAction("take-photo")}
-                  >
+                  <DropdownMenuItem onClick={handleTakePhoto}>
                     <CameraIcon className="mr-2" size={16} />
                     Take photo
                   </DropdownMenuItem>
@@ -753,30 +801,12 @@ const Example = () => {
                     <ModelSelectorEmpty>No models found.</ModelSelectorEmpty>
                     <ModelSelectorGroup heading="Anthropic">
                       {models.map((m) => (
-                        <ModelSelectorItem
+                        <ModelItem
                           key={m.id}
-                          onSelect={() => {
-                            setModel(m.id);
-                            setModelSelectorOpen(false);
-                          }}
-                          value={m.id}
-                        >
-                          <ModelSelectorLogo provider={m.chefSlug} />
-                          <ModelSelectorName>{m.name}</ModelSelectorName>
-                          <ModelSelectorLogoGroup>
-                            {m.providers.map((provider) => (
-                              <ModelSelectorLogo
-                                key={provider}
-                                provider={provider}
-                              />
-                            ))}
-                          </ModelSelectorLogoGroup>
-                          {model === m.id ? (
-                            <CheckIcon className="ml-auto size-4" />
-                          ) : (
-                            <div className="ml-auto size-4" />
-                          )}
-                        </ModelSelectorItem>
+                          m={m}
+                          onSelect={handleModelSelect}
+                          selectedModel={model}
+                        />
                       ))}
                     </ModelSelectorGroup>
                   </ModelSelectorList>

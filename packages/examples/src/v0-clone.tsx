@@ -18,7 +18,7 @@ import {
 } from "@repo/elements/web-preview";
 import { Spinner } from "@repo/shadcn-ui/components/ui/spinner";
 import { nanoid } from "nanoid";
-import { useState } from "react";
+import { memo, useCallback, useState } from "react";
 
 interface Chat {
   id: string;
@@ -67,6 +67,23 @@ const mockChat: Chat = {
   id: "mock-chat-1",
 };
 
+interface SuggestionItemProps {
+  text: string;
+  onSuggestionClick: (text: string) => void;
+}
+
+const SuggestionItem = memo(
+  ({ text, onSuggestionClick }: SuggestionItemProps) => {
+    const handleClick = useCallback(
+      () => onSuggestionClick(text),
+      [onSuggestionClick, text]
+    );
+    return <Suggestion onClick={handleClick} suggestion={text} />;
+  }
+);
+
+SuggestionItem.displayName = "SuggestionItem";
+
 export default function Home() {
   const [message, setMessage] = useState("");
   const [currentChat, setCurrentChat] = useState<Chat | null>(mockChat);
@@ -80,65 +97,77 @@ export default function Home() {
       }[]
     >(mockChatHistory);
 
-  const handleSendMessage = async (promptMessage: PromptInputMessage) => {
-    const hasText = Boolean(promptMessage.text);
-    const hasAttachments = Boolean(promptMessage.files?.length);
+  const handleSendMessage = useCallback(
+    async (promptMessage: PromptInputMessage) => {
+      const hasText = Boolean(promptMessage.text);
+      const hasAttachments = Boolean(promptMessage.files?.length);
 
-    if (!(hasText || hasAttachments) || isLoading) {
-      return;
-    }
-
-    const userMessage = promptMessage.text?.trim() || "Sent with attachments";
-    setMessage("");
-    setIsLoading(true);
-
-    setChatHistory((prev) => [
-      ...prev,
-      { content: userMessage, id: nanoid(), type: "user" },
-    ]);
-
-    try {
-      const response = await fetch("/api/v0", {
-        body: JSON.stringify({
-          chatId: currentChat?.id,
-          message: userMessage,
-        }),
-        headers: {
-          "Content-Type": "application/json",
-        },
-        method: "POST",
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to create chat");
+      if (!(hasText || hasAttachments) || isLoading) {
+        return;
       }
 
-      const chat: Chat = await response.json();
-      setCurrentChat(chat);
+      const userMessage = promptMessage.text?.trim() || "Sent with attachments";
+      setMessage("");
+      setIsLoading(true);
 
       setChatHistory((prev) => [
         ...prev,
-        {
-          content: "Generated new app preview. Check the preview panel!",
-          id: nanoid(),
-          type: "assistant",
-        },
+        { content: userMessage, id: nanoid(), type: "user" },
       ]);
-    } catch (error) {
-      console.error("Error:", error);
-      setChatHistory((prev) => [
-        ...prev,
-        {
-          content:
-            "Sorry, there was an error creating your app. Please try again.",
-          id: nanoid(),
-          type: "assistant",
-        },
-      ]);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+
+      try {
+        const response = await fetch("/api/v0", {
+          body: JSON.stringify({
+            chatId: currentChat?.id,
+            message: userMessage,
+          }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+          method: "POST",
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to create chat");
+        }
+
+        const chat: Chat = await response.json();
+        setCurrentChat(chat);
+
+        setChatHistory((prev) => [
+          ...prev,
+          {
+            content: "Generated new app preview. Check the preview panel!",
+            id: nanoid(),
+            type: "assistant",
+          },
+        ]);
+      } catch (error) {
+        console.error("Error:", error);
+        setChatHistory((prev) => [
+          ...prev,
+          {
+            content:
+              "Sorry, there was an error creating your app. Please try again.",
+            id: nanoid(),
+            type: "assistant",
+          },
+        ]);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [currentChat?.id, isLoading]
+  );
+
+  const handleSuggestionClick = useCallback((suggestion: string) => {
+    setMessage(suggestion);
+  }, []);
+
+  const handleTextChange = useCallback(
+    (e: React.ChangeEvent<HTMLTextAreaElement>) => setMessage(e.target.value),
+    []
+  );
 
   return (
     <div className="flex size-full divide-x">
@@ -178,21 +207,17 @@ export default function Home() {
         <div className="border-t p-4">
           {!currentChat && (
             <Suggestions>
-              <Suggestion
-                onClick={() =>
-                  setMessage("Create a responsive navbar with Tailwind CSS")
-                }
-                suggestion="Create a responsive navbar with Tailwind CSS"
+              <SuggestionItem
+                onSuggestionClick={handleSuggestionClick}
+                text="Create a responsive navbar with Tailwind CSS"
               />
-              <Suggestion
-                onClick={() => setMessage("Build a todo app with React")}
-                suggestion="Build a todo app with React"
+              <SuggestionItem
+                onSuggestionClick={handleSuggestionClick}
+                text="Build a todo app with React"
               />
-              <Suggestion
-                onClick={() =>
-                  setMessage("Make a landing page for a coffee shop")
-                }
-                suggestion="Make a landing page for a coffee shop"
+              <SuggestionItem
+                onSuggestionClick={handleSuggestionClick}
+                text="Make a landing page for a coffee shop"
               />
             </Suggestions>
           )}
@@ -203,7 +228,7 @@ export default function Home() {
             >
               <PromptInputTextarea
                 className="min-h-[60px] pr-12"
-                onChange={(e) => setMessage(e.target.value)}
+                onChange={handleTextChange}
                 value={message}
               />
               <PromptInputSubmit

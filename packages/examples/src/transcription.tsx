@@ -6,7 +6,7 @@ import {
   Transcription,
   TranscriptionSegment,
 } from "@repo/elements/transcription";
-import { useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 
 const segments: TranscriptionResult["segments"] = [
   {
@@ -250,17 +250,17 @@ const Example = () => {
   const audioRef = useRef<HTMLAudioElement>(null);
   const [currentTime, setCurrentTime] = useState(0);
 
-  const handleSeek = (time: number) => {
+  const handleSeek = useCallback((time: number) => {
     if (audioRef.current) {
       audioRef.current.currentTime = time;
     }
-  };
+  }, []);
 
-  const handleTimeUpdate = () => {
+  const handleTimeUpdate = useCallback(() => {
     if (audioRef.current) {
       setCurrentTime(audioRef.current.currentTime);
     }
-  };
+  }, []);
 
   return (
     <div className="space-y-6 p-6">

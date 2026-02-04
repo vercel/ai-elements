@@ -15,7 +15,7 @@ import {
 } from "@repo/elements/model-selector";
 import { Button } from "@repo/shadcn-ui/components/ui/button";
 import { CheckIcon } from "lucide-react";
-import { useState } from "react";
+import { memo, useCallback, useState } from "react";
 
 const models = [
   {
@@ -279,9 +279,45 @@ const models = [
   },
 ];
 
+interface ModelItemProps {
+  model: (typeof models)[0];
+  selectedModel: string;
+  onSelect: (id: string) => void;
+}
+
+const ModelItem = memo(({ model, selectedModel, onSelect }: ModelItemProps) => {
+  const handleSelect = useCallback(
+    () => onSelect(model.id),
+    [onSelect, model.id]
+  );
+  return (
+    <ModelSelectorItem key={model.id} onSelect={handleSelect} value={model.id}>
+      <ModelSelectorLogo provider={model.chefSlug} />
+      <ModelSelectorName>{model.name}</ModelSelectorName>
+      <ModelSelectorLogoGroup>
+        {model.providers.map((provider) => (
+          <ModelSelectorLogo key={provider} provider={provider} />
+        ))}
+      </ModelSelectorLogoGroup>
+      {selectedModel === model.id ? (
+        <CheckIcon className="ml-auto size-4" />
+      ) : (
+        <div className="ml-auto size-4" />
+      )}
+    </ModelSelectorItem>
+  );
+});
+
+ModelItem.displayName = "ModelItem";
+
 const Example = () => {
   const [open, setOpen] = useState(false);
   const [selectedModel, setSelectedModel] = useState<string>("gpt-4o");
+
+  const handleModelSelect = useCallback((id: string) => {
+    setSelectedModel(id);
+    setOpen(false);
+  }, []);
 
   const selectedModelData = models.find((model) => model.id === selectedModel);
 
@@ -310,30 +346,12 @@ const Example = () => {
                 {models
                   .filter((model) => model.chef === chef)
                   .map((model) => (
-                    <ModelSelectorItem
+                    <ModelItem
                       key={model.id}
-                      onSelect={() => {
-                        setSelectedModel(model.id);
-                        setOpen(false);
-                      }}
-                      value={model.id}
-                    >
-                      <ModelSelectorLogo provider={model.chefSlug} />
-                      <ModelSelectorName>{model.name}</ModelSelectorName>
-                      <ModelSelectorLogoGroup>
-                        {model.providers.map((provider) => (
-                          <ModelSelectorLogo
-                            key={provider}
-                            provider={provider}
-                          />
-                        ))}
-                      </ModelSelectorLogoGroup>
-                      {selectedModel === model.id ? (
-                        <CheckIcon className="ml-auto size-4" />
-                      ) : (
-                        <div className="ml-auto size-4" />
-                      )}
-                    </ModelSelectorItem>
+                      model={model}
+                      onSelect={handleModelSelect}
+                      selectedModel={selectedModel}
+                    />
                   ))}
               </ModelSelectorGroup>
             ))}

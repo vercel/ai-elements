@@ -364,13 +364,13 @@ const Example = () => {
     mockFiles.find((f) => f.path === path);
 
   // Handle file selection
-  const handleFileSelect = (path: string) => {
+  const handleFileSelect = useCallback((path: string) => {
     setSelectedPath(path);
     const file = findFileByPath(path);
     if (file) {
       setCurrentFile(file);
     }
-  };
+  }, []);
 
   // Stream message content word by word
   const streamContent = useCallback(
@@ -479,33 +479,41 @@ const Example = () => {
     runAnimation();
   }, [streamMessage, streamTerminal]);
 
+  const handleChatTextChange = useCallback(
+    (e: React.ChangeEvent<HTMLTextAreaElement>) => setChatText(e.target.value),
+    []
+  );
+
   // Handle chat submit
-  const handleSubmit = (message: PromptInputMessage) => {
-    if (!message.text.trim()) {
-      return;
-    }
+  const handleSubmit = useCallback(
+    (message: PromptInputMessage) => {
+      if (!message.text.trim()) {
+        return;
+      }
 
-    const userMessage: MessageType = {
-      content: message.text,
-      from: "user",
-      key: nanoid(),
-    };
-
-    setMessages((prev) => [...prev, userMessage]);
-    setChatText("");
-    setStatus("submitted");
-
-    // Simulate AI response
-    setTimeout(() => {
-      const assistantMessage: MessageType = {
-        content:
-          "I'll look into that for you. Let me analyze the codebase and suggest some improvements.",
-        from: "assistant",
+      const userMessage: MessageType = {
+        content: message.text,
+        from: "user",
         key: nanoid(),
       };
-      streamMessage(assistantMessage);
-    }, 500);
-  };
+
+      setMessages((prev) => [...prev, userMessage]);
+      setChatText("");
+      setStatus("submitted");
+
+      // Simulate AI response
+      setTimeout(() => {
+        const assistantMessage: MessageType = {
+          content:
+            "I'll look into that for you. Let me analyze the codebase and suggest some improvements.",
+          from: "assistant",
+          key: nanoid(),
+        };
+        streamMessage(assistantMessage);
+      }, 500);
+    },
+    [streamMessage]
+  );
 
   const completedTasks = tasks.filter((t) => t.status === "completed");
   const pendingTasks = tasks.filter((t) => t.status !== "completed");
@@ -676,7 +684,7 @@ const Example = () => {
             <PromptInput className="rounded-lg border" onSubmit={handleSubmit}>
               <PromptInputTextarea
                 className="min-h-10"
-                onChange={(e) => setChatText(e.target.value)}
+                onChange={handleChatTextChange}
                 placeholder="Ask about the code..."
                 value={chatText}
               />

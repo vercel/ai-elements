@@ -1,7 +1,7 @@
 "use client";
 
 import { SpeechInput } from "@repo/elements/speech-input";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
 /**
  * Fallback handler for browsers that don't support Web Speech API (Firefox, Safari).
@@ -35,16 +35,16 @@ const handleAudioRecorded = async (audioBlob: Blob): Promise<string> => {
 const Example = () => {
   const [transcript, setTranscript] = useState("");
 
-  const handleTranscriptionChange = (text: string) => {
+  const handleTranscriptionChange = useCallback((text: string) => {
     setTranscript((prev) => {
       const newText = prev ? `${prev} ${text}` : text;
       return newText;
     });
-  };
+  }, []);
 
-  const handleClear = () => {
+  const handleClear = useCallback(() => {
     setTranscript("");
-  };
+  }, []);
 
   return (
     <div className="flex size-full flex-col items-center justify-center gap-4">

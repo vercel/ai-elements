@@ -244,16 +244,16 @@ export const EnvironmentVariableCopyButton = ({
   const [isCopied, setIsCopied] = useState(false);
   const { name, value } = useContext(EnvironmentVariableContext);
 
-  const getTextToCopy = (): string => {
+  const getTextToCopy = useCallback((): string => {
     const formatMap = {
       export: () => `export ${name}="${value}"`,
       name: () => name,
       value: () => value,
     };
     return formatMap[copyFormat]();
-  };
+  }, [name, value, copyFormat]);
 
-  const copyToClipboard = async () => {
+  const copyToClipboard = useCallback(async () => {
     if (typeof window === "undefined" || !navigator?.clipboard?.writeText) {
       onError?.(new Error("Clipboard API not available"));
       return;
@@ -267,7 +267,7 @@ export const EnvironmentVariableCopyButton = ({
     } catch (error) {
       onError?.(error as Error);
     }
-  };
+  }, [getTextToCopy, onCopy, onError, timeout]);
 
   const Icon = isCopied ? CheckIcon : CopyIcon;
 

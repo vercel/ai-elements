@@ -16,7 +16,7 @@ import {
   MousePointerClickIcon,
   RefreshCcwIcon,
 } from "lucide-react";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
 const handleUrlChange = (url: string) => {
   console.log("URL changed to:", url);
@@ -61,7 +61,12 @@ const exampleLogs = [
 ];
 
 const Example = () => {
-  const [fullscreen, setFullscreen] = useState(false);
+  const [_fullscreen, setFullscreen] = useState(false);
+
+  const handleToggleFullscreen = useCallback(
+    () => setFullscreen((prev) => !prev),
+    []
+  );
 
   return (
     <WebPreview
@@ -93,7 +98,7 @@ const Example = () => {
           <ExternalLinkIcon className="size-4" />
         </WebPreviewNavigationButton>
         <WebPreviewNavigationButton
-          onClick={() => setFullscreen(!fullscreen)}
+          onClick={handleToggleFullscreen}
           tooltip="Maximize"
         >
           <Maximize2Icon className="size-4" />

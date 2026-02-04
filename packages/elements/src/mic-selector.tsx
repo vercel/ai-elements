@@ -205,15 +205,15 @@ export type MicSelectorItemProps = ComponentProps<typeof CommandItem>;
 export const MicSelectorItem = (props: MicSelectorItemProps) => {
   const { onValueChange, onOpenChange } = useContext(MicSelectorContext);
 
-  return (
-    <CommandItem
-      onSelect={(currentValue) => {
-        onValueChange?.(currentValue);
-        onOpenChange?.(false);
-      }}
-      {...props}
-    />
+  const handleSelect = useCallback(
+    (currentValue: string) => {
+      onValueChange?.(currentValue);
+      onOpenChange?.(false);
+    },
+    [onValueChange, onOpenChange]
   );
+
+  return <CommandItem onSelect={handleSelect} {...props} />;
 };
 
 export type MicSelectorLabelProps = ComponentProps<"span"> & {

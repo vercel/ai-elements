@@ -1,3 +1,4 @@
+// oxlint-disable eslint-plugin-react-perf(jsx-no-new-function-as-prop)
 import { render, screen, waitFor } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import { useCallback } from "react";

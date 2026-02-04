@@ -1,4 +1,4 @@
-// oxlint-disable eslint-plugin-jest(max-expects)
+// oxlint-disable eslint-plugin-jest(max-expects), eslint-plugin-react-perf(jsx-no-new-function-as-prop)
 import { act, render, screen } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import React from "react";

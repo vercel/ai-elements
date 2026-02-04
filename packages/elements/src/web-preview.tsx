@@ -146,13 +146,16 @@ export const WebPreviewUrl = ({
     onChange?.(event);
   };
 
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === "Enter") {
-      const target = event.target as HTMLInputElement;
-      setUrl(target.value);
-    }
-    onKeyDown?.(event);
-  };
+  const handleKeyDown = useCallback(
+    (event: React.KeyboardEvent<HTMLInputElement>) => {
+      if (event.key === "Enter") {
+        const target = event.target as HTMLInputElement;
+        setUrl(target.value);
+      }
+      onKeyDown?.(event);
+    },
+    [setUrl, onKeyDown]
+  );
 
   return (
     <Input

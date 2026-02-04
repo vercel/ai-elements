@@ -173,6 +173,9 @@ export const CommitTimestamp = ({
 
 export type CommitActionsProps = HTMLAttributes<HTMLDivElement>;
 
+const handleActionsClick = (e: React.MouseEvent) => e.stopPropagation();
+const handleActionsKeyDown = (e: React.KeyboardEvent) => e.stopPropagation();
+
 export const CommitActions = ({
   className,
   children,
@@ -182,8 +185,8 @@ export const CommitActions = ({
   // biome-ignore lint/a11y/useSemanticElements: fieldset doesn't fit this UI pattern
   <div
     className={cn("flex items-center gap-1", className)}
-    onClick={(e) => e.stopPropagation()}
-    onKeyDown={(e) => e.stopPropagation()}
+    onClick={handleActionsClick}
+    onKeyDown={handleActionsKeyDown}
     role="group"
     {...props}
   >
@@ -210,7 +213,7 @@ export const CommitCopyButton = ({
   const [isCopied, setIsCopied] = useState(false);
   const timeoutRef = useRef<number>(0);
 
-  const copyToClipboard = async () => {
+  const copyToClipboard = useCallback(async () => {
     if (typeof window === "undefined" || !navigator?.clipboard?.writeText) {
       onError?.(new Error("Clipboard API not available"));
       return;
@@ -229,7 +232,7 @@ export const CommitCopyButton = ({
     } catch (error) {
       onError?.(error as Error);
     }
-  };
+  }, [hash, onCopy, onError, timeout, isCopied]);
 
   useEffect(
     () => () => {

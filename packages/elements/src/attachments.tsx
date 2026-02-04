@@ -324,6 +324,14 @@ export const AttachmentRemove = ({
 }: AttachmentRemoveProps) => {
   const { onRemove, variant } = useAttachmentContext();
 
+  const handleClick = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation();
+      onRemove?.();
+    },
+    [onRemove]
+  );
+
   if (!onRemove) {
     return null;
   }
@@ -347,10 +355,7 @@ export const AttachmentRemove = ({
         variant === "list" && ["size-8 shrink-0 rounded p-0", "[&>svg]:size-4"],
         className
       )}
-      onClick={(e) => {
-        e.stopPropagation();
-        onRemove();
-      }}
+      onClick={handleClick}
       type="button"
       variant="ghost"
       {...props}

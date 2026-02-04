@@ -487,11 +487,14 @@ export const VoiceSelectorPreview = ({
   onClick,
   ...props
 }: VoiceSelectorPreviewProps) => {
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    event.stopPropagation();
-    onClick?.(event);
-    onPlay?.();
-  };
+  const handleClick = useCallback(
+    (event: React.MouseEvent<HTMLButtonElement>) => {
+      event.stopPropagation();
+      onClick?.(event);
+      onPlay?.();
+    },
+    [onClick, onPlay]
+  );
 
   let icon = <PlayIcon className="size-3" />;
 

@@ -20,7 +20,7 @@ import {
   QueueSectionTrigger,
 } from "@repo/elements/queue";
 import { ArrowUp, Trash2 } from "lucide-react";
-import { useState } from "react";
+import { memo, useCallback, useState } from "react";
 
 const sampleMessages: QueueMessage[] = [
   {
@@ -93,22 +93,111 @@ const sampleTodos: QueueTodo[] = [
   },
 ];
 
+interface MessageActionsProps {
+  messageId: string;
+  onRemove: (e: React.MouseEvent, id: string) => void;
+  onSend: (e: React.MouseEvent, id: string) => void;
+}
+
+const MessageActions = memo(
+  ({ messageId, onRemove, onSend }: MessageActionsProps) => {
+    const handleRemove = useCallback(
+      (e: React.MouseEvent) => onRemove(e, messageId),
+      [onRemove, messageId]
+    );
+    const handleSend = useCallback(
+      (e: React.MouseEvent) => onSend(e, messageId),
+      [onSend, messageId]
+    );
+    return (
+      <QueueItemActions>
+        <QueueItemAction
+          aria-label="Remove from queue"
+          onClick={handleRemove}
+          title="Remove from queue"
+        >
+          <Trash2 size={12} />
+        </QueueItemAction>
+        <QueueItemAction aria-label="Send now" onClick={handleSend}>
+          <ArrowUp size={14} />
+        </QueueItemAction>
+      </QueueItemActions>
+    );
+  }
+);
+
+MessageActions.displayName = "MessageActions";
+
+interface TodoItemProps {
+  todo: QueueTodo;
+  onRemove: (id: string) => void;
+}
+
+const TodoItem = memo(({ todo, onRemove }: TodoItemProps) => {
+  const isCompleted = todo.status === "completed";
+  const handleRemove = useCallback(
+    () => onRemove(todo.id),
+    [onRemove, todo.id]
+  );
+
+  return (
+    <QueueItem key={todo.id}>
+      <div className="flex items-center gap-2">
+        <QueueItemIndicator completed={isCompleted} />
+        <QueueItemContent completed={isCompleted}>
+          {todo.title}
+        </QueueItemContent>
+        <QueueItemActions>
+          <QueueItemAction aria-label="Remove todo" onClick={handleRemove}>
+            <Trash2 size={12} />
+          </QueueItemAction>
+        </QueueItemActions>
+      </div>
+      {todo.description && (
+        <QueueItemDescription completed={isCompleted}>
+          {todo.description}
+        </QueueItemDescription>
+      )}
+    </QueueItem>
+  );
+});
+
+TodoItem.displayName = "TodoItem";
+
 const Example = () => {
   const [messages, setMessages] = useState(sampleMessages);
   const [todos, setTodos] = useState(sampleTodos);
 
-  const handleRemoveMessage = (id: string) => {
+  const handleRemoveMessage = useCallback((id: string) => {
     setMessages((prev) => prev.filter((msg) => msg.id !== id));
-  };
+  }, []);
 
-  const handleRemoveTodo = (id: string) => {
+  const handleRemoveTodo = useCallback((id: string) => {
     setTodos((prev) => prev.filter((todo) => todo.id !== id));
-  };
+  }, []);
 
-  const handleSendNow = (id: string) => {
+  const handleSendNow = useCallback((id: string) => {
     console.log("Send now:", id);
-    handleRemoveMessage(id);
-  };
+    setMessages((prev) => prev.filter((msg) => msg.id !== id));
+  }, []);
+
+  const handleMessageRemove = useCallback(
+    (e: React.MouseEvent, id: string) => {
+      e.preventDefault();
+      e.stopPropagation();
+      handleRemoveMessage(id);
+    },
+    [handleRemoveMessage]
+  );
+
+  const handleMessageSend = useCallback(
+    (e: React.MouseEvent, id: string) => {
+      e.preventDefault();
+      e.stopPropagation();
+      handleSendNow(id);
+    },
+    [handleSendNow]
+  );
 
   if (messages.length === 0 && todos.length === 0) {
     return null;
@@ -144,29 +233,11 @@ const Example = () => {
                     <div className="flex items-center gap-2">
                       <QueueItemIndicator />
                       <QueueItemContent>{summary}</QueueItemContent>
-                      <QueueItemActions>
-                        <QueueItemAction
-                          aria-label="Remove from queue"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            handleRemoveMessage(message.id);
-                          }}
-                          title="Remove from queue"
-                        >
-                          <Trash2 size={12} />
-                        </QueueItemAction>
-                        <QueueItemAction
-                          aria-label="Send now"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            handleSendNow(message.id);
-                          }}
-                        >
-                          <ArrowUp size={14} />
-                        </QueueItemAction>
-                      </QueueItemActions>
+                      <MessageActions
+                        messageId={message.id}
+                        onRemove={handleMessageRemove}
+                        onSend={handleMessageSend}
+                      />
                     </div>
                     {hasFiles && (
                       <QueueItemAttachment>
@@ -207,33 +278,13 @@ const Example = () => {
           </QueueSectionTrigger>
           <QueueSectionContent>
             <QueueList>
-              {todos.map((todo) => {
-                const isCompleted = todo.status === "completed";
-
-                return (
-                  <QueueItem key={todo.id}>
-                    <div className="flex items-center gap-2">
-                      <QueueItemIndicator completed={isCompleted} />
-                      <QueueItemContent completed={isCompleted}>
-                        {todo.title}
-                      </QueueItemContent>
-                      <QueueItemActions>
-                        <QueueItemAction
-                          aria-label="Remove todo"
-                          onClick={() => handleRemoveTodo(todo.id)}
-                        >
-                          <Trash2 size={12} />
-                        </QueueItemAction>
-                      </QueueItemActions>
-                    </div>
-                    {todo.description && (
-                      <QueueItemDescription completed={isCompleted}>
-                        {todo.description}
-                      </QueueItemDescription>
-                    )}
-                  </QueueItem>
-                );
-              })}
+              {todos.map((todo) => (
+                <TodoItem
+                  key={todo.id}
+                  onRemove={handleRemoveTodo}
+                  todo={todo}
+                />
+              ))}
             </QueueList>
           </QueueSectionContent>
         </QueueSection>

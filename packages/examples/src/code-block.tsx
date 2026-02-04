@@ -16,7 +16,7 @@ import {
   CodeBlockTitle,
 } from "@repo/elements/code-block";
 import { FileIcon } from "lucide-react";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
 const codeExamples = {
   go: {
@@ -81,6 +81,10 @@ const Example = () => {
   const [language, setLanguage] = useState<Language>("typescript");
   const { code, filename } = codeExamples[language];
 
+  const handleLanguageChange = useCallback((value: string) => {
+    setLanguage(value as Language);
+  }, []);
+
   return (
     <CodeBlock code={code} language={language as BundledLanguage}>
       <CodeBlockHeader>
@@ -90,7 +94,7 @@ const Example = () => {
         </CodeBlockTitle>
         <CodeBlockActions>
           <CodeBlockLanguageSelector
-            onValueChange={(value) => setLanguage(value as Language)}
+            onValueChange={handleLanguageChange}
             value={language}
           >
             <CodeBlockLanguageSelectorTrigger>

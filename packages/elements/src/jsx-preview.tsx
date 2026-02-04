@@ -173,15 +173,18 @@ export const JSXPreviewContent = memo(
       errorReportedRef.current = null;
     }, [processedJsx]);
 
-    const handleError = (err: Error) => {
-      // Prevent duplicate error reports for the same jsx
-      if (errorReportedRef.current === processedJsx) {
-        return;
-      }
-      errorReportedRef.current = processedJsx;
-      setError(err);
-      onErrorProp?.(err);
-    };
+    const handleError = useCallback(
+      (err: Error) => {
+        // Prevent duplicate error reports for the same jsx
+        if (errorReportedRef.current === processedJsx) {
+          return;
+        }
+        errorReportedRef.current = processedJsx;
+        setError(err);
+        onErrorProp?.(err);
+      },
+      [processedJsx, onErrorProp, setError]
+    );
 
     return (
       <div className={cn("jsx-preview-content", className)} {...props}>

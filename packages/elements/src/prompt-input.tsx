@@ -340,14 +340,16 @@ export const PromptInputActionAddAttachments = ({
 }: PromptInputActionAddAttachmentsProps) => {
   const attachments = usePromptInputAttachments();
 
+  const handleSelect = useCallback(
+    (e: Event) => {
+      e.preventDefault();
+      attachments.openFileDialog();
+    },
+    [attachments]
+  );
+
   return (
-    <DropdownMenuItem
-      {...props}
-      onSelect={(e) => {
-        e.preventDefault();
-        attachments.openFileDialog();
-      }}
-    >
+    <DropdownMenuItem {...props} onSelect={handleSelect}>
       <ImageIcon className="mr-2 size-4" /> {label}
     </DropdownMenuItem>
   );
@@ -670,13 +672,16 @@ export const PromptInput = ({
     [usingProvider]
   );
 
-  const handleChange: ChangeEventHandler<HTMLInputElement> = (event) => {
-    if (event.currentTarget.files) {
-      add(event.currentTarget.files);
-    }
-    // Reset input value to allow selecting files that were previously removed
-    event.currentTarget.value = "";
-  };
+  const handleChange: ChangeEventHandler<HTMLInputElement> = useCallback(
+    (event) => {
+      if (event.currentTarget.files) {
+        add(event.currentTarget.files);
+      }
+      // Reset input value to allow selecting files that were previously removed
+      event.currentTarget.value = "";
+    },
+    [add]
+  );
 
   const attachmentsCtx = useMemo<AttachmentsContext>(
     () => ({
@@ -708,63 +713,66 @@ export const PromptInput = ({
     [referencedSources, clearReferencedSources]
   );
 
-  const handleSubmit: FormEventHandler<HTMLFormElement> = async (event) => {
-    event.preventDefault();
+  const handleSubmit: FormEventHandler<HTMLFormElement> = useCallback(
+    async (event) => {
+      event.preventDefault();
 
-    const form = event.currentTarget;
-    const text = usingProvider
-      ? controller.textInput.value
-      : (() => {
-          const formData = new FormData(form);
-          return (formData.get("message") as string) || "";
-        })();
+      const form = event.currentTarget;
+      const text = usingProvider
+        ? controller.textInput.value
+        : (() => {
+            const formData = new FormData(form);
+            return (formData.get("message") as string) || "";
+          })();
 
-    // Reset form immediately after capturing text to avoid race condition
-    // where user input during async blob conversion would be lost
-    if (!usingProvider) {
-      form.reset();
-    }
+      // Reset form immediately after capturing text to avoid race condition
+      // where user input during async blob conversion would be lost
+      if (!usingProvider) {
+        form.reset();
+      }
 
-    try {
-      // Convert blob URLs to data URLs asynchronously
-      const convertedFiles: FileUIPart[] = await Promise.all(
-        files.map(async ({ id: _id, ...item }) => {
-          if (item.url?.startsWith("blob:")) {
-            const dataUrl = await convertBlobUrlToDataUrl(item.url);
-            // If conversion failed, keep the original blob URL
-            return {
-              ...item,
-              url: dataUrl ?? item.url,
-            };
+      try {
+        // Convert blob URLs to data URLs asynchronously
+        const convertedFiles: FileUIPart[] = await Promise.all(
+          files.map(async ({ id: _id, ...item }) => {
+            if (item.url?.startsWith("blob:")) {
+              const dataUrl = await convertBlobUrlToDataUrl(item.url);
+              // If conversion failed, keep the original blob URL
+              return {
+                ...item,
+                url: dataUrl ?? item.url,
+              };
+            }
+            return item;
+          })
+        );
+
+        const result = onSubmit({ files: convertedFiles, text }, event);
+
+        // Handle both sync and async onSubmit
+        if (result instanceof Promise) {
+          try {
+            await result;
+            clear();
+            if (usingProvider) {
+              controller.textInput.clear();
+            }
+          } catch {
+            // Don't clear on error - user may want to retry
           }
-          return item;
-        })
-      );
-
-      const result = onSubmit({ files: convertedFiles, text }, event);
-
-      // Handle both sync and async onSubmit
-      if (result instanceof Promise) {
-        try {
-          await result;
+        } else {
+          // Sync function completed without throwing, clear inputs
           clear();
           if (usingProvider) {
             controller.textInput.clear();
           }
-        } catch {
-          // Don't clear on error - user may want to retry
         }
-      } else {
-        // Sync function completed without throwing, clear inputs
-        clear();
-        if (usingProvider) {
-          controller.textInput.clear();
-        }
+      } catch {
+        // Don't clear on error - user may want to retry
       }
-    } catch {
-      // Don't clear on error - user may want to retry
-    }
-  };
+    },
+    [usingProvider, controller, files, onSubmit, clear]
+  );
 
   // Render with or without local provider
   const inner = (
@@ -828,73 +836,82 @@ export const PromptInputTextarea = ({
   const attachments = usePromptInputAttachments();
   const [isComposing, setIsComposing] = useState(false);
 
-  const handleKeyDown: KeyboardEventHandler<HTMLTextAreaElement> = (e) => {
-    // Call the external onKeyDown handler first
-    onKeyDown?.(e);
+  const handleKeyDown: KeyboardEventHandler<HTMLTextAreaElement> = useCallback(
+    (e) => {
+      // Call the external onKeyDown handler first
+      onKeyDown?.(e);
 
-    // If the external handler prevented default, don't run internal logic
-    if (e.defaultPrevented) {
-      return;
-    }
-
-    if (e.key === "Enter") {
-      if (isComposing || e.nativeEvent.isComposing) {
-        return;
-      }
-      if (e.shiftKey) {
-        return;
-      }
-      e.preventDefault();
-
-      // Check if the submit button is disabled before submitting
-      const { form } = e.currentTarget;
-      const submitButton = form?.querySelector(
-        'button[type="submit"]'
-      ) as HTMLButtonElement | null;
-      if (submitButton?.disabled) {
+      // If the external handler prevented default, don't run internal logic
+      if (e.defaultPrevented) {
         return;
       }
 
-      form?.requestSubmit();
-    }
+      if (e.key === "Enter") {
+        if (isComposing || e.nativeEvent.isComposing) {
+          return;
+        }
+        if (e.shiftKey) {
+          return;
+        }
+        e.preventDefault();
 
-    // Remove last attachment when Backspace is pressed and textarea is empty
-    if (
-      e.key === "Backspace" &&
-      e.currentTarget.value === "" &&
-      attachments.files.length > 0
-    ) {
-      e.preventDefault();
-      const lastAttachment = attachments.files.at(-1);
-      if (lastAttachment) {
-        attachments.remove(lastAttachment.id);
+        // Check if the submit button is disabled before submitting
+        const { form } = e.currentTarget;
+        const submitButton = form?.querySelector(
+          'button[type="submit"]'
+        ) as HTMLButtonElement | null;
+        if (submitButton?.disabled) {
+          return;
+        }
+
+        form?.requestSubmit();
       }
-    }
-  };
 
-  const handlePaste: ClipboardEventHandler<HTMLTextAreaElement> = (event) => {
-    const items = event.clipboardData?.items;
-
-    if (!items) {
-      return;
-    }
-
-    const files: File[] = [];
-
-    for (const item of items) {
-      if (item.kind === "file") {
-        const file = item.getAsFile();
-        if (file) {
-          files.push(file);
+      // Remove last attachment when Backspace is pressed and textarea is empty
+      if (
+        e.key === "Backspace" &&
+        e.currentTarget.value === "" &&
+        attachments.files.length > 0
+      ) {
+        e.preventDefault();
+        const lastAttachment = attachments.files.at(-1);
+        if (lastAttachment) {
+          attachments.remove(lastAttachment.id);
         }
       }
-    }
+    },
+    [onKeyDown, isComposing, attachments]
+  );
 
-    if (files.length > 0) {
-      event.preventDefault();
-      attachments.add(files);
-    }
-  };
+  const handlePaste: ClipboardEventHandler<HTMLTextAreaElement> = useCallback(
+    (event) => {
+      const items = event.clipboardData?.items;
+
+      if (!items) {
+        return;
+      }
+
+      const files: File[] = [];
+
+      for (const item of items) {
+        if (item.kind === "file") {
+          const file = item.getAsFile();
+          if (file) {
+            files.push(file);
+          }
+        }
+      }
+
+      if (files.length > 0) {
+        event.preventDefault();
+        attachments.add(files);
+      }
+    },
+    [attachments]
+  );
+
+  const handleCompositionEnd = useCallback(() => setIsComposing(false), []);
+  const handleCompositionStart = useCallback(() => setIsComposing(true), []);
 
   const controlledProps = controller
     ? {
@@ -912,8 +929,8 @@ export const PromptInputTextarea = ({
     <InputGroupTextarea
       className={cn("field-sizing-content max-h-48 min-h-16", className)}
       name="message"
-      onCompositionEnd={() => setIsComposing(false)}
-      onCompositionStart={() => setIsComposing(true)}
+      onCompositionEnd={handleCompositionEnd}
+      onCompositionStart={handleCompositionStart}
       onKeyDown={handleKeyDown}
       onPaste={handlePaste}
       placeholder={placeholder}
@@ -1090,14 +1107,17 @@ export const PromptInputSubmit = ({
     Icon = <XIcon className="size-4" />;
   }
 
-  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-    if (isGenerating && onStop) {
-      e.preventDefault();
-      onStop();
-      return;
-    }
-    onClick?.(e);
-  };
+  const handleClick = useCallback(
+    (e: React.MouseEvent<HTMLButtonElement>) => {
+      if (isGenerating && onStop) {
+        e.preventDefault();
+        onStop();
+        return;
+      }
+      onClick?.(e);
+    },
+    [isGenerating, onStop, onClick]
+  );
 
   return (
     <InputGroupButton

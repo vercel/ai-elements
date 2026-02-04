@@ -8,7 +8,7 @@ import {
   Attachments,
 } from "@repo/elements/attachments";
 import { nanoid } from "nanoid";
-import { useState } from "react";
+import { memo, useCallback, useState } from "react";
 
 const initialAttachments = [
   {
@@ -49,26 +49,43 @@ const initialAttachments = [
   },
 ];
 
+interface AttachmentItemProps {
+  attachment: (typeof initialAttachments)[0];
+  onRemove: (id: string) => void;
+}
+
+const AttachmentItem = memo(({ attachment, onRemove }: AttachmentItemProps) => {
+  const handleRemove = useCallback(
+    () => onRemove(attachment.id),
+    [onRemove, attachment.id]
+  );
+  return (
+    <Attachment data={attachment} key={attachment.id} onRemove={handleRemove}>
+      <AttachmentPreview />
+      <AttachmentInfo showMediaType />
+      <AttachmentRemove />
+    </Attachment>
+  );
+});
+
+AttachmentItem.displayName = "AttachmentItem";
+
 const Example = () => {
   const [attachments, setAttachments] = useState(initialAttachments);
 
-  const handleRemove = (id: string) => {
+  const handleRemove = useCallback((id: string) => {
     setAttachments((prev) => prev.filter((a) => a.id !== id));
-  };
+  }, []);
 
   return (
     <div className="flex items-center justify-center p-8">
       <Attachments className="w-full max-w-md" variant="list">
         {attachments.map((attachment) => (
-          <Attachment
-            data={attachment}
+          <AttachmentItem
+            attachment={attachment}
             key={attachment.id}
-            onRemove={() => handleRemove(attachment.id)}
-          >
-            <AttachmentPreview />
-            <AttachmentInfo showMediaType />
-            <AttachmentRemove />
-          </Attachment>
+            onRemove={handleRemove}
+          />
         ))}
       </Attachments>
     </div>

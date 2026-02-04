@@ -18,7 +18,7 @@ import {
   MegaphoneIcon,
   MicIcon,
 } from "lucide-react";
-import { useState } from "react";
+import { memo, useCallback, useState } from "react";
 
 const states: {
   state: PersonaState;
@@ -52,8 +52,43 @@ const states: {
   },
 ];
 
+interface StateButtonProps {
+  state: (typeof states)[0];
+  currentState: PersonaState;
+  onStateChange: (state: PersonaState) => void;
+}
+
+const StateButton = memo(
+  ({ state, currentState, onStateChange }: StateButtonProps) => {
+    const handleClick = useCallback(
+      () => onStateChange(state.state),
+      [onStateChange, state.state]
+    );
+    return (
+      <Tooltip key={state.state}>
+        <TooltipTrigger asChild>
+          <Button
+            onClick={handleClick}
+            size="icon-sm"
+            variant={currentState === state.state ? "default" : "outline"}
+          >
+            <state.icon className="size-4" />
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent>{state.label}</TooltipContent>
+      </Tooltip>
+    );
+  }
+);
+
+StateButton.displayName = "StateButton";
+
 const Example = () => {
   const [currentState, setCurrentState] = useState<PersonaState>("idle");
+
+  const handleStateChange = useCallback((state: PersonaState) => {
+    setCurrentState(state);
+  }, []);
 
   return (
     <div className="flex size-full flex-col items-center justify-center gap-4">
@@ -61,18 +96,12 @@ const Example = () => {
 
       <ButtonGroup orientation="horizontal">
         {states.map((state) => (
-          <Tooltip key={state.state}>
-            <TooltipTrigger asChild>
-              <Button
-                onClick={() => setCurrentState(state.state)}
-                size="icon-sm"
-                variant={currentState === state.state ? "default" : "outline"}
-              >
-                <state.icon className="size-4" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>{state.label}</TooltipContent>
-          </Tooltip>
+          <StateButton
+            currentState={currentState}
+            key={state.state}
+            onStateChange={handleStateChange}
+            state={state}
+          />
         ))}
       </ButtonGroup>
     </div>

@@ -10,7 +10,7 @@ import {
   TerminalStatus,
   TerminalTitle,
 } from "@repo/elements/terminal";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 const handleTerminalCopy = () => {
   console.log("Copied!");
@@ -52,10 +52,10 @@ const Example = () => {
     return () => clearInterval(interval);
   }, []);
 
-  const handleClear = () => {
+  const handleClear = useCallback(() => {
     setOutput("");
     setIsStreaming(false);
-  };
+  }, []);
 
   return (
     <Terminal

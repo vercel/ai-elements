@@ -60,7 +60,7 @@ import {
   ScreenShareIcon,
 } from "lucide-react";
 import { nanoid } from "nanoid";
-import { useCallback, useEffect, useState } from "react";
+import { memo, useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 
 interface MessageType {
@@ -294,10 +294,39 @@ const mockMessageResponses = [
   "That's definitely worth exploring. From what I can see, the best way to handle this is to consider both the theoretical aspects and practical implementation details.",
 ];
 
+interface SuggestionItemProps {
+  icon?: React.ComponentType<{ size: number; style?: React.CSSProperties }>;
+  text: string;
+  color?: string;
+  onSuggestionClick: (text: string) => void;
+}
+
+const SuggestionItem = memo(
+  ({ icon: Icon, text, color, onSuggestionClick }: SuggestionItemProps) => {
+    const handleClick = useCallback(
+      () => onSuggestionClick(text),
+      [onSuggestionClick, text]
+    );
+
+    return (
+      <Suggestion
+        className="font-normal text-foreground"
+        onClick={handleClick}
+        suggestion={text}
+      >
+        {Icon && <Icon size={16} style={{ color }} />}
+        {text}
+      </Suggestion>
+    );
+  }
+);
+
+SuggestionItem.displayName = "SuggestionItem";
+
 const Example = () => {
   const [text, setText] = useState<string>("");
-  const [useWebSearch, setUseWebSearch] = useState<boolean>(false);
-  const [useMicrophone, setUseMicrophone] = useState<boolean>(false);
+  const [_useWebSearch, setUseWebSearch] = useState<boolean>(false);
+  const [_useMicrophone, setUseMicrophone] = useState<boolean>(false);
   const [_status, setStatus] = useState<
     "submitted" | "streaming" | "ready" | "error"
   >("ready");
@@ -555,18 +584,49 @@ const Example = () => {
     };
   }, [streamMessage]);
 
-  const handleSubmit = (message: PromptInputMessage) => {
-    const hasText = Boolean(message.text);
-    const hasAttachments = Boolean(message.files?.length);
+  const handleSubmit = useCallback(
+    (message: PromptInputMessage) => {
+      const hasText = Boolean(message.text);
+      const hasAttachments = Boolean(message.files?.length);
 
-    if (!(hasText || hasAttachments)) {
-      return;
-    }
+      if (!(hasText || hasAttachments)) {
+        return;
+      }
 
-    setStatus("submitted");
-    addUserMessage(message.text || "Sent with attachments");
-    setText("");
-  };
+      setStatus("submitted");
+      addUserMessage(message.text || "Sent with attachments");
+      setText("");
+    },
+    [addUserMessage]
+  );
+
+  const handleTextChange = useCallback(
+    (event: React.ChangeEvent<HTMLTextAreaElement>) =>
+      setText(event.target.value),
+    []
+  );
+
+  const handleUploadFile = useCallback(
+    () => handleFileAction("upload-file"),
+    []
+  );
+  const handleUploadPhoto = useCallback(
+    () => handleFileAction("upload-photo"),
+    []
+  );
+  const handleTakeScreenshot = useCallback(
+    () => handleFileAction("take-screenshot"),
+    []
+  );
+  const handleTakePhoto = useCallback(() => handleFileAction("take-photo"), []);
+  const handleToggleWebSearch = useCallback(
+    () => setUseWebSearch((prev) => !prev),
+    []
+  );
+  const handleToggleMicrophone = useCallback(
+    () => setUseMicrophone((prev) => !prev),
+    []
+  );
 
   const handleFileAction = (action: string) => {
     toast.success("File action", {
@@ -574,10 +634,13 @@ const Example = () => {
     });
   };
 
-  const handleSuggestionClick = (suggestion: string) => {
-    setStatus("submitted");
-    addUserMessage(suggestion);
-  };
+  const handleSuggestionClick = useCallback(
+    (suggestion: string) => {
+      setStatus("submitted");
+      addUserMessage(suggestion);
+    },
+    [addUserMessage]
+  );
 
   return (
     <div className="relative flex size-full flex-col divide-y overflow-hidden">
@@ -652,7 +715,7 @@ const Example = () => {
         >
           <PromptInputTextarea
             className="px-5 md:text-base"
-            onChange={(event) => setText(event.target.value)}
+            onChange={handleTextChange}
             placeholder="Ask anything"
             value={text}
           />
@@ -669,27 +732,19 @@ const Example = () => {
                   </PromptInputButton>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="start">
-                  <DropdownMenuItem
-                    onClick={() => handleFileAction("upload-file")}
-                  >
+                  <DropdownMenuItem onClick={handleUploadFile}>
                     <FileIcon className="mr-2" size={16} />
                     Upload file
                   </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={() => handleFileAction("upload-photo")}
-                  >
+                  <DropdownMenuItem onClick={handleUploadPhoto}>
                     <ImageIcon className="mr-2" size={16} />
                     Upload photo
                   </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={() => handleFileAction("take-screenshot")}
-                  >
+                  <DropdownMenuItem onClick={handleTakeScreenshot}>
                     <ScreenShareIcon className="mr-2" size={16} />
                     Take screenshot
                   </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={() => handleFileAction("take-photo")}
-                  >
+                  <DropdownMenuItem onClick={handleTakePhoto}>
                     <CameraIcon className="mr-2" size={16} />
                     Take photo
                   </DropdownMenuItem>
@@ -697,7 +752,7 @@ const Example = () => {
               </DropdownMenu>
               <PromptInputButton
                 className="rounded-full border font-medium"
-                onClick={() => setUseWebSearch(!useWebSearch)}
+                onClick={handleToggleWebSearch}
                 variant="outline"
               >
                 <GlobeIcon size={16} />
@@ -706,7 +761,7 @@ const Example = () => {
             </PromptInputTools>
             <PromptInputButton
               className="rounded-full font-medium text-foreground"
-              onClick={() => setUseMicrophone(!useMicrophone)}
+              onClick={handleToggleMicrophone}
               variant="secondary"
             >
               <AudioWaveformIcon size={16} />
@@ -715,16 +770,14 @@ const Example = () => {
           </PromptInputFooter>
         </PromptInput>
         <Suggestions className="px-4">
-          {suggestions.map(({ icon: Icon, text, color }) => (
-            <Suggestion
-              className="font-normal text-foreground"
+          {suggestions.map(({ icon, text, color }) => (
+            <SuggestionItem
+              color={color}
+              icon={icon}
               key={text}
-              onClick={() => handleSuggestionClick(text)}
-              suggestion={text}
-            >
-              {Icon && <Icon size={16} style={{ color }} />}
-              {text}
-            </Suggestion>
+              onSuggestionClick={handleSuggestionClick}
+              text={text}
+            />
           ))}
         </Suggestions>
       </div>

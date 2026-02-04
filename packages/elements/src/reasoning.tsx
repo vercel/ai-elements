@@ -115,9 +115,12 @@ export const Reasoning = memo(
       }
     }, [hasEverStreamed, isStreaming, isOpen, setIsOpen, hasAutoClosed]);
 
-    const handleOpenChange = (newOpen: boolean) => {
-      setIsOpen(newOpen);
-    };
+    const handleOpenChange = useCallback(
+      (newOpen: boolean) => {
+        setIsOpen(newOpen);
+      },
+      [setIsOpen]
+    );
 
     return (
       <ReasoningContext.Provider

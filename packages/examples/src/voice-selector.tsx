@@ -19,7 +19,7 @@ import {
   VoiceSelectorTrigger,
 } from "@repo/elements/voice-selector";
 import { Button } from "@repo/shadcn-ui/components/ui/button";
-import { useRef, useState } from "react";
+import { memo, useCallback, useRef, useState } from "react";
 
 const voices: {
   id: string;
@@ -92,6 +92,56 @@ const voices: {
   },
 ];
 
+interface VoiceItemProps {
+  voice: (typeof voices)[0];
+  playingVoice: string | null;
+  loadingVoice: string | null;
+  onSelect: (id: string) => void;
+  onPreview: (id: string) => void;
+}
+
+const VoiceItem = memo(
+  ({
+    voice,
+    playingVoice,
+    loadingVoice,
+    onSelect,
+    onPreview,
+  }: VoiceItemProps) => {
+    const handleSelect = useCallback(
+      () => onSelect(voice.id),
+      [onSelect, voice.id]
+    );
+    const handlePreview = useCallback(
+      () => onPreview(voice.id),
+      [onPreview, voice.id]
+    );
+    return (
+      <VoiceSelectorItem
+        key={voice.id}
+        onSelect={handleSelect}
+        value={voice.id}
+      >
+        <VoiceSelectorPreview
+          loading={loadingVoice === voice.id}
+          onPlay={handlePreview}
+          playing={playingVoice === voice.id}
+        />
+        <VoiceSelectorName>{voice.name}</VoiceSelectorName>
+        <VoiceSelectorDescription>{voice.description}</VoiceSelectorDescription>
+        <VoiceSelectorBullet />
+        <VoiceSelectorAccent value={voice.accent} />
+        <VoiceSelectorBullet />
+        <VoiceSelectorAge>{voice.age}</VoiceSelectorAge>
+        <VoiceSelectorBullet />
+        <VoiceSelectorGender value={voice.gender} />
+      </VoiceSelectorItem>
+    );
+  }
+);
+
+VoiceItem.displayName = "VoiceItem";
+
 const Example = () => {
   const [open, setOpen] = useState(false);
   const [selectedVoice, setSelectedVoice] = useState<string | null>(null);
@@ -99,52 +149,55 @@ const Example = () => {
   const [loadingVoice, setLoadingVoice] = useState<string | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  const handleSelect = (voiceId: string) => {
+  const handleSelect = useCallback((voiceId: string) => {
     setSelectedVoice(voiceId);
     setOpen(false);
-  };
+  }, []);
 
-  const handlePreview = (voiceId: string) => {
-    const voice = voices.find((v) => v.id === voiceId);
-    if (!voice) {
-      return;
-    }
+  const handlePreview = useCallback(
+    (voiceId: string) => {
+      const voice = voices.find((v) => v.id === voiceId);
+      if (!voice) {
+        return;
+      }
 
-    // If clicking the same voice that's playing, pause it
-    if (playingVoice === voiceId) {
-      audioRef.current?.pause();
-      setPlayingVoice(null);
-      return;
-    }
+      // If clicking the same voice that's playing, pause it
+      if (playingVoice === voiceId) {
+        audioRef.current?.pause();
+        setPlayingVoice(null);
+        return;
+      }
 
-    // Stop any currently playing audio
-    if (audioRef.current) {
-      audioRef.current.pause();
-      audioRef.current = null;
-    }
+      // Stop any currently playing audio
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
 
-    setLoadingVoice(voiceId);
+      setLoadingVoice(voiceId);
 
-    const audio = new Audio(voice.previewUrl);
-    audioRef.current = audio;
+      const audio = new Audio(voice.previewUrl);
+      audioRef.current = audio;
 
-    audio.addEventListener("canplaythrough", () => {
-      setLoadingVoice(null);
-      setPlayingVoice(voiceId);
-      audio.play();
-    });
+      audio.addEventListener("canplaythrough", () => {
+        setLoadingVoice(null);
+        setPlayingVoice(voiceId);
+        audio.play();
+      });
 
-    audio.addEventListener("ended", () => {
-      setPlayingVoice(null);
-    });
+      audio.addEventListener("ended", () => {
+        setPlayingVoice(null);
+      });
 
-    audio.addEventListener("error", () => {
-      setLoadingVoice(null);
-      setPlayingVoice(null);
-    });
+      audio.addEventListener("error", () => {
+        setLoadingVoice(null);
+        setPlayingVoice(null);
+      });
 
-    audio.load();
-  };
+      audio.load();
+    },
+    [playingVoice]
+  );
 
   const selectedVoiceData = voices.find((voice) => voice.id === selectedVoice);
 
@@ -174,27 +227,14 @@ const Example = () => {
           <VoiceSelectorList>
             <VoiceSelectorEmpty>No voices found.</VoiceSelectorEmpty>
             {voices.map((voice) => (
-              <VoiceSelectorItem
+              <VoiceItem
                 key={voice.id}
-                onSelect={() => handleSelect(voice.id)}
-                value={voice.id}
-              >
-                <VoiceSelectorPreview
-                  loading={loadingVoice === voice.id}
-                  onPlay={() => handlePreview(voice.id)}
-                  playing={playingVoice === voice.id}
-                />
-                <VoiceSelectorName>{voice.name}</VoiceSelectorName>
-                <VoiceSelectorDescription>
-                  {voice.description}
-                </VoiceSelectorDescription>
-                <VoiceSelectorBullet />
-                <VoiceSelectorAccent value={voice.accent} />
-                <VoiceSelectorBullet />
-                <VoiceSelectorAge>{voice.age}</VoiceSelectorAge>
-                <VoiceSelectorBullet />
-                <VoiceSelectorGender value={voice.gender} />
-              </VoiceSelectorItem>
+                loadingVoice={loadingVoice}
+                onPreview={handlePreview}
+                onSelect={handleSelect}
+                playingVoice={playingVoice}
+                voice={voice}
+              />
             ))}
           </VoiceSelectorList>
         </VoiceSelectorContent>

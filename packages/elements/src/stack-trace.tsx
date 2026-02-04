@@ -273,18 +273,21 @@ export const StackTraceErrorMessage = memo(
 
 export type StackTraceActionsProps = ComponentProps<"div">;
 
+const handleActionsClick = (e: React.MouseEvent) => e.stopPropagation();
+const handleActionsKeyDown = (e: React.KeyboardEvent) => {
+  if (e.key === "Enter" || e.key === " ") {
+    e.stopPropagation();
+  }
+};
+
 export const StackTraceActions = memo(
   ({ className, children, ...props }: StackTraceActionsProps) => (
     // biome-ignore lint/a11y/noNoninteractiveElementInteractions: stopPropagation required for nested interactions
     // biome-ignore lint/a11y/useSemanticElements: fieldset doesn't fit this UI pattern
     <div
       className={cn("flex shrink-0 items-center gap-1", className)}
-      onClick={(e) => e.stopPropagation()}
-      onKeyDown={(e) => {
-        if (e.key === "Enter" || e.key === " ") {
-          e.stopPropagation();
-        }
-      }}
+      onClick={handleActionsClick}
+      onKeyDown={handleActionsKeyDown}
       role="group"
       {...props}
     >
@@ -311,7 +314,7 @@ export const StackTraceCopyButton = memo(
     const [isCopied, setIsCopied] = useState(false);
     const { raw } = useStackTrace();
 
-    const copyToClipboard = async () => {
+    const copyToClipboard = useCallback(async () => {
       if (typeof window === "undefined" || !navigator?.clipboard?.writeText) {
         onError?.(new Error("Clipboard API not available"));
         return;
@@ -325,7 +328,7 @@ export const StackTraceCopyButton = memo(
       } catch (error) {
         onError?.(error as Error);
       }
-    };
+    }, [raw, onCopy, onError, timeout]);
 
     const Icon = isCopied ? CheckIcon : CopyIcon;
 
@@ -402,6 +405,47 @@ export type StackTraceFramesProps = ComponentProps<"div"> & {
   showInternalFrames?: boolean;
 };
 
+interface FilePathButtonProps {
+  frame: StackFrame;
+  onFilePathClick?: (
+    filePath: string,
+    lineNumber?: number,
+    columnNumber?: number
+  ) => void;
+}
+
+const FilePathButton = memo(
+  ({ frame, onFilePathClick }: FilePathButtonProps) => {
+    const handleClick = useCallback(() => {
+      if (frame.filePath) {
+        onFilePathClick?.(
+          frame.filePath,
+          frame.lineNumber ?? undefined,
+          frame.columnNumber ?? undefined
+        );
+      }
+    }, [frame, onFilePathClick]);
+
+    return (
+      <button
+        className={cn(
+          "underline decoration-dotted hover:text-primary",
+          onFilePathClick && "cursor-pointer"
+        )}
+        disabled={!onFilePathClick}
+        onClick={handleClick}
+        type="button"
+      >
+        {frame.filePath}
+        {frame.lineNumber !== null && `:${frame.lineNumber}`}
+        {frame.columnNumber !== null && `:${frame.columnNumber}`}
+      </button>
+    );
+  }
+);
+
+FilePathButton.displayName = "FilePathButton";
+
 export const StackTraceFrames = memo(
   ({
     className,
@@ -435,27 +479,10 @@ export const StackTraceFrames = memo(
             {frame.filePath && (
               <>
                 <span className="text-muted-foreground">(</span>
-                <button
-                  className={cn(
-                    "underline decoration-dotted hover:text-primary",
-                    onFilePathClick && "cursor-pointer"
-                  )}
-                  disabled={!onFilePathClick}
-                  onClick={() => {
-                    if (frame.filePath) {
-                      onFilePathClick?.(
-                        frame.filePath,
-                        frame.lineNumber ?? undefined,
-                        frame.columnNumber ?? undefined
-                      );
-                    }
-                  }}
-                  type="button"
-                >
-                  {frame.filePath}
-                  {frame.lineNumber !== null && `:${frame.lineNumber}`}
-                  {frame.columnNumber !== null && `:${frame.columnNumber}`}
-                </button>
+                <FilePathButton
+                  frame={frame}
+                  onFilePathClick={onFilePathClick}
+                />
                 <span className="text-muted-foreground">)</span>
               </>
             )}

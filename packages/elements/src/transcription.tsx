@@ -94,12 +94,15 @@ export const TranscriptionSegment = ({
     currentTime >= segment.startSecond && currentTime < segment.endSecond;
   const isPast = currentTime >= segment.endSecond;
 
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    if (onSeek) {
-      onSeek(segment.startSecond);
-    }
-    onClick?.(event);
-  };
+  const handleClick = useCallback(
+    (event: React.MouseEvent<HTMLButtonElement>) => {
+      if (onSeek) {
+        onSeek(segment.startSecond);
+      }
+      onClick?.(event);
+    },
+    [onSeek, segment.startSecond, onClick]
+  );
 
   return (
     <button
