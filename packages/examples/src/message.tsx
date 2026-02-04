@@ -281,7 +281,7 @@ const Example = () => {
               </MessageBranchContent>
               {message.from === "assistant" && (
                 <MessageToolbar>
-                  <MessageBranchSelector from={message.from}>
+                  <MessageBranchSelector>
                     <MessageBranchPrevious />
                     <MessageBranchPage />
                     <MessageBranchNext />

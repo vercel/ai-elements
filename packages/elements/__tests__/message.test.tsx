@@ -175,7 +175,7 @@ describe("messageBranch", () => {
           <div key="1">Branch 1</div>
           <div key="2">Branch 2</div>
         </MessageBranchContent>
-        <MessageBranchSelector from="assistant">
+        <MessageBranchSelector>
           <MessageBranchPrevious />
           <MessageBranchNext />
         </MessageBranchSelector>
@@ -211,7 +211,7 @@ describe("messageBranchSelector", () => {
         <MessageBranchContent>
           <div key="1">Single Branch</div>
         </MessageBranchContent>
-        <MessageBranchSelector from="assistant">
+        <MessageBranchSelector>
           <span>Selector</span>
         </MessageBranchSelector>
       </MessageBranch>
@@ -227,7 +227,7 @@ describe("messageBranchSelector", () => {
           <div key="1">Branch 1</div>
           <div key="2">Branch 2</div>
         </MessageBranchContent>
-        <MessageBranchSelector from="assistant">
+        <MessageBranchSelector>
           <span>Selector</span>
         </MessageBranchSelector>
       </MessageBranch>

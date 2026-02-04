@@ -722,7 +722,7 @@ const Example = () => {
                 ))}
               </MessageBranchContent>
               {versions.length > 1 && (
-                <MessageBranchSelector className="px-0" from={message.from}>
+                <MessageBranchSelector className="px-0">
                   <MessageBranchPrevious />
                   <MessageBranchPage />
                   <MessageBranchNext />

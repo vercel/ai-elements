@@ -626,7 +626,7 @@ const Example = () => {
                 ))}
               </MessageBranchContent>
               {versions.length > 1 && (
-                <MessageBranchSelector from={message.from}>
+                <MessageBranchSelector>
                   <MessageBranchPrevious />
                   <MessageBranchPage />
                   <MessageBranchNext />
