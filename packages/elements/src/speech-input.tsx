@@ -124,19 +124,24 @@ export const SpeechInput = ({
     speechRecognition.interimResults = true;
     speechRecognition.lang = lang;
 
-    speechRecognition.onstart = () => {
+    const handleStart = () => {
       setIsListening(true);
     };
 
-    speechRecognition.onend = () => {
+    const handleEnd = () => {
       setIsListening(false);
     };
 
-    speechRecognition.onresult = (event) => {
+    const handleResult = (event: Event) => {
+      const speechEvent = event as SpeechRecognitionEvent;
       let finalTranscript = "";
 
-      for (let i = event.resultIndex; i < event.results.length; i += 1) {
-        const result = event.results[i];
+      for (
+        let i = speechEvent.resultIndex;
+        i < speechEvent.results.length;
+        i += 1
+      ) {
+        const result = speechEvent.results[i];
         if (result.isFinal) {
           finalTranscript += result[0]?.transcript ?? "";
         }
@@ -147,15 +152,25 @@ export const SpeechInput = ({
       }
     };
 
-    speechRecognition.onerror = (event) => {
-      console.error("Speech recognition error:", event.error);
+    const handleError = (event: Event) => {
+      const errorEvent = event as SpeechRecognitionErrorEvent;
+      console.error("Speech recognition error:", errorEvent.error);
       setIsListening(false);
     };
+
+    speechRecognition.addEventListener("start", handleStart);
+    speechRecognition.addEventListener("end", handleEnd);
+    speechRecognition.addEventListener("result", handleResult);
+    speechRecognition.addEventListener("error", handleError);
 
     recognitionRef.current = speechRecognition;
     setRecognition(speechRecognition);
 
     return () => {
+      speechRecognition.removeEventListener("start", handleStart);
+      speechRecognition.removeEventListener("end", handleEnd);
+      speechRecognition.removeEventListener("result", handleResult);
+      speechRecognition.removeEventListener("error", handleError);
       if (recognitionRef.current) {
         recognitionRef.current.stop();
       }
@@ -176,14 +191,13 @@ export const SpeechInput = ({
       const mediaRecorder = new MediaRecorder(stream);
       audioChunksRef.current = [];
 
-      mediaRecorder.ondataavailable = (event) => {
+      const handleDataAvailable = (event: BlobEvent) => {
         if (event.data.size > 0) {
           audioChunksRef.current.push(event.data);
         }
       };
 
-      mediaRecorder.onstop = async () => {
-        // Stop all tracks to release the microphone
+      const handleStop = async () => {
         for (const track of stream.getTracks()) {
           track.stop();
         }
@@ -207,14 +221,17 @@ export const SpeechInput = ({
         }
       };
 
-      mediaRecorder.onerror = (event) => {
+      const handleError = (event: Event) => {
         console.error("MediaRecorder error:", event);
         setIsListening(false);
-        // Stop all tracks on error
         for (const track of stream.getTracks()) {
           track.stop();
         }
       };
+
+      mediaRecorder.addEventListener("dataavailable", handleDataAvailable);
+      mediaRecorder.addEventListener("stop", handleStop);
+      mediaRecorder.addEventListener("error", handleError);
 
       mediaRecorderRef.current = mediaRecorder;
       mediaRecorder.start();

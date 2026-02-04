@@ -29,8 +29,8 @@ class MockSpeechRecognition {
 
 // Mock console methods
 beforeEach(() => {
-  vi.spyOn(console, "warn").mockImplementation(() => {});
-  vi.spyOn(console, "error").mockImplementation(() => {});
+  vi.spyOn(console, "warn").mockImplementation(vi.fn());
+  vi.spyOn(console, "error").mockImplementation(vi.fn());
 
   // Reset window.SpeechRecognition - delete properties instead of setting to undefined
   // because `in` operator checks property existence, not value
@@ -275,7 +275,7 @@ describe("speechInput - Speech Recognition", () => {
   it("handles speech recognition errors and logs them", async () => {
     const consoleErrorSpy = vi
       .spyOn(console, "error")
-      .mockImplementation(() => {});
+      .mockImplementation(vi.fn());
     let recognitionInstance: any = null;
 
     class TrackableMockSpeechRecognition extends MockSpeechRecognition {
@@ -591,7 +591,7 @@ describe("speechInput - MediaRecorder Fallback", () => {
     const user = userEvent.setup();
     const consoleErrorSpy = vi
       .spyOn(console, "error")
-      .mockImplementation(() => {});
+      .mockImplementation(vi.fn());
     const handleAudioRecorded = vi
       .fn()
       .mockRejectedValue(new Error("Transcription failed"));

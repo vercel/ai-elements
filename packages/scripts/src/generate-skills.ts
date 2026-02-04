@@ -1,6 +1,10 @@
 import matter from "gray-matter";
+// Node.js script - Node.js modules are valid here
+// oxlint-disable-next-line eslint-plugin-import(no-nodejs-modules)
 import { existsSync, mkdirSync, rmSync } from "node:fs";
+// oxlint-disable-next-line eslint-plugin-import(no-nodejs-modules)
 import { readdir, readFile, writeFile } from "node:fs/promises";
+// oxlint-disable-next-line eslint-plugin-import(no-nodejs-modules)
 import { basename, join } from "node:path";
 
 const ROOT_DIR = join(import.meta.dirname, "../../..");

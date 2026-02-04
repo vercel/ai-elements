@@ -177,9 +177,7 @@ describe("plan", () => {
 
     it("throws error when used outside Plan context", () => {
       // Suppress console.error for this test
-      const consoleSpy = vi
-        .spyOn(console, "error")
-        .mockImplementation(() => {});
+      const consoleSpy = vi.spyOn(console, "error").mockImplementation(vi.fn());
 
       expect(() => {
         render(<PlanTitle>Title</PlanTitle>);
@@ -267,9 +265,7 @@ describe("plan", () => {
     });
 
     it("throws error when used outside Plan context", () => {
-      const consoleSpy = vi
-        .spyOn(console, "error")
-        .mockImplementation(() => {});
+      const consoleSpy = vi.spyOn(console, "error").mockImplementation(vi.fn());
 
       expect(() => {
         render(<PlanDescription>Description</PlanDescription>);

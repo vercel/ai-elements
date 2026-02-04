@@ -145,7 +145,7 @@ export const ConversationDownload = ({
     link.download = filename;
     document.body.append(link);
     link.click();
-    document.body.removeChild(link);
+    link.remove();
     URL.revokeObjectURL(url);
   }, [messages, filename, formatMessage]);
 

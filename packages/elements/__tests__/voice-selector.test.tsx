@@ -150,7 +150,7 @@ describe("voiceSelector", () => {
   });
 
   it("throws error when hook used outside provider", () => {
-    const spy = vi.spyOn(console, "error").mockImplementation(() => {});
+    const spy = vi.spyOn(console, "error").mockImplementation(vi.fn());
 
     const TestComponent = () => {
       useVoiceSelector();

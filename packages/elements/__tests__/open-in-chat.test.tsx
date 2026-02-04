@@ -36,7 +36,7 @@ describe("openIn", () => {
 
   it("throws error when component used outside provider", () => {
     // Suppress console.error for this test
-    const spy = vi.spyOn(console, "error").mockImplementation(() => {});
+    const spy = vi.spyOn(console, "error").mockImplementation(vi.fn());
 
     expect(() => render(<OpenInChatGPT />)).toThrow(
       "OpenIn components must be used within an OpenIn provider"

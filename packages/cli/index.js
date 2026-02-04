@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+// CLI script - Node.js modules are valid here
+// oxlint-disable-next-line eslint-plugin-import(no-nodejs-modules)
 const { spawnSync } = require("node:child_process");
 
 // Function to detect the command used to invoke this script

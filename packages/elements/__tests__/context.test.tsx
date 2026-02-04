@@ -36,7 +36,7 @@ describe("context", () => {
 
   it("throws error when components used outside Context provider", () => {
     // Suppress console.error for this test
-    const spy = vi.spyOn(console, "error").mockImplementation(() => {});
+    const spy = vi.spyOn(console, "error").mockImplementation(vi.fn());
 
     expect(() => render(<ContextTrigger />)).toThrow(
       "Context components must be used within Context"

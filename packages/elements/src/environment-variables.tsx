@@ -14,9 +14,11 @@ interface EnvironmentVariablesContextType {
   setShowValues: (show: boolean) => void;
 }
 
+const noop = () => {};
+
 const EnvironmentVariablesContext =
   createContext<EnvironmentVariablesContextType>({
-    setShowValues: () => {},
+    setShowValues: noop,
     showValues: false,
   });
 

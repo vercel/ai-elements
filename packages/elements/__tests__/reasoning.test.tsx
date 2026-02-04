@@ -16,7 +16,7 @@ describe("reasoning", () => {
 
   it("throws error when components used outside Reasoning provider", () => {
     // Suppress console.error for this test
-    const spy = vi.spyOn(console, "error").mockImplementation(() => {});
+    const spy = vi.spyOn(console, "error").mockImplementation(vi.fn());
 
     expect(() => render(<ReasoningTrigger />)).toThrow(
       "Reasoning components must be used within Reasoning"

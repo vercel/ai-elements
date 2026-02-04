@@ -8,6 +8,7 @@ import {
   ScrollBar,
 } from "@repo/shadcn-ui/components/ui/scroll-area";
 import { cn } from "@repo/shadcn-ui/lib/utils";
+import { useCallback } from "react";
 
 export type SuggestionsProps = ComponentProps<typeof ScrollArea>;
 
@@ -38,9 +39,9 @@ export const Suggestion = ({
   children,
   ...props
 }: SuggestionProps) => {
-  const handleClick = () => {
+  const handleClick = useCallback(() => {
     onClick?.(suggestion);
-  };
+  }, [onClick, suggestion]);
 
   return (
     <Button

@@ -156,7 +156,7 @@ describe("messageBranch", () => {
 
   it("throws error when components used outside MessageBranch provider", () => {
     // Suppress console.error for this test
-    const spy = vi.spyOn(console, "error").mockImplementation(() => {});
+    const spy = vi.spyOn(console, "error").mockImplementation(vi.fn());
 
     expect(() => render(<MessageBranchNext />)).toThrow(
       "MessageBranch components must be used within MessageBranch"

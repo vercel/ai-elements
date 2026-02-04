@@ -14,7 +14,7 @@ import {
   FolderIcon,
   FolderOpenIcon,
 } from "lucide-react";
-import { createContext, useContext, useState } from "react";
+import { createContext, useCallback, useContext, useState } from "react";
 
 interface FileTreeContextType {
   expandedPaths: Set<string>;
@@ -23,9 +23,12 @@ interface FileTreeContextType {
   onSelect?: (path: string) => void;
 }
 
+const noop = () => {};
+
 const FileTreeContext = createContext<FileTreeContextType>({
+  // oxlint-disable-next-line eslint-plugin-unicorn(no-new-builtin)
   expandedPaths: new Set(),
-  togglePath: () => {},
+  togglePath: noop,
 });
 
 export type FileTreeProps = HTMLAttributes<HTMLDivElement> & {
@@ -107,9 +110,17 @@ export const FileTreeFolder = ({
   const isExpanded = expandedPaths.has(path);
   const isSelected = selectedPath === path;
 
+  const handleOpenChange = useCallback(() => {
+    togglePath(path);
+  }, [togglePath, path]);
+
+  const handleSelect = useCallback(() => {
+    onSelect?.(path);
+  }, [onSelect, path]);
+
   return (
     <FileTreeFolderContext.Provider value={{ isExpanded, name, path }}>
-      <Collapsible onOpenChange={() => togglePath(path)} open={isExpanded}>
+      <Collapsible onOpenChange={handleOpenChange} open={isExpanded}>
         <div
           className={cn("", className)}
           role="treeitem"
@@ -122,7 +133,7 @@ export const FileTreeFolder = ({
                 "flex w-full items-center gap-1 rounded px-2 py-1 text-left transition-colors hover:bg-muted/50",
                 isSelected && "bg-muted"
               )}
-              onClick={() => onSelect?.(path)}
+              onClick={handleSelect}
               type="button"
             >
               <ChevronRightIcon
@@ -177,6 +188,19 @@ export const FileTreeFile = ({
   const { selectedPath, onSelect } = useContext(FileTreeContext);
   const isSelected = selectedPath === path;
 
+  const handleClick = useCallback(() => {
+    onSelect?.(path);
+  }, [onSelect, path]);
+
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === "Enter" || e.key === " ") {
+        onSelect?.(path);
+      }
+    },
+    [onSelect, path]
+  );
+
   return (
     <FileTreeFileContext.Provider value={{ name, path }}>
       <div
@@ -185,12 +209,8 @@ export const FileTreeFile = ({
           isSelected && "bg-muted",
           className
         )}
-        onClick={() => onSelect?.(path)}
-        onKeyDown={(e) => {
-          if (e.key === "Enter" || e.key === " ") {
-            onSelect?.(path);
-          }
-        }}
+        onClick={handleClick}
+        onKeyDown={handleKeyDown}
         role="treeitem"
         tabIndex={0}
         {...props}
@@ -236,6 +256,8 @@ export const FileTreeName = ({
 
 export type FileTreeActionsProps = HTMLAttributes<HTMLDivElement>;
 
+const stopPropagation = (e: React.SyntheticEvent) => e.stopPropagation();
+
 export const FileTreeActions = ({
   className,
   children,
@@ -245,8 +267,8 @@ export const FileTreeActions = ({
   // biome-ignore lint/a11y/useSemanticElements: fieldset doesn't fit this UI pattern
   <div
     className={cn("ml-auto flex items-center gap-1", className)}
-    onClick={(e) => e.stopPropagation()}
-    onKeyDown={(e) => e.stopPropagation()}
+    onClick={stopPropagation}
+    onKeyDown={stopPropagation}
     role="group"
     {...props}
   >

@@ -40,7 +40,7 @@ describe("stackTrace", () => {
   });
 
   it("throws error when component used outside provider", () => {
-    const spy = vi.spyOn(console, "error").mockImplementation(() => {});
+    const spy = vi.spyOn(console, "error").mockImplementation(vi.fn());
 
     expect(() => render(<StackTraceHeader>Test</StackTraceHeader>)).toThrow(
       "StackTrace components must be used within StackTrace"

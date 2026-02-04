@@ -16,20 +16,28 @@ const mockState = { isAtBottom: true };
 const mockScrollToBottom = vi.fn();
 
 vi.mock<typeof import("use-stick-to-bottom")>("use-stick-to-bottom", () => {
-  const StickToBottomMock = ({ children, ...props }: any) => (
+  interface MockProps {
+    children?: React.ReactNode;
+    [key: string]: unknown;
+  }
+
+  const StickToBottomMock = ({ children, ...props }: MockProps) => (
     <div role="log" {...props}>
       {children}
     </div>
   );
 
-  const StickToBottomContent = ({ children, ...props }: any) => (
+  const StickToBottomContent = ({ children, ...props }: MockProps) => (
     <div {...props}>{children}</div>
   );
 
-  (StickToBottomMock as any).Content = StickToBottomContent;
+  const MockComponent = StickToBottomMock as typeof StickToBottomMock & {
+    Content: typeof StickToBottomContent;
+  };
+  MockComponent.Content = StickToBottomContent;
 
   return {
-    StickToBottom: StickToBottomMock,
+    StickToBottom: MockComponent,
     useStickToBottomContext: () => ({
       isAtBottom: mockState.isAtBottom,
       scrollToBottom: mockScrollToBottom,

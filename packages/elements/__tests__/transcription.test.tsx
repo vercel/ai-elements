@@ -550,9 +550,7 @@ describe("transcription", () => {
     });
 
     it("throws error when used outside Transcription context", () => {
-      const consoleSpy = vi
-        .spyOn(console, "error")
-        .mockImplementation(() => {});
+      const consoleSpy = vi.spyOn(console, "error").mockImplementation(vi.fn());
 
       expect(() => {
         render(<TranscriptionSegment index={0} segment={mockSegments[0]} />);

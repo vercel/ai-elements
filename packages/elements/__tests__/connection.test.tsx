@@ -6,9 +6,7 @@ import { Connection } from "../src/connection";
 describe("connection", () => {
   it("renders with basic props", () => {
     // Mock console.error to suppress React SVG warnings from @xyflow/react
-    const consoleError = vi
-      .spyOn(console, "error")
-      .mockImplementation(() => {});
+    const consoleError = vi.spyOn(console, "error").mockImplementation(vi.fn());
 
     const props = {
       connectionStatus: null,

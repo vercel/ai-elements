@@ -27,8 +27,8 @@ vi.mock<typeof import("@rive-app/react-webgl2")>(
 
 // Mock console methods
 beforeEach(() => {
-  vi.spyOn(console, "warn").mockImplementation(() => {});
-  vi.spyOn(console, "error").mockImplementation(() => {});
+  vi.spyOn(console, "warn").mockImplementation(vi.fn());
+  vi.spyOn(console, "error").mockImplementation(vi.fn());
 
   // Reset mocks
   mockUseRive.mockReset();
