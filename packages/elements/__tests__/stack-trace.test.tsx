@@ -264,7 +264,7 @@ describe("stackTraceActions", () => {
 
     await user.click(screen.getByText("Action"));
 
-    expect(actionClick).toHaveBeenCalledWith();
+    expect(actionClick).toHaveBeenCalled();
   });
 });
 
@@ -311,7 +311,7 @@ describe("stackTraceCopyButton", () => {
 
     await user.click(screen.getByRole("button"));
 
-    expect(onCopy).toHaveBeenCalledWith();
+    expect(onCopy).toHaveBeenCalled();
   });
 
   it("calls onError when clipboard fails", async () => {

@@ -19,7 +19,7 @@ import {
   VideoIcon,
   XIcon,
 } from "lucide-react";
-import { createContext, useContext, useMemo } from "react";
+import { createContext, useCallback, useContext, useMemo } from "react";
 
 // ============================================================================
 // Types

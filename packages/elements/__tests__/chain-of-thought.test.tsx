@@ -67,7 +67,7 @@ describe("chainOfThought", () => {
     const trigger = screen.getByRole("button");
     await user.click(trigger);
 
-    expect(onOpenChange).toHaveBeenCalledWith();
+    expect(onOpenChange).toHaveBeenCalledWith(true);
   });
 });
 

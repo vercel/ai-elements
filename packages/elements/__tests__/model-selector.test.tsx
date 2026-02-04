@@ -20,6 +20,7 @@ import {
 } from "../src/model-selector";
 
 describe("modelSelector", () => {
+
   it("renders as a Dialog component", () => {
     const { container } = render(
       <ModelSelector>
@@ -64,7 +65,7 @@ describe("modelSelector", () => {
     );
 
     await user.click(screen.getByText("Open Selector"));
-    expect(handleOpenChange).toHaveBeenCalledWith();
+    expect(handleOpenChange).toHaveBeenCalledWith(true);
   });
 });
 
@@ -561,7 +562,7 @@ describe("integration tests", () => {
     );
 
     await user.click(screen.getByText("Select Model"));
-    expect(handleOpenChange).toHaveBeenCalledWith();
+    expect(handleOpenChange).toHaveBeenCalledWith(true);
 
     await user.click(screen.getByText("GPT-4"));
     expect(handleSelect).toHaveBeenCalledWith("gpt-4");

@@ -7,7 +7,7 @@ import { Button } from "@repo/shadcn-ui/components/ui/button";
 import { Switch } from "@repo/shadcn-ui/components/ui/switch";
 import { cn } from "@repo/shadcn-ui/lib/utils";
 import { CheckIcon, CopyIcon, EyeIcon, EyeOffIcon } from "lucide-react";
-import { createContext, useContext, useState } from "react";
+import { createContext, useCallback, useContext, useState } from "react";
 
 interface EnvironmentVariablesContextType {
   showValues: boolean;

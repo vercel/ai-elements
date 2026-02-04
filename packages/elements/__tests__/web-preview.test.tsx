@@ -42,7 +42,7 @@ describe("webPreview", () => {
     const input = screen.getByPlaceholderText("Enter URL...");
     await user.type(input, "https://test.com{Enter}");
 
-    expect(onUrlChange).toHaveBeenCalledWith();
+    expect(onUrlChange).toHaveBeenCalledWith("https://test.com");
   });
 
   it("throws error when component used outside provider", () => {
@@ -94,7 +94,7 @@ describe("webPreviewNavigationButton", () => {
     );
 
     await user.click(screen.getByRole("button"));
-    expect(onClick).toHaveBeenCalledWith();
+    expect(onClick).toHaveBeenCalled();
   });
 });
 

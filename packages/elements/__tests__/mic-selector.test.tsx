@@ -187,6 +187,7 @@ describe("useAudioDevices hook", () => {
 
   it("handles errors gracefully", async () => {
     setupMocks();
+    const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(vi.fn());
     mockEnumerateDevices.mockRejectedValueOnce(new Error("Permission denied"));
 
     const TestComponent = () => {
@@ -216,6 +217,8 @@ describe("useAudioDevices hook", () => {
       },
       { timeout: 3000 }
     );
+
+    consoleErrorSpy.mockRestore();
   });
 
   it("requests permission when loadDevices is called", async () => {
@@ -374,7 +377,7 @@ describe("useAudioDevices hook", () => {
     // Should only call getUserMedia once per actual load
     await waitFor(
       () => {
-        expect(mockGetUserMedia).toHaveBeenCalledWith();
+        expect(mockGetUserMedia).toHaveBeenCalledWith({ audio: true });
       },
       { timeout: 3000 }
     );
@@ -382,6 +385,7 @@ describe("useAudioDevices hook", () => {
 
   it("handles non-Error exception in loadDevicesWithoutPermission", async () => {
     setupMocks();
+    const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(vi.fn());
     mockEnumerateDevices.mockRejectedValueOnce("String error");
 
     const TestComponent = () => {
@@ -411,10 +415,13 @@ describe("useAudioDevices hook", () => {
       },
       { timeout: 3000 }
     );
+
+    consoleErrorSpy.mockRestore();
   });
 
   it("handles non-Error exception in loadDevicesWithPermission", async () => {
     setupMocks();
+    const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(vi.fn());
     mockGetUserMedia.mockRejectedValueOnce("String error");
 
     const TestComponent = () => {
@@ -443,6 +450,8 @@ describe("useAudioDevices hook", () => {
         "Failed to get audio devices"
       );
     });
+
+    consoleErrorSpy.mockRestore();
   });
 });
 
@@ -620,7 +629,7 @@ describe("micSelector", () => {
     await user.click(screen.getByText("External Microphone"));
 
     await waitFor(() => {
-      expect(onValueChange).toHaveBeenCalledWith();
+      expect(onValueChange).toHaveBeenCalledWith("device-2");
     });
   });
 });

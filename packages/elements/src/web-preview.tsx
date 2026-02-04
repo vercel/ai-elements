@@ -17,7 +17,7 @@ import {
 } from "@repo/shadcn-ui/components/ui/tooltip";
 import { cn } from "@repo/shadcn-ui/lib/utils";
 import { ChevronDownIcon } from "lucide-react";
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useState } from "react";
 
 export interface WebPreviewContextValue {
   url: string;

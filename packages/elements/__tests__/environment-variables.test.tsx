@@ -8,7 +8,7 @@ import {
   EnvironmentVariablesHeader,
   EnvironmentVariablesTitle,
   EnvironmentVariablesToggle,
-} from "#src/environment-variables";
+} from "../src/environment-variables";
 import { render, screen } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
@@ -157,7 +157,7 @@ describe("environmentVariableCopyButton", () => {
     const button = screen.getByRole("button");
     await user.click(button);
 
-    expect(onCopy).toHaveBeenCalledWith();
+    expect(onCopy).toHaveBeenCalled();
   });
 });
 

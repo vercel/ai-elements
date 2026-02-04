@@ -36,6 +36,11 @@ failOnConsole({
     if (message.includes("was not wrapped in act")) {
       return true;
     }
+    // Silence Radix UI DialogContent accessibility warnings in tests
+    // Tests use aria-describedby="test-description" but don't render the element
+    if (message.includes("Missing `Description` or `aria-describedby")) {
+      return true;
+    }
     return false;
   },
 });

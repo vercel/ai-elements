@@ -509,7 +509,7 @@ describe("transcription", () => {
       await user.click(segment);
 
       expect(onSeek).toHaveBeenCalledWith(0);
-      expect(onClick).toHaveBeenCalledWith();
+      expect(onClick).toHaveBeenCalled();
     });
 
     it("applies custom className", () => {

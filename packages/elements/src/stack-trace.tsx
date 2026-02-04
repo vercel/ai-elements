@@ -16,7 +16,7 @@ import {
   ChevronDownIcon,
   CopyIcon,
 } from "lucide-react";
-import { createContext, memo, useContext, useMemo, useState } from "react";
+import { createContext, memo, useCallback, useContext, useMemo, useState } from "react";
 
 // Regex patterns for parsing stack traces
 const STACK_FRAME_WITH_PARENS_REGEX = /^at\s+(.+?)\s+\((.+):(\d+):(\d+)\)$/;

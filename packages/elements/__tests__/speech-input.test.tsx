@@ -5,7 +5,7 @@ import { describe, expect, it, vi } from "vitest";
 
 import { SpeechInput } from "../src/speech-input";
 
-// Mock SpeechRecognition
+// Mock SpeechRecognition with EventTarget support
 class MockSpeechRecognition {
   continuous = false;
   interimResults = false;
@@ -17,16 +17,40 @@ class MockSpeechRecognition {
   // oxlint-disable-next-line typescript-eslint(no-explicit-any)
   onerror: ((ev: any) => void) | null = null;
 
-  start() {
-    if (this.onstart) {
-      this.onstart(new Event("start"));
+  // EventTarget implementation
+  // oxlint-disable-next-line typescript-eslint(no-explicit-any)
+  private listeners: Map<string, Set<(ev: any) => void>> = new Map();
+
+  // oxlint-disable-next-line typescript-eslint(no-explicit-any)
+  addEventListener(type: string, listener: (ev: any) => void) {
+    if (!this.listeners.has(type)) {
+      this.listeners.set(type, new Set());
     }
+    this.listeners.get(type)?.add(listener);
+  }
+
+  // oxlint-disable-next-line typescript-eslint(no-explicit-any)
+  removeEventListener(type: string, listener: (ev: any) => void) {
+    this.listeners.get(type)?.delete(listener);
+  }
+
+  // oxlint-disable-next-line typescript-eslint(no-explicit-any)
+  dispatchEvent(event: any): boolean {
+    const listeners = this.listeners.get(event.type);
+    if (listeners) {
+      for (const listener of listeners) {
+        listener(event);
+      }
+    }
+    return true;
+  }
+
+  start() {
+    this.dispatchEvent(new Event("start"));
   }
 
   stop() {
-    if (this.onend) {
-      this.onend(new Event("end"));
-    }
+    this.dispatchEvent(new Event("end"));
   }
 }
 
@@ -155,7 +179,7 @@ describe("speechInput - Speech Recognition", () => {
     const button = screen.getByRole("button");
     await user.click(button);
 
-    expect(startSpy).toHaveBeenCalledWith();
+    expect(startSpy).toHaveBeenCalled();
   });
 
   it("stops listening when clicked again", async () => {
@@ -177,7 +201,7 @@ describe("speechInput - Speech Recognition", () => {
     // Stop listening
     await user.click(button);
 
-    expect(stopSpy).toHaveBeenCalledWith();
+    expect(stopSpy).toHaveBeenCalled();
   });
 
   it("applies pulse animation when listening", async () => {
@@ -228,7 +252,7 @@ describe("speechInput - Speech Recognition", () => {
     });
 
     // Simulate speech recognition result with final transcript
-    instanceRef.current?.onresult?.({
+    const resultEvent = Object.assign(new Event("result"), {
       resultIndex: 0,
       results: {
         0: {
@@ -243,6 +267,7 @@ describe("speechInput - Speech Recognition", () => {
         length: 1,
       },
     });
+    instanceRef.current?.dispatchEvent(resultEvent);
 
     await waitFor(() => {
       expect(handleTranscription).toHaveBeenCalledWith("Hello world");
@@ -271,7 +296,7 @@ describe("speechInput - Speech Recognition", () => {
     });
 
     // Simulate interim result (should not trigger callback)
-    instanceRef.current?.onresult?.({
+    const interimEvent = Object.assign(new Event("result"), {
       resultIndex: 0,
       results: {
         0: {
@@ -286,6 +311,7 @@ describe("speechInput - Speech Recognition", () => {
         length: 1,
       },
     });
+    instanceRef.current?.dispatchEvent(interimEvent);
 
     // Wait a bit to ensure callback wasn't called
     // oxlint-disable-next-line eslint-plugin-promise(avoid-new)
@@ -319,7 +345,8 @@ describe("speechInput - Speech Recognition", () => {
     });
 
     // Trigger error event
-    instanceRef.current?.onerror?.({ error: "no-speech" });
+    const errorEvent = Object.assign(new Event("error"), { error: "no-speech" });
+    instanceRef.current?.dispatchEvent(errorEvent);
 
     await waitFor(() => {
       expect(consoleErrorSpy).toHaveBeenCalledWith(
@@ -353,7 +380,7 @@ describe("speechInput - Speech Recognition", () => {
     });
 
     // Simulate result with empty transcript
-    instanceRef.current?.onresult?.({
+    const emptyEvent = Object.assign(new Event("result"), {
       resultIndex: 0,
       results: {
         0: {
@@ -365,6 +392,7 @@ describe("speechInput - Speech Recognition", () => {
         length: 1,
       },
     });
+    instanceRef.current?.dispatchEvent(emptyEvent);
 
     // Wait to ensure callback wasn't called for empty transcript
     // oxlint-disable-next-line eslint-plugin-promise(avoid-new)
@@ -408,7 +436,7 @@ describe("speechInput - Speech Recognition", () => {
 
     unmount();
 
-    expect(stopSpy).toHaveBeenCalledWith();
+    expect(stopSpy).toHaveBeenCalled();
   });
 });
 
@@ -422,7 +450,7 @@ interface MediaRecorderTestContext {
   mediaRecorderInstances: any[];
 }
 
-// Mock MediaRecorder class that captures instances
+// Mock MediaRecorder class that captures instances with EventTarget support
 const createMockMediaRecorder = (context: MediaRecorderTestContext) =>
   class MockMediaRecorder {
     state = "inactive";
@@ -432,8 +460,36 @@ const createMockMediaRecorder = (context: MediaRecorderTestContext) =>
     // oxlint-disable-next-line typescript-eslint(no-explicit-any)
     onerror: ((event: any) => void) | null = null;
 
+    // EventTarget implementation
+    // oxlint-disable-next-line typescript-eslint(no-explicit-any)
+    private listeners: Map<string, Set<(ev: any) => void>> = new Map();
+
     constructor() {
       context.mediaRecorderInstances.push(this);
+    }
+
+    // oxlint-disable-next-line typescript-eslint(no-explicit-any)
+    addEventListener(type: string, listener: (ev: any) => void) {
+      if (!this.listeners.has(type)) {
+        this.listeners.set(type, new Set());
+      }
+      this.listeners.get(type)?.add(listener);
+    }
+
+    // oxlint-disable-next-line typescript-eslint(no-explicit-any)
+    removeEventListener(type: string, listener: (ev: any) => void) {
+      this.listeners.get(type)?.delete(listener);
+    }
+
+    // oxlint-disable-next-line typescript-eslint(no-explicit-any)
+    dispatchEvent(event: any): boolean {
+      const listeners = this.listeners.get(event.type);
+      if (listeners) {
+        for (const listener of listeners) {
+          listener(event);
+        }
+      }
+      return true;
     }
 
     start = vi.fn(() => {
@@ -442,9 +498,8 @@ const createMockMediaRecorder = (context: MediaRecorderTestContext) =>
 
     stop = vi.fn(() => {
       this.state = "inactive";
-      if (this.onstop) {
-        this.onstop();
-      }
+      // Dispatch stop event
+      this.dispatchEvent(new Event("stop"));
     });
   };
 
@@ -529,7 +584,7 @@ describe("speechInput - MediaRecorder Fallback", () => {
 
     await waitFor(() => {
       expect(ctx.mediaRecorderInstances.length).toBeGreaterThan(0);
-      expect(ctx.mediaRecorderInstances[0].start).toHaveBeenCalledWith();
+      expect(ctx.mediaRecorderInstances[0].start).toHaveBeenCalled();
     });
   });
 
@@ -561,16 +616,17 @@ describe("speechInput - MediaRecorder Fallback", () => {
 
     const [recorder] = ctx.mediaRecorderInstances;
 
-    // Simulate data available
-    recorder.ondataavailable?.({
+    // Simulate data available via dispatchEvent
+    const dataAvailableEvent = Object.assign(new Event("dataavailable"), {
       data: new Blob(["test"], { type: "audio/webm" }),
     });
+    recorder.dispatchEvent(dataAvailableEvent);
 
     // Stop recording (second click)
     await user.click(button);
 
     await waitFor(() => {
-      expect(handleAudioRecorded).toHaveBeenCalledWith();
+      expect(handleAudioRecorded).toHaveBeenCalledWith(expect.any(Blob));
     });
 
     await waitFor(() => {
@@ -602,16 +658,17 @@ describe("speechInput - MediaRecorder Fallback", () => {
 
     const [recorder] = ctx.mediaRecorderInstances;
 
-    // Simulate data available
-    recorder.ondataavailable?.({
+    // Simulate data available via dispatchEvent
+    const dataAvailableEvent = Object.assign(new Event("dataavailable"), {
       data: new Blob(["test"], { type: "audio/webm" }),
     });
+    recorder.dispatchEvent(dataAvailableEvent);
 
     // Stop recording
     await user.click(button);
 
     await waitFor(() => {
-      expect(ctx.mockTrack.stop).toHaveBeenCalledWith();
+      expect(ctx.mockTrack.stop).toHaveBeenCalled();
     });
   });
 
@@ -648,10 +705,11 @@ describe("speechInput - MediaRecorder Fallback", () => {
 
     const [recorder] = ctx.mediaRecorderInstances;
 
-    // Simulate data available
-    recorder.ondataavailable?.({
+    // Simulate data available via dispatchEvent
+    const dataAvailableEvent = Object.assign(new Event("dataavailable"), {
       data: new Blob(["test"], { type: "audio/webm" }),
     });
+    recorder.dispatchEvent(dataAvailableEvent);
 
     // Stop recording
     await user.click(button);

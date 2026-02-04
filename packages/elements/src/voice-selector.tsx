@@ -34,7 +34,7 @@ import {
   VenusAndMarsIcon,
   VenusIcon,
 } from "lucide-react";
-import { createContext, useContext, useMemo } from "react";
+import { createContext, useCallback, useContext, useMemo } from "react";
 
 interface VoiceSelectorContextValue {
   value: string | undefined;
@@ -115,7 +115,11 @@ export const VoiceSelectorContent = ({
   title = "Voice Selector",
   ...props
 }: VoiceSelectorContentProps) => (
-  <DialogContent className={cn("p-0", className)} {...props}>
+  <DialogContent
+    aria-describedby={undefined}
+    className={cn("p-0", className)}
+    {...props}
+  >
     <DialogTitle className="sr-only">{title}</DialogTitle>
     <Command className="**:data-[slot=command-input-wrapper]:h-auto">
       {children}

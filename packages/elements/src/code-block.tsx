@@ -21,6 +21,7 @@ import { CheckIcon, CopyIcon } from "lucide-react";
 import {
   createContext,
   memo,
+  useCallback,
   useContext,
   useEffect,
   useMemo,

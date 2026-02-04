@@ -107,7 +107,7 @@ describe("commitCopyButton", () => {
     const copyButton = screen.getByRole("button");
     await user.click(copyButton);
 
-    expect(onCopy).toHaveBeenCalledWith();
+    expect(onCopy).toHaveBeenCalled();
   });
 });
 

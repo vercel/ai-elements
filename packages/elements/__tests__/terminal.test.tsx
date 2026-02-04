@@ -121,7 +121,7 @@ describe("terminalCopyButton", () => {
     const button = screen.getByRole("button");
     await user.click(button);
 
-    expect(onCopy).toHaveBeenCalledWith();
+    expect(onCopy).toHaveBeenCalled();
   });
 });
 
@@ -143,7 +143,7 @@ describe("terminalClearButton", () => {
     const button = screen.getByRole("button");
     await user.click(button);
 
-    expect(onClear).toHaveBeenCalledWith();
+    expect(onClear).toHaveBeenCalled();
   });
 
   it("does not render without onClear", () => {

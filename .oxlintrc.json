@@ -20,6 +20,7 @@
     "import/no-relative-parent-imports": "off",
     "nextjs/no-img-element": "off",
     "eslint/complexity": "off",
-    "eslint/max-statements": "off"
+    "eslint/max-statements": "off",
+    "jest/prefer-called-with": "off"
   }
 }

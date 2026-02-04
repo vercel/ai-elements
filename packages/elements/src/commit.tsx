@@ -18,7 +18,7 @@ import {
   MinusIcon,
   PlusIcon,
 } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 export type CommitProps = ComponentProps<typeof Collapsible>;
 

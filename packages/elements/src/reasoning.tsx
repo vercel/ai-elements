@@ -14,7 +14,7 @@ import { code } from "@streamdown/code";
 import { math } from "@streamdown/math";
 import { mermaid } from "@streamdown/mermaid";
 import { BrainIcon, ChevronDownIcon } from "lucide-react";
-import { createContext, memo, useContext, useEffect, useState } from "react";
+import { createContext, memo, useCallback, useContext, useEffect, useState } from "react";
 import { Streamdown } from "streamdown";
 
 import { Shimmer } from "./shimmer";

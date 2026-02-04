@@ -77,7 +77,7 @@ describe("snippetCopyButton", () => {
     const button = screen.getByRole("button");
     await user.click(button);
 
-    expect(onCopy).toHaveBeenCalledWith();
+    expect(onCopy).toHaveBeenCalled();
   });
 
   it("calls onError when clipboard fails", async () => {

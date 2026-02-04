@@ -11,24 +11,28 @@ import {
   messagesToMarkdown,
 } from "../src/conversation";
 
-// Mock use-stick-to-bottom with module-level state
-const mockState = { isAtBottom: true };
-const mockScrollToBottom = vi.fn();
+// Mock use-stick-to-bottom with module-level state using vi.hoisted
+const { mockState, mockScrollToBottom, StickToBottomMock, StickToBottomContent } = vi.hoisted(() => {
+  const mockState = { isAtBottom: true };
+  const mockScrollToBottom = vi.fn();
 
-interface MockProps {
-  children?: React.ReactNode;
-  [key: string]: unknown;
-}
+  interface MockProps {
+    children?: React.ReactNode;
+    [key: string]: unknown;
+  }
 
-const StickToBottomMock = ({ children, ...props }: MockProps) => (
-  <div role="log" {...props}>
-    {children}
-  </div>
-);
+  const StickToBottomMock = ({ children, ...props }: MockProps) => (
+    <div role="log" {...props}>
+      {children}
+    </div>
+  );
 
-const StickToBottomContent = ({ children, ...props }: MockProps) => (
-  <div {...props}>{children}</div>
-);
+  const StickToBottomContent = ({ children, ...props }: MockProps) => (
+    <div {...props}>{children}</div>
+  );
+
+  return { mockState, mockScrollToBottom, StickToBottomMock, StickToBottomContent };
+});
 
 // oxlint-disable-next-line typescript-eslint(consistent-type-imports)
 vi.mock<typeof import("use-stick-to-bottom")>("use-stick-to-bottom", () => {
@@ -272,21 +276,19 @@ const setupDownloadMocks = () => {
 // Helper to setup DOM mocks for anchor click tracking
 const setupDomClickTracker = () => {
   let linkClicked = false;
-  const originalAppendChild = document.body.appendChild.bind(document.body);
-  const originalRemoveChild = document.body.removeChild.bind(document.body);
+  const originalCreateElement = document.createElement.bind(document);
 
-  vi.spyOn(document.body, "appendChild").mockImplementation((node: Node) => {
-    if (node instanceof HTMLAnchorElement) {
-      node.click = () => {
+  vi.spyOn(document, "createElement").mockImplementation((tagName: string) => {
+    const element = originalCreateElement(tagName);
+    if (tagName === "a") {
+      const originalClick = element.click.bind(element);
+      element.click = () => {
         linkClicked = true;
+        originalClick();
       };
     }
-    return originalAppendChild(node);
+    return element;
   });
-
-  vi.spyOn(document.body, "removeChild").mockImplementation((node: Node) =>
-    originalRemoveChild(node)
-  );
 
   return { wasLinkClicked: () => linkClicked };
 };
@@ -350,9 +352,9 @@ describe("conversationDownload", () => {
 
     await user.click(screen.getByRole("button"));
 
-    expect(urlMocks.mockCreateObjectURL).toHaveBeenCalledWith();
+    expect(urlMocks.mockCreateObjectURL).toHaveBeenCalledWith(expect.any(Blob));
     expect(domTracker.wasLinkClicked()).toBeTruthy();
-    expect(urlMocks.mockRevokeObjectURL).toHaveBeenCalledWith();
+    expect(urlMocks.mockRevokeObjectURL).toHaveBeenCalledWith("blob:test");
 
     urlMocks.restore();
   });

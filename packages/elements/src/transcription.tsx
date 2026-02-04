@@ -5,7 +5,7 @@ import type { ComponentProps, ReactNode } from "react";
 
 import { useControllableState } from "@radix-ui/react-use-controllable-state";
 import { cn } from "@repo/shadcn-ui/lib/utils";
-import { createContext, useContext } from "react";
+import { createContext, useCallback, useContext } from "react";
 
 type TranscriptionSegment = TranscriptionResult["segments"][number];
 

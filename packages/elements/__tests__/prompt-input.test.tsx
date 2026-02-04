@@ -597,7 +597,10 @@ describe("promptInputTextarea", () => {
     await user.type(textarea, "Test");
     await user.keyboard("{Enter}");
 
-    expect(onSubmit).toHaveBeenCalledWith();
+    expect(onSubmit).toHaveBeenCalledWith(
+      expect.objectContaining({ text: "Test" }),
+      expect.anything()
+    );
   });
 
   it("does not submit on Shift+Enter", async () => {
@@ -3094,7 +3097,7 @@ describe("promptInputActionMenu subcomponents", () => {
       await user.click(menuItem);
     });
 
-    expect(onAction).toHaveBeenCalledWith();
+    expect(onAction).toHaveBeenCalled();
   });
 });
 

@@ -349,7 +349,7 @@ describe("voiceSelectorItem", () => {
     await user.click(item);
 
     await waitFor(() => {
-      expect(onSelect).toHaveBeenCalledWith();
+      expect(onSelect).toHaveBeenCalledWith("alloy");
     });
   });
 });
@@ -715,7 +715,7 @@ describe("voiceSelectorPreview", () => {
     const button = screen.getByRole("button", { name: "Play preview" });
     await user.click(button);
 
-    expect(onPlay).toHaveBeenCalledWith();
+    expect(onPlay).toHaveBeenCalled();
   });
 
   it("does not trigger item selection when clicked", async () => {
@@ -740,7 +740,7 @@ describe("voiceSelectorPreview", () => {
     await user.click(button);
 
     await waitFor(() => {
-      expect(onPlay).toHaveBeenCalledWith();
+      expect(onPlay).toHaveBeenCalled();
     });
 
     // onSelect should not be called when clicking the preview button

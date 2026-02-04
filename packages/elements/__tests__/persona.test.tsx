@@ -4,13 +4,22 @@ import { describe, expect, it, vi } from "vitest";
 
 import { Persona } from "../src/persona";
 
-// Mock the Rive hooks and components
-const mockUseRive = vi.fn();
-const mockUseStateMachineInput = vi.fn();
-const mockUseViewModel = vi.fn();
-const mockUseViewModelInstance = vi.fn();
-const mockUseViewModelInstanceColor = vi.fn();
-const MockRiveComponent = vi.fn(() => <div data-testid="rive-component" />);
+// Mock the Rive hooks and components using vi.hoisted
+const {
+  mockUseRive,
+  mockUseStateMachineInput,
+  mockUseViewModel,
+  mockUseViewModelInstance,
+  mockUseViewModelInstanceColor,
+  MockRiveComponent,
+} = vi.hoisted(() => ({
+  mockUseRive: vi.fn(),
+  mockUseStateMachineInput: vi.fn(),
+  mockUseViewModel: vi.fn(),
+  mockUseViewModelInstance: vi.fn(),
+  mockUseViewModelInstanceColor: vi.fn(),
+  MockRiveComponent: vi.fn(() => <div data-testid="rive-component" />),
+}));
 
 // oxlint-disable-next-line typescript-eslint(consistent-type-imports)
 vi.mock<typeof import("@rive-app/react-webgl2")>(
