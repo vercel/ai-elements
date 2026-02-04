@@ -19,32 +19,32 @@ Build a simple input with suggestions users can click to send a message to the L
 Add the following component to your frontend:
 
 ```tsx title="app/page.tsx"
-'use client';
+"use client";
 
 import {
   Input,
   PromptInputTextarea,
   PromptInputSubmit,
-} from '@/components/ai-elements/prompt-input';
-import { Suggestion, Suggestions } from '@/components/ai-elements/suggestion';
-import { useState } from 'react';
-import { useChat } from '@ai-sdk/react';
+} from "@/components/ai-elements/prompt-input";
+import { Suggestion, Suggestions } from "@/components/ai-elements/suggestion";
+import { useState } from "react";
+import { useChat } from "@ai-sdk/react";
 
 const suggestions = [
-  'Can you explain how to play tennis?',
-  'What is the weather in Tokyo?',
-  'How do I make a really good fish taco?',
+  "Can you explain how to play tennis?",
+  "What is the weather in Tokyo?",
+  "How do I make a really good fish taco?",
 ];
 
 const SuggestionDemo = () => {
-  const [input, setInput] = useState('');
+  const [input, setInput] = useState("");
   const { sendMessage, status } = useChat();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (input.trim()) {
       sendMessage({ text: input });
-      setInput('');
+      setInput("");
     }
   };
 
@@ -76,7 +76,7 @@ const SuggestionDemo = () => {
               className="pr-12"
             />
             <PromptInputSubmit
-              status={status === 'streaming' ? 'streaming' : 'ready'}
+              status={status === "streaming" ? "streaming" : "ready"}
               disabled={!input.trim()}
               className="absolute bottom-1 right-1"
             />
@@ -113,9 +113,10 @@ export default SuggestionDemo;
 
 <TypeTable
   type={{
-    '...props': {
-      description: 'Any other props are spread to the underlying ScrollArea component.',
-      type: 'React.ComponentProps<typeof ScrollArea>',
+    "...props": {
+      description:
+        "Any other props are spread to the underlying ScrollArea component.",
+      type: "React.ComponentProps<typeof ScrollArea>",
     },
   }}
 />
@@ -125,16 +126,17 @@ export default SuggestionDemo;
 <TypeTable
   type={{
     suggestion: {
-      description: 'The suggestion string to display and emit on click.',
-      type: 'string',
+      description: "The suggestion string to display and emit on click.",
+      type: "string",
       required: true,
     },
     onClick: {
-      description: 'Callback fired when the suggestion is clicked.',
-      type: '(suggestion: string) => void',
+      description: "Callback fired when the suggestion is clicked.",
+      type: "(suggestion: string) => void",
     },
-    '...props': {
-      description: 'Any other props are spread to the underlying shadcn/ui Button component.',
+    "...props": {
+      description:
+        "Any other props are spread to the underlying shadcn/ui Button component.",
       type: 'Omit<React.ComponentProps<typeof Button>, "onClick">',
     },
   }}

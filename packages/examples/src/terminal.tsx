@@ -10,23 +10,27 @@ import {
   TerminalStatus,
   TerminalTitle,
 } from "@repo/elements/terminal";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
-const ansiOutput = `\x1b[32m✓\x1b[0m Compiled successfully in 1.2s
+const handleTerminalCopy = () => {
+  console.log("Copied!");
+};
 
-\x1b[1m\x1b[34minfo\x1b[0m  - Collecting page data...
-\x1b[1m\x1b[34minfo\x1b[0m  - Generating static pages (0/3)
-\x1b[32m✓\x1b[0m Generated static pages (3/3)
+const ansiOutput = `\u001B[32m✓\u001B[0m Compiled successfully in 1.2s
 
-\x1b[1m\x1b[33mwarn\x1b[0m  - Using \x1b[1mexperimental\x1b[0m server actions
+\u001B[1m\u001B[34minfo\u001B[0m  - Collecting page data...
+\u001B[1m\u001B[34minfo\u001B[0m  - Generating static pages (0/3)
+\u001B[32m✓\u001B[0m Generated static pages (3/3)
 
-\x1b[36mRoute (app)\x1b[0m                              \x1b[36mSize\x1b[0m     \x1b[36mFirst Load JS\x1b[0m
-\x1b[37m┌ ○ /\x1b[0m                                    \x1b[32m5.2 kB\x1b[0m   \x1b[32m87.3 kB\x1b[0m
-\x1b[37m├ ○ /about\x1b[0m                               \x1b[32m2.1 kB\x1b[0m   \x1b[32m84.2 kB\x1b[0m
-\x1b[37m└ ○ /contact\x1b[0m                             \x1b[32m3.8 kB\x1b[0m   \x1b[32m85.9 kB\x1b[0m
+\u001B[1m\u001B[33mwarn\u001B[0m  - Using \u001B[1mexperimental\u001B[0m server actions
 
-\x1b[32m✓\x1b[0m Build completed successfully!
-\x1b[90mTotal time: 3.45s\x1b[0m
+\u001B[36mRoute (app)\u001B[0m                              \u001B[36mSize\u001B[0m     \u001B[36mFirst Load JS\u001B[0m
+\u001B[37m┌ ○ /\u001B[0m                                    \u001B[32m5.2 kB\u001B[0m   \u001B[32m87.3 kB\u001B[0m
+\u001B[37m├ ○ /about\u001B[0m                               \u001B[32m2.1 kB\u001B[0m   \u001B[32m84.2 kB\u001B[0m
+\u001B[37m└ ○ /contact\u001B[0m                             \u001B[32m3.8 kB\u001B[0m   \u001B[32m85.9 kB\u001B[0m
+
+\u001B[32m✓\u001B[0m Build completed successfully!
+\u001B[90mTotal time: 3.45s\u001B[0m
 `;
 
 const Example = () => {
@@ -48,10 +52,10 @@ const Example = () => {
     return () => clearInterval(interval);
   }, []);
 
-  const handleClear = () => {
+  const handleClear = useCallback(() => {
     setOutput("");
     setIsStreaming(false);
-  };
+  }, []);
 
   return (
     <Terminal
@@ -65,7 +69,7 @@ const Example = () => {
         <div className="flex items-center gap-1">
           <TerminalStatus />
           <TerminalActions>
-            <TerminalCopyButton onCopy={() => console.log("Copied!")} />
+            <TerminalCopyButton onCopy={handleTerminalCopy} />
             <TerminalClearButton />
           </TerminalActions>
         </div>

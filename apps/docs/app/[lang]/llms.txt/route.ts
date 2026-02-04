@@ -1,4 +1,5 @@
 import type { NextRequest } from "next/server";
+
 import { getAllPages, getLLMText } from "@/lib/geistdocs/source";
 
 export const revalidate = false;

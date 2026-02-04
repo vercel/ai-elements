@@ -17,7 +17,8 @@ Before installing AI Elements, ensure your environment meets these requirements:
 - **Tailwind CSS** 4
 
 <Callout>
-  If you don't have shadcn/ui installed, running any AI Elements install command will automatically set it up for you.
+  If you don't have shadcn/ui installed, running any AI Elements install command
+  will automatically set it up for you.
 </Callout>
 
 ## AI Gateway (Recommended)
@@ -50,7 +51,11 @@ After installing a component, verify it works:
 2. Import and use it in a page:
 
 ```tsx title="app/page.tsx"
-import { Message, MessageContent, MessageResponse } from '@/components/ai-elements/message';
+import {
+  Message,
+  MessageContent,
+  MessageResponse,
+} from "@/components/ai-elements/message";
 
 export default function Page() {
   return (

@@ -1,5 +1,6 @@
-import { Badge } from "@repo/shadcn-ui/components/ui/badge";
 import type { ReactNode } from "react";
+
+import { Badge } from "@repo/shadcn-ui/components/ui/badge";
 
 interface HeroProps {
   badge?: string;

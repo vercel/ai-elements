@@ -1,5 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
+
 import {
   Node,
   NodeAction,
@@ -10,10 +11,10 @@ import {
   NodeTitle,
 } from "../src/node";
 
-describe("Node", () => {
+describe("node", () => {
   it("renders children without handles", () => {
     render(
-      <Node handles={{ target: false, source: false }}>
+      <Node handles={{ source: false, target: false }}>
         <div>Test content</div>
       </Node>
     );
@@ -22,7 +23,7 @@ describe("Node", () => {
 
   it("applies custom className", () => {
     const { container } = render(
-      <Node className="custom-node" handles={{ target: false, source: false }}>
+      <Node className="custom-node" handles={{ source: false, target: false }}>
         <div>Content</div>
       </Node>
     );
@@ -31,7 +32,7 @@ describe("Node", () => {
   });
 });
 
-describe("NodeHeader", () => {
+describe("nodeHeader", () => {
   it("renders children", () => {
     render(<NodeHeader>Header content</NodeHeader>);
     expect(screen.getByText("Header content")).toBeInTheDocument();
@@ -45,28 +46,28 @@ describe("NodeHeader", () => {
   });
 });
 
-describe("NodeTitle", () => {
+describe("nodeTitle", () => {
   it("renders title text", () => {
     render(<NodeTitle>Node Title</NodeTitle>);
     expect(screen.getByText("Node Title")).toBeInTheDocument();
   });
 });
 
-describe("NodeDescription", () => {
+describe("nodeDescription", () => {
   it("renders description text", () => {
     render(<NodeDescription>Node description</NodeDescription>);
     expect(screen.getByText("Node description")).toBeInTheDocument();
   });
 });
 
-describe("NodeAction", () => {
+describe("nodeAction", () => {
   it("renders action content", () => {
     render(<NodeAction>Action</NodeAction>);
     expect(screen.getByText("Action")).toBeInTheDocument();
   });
 });
 
-describe("NodeContent", () => {
+describe("nodeContent", () => {
   it("renders content", () => {
     render(<NodeContent>Main content</NodeContent>);
     expect(screen.getByText("Main content")).toBeInTheDocument();
@@ -80,7 +81,7 @@ describe("NodeContent", () => {
   });
 });
 
-describe("NodeFooter", () => {
+describe("nodeFooter", () => {
   it("renders footer content", () => {
     render(<NodeFooter>Footer content</NodeFooter>);
     expect(screen.getByText("Footer content")).toBeInTheDocument();

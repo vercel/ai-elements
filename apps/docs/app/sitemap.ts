@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+
 import {
   componentsSource,
   docsSource,
@@ -17,36 +18,36 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   for (const page of docsSource.getPages()) {
     pages.push({
-      url: url(page.url),
-      lastModified: undefined,
       changeFrequency: "weekly" as const,
+      lastModified: undefined,
       priority: 0.5,
+      url: url(page.url),
     });
   }
 
   for (const page of componentsSource.getPages()) {
     pages.push({
-      url: url(page.url),
-      lastModified: undefined,
       changeFrequency: "weekly" as const,
+      lastModified: undefined,
       priority: 0.5,
+      url: url(page.url),
     });
   }
 
   for (const page of examplesSource.getPages()) {
     pages.push({
-      url: url(page.url),
-      lastModified: undefined,
       changeFrequency: "weekly" as const,
+      lastModified: undefined,
       priority: 0.5,
+      url: url(page.url),
     });
   }
 
   return [
     {
-      url: url("/"),
       changeFrequency: "monthly",
       priority: 1,
+      url: url("/"),
     },
     ...pages,
   ];

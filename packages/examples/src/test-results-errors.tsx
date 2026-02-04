@@ -21,11 +21,11 @@ const stackTrace = `    at Object.<anonymous> (/app/src/api.test.ts:45:12)
 const Example = () => (
   <TestResults
     summary={{
-      passed: 1,
+      duration: 130,
       failed: 1,
+      passed: 1,
       skipped: 0,
       total: 2,
-      duration: 130,
     }}
   >
     <TestResultsHeader>

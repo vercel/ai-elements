@@ -1,27 +1,27 @@
 "use client";
 
+import type { ComponentProps, HTMLAttributes } from "react";
+
 import { Badge } from "@repo/shadcn-ui/components/ui/badge";
 import { Button } from "@repo/shadcn-ui/components/ui/button";
 import { Switch } from "@repo/shadcn-ui/components/ui/switch";
 import { cn } from "@repo/shadcn-ui/lib/utils";
 import { CheckIcon, CopyIcon, EyeIcon, EyeOffIcon } from "lucide-react";
-import {
-  type ComponentProps,
-  createContext,
-  type HTMLAttributes,
-  useContext,
-  useState,
-} from "react";
+import { createContext, useCallback, useContext, useState } from "react";
 
 interface EnvironmentVariablesContextType {
   showValues: boolean;
   setShowValues: (show: boolean) => void;
 }
 
+// Default noop for context default value
+// oxlint-disable-next-line eslint(no-empty-function)
+const noop = () => {};
+
 const EnvironmentVariablesContext =
   createContext<EnvironmentVariablesContextType>({
+    setShowValues: noop,
     showValues: false,
-    setShowValues: () => undefined,
   });
 
 export type EnvironmentVariablesProps = HTMLAttributes<HTMLDivElement> & {
@@ -48,7 +48,7 @@ export const EnvironmentVariables = ({
   };
 
   return (
-    <EnvironmentVariablesContext.Provider value={{ showValues, setShowValues }}>
+    <EnvironmentVariablesContext.Provider value={{ setShowValues, showValues }}>
       <div
         className={cn("rounded-lg border bg-background", className)}
         {...props}
@@ -244,28 +244,30 @@ export const EnvironmentVariableCopyButton = ({
   const [isCopied, setIsCopied] = useState(false);
   const { name, value } = useContext(EnvironmentVariableContext);
 
-  const copyToClipboard = async () => {
+  const getTextToCopy = useCallback((): string => {
+    const formatMap = {
+      export: () => `export ${name}="${value}"`,
+      name: () => name,
+      value: () => value,
+    };
+    return formatMap[copyFormat]();
+  }, [name, value, copyFormat]);
+
+  const copyToClipboard = useCallback(async () => {
     if (typeof window === "undefined" || !navigator?.clipboard?.writeText) {
       onError?.(new Error("Clipboard API not available"));
       return;
     }
 
-    let textToCopy = value;
-    if (copyFormat === "name") {
-      textToCopy = name;
-    } else if (copyFormat === "export") {
-      textToCopy = `export ${name}="${value}"`;
-    }
-
     try {
-      await navigator.clipboard.writeText(textToCopy);
+      await navigator.clipboard.writeText(getTextToCopy());
       setIsCopied(true);
       onCopy?.();
       setTimeout(() => setIsCopied(false), timeout);
     } catch (error) {
       onError?.(error as Error);
     }
-  };
+  }, [getTextToCopy, onCopy, onError, timeout]);
 
   const Icon = isCopied ? CheckIcon : CopyIcon;
 

@@ -1,8 +1,11 @@
 "use client";
 
+import type { AttachmentData } from "@repo/elements/attachments";
+import type { PromptInputMessage } from "@repo/elements/prompt-input";
+import type { SourceDocumentUIPart } from "ai";
+
 import {
   Attachment,
-  type AttachmentData,
   AttachmentInfo,
   AttachmentPreview,
   AttachmentRemove,
@@ -37,7 +40,6 @@ import {
   PromptInputHoverCard,
   PromptInputHoverCardContent,
   PromptInputHoverCardTrigger,
-  type PromptInputMessage,
   PromptInputProvider,
   PromptInputSubmit,
   PromptInputTab,
@@ -50,7 +52,6 @@ import {
   usePromptInputReferencedSources,
 } from "@repo/elements/prompt-input";
 import { Button } from "@repo/shadcn-ui/components/ui/button";
-import type { SourceDocumentUIPart } from "ai";
 import {
   AtSignIcon,
   CheckIcon,
@@ -59,42 +60,42 @@ import {
   ImageIcon,
   RulerIcon,
 } from "lucide-react";
-import { useState } from "react";
+import { memo, useCallback, useState } from "react";
 
 const models = [
   {
+    chef: "OpenAI",
+    chefSlug: "openai",
     id: "gpt-4o",
     name: "GPT-4o",
-    chef: "OpenAI",
-    chefSlug: "openai",
     providers: ["openai", "azure"],
   },
   {
+    chef: "OpenAI",
+    chefSlug: "openai",
     id: "gpt-4o-mini",
     name: "GPT-4o Mini",
-    chef: "OpenAI",
-    chefSlug: "openai",
     providers: ["openai", "azure"],
   },
   {
+    chef: "Anthropic",
+    chefSlug: "anthropic",
     id: "claude-opus-4-20250514",
     name: "Claude 4 Opus",
-    chef: "Anthropic",
-    chefSlug: "anthropic",
     providers: ["anthropic", "azure", "google", "amazon-bedrock"],
   },
   {
+    chef: "Anthropic",
+    chefSlug: "anthropic",
     id: "claude-sonnet-4-20250514",
     name: "Claude 4 Sonnet",
-    chef: "Anthropic",
-    chefSlug: "anthropic",
     providers: ["anthropic", "azure", "google", "amazon-bedrock"],
   },
   {
-    id: "gemini-2.0-flash-exp",
-    name: "Gemini 2.0 Flash",
     chef: "Google",
     chefSlug: "google",
+    id: "gemini-2.0-flash-exp",
+    name: "Gemini 2.0 Flash",
     providers: ["google"],
   },
 ];
@@ -102,27 +103,124 @@ const models = [
 const SUBMITTING_TIMEOUT = 200;
 const STREAMING_TIMEOUT = 2000;
 
+interface AttachmentItemProps {
+  attachment: AttachmentData;
+  onRemove: (id: string) => void;
+}
+
+const AttachmentItem = memo(({ attachment, onRemove }: AttachmentItemProps) => {
+  const handleRemove = useCallback(
+    () => onRemove(attachment.id),
+    [onRemove, attachment.id]
+  );
+  return (
+    <Attachment data={attachment} key={attachment.id} onRemove={handleRemove}>
+      <AttachmentPreview />
+      <AttachmentRemove />
+    </Attachment>
+  );
+});
+
+AttachmentItem.displayName = "AttachmentItem";
+
+interface SourceItemProps {
+  source: AttachmentData;
+  onRemove: (id: string) => void;
+}
+
+const SourceItem = memo(({ source, onRemove }: SourceItemProps) => {
+  const handleRemove = useCallback(
+    () => onRemove(source.id),
+    [onRemove, source.id]
+  );
+  return (
+    <Attachment data={source} key={source.id} onRemove={handleRemove}>
+      <AttachmentPreview />
+      <AttachmentInfo />
+      <AttachmentRemove />
+    </Attachment>
+  );
+});
+
+SourceItem.displayName = "SourceItem";
+
+interface ModelItemProps {
+  m: (typeof models)[0];
+  selectedModel: string;
+  onSelect: (id: string) => void;
+}
+
+const ModelItem = memo(({ m, selectedModel, onSelect }: ModelItemProps) => {
+  const handleSelect = useCallback(() => onSelect(m.id), [onSelect, m.id]);
+  return (
+    <ModelSelectorItem key={m.id} onSelect={handleSelect} value={m.id}>
+      <ModelSelectorLogo provider={m.chefSlug} />
+      <ModelSelectorName>{m.name}</ModelSelectorName>
+      <ModelSelectorLogoGroup>
+        {m.providers.map((provider) => (
+          <ModelSelectorLogo key={provider} provider={provider} />
+        ))}
+      </ModelSelectorLogoGroup>
+      {selectedModel === m.id ? (
+        <CheckIcon className="ml-auto size-4" />
+      ) : (
+        <div className="ml-auto size-4" />
+      )}
+    </ModelSelectorItem>
+  );
+});
+
+ModelItem.displayName = "ModelItem";
+
+interface SourceCommandItemProps {
+  source: SourceDocumentUIPart;
+  index: number;
+  onAdd: (source: SourceDocumentUIPart) => void;
+}
+
+const SourceCommandItem = memo(
+  ({ source, index, onAdd }: SourceCommandItemProps) => {
+    const handleSelect = useCallback(() => onAdd(source), [onAdd, source]);
+    return (
+      <PromptInputCommandItem
+        key={`${source.title}-${index}`}
+        onSelect={handleSelect}
+      >
+        <GlobeIcon className="text-primary" />
+        <div className="flex flex-col">
+          <span className="font-medium text-sm">{source.title}</span>
+          <span className="text-muted-foreground text-xs">
+            {source.filename}
+          </span>
+        </div>
+      </PromptInputCommandItem>
+    );
+  }
+);
+
+SourceCommandItem.displayName = "SourceCommandItem";
+
 const sampleSources: SourceDocumentUIPart[] = [
   {
-    type: "source-document",
+    filename: "packages/elements/src",
+    mediaType: "text/plain",
     sourceId: "1",
     title: "prompt-input.tsx",
-    filename: "packages/elements/src",
-    mediaType: "text/plain",
+    type: "source-document",
   },
   {
-    type: "source-document",
-    sourceId: "2",
-    title: "queue.tsx",
     filename: "apps/test/app/examples",
     mediaType: "text/plain",
+    sourceId: "2",
+    title: "queue.tsx",
+    type: "source-document",
   },
   {
-    type: "source-document",
-    sourceId: "3",
-    title: "queue.tsx",
     filename: "packages/elements/src",
     mediaType: "text/plain",
+    sourceId: "3",
+    title: "queue.tsx",
+    type: "source-document",
   },
 ];
 
@@ -141,6 +239,11 @@ const sampleTabs = {
 const PromptInputAttachmentsDisplay = () => {
   const attachments = usePromptInputAttachments();
 
+  const handleRemove = useCallback(
+    (id: string) => attachments.remove(id),
+    [attachments]
+  );
+
   if (attachments.files.length === 0) {
     return null;
   }
@@ -148,14 +251,11 @@ const PromptInputAttachmentsDisplay = () => {
   return (
     <Attachments variant="inline">
       {attachments.files.map((attachment) => (
-        <Attachment
-          data={attachment}
+        <AttachmentItem
+          attachment={attachment}
           key={attachment.id}
-          onRemove={() => attachments.remove(attachment.id)}
-        >
-          <AttachmentPreview />
-          <AttachmentRemove />
-        </Attachment>
+          onRemove={handleRemove}
+        />
       ))}
     </Attachments>
   );
@@ -164,6 +264,8 @@ const PromptInputAttachmentsDisplay = () => {
 const PromptInputReferencedSourcesDisplay = () => {
   const refs = usePromptInputReferencedSources();
 
+  const handleRemove = useCallback((id: string) => refs.remove(id), [refs]);
+
   if (refs.sources.length === 0) {
     return null;
   }
@@ -171,15 +273,11 @@ const PromptInputReferencedSourcesDisplay = () => {
   return (
     <Attachments variant="inline">
       {refs.sources.map((source) => (
-        <Attachment
-          data={source as AttachmentData}
+        <SourceItem
           key={source.id}
-          onRemove={() => refs.remove(source.id)}
-        >
-          <AttachmentPreview />
-          <AttachmentInfo />
-          <AttachmentRemove />
-        </Attachment>
+          onRemove={handleRemove}
+          source={source as AttachmentData}
+        />
       ))}
     </Attachments>
   );
@@ -194,7 +292,12 @@ const Example = () => {
 
   const selectedModelData = models.find((m) => m.id === model);
 
-  const handleSubmit = (message: PromptInputMessage) => {
+  const handleModelSelect = useCallback((id: string) => {
+    setModel(id);
+    setModelSelectorOpen(false);
+  }, []);
+
+  const handleSubmit = useCallback((message: PromptInputMessage) => {
     const hasText = Boolean(message.text);
     const hasAttachments = Boolean(message.files?.length);
 
@@ -211,7 +314,7 @@ const Example = () => {
     setTimeout(() => {
       setStatus("ready");
     }, STREAMING_TIMEOUT);
-  };
+  }, []);
 
   return (
     <div className="flex size-full flex-col justify-end">
@@ -328,30 +431,12 @@ const Example = () => {
                         {models
                           .filter((m) => m.chef === chef)
                           .map((m) => (
-                            <ModelSelectorItem
+                            <ModelItem
                               key={m.id}
-                              onSelect={() => {
-                                setModel(m.id);
-                                setModelSelectorOpen(false);
-                              }}
-                              value={m.id}
-                            >
-                              <ModelSelectorLogo provider={m.chefSlug} />
-                              <ModelSelectorName>{m.name}</ModelSelectorName>
-                              <ModelSelectorLogoGroup>
-                                {m.providers.map((provider) => (
-                                  <ModelSelectorLogo
-                                    key={provider}
-                                    provider={provider}
-                                  />
-                                ))}
-                              </ModelSelectorLogoGroup>
-                              {model === m.id ? (
-                                <CheckIcon className="ml-auto size-4" />
-                              ) : (
-                                <div className="ml-auto size-4" />
-                              )}
-                            </ModelSelectorItem>
+                              m={m}
+                              onSelect={handleModelSelect}
+                              selectedModel={model}
+                            />
                           ))}
                       </ModelSelectorGroup>
                     ))}
@@ -377,9 +462,10 @@ export default Example;
 const SampleFilesMenu = () => {
   const refs = usePromptInputReferencedSources();
 
-  const handleAdd = (source: SourceDocumentUIPart) => {
-    refs.add(source);
-  };
+  const handleAdd = useCallback(
+    (source: SourceDocumentUIPart) => refs.add(source),
+    [refs]
+  );
 
   return (
     <PromptInputCommand>
@@ -409,18 +495,12 @@ const SampleFilesMenu = () => {
                 )
             )
             .map((source, index) => (
-              <PromptInputCommandItem
+              <SourceCommandItem
+                index={index}
                 key={`${source.title}-${index}`}
-                onSelect={() => handleAdd(source)}
-              >
-                <GlobeIcon className="text-primary" />
-                <div className="flex flex-col">
-                  <span className="font-medium text-sm">{source.title}</span>
-                  <span className="text-muted-foreground text-xs">
-                    {source.filename}
-                  </span>
-                </div>
-              </PromptInputCommandItem>
+                onAdd={handleAdd}
+                source={source}
+              />
             ))}
         </PromptInputCommandGroup>
       </PromptInputCommandList>

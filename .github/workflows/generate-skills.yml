@@ -5,9 +5,9 @@ on:
     branches:
       - main
     paths:
-      - 'apps/docs/content/docs/**/*.mdx'
-      - 'packages/examples/src/**/*.tsx'
-      - 'packages/scripts/**'
+      - "apps/docs/content/docs/**/*.mdx"
+      - "packages/examples/src/**/*.tsx"
+      - "packages/scripts/**"
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
@@ -43,7 +43,7 @@ jobs:
 
       - uses: actions/setup-node@v6
         with:
-          node-version: '24'
+          node-version: "24"
 
       - name: Install Dependencies
         run: pnpm i

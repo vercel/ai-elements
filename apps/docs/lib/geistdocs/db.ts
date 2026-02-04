@@ -1,5 +1,8 @@
 import type { UIMessage } from "@ai-sdk/react";
-import Dexie, { type EntityTable } from "dexie";
+import type { EntityTable } from "dexie";
+
+import Dexie from "dexie";
+
 import { title } from "@/geistdocs";
 
 interface StoredMessage extends UIMessage {

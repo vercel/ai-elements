@@ -34,24 +34,27 @@ The component extends the shadcn/ui Button component, so all Button props are av
 <TypeTable
   type={{
     onTranscriptionChange: {
-      description: 'Callback fired when final transcription text is available. Only fires for completed phrases, not interim results.',
-      type: '(text: string) => void',
+      description:
+        "Callback fired when final transcription text is available. Only fires for completed phrases, not interim results.",
+      type: "(text: string) => void",
       optional: true,
     },
     onAudioRecorded: {
-      description: 'Callback for MediaRecorder fallback. Required for Firefox/Safari support. Receives recorded audio blob and should return transcribed text from an external service (e.g., OpenAI Whisper).',
-      type: '(audioBlob: Blob) => Promise<string>',
+      description:
+        "Callback for MediaRecorder fallback. Required for Firefox/Safari support. Receives recorded audio blob and should return transcribed text from an external service (e.g., OpenAI Whisper).",
+      type: "(audioBlob: Blob) => Promise<string>",
       optional: true,
     },
     lang: {
-      description: 'Language for speech recognition.',
-      type: 'string',
+      description: "Language for speech recognition.",
+      type: "string",
       default: '"en-US"',
       optional: true,
     },
-    '...props': {
-      description: 'Any other props are spread to the Button component, including variant, size, disabled, etc.',
-      type: 'React.ComponentProps<typeof Button>',
+    "...props": {
+      description:
+        "Any other props are spread to the Button component, including variant, size, disabled, etc.",
+      type: "React.ComponentProps<typeof Button>",
     },
   }}
 />
@@ -62,11 +65,11 @@ The component extends the shadcn/ui Button component, so all Button props are av
 
 The component automatically detects browser capabilities and uses the best available method:
 
-| Browser | Mode | Behavior |
-|---------|------|----------|
-| Chrome, Edge | Web Speech API | Real-time transcription, no server required |
-| Firefox, Safari | MediaRecorder | Records audio, sends to external transcription service |
-| Unsupported | Disabled | Button is disabled |
+| Browser         | Mode           | Behavior                                               |
+| --------------- | -------------- | ------------------------------------------------------ |
+| Chrome, Edge    | Web Speech API | Real-time transcription, no server required            |
+| Firefox, Safari | MediaRecorder  | Records audio, sends to external transcription service |
+| Unsupported     | Disabled       | Button is disabled                                     |
 
 ### Web Speech API Mode (Chrome, Edge)
 
@@ -110,12 +113,12 @@ The component only calls `onTranscriptionChange` with **final transcripts**. Int
 
 The component provides cross-browser support through a two-tier system:
 
-| Browser | API Used | Requirements |
-|---------|----------|--------------|
-| Chrome | Web Speech API | None |
-| Edge | Web Speech API | None |
-| Firefox | MediaRecorder | `onAudioRecorded` prop |
-| Safari | MediaRecorder | `onAudioRecorded` prop |
+| Browser | API Used       | Requirements           |
+| ------- | -------------- | ---------------------- |
+| Chrome  | Web Speech API | None                   |
+| Edge    | Web Speech API | None                   |
+| Firefox | MediaRecorder  | `onAudioRecorded` prop |
+| Safari  | MediaRecorder  | `onAudioRecorded` prop |
 
 For full cross-browser support, provide the `onAudioRecorded` callback that sends audio to a transcription service like OpenAI Whisper, Google Cloud Speech-to-Text, or AssemblyAI.
 
@@ -154,7 +157,7 @@ const handleAudioRecorded = async (audioBlob: Blob): Promise<string> => {
 <SpeechInput
   onTranscriptionChange={(text) => console.log(text)}
   onAudioRecorded={handleAudioRecorded}
-/>
+/>;
 ```
 
 ## Notes

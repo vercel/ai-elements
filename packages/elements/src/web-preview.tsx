@@ -1,5 +1,7 @@
 "use client";
 
+import type { ComponentProps, ReactNode } from "react";
+
 import { Button } from "@repo/shadcn-ui/components/ui/button";
 import {
   Collapsible,
@@ -15,8 +17,13 @@ import {
 } from "@repo/shadcn-ui/components/ui/tooltip";
 import { cn } from "@repo/shadcn-ui/lib/utils";
 import { ChevronDownIcon } from "lucide-react";
-import type { ComponentProps, ReactNode } from "react";
-import { createContext, useContext, useEffect, useState } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 
 export interface WebPreviewContextValue {
   url: string;
@@ -56,10 +63,10 @@ export const WebPreview = ({
   };
 
   const contextValue: WebPreviewContextValue = {
-    url,
-    setUrl: handleUrlChange,
     consoleOpen,
     setConsoleOpen,
+    setUrl: handleUrlChange,
+    url,
   };
 
   return (
@@ -145,13 +152,16 @@ export const WebPreviewUrl = ({
     onChange?.(event);
   };
 
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === "Enter") {
-      const target = event.target as HTMLInputElement;
-      setUrl(target.value);
-    }
-    onKeyDown?.(event);
-  };
+  const handleKeyDown = useCallback(
+    (event: React.KeyboardEvent<HTMLInputElement>) => {
+      if (event.key === "Enter") {
+        const target = event.target as HTMLInputElement;
+        setUrl(target.value);
+      }
+      onKeyDown?.(event);
+    },
+    [setUrl, onKeyDown]
+  );
 
   return (
     <Input
@@ -181,6 +191,7 @@ export const WebPreviewBody = ({
     <div className="flex-1">
       <iframe
         className={cn("size-full", className)}
+        // oxlint-disable-next-line eslint-plugin-react(iframe-missing-sandbox)
         sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-presentation"
         src={(src ?? url) || undefined}
         title="Preview"
@@ -192,11 +203,11 @@ export const WebPreviewBody = ({
 };
 
 export type WebPreviewConsoleProps = ComponentProps<"div"> & {
-  logs?: Array<{
+  logs?: {
     level: "log" | "warn" | "error";
     message: string;
     timestamp: Date;
-  }>;
+  }[];
 };
 
 export const WebPreviewConsole = ({

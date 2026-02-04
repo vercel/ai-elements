@@ -1,18 +1,20 @@
 "use client";
 
+import type { ComponentProps, HTMLAttributes } from "react";
+
 import { Button } from "@repo/shadcn-ui/components/ui/button";
 import { cn } from "@repo/shadcn-ui/lib/utils";
 import Ansi from "ansi-to-react";
 import { CheckIcon, CopyIcon, TerminalIcon, Trash2Icon } from "lucide-react";
 import {
-  type ComponentProps,
   createContext,
-  type HTMLAttributes,
+  useCallback,
   useContext,
   useEffect,
   useRef,
   useState,
 } from "react";
+
 import { Shimmer } from "./shimmer";
 
 interface TerminalContextType {
@@ -23,9 +25,9 @@ interface TerminalContextType {
 }
 
 const TerminalContext = createContext<TerminalContextType>({
-  output: "",
-  isStreaming: false,
   autoScroll: true,
+  isStreaming: false,
+  output: "",
 });
 
 export type TerminalProps = HTMLAttributes<HTMLDivElement> & {
@@ -45,7 +47,7 @@ export const Terminal = ({
   ...props
 }: TerminalProps) => (
   <TerminalContext.Provider
-    value={{ output, isStreaming, autoScroll, onClear }}
+    value={{ autoScroll, isStreaming, onClear, output }}
   >
     <div
       className={cn(
@@ -159,7 +161,7 @@ export const TerminalCopyButton = ({
   const [isCopied, setIsCopied] = useState(false);
   const { output } = useContext(TerminalContext);
 
-  const copyToClipboard = async () => {
+  const copyToClipboard = useCallback(async () => {
     if (typeof window === "undefined" || !navigator?.clipboard?.writeText) {
       onError?.(new Error("Clipboard API not available"));
       return;
@@ -173,7 +175,7 @@ export const TerminalCopyButton = ({
     } catch (error) {
       onError?.(error as Error);
     }
-  };
+  }, [output, onCopy, onError, timeout]);
 
   const Icon = isCopied ? CheckIcon : CopyIcon;
 

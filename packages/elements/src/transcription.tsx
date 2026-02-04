@@ -1,10 +1,11 @@
 "use client";
 
-import { useControllableState } from "@radix-ui/react-use-controllable-state";
-import { cn } from "@repo/shadcn-ui/lib/utils";
 import type { Experimental_TranscriptionResult as TranscriptionResult } from "ai";
 import type { ComponentProps, ReactNode } from "react";
-import { createContext, useContext } from "react";
+
+import { useControllableState } from "@radix-ui/react-use-controllable-state";
+import { cn } from "@repo/shadcn-ui/lib/utils";
+import { createContext, useCallback, useContext } from "react";
 
 type TranscriptionSegment = TranscriptionResult["segments"][number];
 
@@ -45,18 +46,18 @@ export const Transcription = ({
   ...props
 }: TranscriptionProps) => {
   const [currentTime, setCurrentTime] = useControllableState({
-    prop: externalCurrentTime,
     defaultProp: 0,
     onChange: onSeek,
+    prop: externalCurrentTime,
   });
 
   return (
     <TranscriptionContext.Provider
       value={{
-        segments,
         currentTime,
-        onTimeUpdate: setCurrentTime,
         onSeek,
+        onTimeUpdate: setCurrentTime,
+        segments,
       }}
     >
       <div
@@ -93,12 +94,15 @@ export const TranscriptionSegment = ({
     currentTime >= segment.startSecond && currentTime < segment.endSecond;
   const isPast = currentTime >= segment.endSecond;
 
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    if (onSeek) {
-      onSeek(segment.startSecond);
-    }
-    onClick?.(event);
-  };
+  const handleClick = useCallback(
+    (event: React.MouseEvent<HTMLButtonElement>) => {
+      if (onSeek) {
+        onSeek(segment.startSecond);
+      }
+      onClick?.(event);
+    },
+    [onSeek, segment.startSecond, onClick]
+  );
 
   return (
     <button

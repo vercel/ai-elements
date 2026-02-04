@@ -1,0 +1,26 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "extends": [
+    "./node_modules/ultracite/config/oxlint/core/.oxlintrc.json",
+    "./node_modules/ultracite/config/oxlint/next/.oxlintrc.json",
+    "./node_modules/ultracite/config/oxlint/react/.oxlintrc.json"
+  ],
+  "ignorePatterns": [
+    "packages/shadcn-ui",
+    "apps/docs/components/geistdocs",
+    "apps/docs/lib/geistdocs",
+    "apps/docs/hooks/geistdocs",
+    "apps/docs/app",
+    "apps/docs/geistdocs.tsx",
+    "apps/docs/proxy.ts",
+    "apps/docs/source.config.ts",
+    "skills"
+  ],
+  "rules": {
+    "import/no-relative-parent-imports": "off",
+    "nextjs/no-img-element": "off",
+    "eslint/complexity": "off",
+    "eslint/max-statements": "off",
+    "jest/prefer-called-with": "off"
+  }
+}

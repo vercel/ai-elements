@@ -1,9 +1,10 @@
 import { render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
+import { userEvent } from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
+
 import { FileTree, FileTreeFile, FileTreeFolder } from "../src/file-tree";
 
-describe("FileTree", () => {
+describe("fileTree", () => {
   it("renders children", () => {
     render(
       <FileTree>
@@ -32,7 +33,7 @@ describe("FileTree", () => {
   });
 });
 
-describe("FileTreeFolder", () => {
+describe("fileTreeFolder", () => {
   it("renders folder name", () => {
     render(
       <FileTree>
@@ -94,7 +95,7 @@ describe("FileTreeFolder", () => {
   });
 });
 
-describe("FileTreeFile", () => {
+describe("fileTreeFile", () => {
   it("renders file name", () => {
     render(
       <FileTree>
@@ -143,7 +144,7 @@ describe("FileTreeFile", () => {
   });
 });
 
-describe("Composability", () => {
+describe("composability", () => {
   it("renders nested folder structure", async () => {
     const user = userEvent.setup();
     render(
@@ -162,6 +163,7 @@ describe("Composability", () => {
     const componentsFolderButton = screen
       .getByText("components")
       .closest("button");
+    // oxlint-disable-next-line eslint-plugin-jest(no-conditional-in-test)
     if (componentsFolderButton) {
       await user.click(componentsFolderButton);
     }

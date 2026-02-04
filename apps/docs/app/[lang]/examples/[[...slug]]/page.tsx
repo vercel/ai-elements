@@ -1,7 +1,9 @@
+import type { Metadata } from "next";
+
 import { Separator } from "@repo/shadcn-ui/components/ui/separator";
 import { createRelativeLink } from "fumadocs-ui/mdx";
-import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+
 import { ElementsDemo } from "@/components/custom/elements-demo";
 import { ElementsInstaller } from "@/components/custom/elements-installer";
 import { Preview } from "@/components/custom/preview";
@@ -40,7 +42,6 @@ const Page = async ({ params }: PageProps<"/[lang]/examples/[[...slug]]">) => {
     <DocsPage
       full={page.data.full}
       tableOfContent={{
-        style: "clerk",
         footer: (
           <div className="my-3 space-y-3">
             <Separator />
@@ -52,6 +53,7 @@ const Page = async ({ params }: PageProps<"/[lang]/examples/[[...slug]]">) => {
             <OpenInChat href={page.url} />
           </div>
         ),
+        style: "clerk",
       }}
       toc={page.data.toc}
     >
@@ -87,11 +89,11 @@ export const generateMetadata = async ({
   }
 
   const metadata: Metadata = {
-    title: page.data.title,
     description: page.data.description,
     openGraph: {
       images: getPageImage(page).url,
     },
+    title: page.data.title,
   };
 
   return metadata;

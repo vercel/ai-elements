@@ -1,6 +1,9 @@
 "use client";
 
-import { Persona, type PersonaState } from "@repo/elements/persona";
+import type { PersonaState } from "@repo/elements/persona";
+import type { LucideIcon } from "lucide-react";
+
+import { Persona } from "@repo/elements/persona";
 import { Button } from "@repo/shadcn-ui/components/ui/button";
 import { ButtonGroup } from "@repo/shadcn-ui/components/ui/button-group";
 import {
@@ -12,11 +15,10 @@ import {
   BrainIcon,
   CircleIcon,
   EyeClosedIcon,
-  type LucideIcon,
   MegaphoneIcon,
   MicIcon,
 } from "lucide-react";
-import { useState } from "react";
+import { memo, useCallback, useState } from "react";
 
 const states: {
   state: PersonaState;
@@ -24,34 +26,69 @@ const states: {
   label: string;
 }[] = [
   {
-    state: "idle",
     icon: CircleIcon,
     label: "Idle",
+    state: "idle",
   },
   {
-    state: "listening",
     icon: MicIcon,
     label: "Listening",
+    state: "listening",
   },
   {
-    state: "thinking",
     icon: BrainIcon,
     label: "Thinking",
+    state: "thinking",
   },
   {
-    state: "speaking",
     icon: MegaphoneIcon,
     label: "Speaking",
+    state: "speaking",
   },
   {
-    state: "asleep",
     icon: EyeClosedIcon,
     label: "Asleep",
+    state: "asleep",
   },
 ];
 
+interface StateButtonProps {
+  state: (typeof states)[0];
+  currentState: PersonaState;
+  onStateChange: (state: PersonaState) => void;
+}
+
+const StateButton = memo(
+  ({ state, currentState, onStateChange }: StateButtonProps) => {
+    const handleClick = useCallback(
+      () => onStateChange(state.state),
+      [onStateChange, state.state]
+    );
+    return (
+      <Tooltip key={state.state}>
+        <TooltipTrigger asChild>
+          <Button
+            onClick={handleClick}
+            size="icon-sm"
+            variant={currentState === state.state ? "default" : "outline"}
+          >
+            <state.icon className="size-4" />
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent>{state.label}</TooltipContent>
+      </Tooltip>
+    );
+  }
+);
+
+StateButton.displayName = "StateButton";
+
 const Example = () => {
   const [currentState, setCurrentState] = useState<PersonaState>("idle");
+
+  const handleStateChange = useCallback((state: PersonaState) => {
+    setCurrentState(state);
+  }, []);
 
   return (
     <div className="flex size-full flex-col items-center justify-center gap-4">
@@ -59,18 +96,12 @@ const Example = () => {
 
       <ButtonGroup orientation="horizontal">
         {states.map((state) => (
-          <Tooltip key={state.state}>
-            <TooltipTrigger asChild>
-              <Button
-                onClick={() => setCurrentState(state.state)}
-                size="icon-sm"
-                variant={currentState === state.state ? "default" : "outline"}
-              >
-                <state.icon className="size-4" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>{state.label}</TooltipContent>
-          </Tooltip>
+          <StateButton
+            currentState={currentState}
+            key={state.state}
+            onStateChange={handleStateChange}
+            state={state}
+          />
         ))}
       </ButtonGroup>
     </div>

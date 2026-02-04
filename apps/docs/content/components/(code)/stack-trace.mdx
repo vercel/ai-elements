@@ -19,9 +19,9 @@ Build an error display tool that shows stack traces from AI-generated code using
 Add the following component to your frontend:
 
 ```tsx title="app/page.tsx"
-'use client';
+"use client";
 
-import { useChat } from '@ai-sdk/react';
+import { useChat } from "@ai-sdk/react";
 import {
   StackTrace,
   StackTraceHeader,
@@ -33,22 +33,22 @@ import {
   StackTraceExpandButton,
   StackTraceContent,
   StackTraceFrames,
-} from '@/components/ai-elements/stack-trace';
+} from "@/components/ai-elements/stack-trace";
 
 export default function Page() {
   const { messages } = useChat({
-    api: '/api/run-code',
+    api: "/api/run-code",
   });
 
   return (
     <div className="max-w-4xl mx-auto p-6">
       {messages.map((message) => {
         const toolInvocations = message.parts?.filter(
-          (part) => part.type === 'tool-invocation'
+          (part) => part.type === "tool-invocation"
         );
 
         return toolInvocations?.map((tool) => {
-          if (tool.toolName === 'runCode' && tool.result?.error) {
+          if (tool.toolName === "runCode" && tool.result?.error) {
             return (
               <StackTrace
                 key={tool.toolCallId}
@@ -82,18 +82,18 @@ export default function Page() {
 Add the following route to your backend:
 
 ```tsx title="api/run-code/route.ts"
-import { streamText, tool } from 'ai';
-import { z } from 'zod';
+import { streamText, tool } from "ai";
+import { z } from "zod";
 
 export async function POST(req: Request) {
   const { messages } = await req.json();
 
   const result = streamText({
-    model: 'openai/gpt-4o',
+    model: "openai/gpt-4o",
     messages,
     tools: {
       runCode: tool({
-        description: 'Execute JavaScript code and return any errors',
+        description: "Execute JavaScript code and return any errors",
         parameters: z.object({
           code: z.string(),
         }),
@@ -140,37 +140,39 @@ export async function POST(req: Request) {
 <TypeTable
   type={{
     trace: {
-      description: 'The raw stack trace string to parse and display.',
-      type: 'string',
+      description: "The raw stack trace string to parse and display.",
+      type: "string",
     },
     open: {
-      description: 'Controlled open state.',
-      type: 'boolean',
+      description: "Controlled open state.",
+      type: "boolean",
     },
     defaultOpen: {
-      description: 'Whether the content is expanded by default.',
-      type: 'boolean',
-      default: 'false',
+      description: "Whether the content is expanded by default.",
+      type: "boolean",
+      default: "false",
     },
     onOpenChange: {
-      description: 'Callback when open state changes.',
-      type: '(open: boolean) => void',
+      description: "Callback when open state changes.",
+      type: "(open: boolean) => void",
     },
     onFilePathClick: {
-      description: 'Callback when a file path is clicked. Receives the file path, line number, and column number.',
-      type: '(path: string, line?: number, column?: number) => void',
+      description:
+        "Callback when a file path is clicked. Receives the file path, line number, and column number.",
+      type: "(path: string, line?: number, column?: number) => void",
     },
     children: {
-      description: 'Child elements (StackTraceHeader, StackTraceContent, etc.).',
-      type: 'React.ReactNode',
+      description:
+        "Child elements (StackTraceHeader, StackTraceContent, etc.).",
+      type: "React.ReactNode",
     },
     className: {
-      description: 'Additional CSS classes.',
-      type: 'string',
+      description: "Additional CSS classes.",
+      type: "string",
     },
-    '...props': {
-      description: 'Any other props are spread to the root div.',
-      type: 'React.HTMLAttributes<HTMLDivElement>',
+    "...props": {
+      description: "Any other props are spread to the root div.",
+      type: "React.HTMLAttributes<HTMLDivElement>",
     },
   }}
 />
@@ -180,16 +182,17 @@ export async function POST(req: Request) {
 <TypeTable
   type={{
     children: {
-      description: 'Header content (typically StackTraceError and StackTraceActions).',
-      type: 'React.ReactNode',
+      description:
+        "Header content (typically StackTraceError and StackTraceActions).",
+      type: "React.ReactNode",
     },
     className: {
-      description: 'Additional CSS classes.',
-      type: 'string',
+      description: "Additional CSS classes.",
+      type: "string",
     },
-    '...props': {
-      description: 'Any other props are spread to the CollapsibleTrigger.',
-      type: 'React.ComponentProps<typeof CollapsibleTrigger>',
+    "...props": {
+      description: "Any other props are spread to the CollapsibleTrigger.",
+      type: "React.ComponentProps<typeof CollapsibleTrigger>",
     },
   }}
 />
@@ -199,16 +202,17 @@ export async function POST(req: Request) {
 <TypeTable
   type={{
     children: {
-      description: 'Error content (typically StackTraceErrorType and StackTraceErrorMessage).',
-      type: 'React.ReactNode',
+      description:
+        "Error content (typically StackTraceErrorType and StackTraceErrorMessage).",
+      type: "React.ReactNode",
     },
     className: {
-      description: 'Additional CSS classes.',
-      type: 'string',
+      description: "Additional CSS classes.",
+      type: "string",
     },
-    '...props': {
-      description: 'Any other props are spread to the container div.',
-      type: 'React.HTMLAttributes<HTMLDivElement>',
+    "...props": {
+      description: "Any other props are spread to the container div.",
+      type: "React.HTMLAttributes<HTMLDivElement>",
     },
   }}
 />
@@ -218,16 +222,17 @@ export async function POST(req: Request) {
 <TypeTable
   type={{
     children: {
-      description: 'Custom content. Defaults to the parsed error type (e.g., "TypeError").',
-      type: 'React.ReactNode',
+      description:
+        'Custom content. Defaults to the parsed error type (e.g., "TypeError").',
+      type: "React.ReactNode",
     },
     className: {
-      description: 'Additional CSS classes.',
-      type: 'string',
+      description: "Additional CSS classes.",
+      type: "string",
     },
-    '...props': {
-      description: 'Any other props are spread to the span element.',
-      type: 'React.HTMLAttributes<HTMLSpanElement>',
+    "...props": {
+      description: "Any other props are spread to the span element.",
+      type: "React.HTMLAttributes<HTMLSpanElement>",
     },
   }}
 />
@@ -237,16 +242,16 @@ export async function POST(req: Request) {
 <TypeTable
   type={{
     children: {
-      description: 'Custom content. Defaults to the parsed error message.',
-      type: 'React.ReactNode',
+      description: "Custom content. Defaults to the parsed error message.",
+      type: "React.ReactNode",
     },
     className: {
-      description: 'Additional CSS classes.',
-      type: 'string',
+      description: "Additional CSS classes.",
+      type: "string",
     },
-    '...props': {
-      description: 'Any other props are spread to the span element.',
-      type: 'React.HTMLAttributes<HTMLSpanElement>',
+    "...props": {
+      description: "Any other props are spread to the span element.",
+      type: "React.HTMLAttributes<HTMLSpanElement>",
     },
   }}
 />
@@ -256,16 +261,17 @@ export async function POST(req: Request) {
 <TypeTable
   type={{
     children: {
-      description: 'Action buttons (typically StackTraceCopyButton and StackTraceExpandButton).',
-      type: 'React.ReactNode',
+      description:
+        "Action buttons (typically StackTraceCopyButton and StackTraceExpandButton).",
+      type: "React.ReactNode",
     },
     className: {
-      description: 'Additional CSS classes.',
-      type: 'string',
+      description: "Additional CSS classes.",
+      type: "string",
     },
-    '...props': {
-      description: 'Any other props are spread to the container div.',
-      type: 'React.HTMLAttributes<HTMLDivElement>',
+    "...props": {
+      description: "Any other props are spread to the container div.",
+      type: "React.HTMLAttributes<HTMLDivElement>",
     },
   }}
 />
@@ -275,29 +281,31 @@ export async function POST(req: Request) {
 <TypeTable
   type={{
     onCopy: {
-      description: 'Callback fired after a successful copy.',
-      type: '() => void',
+      description: "Callback fired after a successful copy.",
+      type: "() => void",
     },
     onError: {
-      description: 'Callback fired if copying fails.',
-      type: '(error: Error) => void',
+      description: "Callback fired if copying fails.",
+      type: "(error: Error) => void",
     },
     timeout: {
-      description: 'How long to show the copied state (ms).',
-      type: 'number',
-      default: '2000',
+      description: "How long to show the copied state (ms).",
+      type: "number",
+      default: "2000",
     },
     children: {
-      description: 'Custom content for the button. Defaults to copy/check icons.',
-      type: 'React.ReactNode',
+      description:
+        "Custom content for the button. Defaults to copy/check icons.",
+      type: "React.ReactNode",
     },
     className: {
-      description: 'Additional CSS classes.',
-      type: 'string',
+      description: "Additional CSS classes.",
+      type: "string",
     },
-    '...props': {
-      description: 'Any other props are spread to the underlying shadcn/ui Button component.',
-      type: 'React.ComponentProps<typeof Button>',
+    "...props": {
+      description:
+        "Any other props are spread to the underlying shadcn/ui Button component.",
+      type: "React.ComponentProps<typeof Button>",
     },
   }}
 />
@@ -307,12 +315,12 @@ export async function POST(req: Request) {
 <TypeTable
   type={{
     className: {
-      description: 'Additional CSS classes.',
-      type: 'string',
+      description: "Additional CSS classes.",
+      type: "string",
     },
-    '...props': {
-      description: 'Any other props are spread to the container div.',
-      type: 'React.HTMLAttributes<HTMLDivElement>',
+    "...props": {
+      description: "Any other props are spread to the container div.",
+      type: "React.HTMLAttributes<HTMLDivElement>",
     },
   }}
 />
@@ -322,21 +330,22 @@ export async function POST(req: Request) {
 <TypeTable
   type={{
     maxHeight: {
-      description: 'Maximum height of the content area. Enables scrolling when content exceeds this height.',
-      type: 'number',
-      default: '400',
+      description:
+        "Maximum height of the content area. Enables scrolling when content exceeds this height.",
+      type: "number",
+      default: "400",
     },
     children: {
-      description: 'Content to display (typically StackTraceFrames).',
-      type: 'React.ReactNode',
+      description: "Content to display (typically StackTraceFrames).",
+      type: "React.ReactNode",
     },
     className: {
-      description: 'Additional CSS classes.',
-      type: 'string',
+      description: "Additional CSS classes.",
+      type: "string",
     },
-    '...props': {
-      description: 'Any other props are spread to the CollapsibleContent.',
-      type: 'React.ComponentProps<typeof CollapsibleContent>',
+    "...props": {
+      description: "Any other props are spread to the CollapsibleContent.",
+      type: "React.ComponentProps<typeof CollapsibleContent>",
     },
   }}
 />
@@ -346,17 +355,18 @@ export async function POST(req: Request) {
 <TypeTable
   type={{
     showInternalFrames: {
-      description: 'Whether to show internal frames (node_modules, node: paths).',
-      type: 'boolean',
-      default: 'true',
+      description:
+        "Whether to show internal frames (node_modules, node: paths).",
+      type: "boolean",
+      default: "true",
     },
     className: {
-      description: 'Additional CSS classes.',
-      type: 'string',
+      description: "Additional CSS classes.",
+      type: "string",
     },
-    '...props': {
-      description: 'Any other props are spread to the container div.',
-      type: 'React.HTMLAttributes<HTMLDivElement>',
+    "...props": {
+      description: "Any other props are spread to the container div.",
+      type: "React.HTMLAttributes<HTMLDivElement>",
     },
   }}
 />

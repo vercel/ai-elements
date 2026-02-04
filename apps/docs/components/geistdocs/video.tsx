@@ -1,4 +1,5 @@
 import type { ComponentProps } from "react";
+
 import ReactPlayer from "react-player";
 
 type VideoProps = ComponentProps<typeof ReactPlayer>;

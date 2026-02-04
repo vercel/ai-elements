@@ -1,6 +1,9 @@
-import { type ToolSet, tool, type UIMessageStreamWriter } from "ai";
+import type { ToolSet, UIMessageStreamWriter } from "ai";
+
+import { tool } from "ai";
 import { initAdvancedSearch } from "fumadocs-core/search/server";
 import z from "zod";
+
 import { i18n } from "@/lib/geistdocs/i18n";
 import { getAllPages, getPageByHref } from "@/lib/geistdocs/source";
 
@@ -9,11 +12,11 @@ const createSearchServer = (lang: string) => {
 
   return initAdvancedSearch({
     indexes: pages.map((page) => ({
-      title: page.data.title ?? "",
       description: page.data.description,
-      url: page.url,
       id: page.url,
       structuredData: page.data.structuredData,
+      title: page.data.title ?? "",
+      url: page.url,
     })),
   });
 };
@@ -25,14 +28,6 @@ const log = (message: string) => {
 const search_docs = (writer: UIMessageStreamWriter) =>
   tool({
     description: "Search through documentation content by query",
-    inputSchema: z.object({
-      query: z.string().describe("Search query to find relevant documentation"),
-      lang: z
-        .string()
-        .describe("The two letter language code of the documentation to search")
-        .optional()
-        .default(i18n.defaultLanguage),
-    }),
     execute: async ({ query, lang }) => {
       try {
         log(`Creating search server for language: ${lang}`);
@@ -75,10 +70,10 @@ const search_docs = (writer: UIMessageStreamWriter) =>
           );
 
           return {
-            title: page.data.title,
-            description: page.data.description,
             content: JSON.stringify(page.data.structuredData.contents),
+            description: page.data.description,
             slug: page.url,
+            title: page.data.title,
           };
         });
 
@@ -117,10 +112,10 @@ const search_docs = (writer: UIMessageStreamWriter) =>
         for (const [index, doc] of trimmedResults.entries()) {
           log(`Writing doc: ${doc.title}, ${doc.slug}`);
           writer.write({
-            type: "source-url",
             sourceId: `doc-${index}-${doc.slug}`,
-            url: doc.slug,
             title: doc.title,
+            type: "source-url",
+            url: doc.slug,
           });
         }
 
@@ -143,20 +138,28 @@ const search_docs = (writer: UIMessageStreamWriter) =>
         return `Error processing results: ${message}`;
       }
     },
+    inputSchema: z.object({
+      lang: z
+        .string()
+        .describe("The two letter language code of the documentation to search")
+        .optional()
+        .default(i18n.defaultLanguage),
+      query: z.string().describe("Search query to find relevant documentation"),
+    }),
   });
 
 const get_doc_page = tool({
   description:
     'Get the full content of a specific documentation page or guide by slug. Use the exact URL path from search results (e.g., "/docs/vercel-blob/client-upload" or "/guides/how-to-build-ai-app")',
   inputSchema: z.object({
-    slug: z
-      .string()
-      .describe("The slug/path of the documentation page or guide to retrieve"),
     lang: z
       .string()
       .describe("The two letter language code of the documentation to search")
       .optional()
       .default(i18n.defaultLanguage),
+    slug: z
+      .string()
+      .describe("The slug/path of the documentation page or guide to retrieve"),
   }),
   // biome-ignore lint/suspicious/useAwait: "tool calls must be async"
   execute: async ({ slug, lang }) => {

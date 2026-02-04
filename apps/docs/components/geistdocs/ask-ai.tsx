@@ -1,6 +1,7 @@
 "use client";
 
 import { MessageCircleIcon } from "lucide-react";
+
 import { useChatContext } from "@/hooks/geistdocs/use-chat";
 
 interface AskAIProps {

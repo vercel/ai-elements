@@ -1,5 +1,20 @@
 "use client";
 
+import type { ChatStatus, FileUIPart, SourceDocumentUIPart } from "ai";
+import type {
+  ChangeEvent,
+  ChangeEventHandler,
+  ClipboardEventHandler,
+  ComponentProps,
+  FormEvent,
+  FormEventHandler,
+  HTMLAttributes,
+  KeyboardEventHandler,
+  PropsWithChildren,
+  ReactNode,
+  RefObject,
+} from "react";
+
 import {
   Command,
   CommandEmpty,
@@ -40,7 +55,6 @@ import {
   TooltipTrigger,
 } from "@repo/shadcn-ui/components/ui/tooltip";
 import { cn } from "@repo/shadcn-ui/lib/utils";
-import type { ChatStatus, FileUIPart, SourceDocumentUIPart } from "ai";
 import {
   CornerDownLeftIcon,
   ImageIcon,
@@ -50,19 +64,8 @@ import {
 } from "lucide-react";
 import { nanoid } from "nanoid";
 import {
-  type ChangeEvent,
-  type ChangeEventHandler,
   Children,
-  type ClipboardEventHandler,
-  type ComponentProps,
   createContext,
-  type FormEvent,
-  type FormEventHandler,
-  type HTMLAttributes,
-  type KeyboardEventHandler,
-  type PropsWithChildren,
-  type ReactNode,
-  type RefObject,
   useCallback,
   useContext,
   useEffect,
@@ -70,6 +73,29 @@ import {
   useRef,
   useState,
 } from "react";
+
+// ============================================================================
+// Helpers
+// ============================================================================
+
+const convertBlobUrlToDataUrl = async (url: string): Promise<string | null> => {
+  try {
+    const response = await fetch(url);
+    const blob = await response.blob();
+    // FileReader uses callback-based API, wrapping in Promise is necessary
+    // oxlint-disable-next-line eslint-plugin-promise(avoid-new)
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      // oxlint-disable-next-line eslint-plugin-unicorn(prefer-add-event-listener)
+      reader.onloadend = () => resolve(reader.result as string);
+      // oxlint-disable-next-line eslint-plugin-unicorn(prefer-add-event-listener)
+      reader.onerror = () => resolve(null);
+      reader.readAsDataURL(blob);
+    });
+  } catch {
+    return null;
+  }
+};
 
 // ============================================================================
 // Provider Context & Types
@@ -142,10 +168,10 @@ export type PromptInputProviderProps = PropsWithChildren<{
  * Optional global provider that lifts PromptInput state outside of PromptInput.
  * If you don't use it, PromptInput stays fully self-managed.
  */
-export function PromptInputProvider({
+export const PromptInputProvider = ({
   initialInput: initialTextInput = "",
   children,
-}: PromptInputProviderProps) {
+}: PromptInputProviderProps) => {
   // ----- textInput state
   const [textInput, setTextInput] = useState(initialTextInput);
   const clearInput = useCallback(() => setTextInput(""), []);
@@ -155,25 +181,25 @@ export function PromptInputProvider({
     (FileUIPart & { id: string })[]
   >([]);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const openRef = useRef<() => void>(() => undefined);
+  // oxlint-disable-next-line eslint(no-empty-function)
+  const openRef = useRef<() => void>(() => {});
 
   const add = useCallback((files: File[] | FileList) => {
-    const incoming = Array.from(files);
+    const incoming = [...files];
     if (incoming.length === 0) {
       return;
     }
 
-    setAttachmentFiles((prev) =>
-      prev.concat(
-        incoming.map((file) => ({
-          id: nanoid(),
-          type: "file" as const,
-          url: URL.createObjectURL(file),
-          mediaType: file.type,
-          filename: file.name,
-        }))
-      )
-    );
+    setAttachmentFiles((prev) => [
+      ...prev,
+      ...incoming.map((file) => ({
+        filename: file.name,
+        id: nanoid(),
+        mediaType: file.type,
+        type: "file" as const,
+        url: URL.createObjectURL(file),
+      })),
+    ]);
   }, []);
 
   const remove = useCallback((id: string) => {
@@ -219,12 +245,12 @@ export function PromptInputProvider({
 
   const attachments = useMemo<AttachmentsContext>(
     () => ({
-      files: attachmentFiles,
       add,
-      remove,
       clear,
-      openFileDialog,
       fileInputRef,
+      files: attachmentFiles,
+      openFileDialog,
+      remove,
     }),
     [attachmentFiles, add, remove, clear, openFileDialog]
   );
@@ -239,13 +265,13 @@ export function PromptInputProvider({
 
   const controller = useMemo<PromptInputControllerProps>(
     () => ({
-      textInput: {
-        value: textInput,
-        setInput: setTextInput,
-        clear: clearInput,
-      },
-      attachments,
       __registerFileInput,
+      attachments,
+      textInput: {
+        clear: clearInput,
+        setInput: setTextInput,
+        value: textInput,
+      },
     }),
     [textInput, clearInput, attachments, __registerFileInput]
   );
@@ -257,7 +283,7 @@ export function PromptInputProvider({
       </ProviderAttachmentsContext.Provider>
     </PromptInputController.Provider>
   );
-}
+};
 
 // ============================================================================
 // Component Context & Hooks
@@ -314,14 +340,16 @@ export const PromptInputActionAddAttachments = ({
 }: PromptInputActionAddAttachmentsProps) => {
   const attachments = usePromptInputAttachments();
 
+  const handleSelect = useCallback(
+    (e: Event) => {
+      e.preventDefault();
+      attachments.openFileDialog();
+    },
+    [attachments]
+  );
+
   return (
-    <DropdownMenuItem
-      {...props}
-      onSelect={(e) => {
-        e.preventDefault();
-        attachments.openFileDialog();
-      }}
-    >
+    <DropdownMenuItem {...props} onSelect={handleSelect}>
       <ImageIcon className="mr-2 size-4" /> {label}
     </DropdownMenuItem>
   );
@@ -336,7 +364,8 @@ export type PromptInputProps = Omit<
   HTMLAttributes<HTMLFormElement>,
   "onSubmit" | "onError"
 > & {
-  accept?: string; // e.g., "image/*" or leave undefined for any
+  // e.g., "image/*" or leave undefined for any
+  accept?: string;
   multiple?: boolean;
   // When true, accepts drops anywhere on document. Default false (opt-in).
   globalDrop?: boolean;
@@ -344,7 +373,8 @@ export type PromptInputProps = Omit<
   syncHiddenInput?: boolean;
   // Minimal constraints
   maxFiles?: number;
-  maxFileSize?: number; // bytes
+  // bytes
+  maxFileSize?: number;
   onError?: (err: {
     code: "max_files" | "max_file_size" | "accept";
     message: string;
@@ -406,7 +436,8 @@ export const PromptInput = ({
 
       return patterns.some((pattern) => {
         if (pattern.endsWith("/*")) {
-          const prefix = pattern.slice(0, -1); // e.g: image/* -> image/
+          // e.g: image/* -> image/
+          const prefix = pattern.slice(0, -1);
           return f.type.startsWith(prefix);
         }
         return f.type === pattern;
@@ -417,7 +448,7 @@ export const PromptInput = ({
 
   const addLocal = useCallback(
     (fileList: File[] | FileList) => {
-      const incoming = Array.from(fileList);
+      const incoming = [...fileList];
       const accepted = incoming.filter((f) => matchesAccept(f));
       if (incoming.length && accepted.length === 0) {
         onError?.({
@@ -453,14 +484,14 @@ export const PromptInput = ({
         const next: (FileUIPart & { id: string })[] = [];
         for (const file of capped) {
           next.push({
+            filename: file.name,
             id: nanoid(),
+            mediaType: file.type,
             type: "file",
             url: URL.createObjectURL(file),
-            mediaType: file.type,
-            filename: file.name,
           });
         }
-        return prev.concat(next);
+        return [...prev, ...next];
       });
     },
     [matchesAccept, maxFiles, maxFileSize, onError]
@@ -481,7 +512,7 @@ export const PromptInput = ({
   // Wrapper that validates files before calling provider's add
   const addWithProviderValidation = useCallback(
     (fileList: File[] | FileList) => {
-      const incoming = Array.from(fileList);
+      const incoming = [...fileList];
       const accepted = incoming.filter((f) => matchesAccept(f));
       if (incoming.length && accepted.length === 0) {
         onError?.({
@@ -576,7 +607,8 @@ export const PromptInput = ({
       return;
     }
     if (globalDrop) {
-      return; // when global drop is on, let the document-level handler own drops
+      // when global drop is on, let the document-level handler own drops
+      return;
     }
 
     const onDragOver = (e: DragEvent) => {
@@ -640,122 +672,107 @@ export const PromptInput = ({
     [usingProvider]
   );
 
-  const handleChange: ChangeEventHandler<HTMLInputElement> = (event) => {
-    if (event.currentTarget.files) {
-      add(event.currentTarget.files);
-    }
-    // Reset input value to allow selecting files that were previously removed
-    event.currentTarget.value = "";
-  };
-
-  const convertBlobUrlToDataUrl = async (
-    url: string
-  ): Promise<string | null> => {
-    try {
-      const response = await fetch(url);
-      const blob = await response.blob();
-      return new Promise((resolve) => {
-        const reader = new FileReader();
-        reader.onloadend = () => resolve(reader.result as string);
-        reader.onerror = () => resolve(null);
-        reader.readAsDataURL(blob);
-      });
-    } catch {
-      return null;
-    }
-  };
+  const handleChange: ChangeEventHandler<HTMLInputElement> = useCallback(
+    (event) => {
+      if (event.currentTarget.files) {
+        add(event.currentTarget.files);
+      }
+      // Reset input value to allow selecting files that were previously removed
+      event.currentTarget.value = "";
+    },
+    [add]
+  );
 
   const attachmentsCtx = useMemo<AttachmentsContext>(
     () => ({
-      files: files.map((item) => ({ ...item, id: item.id })),
       add,
-      remove,
       clear: clearAttachments,
-      openFileDialog,
       fileInputRef: inputRef,
+      files: files.map((item) => ({ ...item, id: item.id })),
+      openFileDialog,
+      remove,
     }),
     [files, add, remove, clearAttachments, openFileDialog]
   );
 
   const refsCtx = useMemo<ReferencedSourcesContext>(
     () => ({
-      sources: referencedSources,
       add: (incoming: SourceDocumentUIPart[] | SourceDocumentUIPart) => {
         const array = Array.isArray(incoming) ? incoming : [incoming];
-        setReferencedSources((prev) =>
-          prev.concat(array.map((s) => ({ ...s, id: nanoid() })))
-        );
+        setReferencedSources((prev) => [
+          ...prev,
+          ...array.map((s) => ({ ...s, id: nanoid() })),
+        ]);
       },
+      clear: clearReferencedSources,
       remove: (id: string) => {
         setReferencedSources((prev) => prev.filter((s) => s.id !== id));
       },
-      clear: clearReferencedSources,
+      sources: referencedSources,
     }),
     [referencedSources, clearReferencedSources]
   );
 
-  const handleSubmit: FormEventHandler<HTMLFormElement> = (event) => {
-    event.preventDefault();
+  const handleSubmit: FormEventHandler<HTMLFormElement> = useCallback(
+    async (event) => {
+      event.preventDefault();
 
-    const form = event.currentTarget;
-    const text = usingProvider
-      ? controller.textInput.value
-      : (() => {
-          const formData = new FormData(form);
-          return (formData.get("message") as string) || "";
-        })();
+      const form = event.currentTarget;
+      const text = usingProvider
+        ? controller.textInput.value
+        : (() => {
+            const formData = new FormData(form);
+            return (formData.get("message") as string) || "";
+          })();
 
-    // Reset form immediately after capturing text to avoid race condition
-    // where user input during async blob conversion would be lost
-    if (!usingProvider) {
-      form.reset();
-    }
+      // Reset form immediately after capturing text to avoid race condition
+      // where user input during async blob conversion would be lost
+      if (!usingProvider) {
+        form.reset();
+      }
 
-    // Convert blob URLs to data URLs asynchronously
-    Promise.all(
-      files.map(async ({ id, ...item }) => {
-        if (item.url?.startsWith("blob:")) {
-          const dataUrl = await convertBlobUrlToDataUrl(item.url);
-          // If conversion failed, keep the original blob URL
-          return {
-            ...item,
-            url: dataUrl ?? item.url,
-          };
-        }
-        return item;
-      })
-    )
-      .then((convertedFiles: FileUIPart[]) => {
-        try {
-          const result = onSubmit({ text, files: convertedFiles }, event);
+      try {
+        // Convert blob URLs to data URLs asynchronously
+        const convertedFiles: FileUIPart[] = await Promise.all(
+          files.map(async ({ id: _id, ...item }) => {
+            if (item.url?.startsWith("blob:")) {
+              const dataUrl = await convertBlobUrlToDataUrl(item.url);
+              // If conversion failed, keep the original blob URL
+              return {
+                ...item,
+                url: dataUrl ?? item.url,
+              };
+            }
+            return item;
+          })
+        );
 
-          // Handle both sync and async onSubmit
-          if (result instanceof Promise) {
-            result
-              .then(() => {
-                clear();
-                if (usingProvider) {
-                  controller.textInput.clear();
-                }
-              })
-              .catch(() => {
-                // Don't clear on error - user may want to retry
-              });
-          } else {
-            // Sync function completed without throwing, clear inputs
+        const result = onSubmit({ files: convertedFiles, text }, event);
+
+        // Handle both sync and async onSubmit
+        if (result instanceof Promise) {
+          try {
+            await result;
             clear();
             if (usingProvider) {
               controller.textInput.clear();
             }
+          } catch {
+            // Don't clear on error - user may want to retry
           }
-        } catch {
-          // Don't clear on error - user may want to retry
+        } else {
+          // Sync function completed without throwing, clear inputs
+          clear();
+          if (usingProvider) {
+            controller.textInput.clear();
+          }
         }
-      })
-      .catch(() => {
+      } catch {
         // Don't clear on error - user may want to retry
-      });
-  };
+      }
+    },
+    [usingProvider, controller, files, onSubmit, clear]
+  );
 
   // Render with or without local provider
   const inner = (
@@ -819,81 +836,90 @@ export const PromptInputTextarea = ({
   const attachments = usePromptInputAttachments();
   const [isComposing, setIsComposing] = useState(false);
 
-  const handleKeyDown: KeyboardEventHandler<HTMLTextAreaElement> = (e) => {
-    // Call the external onKeyDown handler first
-    onKeyDown?.(e);
+  const handleKeyDown: KeyboardEventHandler<HTMLTextAreaElement> = useCallback(
+    (e) => {
+      // Call the external onKeyDown handler first
+      onKeyDown?.(e);
 
-    // If the external handler prevented default, don't run internal logic
-    if (e.defaultPrevented) {
-      return;
-    }
-
-    if (e.key === "Enter") {
-      if (isComposing || e.nativeEvent.isComposing) {
-        return;
-      }
-      if (e.shiftKey) {
-        return;
-      }
-      e.preventDefault();
-
-      // Check if the submit button is disabled before submitting
-      const form = e.currentTarget.form;
-      const submitButton = form?.querySelector(
-        'button[type="submit"]'
-      ) as HTMLButtonElement | null;
-      if (submitButton?.disabled) {
+      // If the external handler prevented default, don't run internal logic
+      if (e.defaultPrevented) {
         return;
       }
 
-      form?.requestSubmit();
-    }
+      if (e.key === "Enter") {
+        if (isComposing || e.nativeEvent.isComposing) {
+          return;
+        }
+        if (e.shiftKey) {
+          return;
+        }
+        e.preventDefault();
 
-    // Remove last attachment when Backspace is pressed and textarea is empty
-    if (
-      e.key === "Backspace" &&
-      e.currentTarget.value === "" &&
-      attachments.files.length > 0
-    ) {
-      e.preventDefault();
-      const lastAttachment = attachments.files.at(-1);
-      if (lastAttachment) {
-        attachments.remove(lastAttachment.id);
+        // Check if the submit button is disabled before submitting
+        const { form } = e.currentTarget;
+        const submitButton = form?.querySelector(
+          'button[type="submit"]'
+        ) as HTMLButtonElement | null;
+        if (submitButton?.disabled) {
+          return;
+        }
+
+        form?.requestSubmit();
       }
-    }
-  };
 
-  const handlePaste: ClipboardEventHandler<HTMLTextAreaElement> = (event) => {
-    const items = event.clipboardData?.items;
-
-    if (!items) {
-      return;
-    }
-
-    const files: File[] = [];
-
-    for (const item of items) {
-      if (item.kind === "file") {
-        const file = item.getAsFile();
-        if (file) {
-          files.push(file);
+      // Remove last attachment when Backspace is pressed and textarea is empty
+      if (
+        e.key === "Backspace" &&
+        e.currentTarget.value === "" &&
+        attachments.files.length > 0
+      ) {
+        e.preventDefault();
+        const lastAttachment = attachments.files.at(-1);
+        if (lastAttachment) {
+          attachments.remove(lastAttachment.id);
         }
       }
-    }
+    },
+    [onKeyDown, isComposing, attachments]
+  );
 
-    if (files.length > 0) {
-      event.preventDefault();
-      attachments.add(files);
-    }
-  };
+  const handlePaste: ClipboardEventHandler<HTMLTextAreaElement> = useCallback(
+    (event) => {
+      const items = event.clipboardData?.items;
+
+      if (!items) {
+        return;
+      }
+
+      const files: File[] = [];
+
+      for (const item of items) {
+        if (item.kind === "file") {
+          const file = item.getAsFile();
+          if (file) {
+            files.push(file);
+          }
+        }
+      }
+
+      if (files.length > 0) {
+        event.preventDefault();
+        attachments.add(files);
+      }
+    },
+    [attachments]
+  );
+
+  const handleCompositionEnd = useCallback(() => setIsComposing(false), []);
+  const handleCompositionStart = useCallback(() => setIsComposing(true), []);
 
   const controlledProps = controller
     ? {
-        value: controller.textInput.value,
         onChange: (e: ChangeEvent<HTMLTextAreaElement>) => {
           controller.textInput.setInput(e.currentTarget.value);
           onChange?.(e);
         },
+        value: controller.textInput.value,
       }
     : {
         onChange,
@@ -903,8 +929,8 @@ export const PromptInputTextarea = ({
     <InputGroupTextarea
       className={cn("field-sizing-content max-h-48 min-h-16", className)}
       name="message"
-      onCompositionEnd={() => setIsComposing(false)}
-      onCompositionStart={() => setIsComposing(true)}
+      onCompositionEnd={handleCompositionEnd}
+      onCompositionStart={handleCompositionStart}
       onKeyDown={handleKeyDown}
       onPaste={handlePaste}
       placeholder={placeholder}
@@ -952,7 +978,10 @@ export const PromptInputTools = ({
   className,
   ...props
 }: PromptInputToolsProps) => (
-  <div className={cn("flex min-w-0 items-center gap-1", className)} {...props} />
+  <div
+    className={cn("flex min-w-0 items-center gap-1", className)}
+    {...props}
+  />
 );
 
 export type PromptInputButtonTooltip =
@@ -1078,14 +1107,17 @@ export const PromptInputSubmit = ({
     Icon = <XIcon className="size-4" />;
   }
 
-  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-    if (isGenerating && onStop) {
-      e.preventDefault();
-      onStop();
-      return;
-    }
-    onClick?.(e);
-  };
+  const handleClick = useCallback(
+    (e: React.MouseEvent<HTMLButtonElement>) => {
+      if (isGenerating && onStop) {
+        e.preventDefault();
+        onStop();
+        return;
+      }
+      onClick?.(e);
+    },
+    [isGenerating, onStop, onClick]
+  );
 
   return (
     <InputGroupButton
@@ -1204,6 +1236,8 @@ export const PromptInputTabLabel = ({
   className,
   ...props
 }: PromptInputTabLabelProps) => (
+  // Content provided via children in props
+  // oxlint-disable-next-line eslint-plugin-jsx-a11y(heading-has-content)
   <h3
     className={cn(
       "mb-2 px-3 font-medium text-muted-foreground text-xs",

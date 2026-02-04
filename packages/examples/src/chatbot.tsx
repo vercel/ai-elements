@@ -1,5 +1,8 @@
 "use client";
 
+import type { PromptInputMessage } from "@repo/elements/prompt-input";
+import type { ToolUIPart } from "ai";
+
 import {
   Attachment,
   AttachmentPreview,
@@ -45,7 +48,6 @@ import {
   PromptInputButton,
   PromptInputFooter,
   PromptInputHeader,
-  type PromptInputMessage,
   PromptInputSubmit,
   PromptInputTextarea,
   PromptInputTools,
@@ -64,10 +66,9 @@ import {
 } from "@repo/elements/sources";
 import { SpeechInput } from "@repo/elements/speech-input";
 import { Suggestion, Suggestions } from "@repo/elements/suggestion";
-import type { ToolUIPart } from "ai";
 import { CheckIcon, GlobeIcon } from "lucide-react";
 import { nanoid } from "nanoid";
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { toast } from "sonner";
 
 interface MessageType {
@@ -94,18 +95,18 @@ interface MessageType {
 
 const initialMessages: MessageType[] = [
   {
-    key: nanoid(),
     from: "user",
+    key: nanoid(),
     versions: [
       {
-        id: nanoid(),
         content: "Can you explain how to use React hooks effectively?",
+        id: nanoid(),
       },
     ],
   },
   {
-    key: nanoid(),
     from: "assistant",
+    key: nanoid(),
     sources: [
       {
         href: "https://react.dev/reference/react",
@@ -118,9 +119,9 @@ const initialMessages: MessageType[] = [
     ],
     tools: [
       {
-        name: "mcp",
         description: "Searching React documentation",
-        status: "input-available",
+        error: undefined,
+        name: "mcp",
         parameters: {
           query: "React hooks best practices",
           source: "react.dev",
@@ -145,12 +146,11 @@ const initialMessages: MessageType[] = [
     }
   ]
 }`,
-        error: undefined,
+        status: "input-available",
       },
     ],
     versions: [
       {
-        id: nanoid(),
         content: `# React Hooks Best Practices
 
 React hooks are a powerful feature that let you use state and other React features without writing classes. Here are some tips for using them effectively:
@@ -187,33 +187,34 @@ function ProfilePage({ userId }) {
 \`\`\`
 
 Would you like me to explain any specific hook in more detail?`,
+        id: nanoid(),
       },
     ],
   },
   {
-    key: nanoid(),
     from: "user",
+    key: nanoid(),
     versions: [
       {
-        id: nanoid(),
         content:
           "Yes, could you explain useCallback and useMemo in more detail? When should I use one over the other?",
+        id: nanoid(),
       },
       {
-        id: nanoid(),
         content:
           "I'm particularly interested in understanding the performance implications of useCallback and useMemo. Could you break down when each is most appropriate?",
+        id: nanoid(),
       },
       {
-        id: nanoid(),
         content:
           "Thanks for the overview! Could you dive deeper into the specific use cases where useCallback and useMemo make the biggest difference in React applications?",
+        id: nanoid(),
       },
     ],
   },
   {
-    key: nanoid(),
     from: "assistant",
+    key: nanoid(),
     reasoning: {
       content: `The user is asking for a detailed explanation of useCallback and useMemo. I should provide a clear and concise explanation of each hook's purpose and how they differ.
 
@@ -226,7 +227,6 @@ Both hooks help with performance optimization, but they serve different purposes
     },
     versions: [
       {
-        id: nanoid(),
         content: `## useCallback vs useMemo
 
 Both hooks help with performance optimization, but they serve different purposes:
@@ -272,6 +272,7 @@ const sortedList = useMemo(() => expensiveSort(items), [items]);
 ### Performance Note
 
 Don't overuse these hooks! They come with their own overhead. Only use them when you have identified a genuine performance issue.`,
+        id: nanoid(),
       },
     ],
   },
@@ -279,38 +280,38 @@ Don't overuse these hooks! They come with their own overhead. Only use them when
 
 const models = [
   {
+    chef: "OpenAI",
+    chefSlug: "openai",
     id: "gpt-4o",
     name: "GPT-4o",
-    chef: "OpenAI",
-    chefSlug: "openai",
     providers: ["openai", "azure"],
   },
   {
+    chef: "OpenAI",
+    chefSlug: "openai",
     id: "gpt-4o-mini",
     name: "GPT-4o Mini",
-    chef: "OpenAI",
-    chefSlug: "openai",
     providers: ["openai", "azure"],
   },
   {
+    chef: "Anthropic",
+    chefSlug: "anthropic",
     id: "claude-opus-4-20250514",
     name: "Claude 4 Opus",
-    chef: "Anthropic",
-    chefSlug: "anthropic",
     providers: ["anthropic", "azure", "google", "amazon-bedrock"],
   },
   {
+    chef: "Anthropic",
+    chefSlug: "anthropic",
     id: "claude-sonnet-4-20250514",
     name: "Claude 4 Sonnet",
-    chef: "Anthropic",
-    chefSlug: "anthropic",
     providers: ["anthropic", "azure", "google", "amazon-bedrock"],
   },
   {
-    id: "gemini-2.0-flash-exp",
-    name: "Gemini 2.0 Flash",
     chef: "Google",
     chefSlug: "google",
+    id: "gemini-2.0-flash-exp",
+    name: "Gemini 2.0 Flash",
     providers: ["google"],
   },
 ];
@@ -334,8 +335,42 @@ const mockResponses = [
   "That's definitely worth exploring. From what I can see, the best way to handle this is to consider both the theoretical aspects and practical implementation details.",
 ];
 
+const delay = (ms: number): Promise<void> =>
+  // eslint-disable-next-line promise/avoid-new -- setTimeout requires a new Promise
+  new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+
+const chefs = ["OpenAI", "Anthropic", "Google"];
+
+const AttachmentItem = ({
+  attachment,
+  onRemove,
+}: {
+  attachment: { id: string; name: string; type: string; url: string };
+  onRemove: (id: string) => void;
+}) => {
+  const handleRemove = useCallback(() => {
+    onRemove(attachment.id);
+  }, [onRemove, attachment.id]);
+
+  return (
+    <Attachment data={attachment} onRemove={handleRemove}>
+      <AttachmentPreview />
+      <AttachmentRemove />
+    </Attachment>
+  );
+};
+
 const PromptInputAttachmentsDisplay = () => {
   const attachments = usePromptInputAttachments();
+
+  const handleRemove = useCallback(
+    (id: string) => {
+      attachments.remove(id);
+    },
+    [attachments]
+  );
 
   if (attachments.files.length === 0) {
     return null;
@@ -344,16 +379,58 @@ const PromptInputAttachmentsDisplay = () => {
   return (
     <Attachments variant="inline">
       {attachments.files.map((attachment) => (
-        <Attachment
-          data={attachment}
+        <AttachmentItem
+          attachment={attachment}
           key={attachment.id}
-          onRemove={() => attachments.remove(attachment.id)}
-        >
-          <AttachmentPreview />
-          <AttachmentRemove />
-        </Attachment>
+          onRemove={handleRemove}
+        />
       ))}
     </Attachments>
+  );
+};
+
+const SuggestionItem = ({
+  suggestion,
+  onClick,
+}: {
+  suggestion: string;
+  onClick: (suggestion: string) => void;
+}) => {
+  const handleClick = useCallback(() => {
+    onClick(suggestion);
+  }, [onClick, suggestion]);
+
+  return <Suggestion onClick={handleClick} suggestion={suggestion} />;
+};
+
+const ModelItem = ({
+  m,
+  isSelected,
+  onSelect,
+}: {
+  m: (typeof models)[0];
+  isSelected: boolean;
+  onSelect: (id: string) => void;
+}) => {
+  const handleSelect = useCallback(() => {
+    onSelect(m.id);
+  }, [onSelect, m.id]);
+
+  return (
+    <ModelSelectorItem onSelect={handleSelect} value={m.id}>
+      <ModelSelectorLogo provider={m.chefSlug} />
+      <ModelSelectorName>{m.name}</ModelSelectorName>
+      <ModelSelectorLogoGroup>
+        {m.providers.map((provider) => (
+          <ModelSelectorLogo key={provider} provider={provider} />
+        ))}
+      </ModelSelectorLogoGroup>
+      {isSelected ? (
+        <CheckIcon className="ml-auto size-4" />
+      ) : (
+        <div className="ml-auto size-4" />
+      )}
+    </ModelSelectorItem>
   );
 };
 
@@ -366,11 +443,31 @@ const Example = () => {
     "submitted" | "streaming" | "ready" | "error"
   >("ready");
   const [messages, setMessages] = useState<MessageType[]>(initialMessages);
-  const [_streamingMessageId, setStreamingMessageId] = useState<string | null>(
-    null
+  const [, setStreamingMessageId] = useState<string | null>(null);
+
+  const selectedModelData = useMemo(
+    () => models.find((m) => m.id === model),
+    [model]
   );
 
-  const selectedModelData = models.find((m) => m.id === model);
+  const updateMessageContent = useCallback(
+    (messageId: string, newContent: string) => {
+      setMessages((prev) =>
+        prev.map((msg) => {
+          if (msg.versions.some((v) => v.id === messageId)) {
+            return {
+              ...msg,
+              versions: msg.versions.map((v) =>
+                v.id === messageId ? { ...v, content: newContent } : v
+              ),
+            };
+          }
+          return msg;
+        })
+      );
+    },
+    []
+  );
 
   const streamResponse = useCallback(
     async (messageId: string, content: string) => {
@@ -380,43 +477,27 @@ const Example = () => {
       const words = content.split(" ");
       let currentContent = "";
 
-      for (let i = 0; i < words.length; i++) {
-        currentContent += (i > 0 ? " " : "") + words[i];
-
-        setMessages((prev) =>
-          prev.map((msg) => {
-            if (msg.versions.some((v) => v.id === messageId)) {
-              return {
-                ...msg,
-                versions: msg.versions.map((v) =>
-                  v.id === messageId ? { ...v, content: currentContent } : v
-                ),
-              };
-            }
-            return msg;
-          })
-        );
-
-        await new Promise((resolve) =>
-          setTimeout(resolve, Math.random() * 100 + 50)
-        );
+      for (const [i, word] of words.entries()) {
+        currentContent += (i > 0 ? " " : "") + word;
+        updateMessageContent(messageId, currentContent);
+        await delay(Math.random() * 100 + 50);
       }
 
       setStatus("ready");
       setStreamingMessageId(null);
     },
-    []
+    [updateMessageContent]
   );
 
   const addUserMessage = useCallback(
     (content: string) => {
       const userMessage: MessageType = {
-        key: `user-${Date.now()}`,
         from: "user",
+        key: `user-${Date.now()}`,
         versions: [
           {
-            id: `user-${Date.now()}`,
             content,
+            id: `user-${Date.now()}`,
           },
         ],
       };
@@ -429,12 +510,12 @@ const Example = () => {
           mockResponses[Math.floor(Math.random() * mockResponses.length)];
 
         const assistantMessage: MessageType = {
-          key: `assistant-${Date.now()}`,
           from: "assistant",
+          key: `assistant-${Date.now()}`,
           versions: [
             {
-              id: assistantMessageId,
               content: "",
+              id: assistantMessageId,
             },
           ],
         };
@@ -446,34 +527,61 @@ const Example = () => {
     [streamResponse]
   );
 
-  const handleSubmit = (message: PromptInputMessage) => {
-    const hasText = Boolean(message.text);
-    const hasAttachments = Boolean(message.files?.length);
+  const handleSubmit = useCallback(
+    (message: PromptInputMessage) => {
+      const hasText = Boolean(message.text);
+      const hasAttachments = Boolean(message.files?.length);
 
-    if (!(hasText || hasAttachments)) {
-      return;
-    }
+      if (!(hasText || hasAttachments)) {
+        return;
+      }
 
-    setStatus("submitted");
+      setStatus("submitted");
 
-    if (message.files?.length) {
-      toast.success("Files attached", {
-        description: `${message.files.length} file(s) attached to message`,
-      });
-    }
+      if (message.files?.length) {
+        toast.success("Files attached", {
+          description: `${message.files.length} file(s) attached to message`,
+        });
+      }
 
-    addUserMessage(message.text || "Sent with attachments");
-    setText("");
-  };
+      addUserMessage(message.text || "Sent with attachments");
+      setText("");
+    },
+    [addUserMessage]
+  );
 
-  const handleSuggestionClick = (suggestion: string) => {
-    setStatus("submitted");
-    addUserMessage(suggestion);
-  };
+  const handleSuggestionClick = useCallback(
+    (suggestion: string) => {
+      setStatus("submitted");
+      addUserMessage(suggestion);
+    },
+    [addUserMessage]
+  );
 
   const handleTranscriptionChange = useCallback((transcript: string) => {
     setText((prev) => (prev ? `${prev} ${transcript}` : transcript));
   }, []);
+
+  const handleTextChange = useCallback(
+    (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+      setText(event.target.value);
+    },
+    []
+  );
+
+  const toggleWebSearch = useCallback(() => {
+    setUseWebSearch((prev) => !prev);
+  }, []);
+
+  const handleModelSelect = useCallback((modelId: string) => {
+    setModel(modelId);
+    setModelSelectorOpen(false);
+  }, []);
+
+  const isSubmitDisabled = useMemo(
+    () => !(text.trim() || status) || status === "streaming",
+    [text, status]
+  );
 
   return (
     <div className="relative flex size-full flex-col divide-y overflow-hidden">
@@ -518,7 +626,7 @@ const Example = () => {
                 ))}
               </MessageBranchContent>
               {versions.length > 1 && (
-                <MessageBranchSelector from={message.from}>
+                <MessageBranchSelector>
                   <MessageBranchPrevious />
                   <MessageBranchPage />
                   <MessageBranchNext />
@@ -532,9 +640,9 @@ const Example = () => {
       <div className="grid shrink-0 gap-4 pt-4">
         <Suggestions className="px-4">
           {suggestions.map((suggestion) => (
-            <Suggestion
+            <SuggestionItem
               key={suggestion}
-              onClick={() => handleSuggestionClick(suggestion)}
+              onClick={handleSuggestionClick}
               suggestion={suggestion}
             />
           ))}
@@ -545,10 +653,7 @@ const Example = () => {
               <PromptInputAttachmentsDisplay />
             </PromptInputHeader>
             <PromptInputBody>
-              <PromptInputTextarea
-                onChange={(event) => setText(event.target.value)}
-                value={text}
-              />
+              <PromptInputTextarea onChange={handleTextChange} value={text} />
             </PromptInputBody>
             <PromptInputFooter>
               <PromptInputTools>
@@ -565,7 +670,7 @@ const Example = () => {
                   variant="ghost"
                 />
                 <PromptInputButton
-                  onClick={() => setUseWebSearch(!useWebSearch)}
+                  onClick={toggleWebSearch}
                   variant={useWebSearch ? "default" : "ghost"}
                 >
                   <GlobeIcon size={16} />
@@ -593,35 +698,17 @@ const Example = () => {
                     <ModelSelectorInput placeholder="Search models..." />
                     <ModelSelectorList>
                       <ModelSelectorEmpty>No models found.</ModelSelectorEmpty>
-                      {["OpenAI", "Anthropic", "Google"].map((chef) => (
+                      {chefs.map((chef) => (
                         <ModelSelectorGroup heading={chef} key={chef}>
                           {models
                             .filter((m) => m.chef === chef)
                             .map((m) => (
-                              <ModelSelectorItem
+                              <ModelItem
+                                isSelected={model === m.id}
                                 key={m.id}
-                                onSelect={() => {
-                                  setModel(m.id);
-                                  setModelSelectorOpen(false);
-                                }}
-                                value={m.id}
-                              >
-                                <ModelSelectorLogo provider={m.chefSlug} />
-                                <ModelSelectorName>{m.name}</ModelSelectorName>
-                                <ModelSelectorLogoGroup>
-                                  {m.providers.map((provider) => (
-                                    <ModelSelectorLogo
-                                      key={provider}
-                                      provider={provider}
-                                    />
-                                  ))}
-                                </ModelSelectorLogoGroup>
-                                {model === m.id ? (
-                                  <CheckIcon className="ml-auto size-4" />
-                                ) : (
-                                  <div className="ml-auto size-4" />
-                                )}
-                              </ModelSelectorItem>
+                                m={m}
+                                onSelect={handleModelSelect}
+                              />
                             ))}
                         </ModelSelectorGroup>
                       ))}
@@ -629,10 +716,7 @@ const Example = () => {
                   </ModelSelectorContent>
                 </ModelSelector>
               </PromptInputTools>
-              <PromptInputSubmit
-                disabled={!(text.trim() || status) || status === "streaming"}
-                status={status}
-              />
+              <PromptInputSubmit disabled={isSubmitDisabled} status={status} />
             </PromptInputFooter>
           </PromptInput>
         </div>

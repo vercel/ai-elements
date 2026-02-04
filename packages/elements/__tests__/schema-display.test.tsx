@@ -1,5 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
+
 import {
   SchemaDisplay,
   SchemaDisplayContent,
@@ -15,7 +16,7 @@ import {
   SchemaDisplayResponse,
 } from "../src/schema-display";
 
-describe("SchemaDisplay", () => {
+describe("schemaDisplay", () => {
   it("renders method and path", () => {
     render(<SchemaDisplay method="GET" path="/api/users" />);
     expect(screen.getByText("GET")).toBeInTheDocument();
@@ -41,7 +42,7 @@ describe("SchemaDisplay", () => {
   });
 });
 
-describe("SchemaDisplayMethod", () => {
+describe("schemaDisplayMethod", () => {
   it("renders GET with green styling", () => {
     render(
       <SchemaDisplay method="GET" path="/test">
@@ -73,7 +74,7 @@ describe("SchemaDisplayMethod", () => {
   });
 });
 
-describe("SchemaDisplayPath", () => {
+describe("schemaDisplayPath", () => {
   it("renders path with parameters highlighted", () => {
     const { container } = render(
       <SchemaDisplay method="GET" path="/api/users/{userId}/posts">
@@ -84,14 +85,14 @@ describe("SchemaDisplayPath", () => {
   });
 });
 
-describe("SchemaDisplayParameters", () => {
+describe("schemaDisplayParameters", () => {
   it("renders parameters", () => {
     render(
       <SchemaDisplay
         method="GET"
         parameters={[
-          { name: "page", type: "number", description: "Page number" },
-          { name: "limit", type: "number", required: true },
+          { description: "Page number", name: "page", type: "number" },
+          { name: "limit", required: true, type: "number" },
         ]}
         path="/api/users"
       >
@@ -126,7 +127,7 @@ describe("SchemaDisplayParameters", () => {
   });
 });
 
-describe("SchemaDisplayParameter", () => {
+describe("schemaDisplayParameter", () => {
   it("renders parameter with location", () => {
     render(
       <SchemaDisplay method="GET" path="/test">
@@ -145,7 +146,7 @@ describe("SchemaDisplayParameter", () => {
   });
 });
 
-describe("SchemaDisplayProperty", () => {
+describe("schemaDisplayProperty", () => {
   it("renders simple property", () => {
     render(
       <SchemaDisplay method="GET" path="/test">
@@ -184,7 +185,7 @@ describe("SchemaDisplayProperty", () => {
   });
 });
 
-describe("SchemaDisplayExample", () => {
+describe("schemaDisplayExample", () => {
   it("renders example code", () => {
     render(
       <SchemaDisplay method="GET" path="/test">
@@ -195,16 +196,16 @@ describe("SchemaDisplayExample", () => {
   });
 });
 
-describe("Composability", () => {
+describe("composability", () => {
   it("renders full schema display", () => {
     render(
       <SchemaDisplay
         description="Create a user"
         method="POST"
-        parameters={[{ name: "userId", type: "string", required: true }]}
+        parameters={[{ name: "userId", required: true, type: "string" }]}
         path="/api/users/{userId}"
-        requestBody={[{ name: "name", type: "string", required: true }]}
-        responseBody={[{ name: "id", type: "string", required: true }]}
+        requestBody={[{ name: "name", required: true, type: "string" }]}
+        responseBody={[{ name: "id", required: true, type: "string" }]}
       >
         <SchemaDisplayHeader>
           <SchemaDisplayMethod />

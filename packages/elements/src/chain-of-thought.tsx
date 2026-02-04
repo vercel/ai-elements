@@ -1,5 +1,8 @@
 "use client";
 
+import type { LucideIcon } from "lucide-react";
+import type { ComponentProps, ReactNode } from "react";
+
 import { useControllableState } from "@radix-ui/react-use-controllable-state";
 import { Badge } from "@repo/shadcn-ui/components/ui/badge";
 import {
@@ -8,13 +11,7 @@ import {
   CollapsibleTrigger,
 } from "@repo/shadcn-ui/components/ui/collapsible";
 import { cn } from "@repo/shadcn-ui/lib/utils";
-import {
-  BrainIcon,
-  ChevronDownIcon,
-  DotIcon,
-  type LucideIcon,
-} from "lucide-react";
-import type { ComponentProps, ReactNode } from "react";
+import { BrainIcon, ChevronDownIcon, DotIcon } from "lucide-react";
 import { createContext, memo, useContext, useMemo } from "react";
 
 interface ChainOfThoughtContextValue {
@@ -52,9 +49,9 @@ export const ChainOfThought = memo(
     ...props
   }: ChainOfThoughtProps) => {
     const [isOpen, setIsOpen] = useControllableState({
-      prop: open,
       defaultProp: defaultOpen,
       onChange: onOpenChange,
+      prop: open,
     });
 
     const chainOfThoughtContext = useMemo(
@@ -123,8 +120,8 @@ export const ChainOfThoughtStep = memo(
     ...props
   }: ChainOfThoughtStepProps) => {
     const statusStyles = {
-      complete: "text-muted-foreground",
       active: "text-foreground",
+      complete: "text-muted-foreground",
       pending: "text-muted-foreground/50",
     };
 

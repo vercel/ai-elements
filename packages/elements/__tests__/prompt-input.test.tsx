@@ -1,15 +1,13 @@
+// oxlint-disable eslint-plugin-jest(max-expects), eslint-plugin-react-perf(jsx-no-new-function-as-prop)
 import { act, render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
+import { userEvent } from "@testing-library/user-event";
 import React from "react";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
-const DATA_PREFIX_REGEX = /^data:/;
-const BLOB_PREFIX_REGEX = /^blob:/;
-const SUBMIT_REGEX = /submit/i;
+import type { AttachmentData } from "../src/attachments";
 
 import {
   Attachment,
-  type AttachmentData,
   AttachmentInfo,
   AttachmentPreview,
   AttachmentRemove,
@@ -35,6 +33,10 @@ import {
   usePromptInputAttachments,
   usePromptInputReferencedSources,
 } from "../src/prompt-input";
+
+const DATA_PREFIX_REGEX = /^data:/;
+const BLOB_PREFIX_REGEX = /^blob:/;
+const SUBMIT_REGEX = /submit/i;
 
 // Backwards-compatibility aliases for tests (these components were moved to attachment.tsx)
 const PromptInputAttachment = ({
@@ -108,42 +110,58 @@ const PromptInputReferencedSources = ({
   );
 };
 
-// Mock URL.createObjectURL and URL.revokeObjectURL for tests
-beforeEach(() => {
-  window.URL.createObjectURL = vi.fn(
+// Setup function for prompt input tests
+const setupPromptInputTests = () => {
+  vi.spyOn(window.URL, "createObjectURL").mockImplementation(
     (_blob) => `blob:mock-url-${Math.random()}`
   );
-  window.URL.revokeObjectURL = vi.fn();
+  vi.spyOn(window.URL, "revokeObjectURL").mockImplementation(vi.fn());
 
-  // Mock fetch for blob URL conversion
-  window.fetch = vi.fn((url: string) => {
-    if (url.startsWith("blob:")) {
+  // Mock fetch for blob URL conversion - Promise.resolve/reject required for mock return values
+  // oxlint-disable-next-line eslint-plugin-promise(prefer-await-to-then)
+  vi.spyOn(window, "fetch").mockImplementation((url) => {
+    if (typeof url === "string" && url.startsWith("blob:")) {
       const blob = new Blob(["test content"], { type: "text/plain" });
+      // oxlint-disable-next-line eslint-plugin-promise(prefer-await-to-then)
       return Promise.resolve({
+        // oxlint-disable-next-line eslint-plugin-promise(prefer-await-to-then)
         blob: () => Promise.resolve(blob),
       } as Response);
     }
+    // oxlint-disable-next-line eslint-plugin-promise(prefer-await-to-then)
     return Promise.reject(new Error("Not a blob URL"));
   });
 
   // Mock FileReader
-  window.FileReader = vi.fn(function (this: FileReader) {
-    this.readAsDataURL = vi.fn(function (this: FileReader, _blob: Blob) {
+  // oxlint-disable-next-line eslint-plugin-react(no-this-in-sfc)
+  window.FileReader = vi.fn(function FileReader(this: FileReader) {
+    // oxlint-disable-next-line eslint-plugin-react(no-this-in-sfc), eslint-plugin-jest(prefer-spy-on)
+    this.readAsDataURL = vi.fn(function readAsDataURL(
+      this: FileReader,
+      _blob: Blob
+    ) {
       // Simulate async file reading
       setTimeout(() => {
+        // oxlint-disable-next-line eslint-plugin-react(no-this-in-sfc)
         this.result = "data:text/plain;base64,dGVzdCBjb250ZW50";
+        // oxlint-disable-next-line eslint-plugin-react(no-this-in-sfc)
         this.onloadend?.(new ProgressEvent("loadend"));
       }, 0);
     });
+    // oxlint-disable-next-line eslint-plugin-react(no-this-in-sfc)
     this.result = null;
+    // oxlint-disable-next-line eslint-plugin-react(no-this-in-sfc)
     this.onloadend = null;
+    // oxlint-disable-next-line eslint-plugin-react(no-this-in-sfc), eslint-plugin-unicorn(prefer-add-event-listener)
     this.onerror = null;
+    // oxlint-disable-next-line eslint-plugin-react(no-this-in-sfc)
     return this;
   }) as unknown as typeof FileReader;
-});
+};
 
-describe("PromptInput", () => {
+describe("promptInput", () => {
   it("renders form", () => {
+    setupPromptInputTests();
     const onSubmit = vi.fn();
     const { container } = render(
       <PromptInput onSubmit={onSubmit}>
@@ -156,6 +174,7 @@ describe("PromptInput", () => {
   });
 
   it("calls onSubmit with message", async () => {
+    setupPromptInputTests();
     const onSubmit = vi.fn();
     const user = userEvent.setup();
 
@@ -178,13 +197,14 @@ describe("PromptInput", () => {
 
     await user.keyboard("{Enter}");
 
-    expect(onSubmit).toHaveBeenCalledTimes(1);
-    const [message] = onSubmit.mock.calls[0];
+    expect(onSubmit).toHaveBeenCalledOnce();
+    const [[message]] = onSubmit.mock.calls;
     expect(message).toHaveProperty("text", "Hello");
     expect(message).toHaveProperty("files");
   });
 
   it("clears textarea after form submission - #125", async () => {
+    setupPromptInputTests();
     const onSubmit = vi.fn();
     const user = userEvent.setup();
 
@@ -210,7 +230,7 @@ describe("PromptInput", () => {
 
     // Wait for async submission
     await vi.waitFor(() => {
-      expect(onSubmit).toHaveBeenCalledTimes(1);
+      expect(onSubmit).toHaveBeenCalledOnce();
     });
 
     // Verify textarea is cleared after submission
@@ -218,6 +238,7 @@ describe("PromptInput", () => {
   });
 
   it("does not lose user input typed immediately after submission - #125", async () => {
+    setupPromptInputTests();
     const onSubmit = vi.fn();
     const user = userEvent.setup();
 
@@ -243,7 +264,8 @@ describe("PromptInput", () => {
     expect(textarea.value).toBe("");
 
     // Immediately type a second message (without waiting for async completion)
-    await user.clear(textarea); // Explicitly clear before typing
+    // Explicitly clear before typing
+    await user.clear(textarea);
     await user.type(textarea, "Second message");
 
     // Verify the second message is still there (not cleared by race condition)
@@ -251,7 +273,7 @@ describe("PromptInput", () => {
 
     // Wait for async submission to complete
     await vi.waitFor(() => {
-      expect(onSubmit).toHaveBeenCalledTimes(1);
+      expect(onSubmit).toHaveBeenCalledOnce();
     });
 
     // Second message should still be there after async completion
@@ -259,6 +281,7 @@ describe("PromptInput", () => {
   });
 
   it("converts blob URLs to data URLs on submit - #113", async () => {
+    setupPromptInputTests();
     const onSubmit = vi.fn();
     const user = userEvent.setup();
 
@@ -311,11 +334,11 @@ describe("PromptInput", () => {
 
     // Wait for async submission to complete
     await vi.waitFor(() => {
-      expect(onSubmit).toHaveBeenCalledTimes(1);
+      expect(onSubmit).toHaveBeenCalledOnce();
     });
 
     // Verify that the URL was converted from blob: to data:
-    const [message] = onSubmit.mock.calls[0];
+    const [[message]] = onSubmit.mock.calls;
     expect(message.files).toHaveLength(1);
     expect(message.files[0].url).toMatch(DATA_PREFIX_REGEX);
     expect(message.files[0].url).not.toMatch(BLOB_PREFIX_REGEX);
@@ -323,6 +346,7 @@ describe("PromptInput", () => {
   });
 
   it("does not clear attachments when onSubmit throws an error - #126", async () => {
+    setupPromptInputTests();
     const onSubmit = vi.fn(() => {
       throw new Error("Submission failed");
     });
@@ -377,7 +401,7 @@ describe("PromptInput", () => {
 
     // Wait for async submission to complete
     await vi.waitFor(() => {
-      expect(onSubmit).toHaveBeenCalledTimes(1);
+      expect(onSubmit).toHaveBeenCalledOnce();
     });
 
     // Verify that the attachment is still there (not cleared due to error)
@@ -385,8 +409,11 @@ describe("PromptInput", () => {
   });
 
   it("does not clear attachments when async onSubmit rejects - #126", async () => {
-    const onSubmit = vi.fn(() =>
-      Promise.reject(new Error("Async submission failed"))
+    setupPromptInputTests();
+    // Mock needs to return rejected promise to simulate async failure
+    const onSubmit = vi.fn(
+      // oxlint-disable-next-line eslint-plugin-promise(prefer-await-to-then)
+      () => Promise.reject(new Error("Async submission failed"))
     );
     const user = userEvent.setup();
 
@@ -439,17 +466,22 @@ describe("PromptInput", () => {
 
     // Wait for async submission to be attempted
     await vi.waitFor(() => {
-      expect(onSubmit).toHaveBeenCalledTimes(1);
+      expect(onSubmit).toHaveBeenCalledOnce();
     });
 
     // Give some time for the promise rejection to be handled
-    await new Promise((resolve) => setTimeout(resolve, 100));
+    // oxlint-disable-next-line eslint-plugin-promise(avoid-new)
+    await new Promise((resolve) => {
+      setTimeout(resolve, 100);
+    });
 
     // Verify that the attachment is still there (not cleared due to rejection)
     expect(screen.getByText("test.txt")).toBeInTheDocument();
   });
 
   it("clears attachments when async onSubmit resolves successfully - #126", async () => {
+    setupPromptInputTests();
+    // oxlint-disable-next-line eslint-plugin-promise(prefer-await-to-then)
     const onSubmit = vi.fn(() => Promise.resolve());
     const user = userEvent.setup();
 
@@ -502,19 +534,23 @@ describe("PromptInput", () => {
 
     // Wait for async submission to complete successfully
     await vi.waitFor(() => {
-      expect(onSubmit).toHaveBeenCalledTimes(1);
+      expect(onSubmit).toHaveBeenCalledOnce();
     });
 
     // Give some time for the promise resolution to be handled
-    await new Promise((resolve) => setTimeout(resolve, 100));
+    // oxlint-disable-next-line eslint-plugin-promise(avoid-new)
+    await new Promise((resolve) => {
+      setTimeout(resolve, 100);
+    });
 
     // Verify that the attachment was cleared after successful async submission
     expect(screen.queryByText("test.txt")).not.toBeInTheDocument();
   });
 });
 
-describe("PromptInputBody", () => {
+describe("promptInputBody", () => {
   it("renders body content", () => {
+    setupPromptInputTests();
     const onSubmit = vi.fn();
     render(
       <PromptInput onSubmit={onSubmit}>
@@ -525,8 +561,9 @@ describe("PromptInputBody", () => {
   });
 });
 
-describe("PromptInputTextarea", () => {
+describe("promptInputTextarea", () => {
   it("renders textarea", () => {
+    setupPromptInputTests();
     const onSubmit = vi.fn();
     render(
       <PromptInput onSubmit={onSubmit}>
@@ -541,6 +578,7 @@ describe("PromptInputTextarea", () => {
   });
 
   it("submits on Enter key", async () => {
+    setupPromptInputTests();
     const onSubmit = vi.fn();
     const user = userEvent.setup();
 
@@ -559,10 +597,14 @@ describe("PromptInputTextarea", () => {
     await user.type(textarea, "Test");
     await user.keyboard("{Enter}");
 
-    expect(onSubmit).toHaveBeenCalled();
+    expect(onSubmit).toHaveBeenCalledWith(
+      expect.objectContaining({ text: "Test" }),
+      expect.anything()
+    );
   });
 
   it("does not submit on Shift+Enter", async () => {
+    setupPromptInputTests();
     const onSubmit = vi.fn();
     const user = userEvent.setup();
 
@@ -586,6 +628,7 @@ describe("PromptInputTextarea", () => {
   });
 
   it("does not submit on Enter during IME composition - #21", () => {
+    setupPromptInputTests();
     const onSubmit = vi.fn();
 
     render(
@@ -606,9 +649,9 @@ describe("PromptInputTextarea", () => {
 
     // Create a KeyboardEvent with isComposing = true
     const enterKeyDuringComposition = new KeyboardEvent("keydown", {
-      key: "Enter",
       bubbles: true,
       cancelable: true,
+      key: "Enter",
     });
 
     // Mock isComposing to true (simulates IME composition in progress)
@@ -624,6 +667,7 @@ describe("PromptInputTextarea", () => {
   });
 
   it("uses custom placeholder", () => {
+    setupPromptInputTests();
     const onSubmit = vi.fn();
     render(
       <PromptInput onSubmit={onSubmit}>
@@ -638,8 +682,9 @@ describe("PromptInputTextarea", () => {
   });
 });
 
-describe("PromptInputTools", () => {
+describe("promptInputTools", () => {
   it("renders tools", () => {
+    setupPromptInputTests();
     const onSubmit = vi.fn();
     render(
       <PromptInput onSubmit={onSubmit}>
@@ -652,8 +697,9 @@ describe("PromptInputTools", () => {
   });
 });
 
-describe("PromptInputButton", () => {
+describe("promptInputButton", () => {
   it("renders button", () => {
+    setupPromptInputTests();
     const onSubmit = vi.fn();
     render(
       <PromptInput onSubmit={onSubmit}>
@@ -666,6 +712,7 @@ describe("PromptInputButton", () => {
   });
 
   it("renders button with string tooltip", async () => {
+    setupPromptInputTests();
     const onSubmit = vi.fn();
     const user = userEvent.setup();
 
@@ -693,6 +740,7 @@ describe("PromptInputButton", () => {
   });
 
   it("renders button with object tooltip containing shortcut", async () => {
+    setupPromptInputTests();
     const onSubmit = vi.fn();
     const user = userEvent.setup();
 
@@ -723,6 +771,7 @@ describe("PromptInputButton", () => {
   });
 
   it("does not render tooltip when prop is not provided", () => {
+    setupPromptInputTests();
     const onSubmit = vi.fn();
 
     render(
@@ -737,8 +786,9 @@ describe("PromptInputButton", () => {
   });
 });
 
-describe("PromptInputSubmit", () => {
+describe("promptInputSubmit", () => {
   it("renders submit button", () => {
+    setupPromptInputTests();
     const onSubmit = vi.fn();
     render(
       <PromptInput onSubmit={onSubmit}>
@@ -752,6 +802,7 @@ describe("PromptInputSubmit", () => {
   });
 
   it("shows loading icon when submitted", () => {
+    setupPromptInputTests();
     const onSubmit = vi.fn();
     const { container } = render(
       <PromptInput onSubmit={onSubmit}>
@@ -764,6 +815,7 @@ describe("PromptInputSubmit", () => {
   });
 
   it("shows stop icon when streaming", () => {
+    setupPromptInputTests();
     const onSubmit = vi.fn();
     render(
       <PromptInput onSubmit={onSubmit}>
@@ -776,8 +828,9 @@ describe("PromptInputSubmit", () => {
   });
 });
 
-describe("PromptInputActionMenu", () => {
+describe("promptInputActionMenu", () => {
   it("renders action menu", () => {
+    setupPromptInputTests();
     const onSubmit = vi.fn();
     render(
       <PromptInput onSubmit={onSubmit}>
@@ -795,8 +848,9 @@ describe("PromptInputActionMenu", () => {
   });
 });
 
-describe("PromptInputSelect", () => {
+describe("promptInputSelect", () => {
   it("renders model select", () => {
+    setupPromptInputTests();
     const onSubmit = vi.fn();
     render(
       <PromptInput onSubmit={onSubmit}>
@@ -816,12 +870,12 @@ describe("PromptInputSelect", () => {
   });
 });
 
-describe("PromptInputProvider", () => {
+describe("promptInputProvider", () => {
   it("provides context to children", async () => {
+    setupPromptInputTests();
     const _onSubmit = vi.fn();
-    const { PromptInputProvider, usePromptInputController } = await import(
-      "../src/prompt-input"
-    );
+    const { PromptInputProvider, usePromptInputController } =
+      await import("../src/prompt-input");
 
     const TestComponent = () => {
       const controller = usePromptInputController();
@@ -848,6 +902,7 @@ describe("PromptInputProvider", () => {
   });
 
   it("throws error when usePromptInputController used outside provider", async () => {
+    setupPromptInputTests();
     const { usePromptInputController } = await import("../src/prompt-input");
 
     const TestComponent = () => {
@@ -856,14 +911,17 @@ describe("PromptInputProvider", () => {
     };
 
     // Suppress console.error for this test
-    const spy = vi.spyOn(console, "error").mockImplementation(() => undefined);
+    const spy = vi.spyOn(console, "error").mockImplementation(vi.fn());
 
-    expect(() => render(<TestComponent />)).toThrow();
+    expect(() => render(<TestComponent />)).toThrow(
+      "Wrap your component inside <PromptInputProvider> to use usePromptInputController()."
+    );
 
     spy.mockRestore();
   });
 
   it("provides initial input value", async () => {
+    setupPromptInputTests();
     const {
       PromptInputProvider,
       PromptInput,
@@ -893,9 +951,9 @@ describe("PromptInputProvider", () => {
   });
 
   it("manages attachments globally", async () => {
-    const { PromptInputProvider, useProviderAttachments } = await import(
-      "../src/prompt-input"
-    );
+    setupPromptInputTests();
+    const { PromptInputProvider, useProviderAttachments } =
+      await import("../src/prompt-input");
 
     const file = new File(["test"], "test.txt", { type: "text/plain" });
 
@@ -926,8 +984,9 @@ describe("PromptInputProvider", () => {
   });
 });
 
-describe("File validation", () => {
+describe("file validation", () => {
   it("enforces maxFiles limit", async () => {
+    setupPromptInputTests();
     const onSubmit = vi.fn();
     const onError = vi.fn();
     const user = userEvent.setup();
@@ -972,6 +1031,7 @@ describe("File validation", () => {
   });
 
   it("enforces maxFileSize limit", async () => {
+    setupPromptInputTests();
     const onSubmit = vi.fn();
     const onError = vi.fn();
     const user = userEvent.setup();
@@ -1017,6 +1077,7 @@ describe("File validation", () => {
   });
 
   it("enforces accept image filter", async () => {
+    setupPromptInputTests();
     const onSubmit = vi.fn();
     const onError = vi.fn();
     const user = userEvent.setup();
@@ -1058,6 +1119,7 @@ describe("File validation", () => {
   });
 
   it("allows image files when accept is image/*", async () => {
+    setupPromptInputTests();
     const onSubmit = vi.fn();
     const user = userEvent.setup();
 
@@ -1094,6 +1156,7 @@ describe("File validation", () => {
   });
 
   it("enforces accept video/* filter", async () => {
+    setupPromptInputTests();
     const onSubmit = vi.fn();
     const onError = vi.fn();
     const user = userEvent.setup();
@@ -1145,6 +1208,7 @@ describe("File validation", () => {
   });
 
   it("enforces accept audio/* filter", async () => {
+    setupPromptInputTests();
     const onSubmit = vi.fn();
     const onError = vi.fn();
     const user = userEvent.setup();
@@ -1196,6 +1260,7 @@ describe("File validation", () => {
   });
 
   it("enforces accept with exact MIME type", async () => {
+    setupPromptInputTests();
     const onSubmit = vi.fn();
     const onError = vi.fn();
     const user = userEvent.setup();
@@ -1247,6 +1312,7 @@ describe("File validation", () => {
   });
 
   it("allows exact MIME type match for application/pdf", async () => {
+    setupPromptInputTests();
     const onSubmit = vi.fn();
     const onError = vi.fn();
     const user = userEvent.setup();
@@ -1303,7 +1369,9 @@ describe("File validation", () => {
     });
   });
 
+  // oxlint-disable-next-line eslint-plugin-jest(max-expects)
   it("accepts multiple comma-separated patterns with wildcards", async () => {
+    setupPromptInputTests();
     const onSubmit = vi.fn();
     const onError = vi.fn();
     const user = userEvent.setup();
@@ -1381,7 +1449,9 @@ describe("File validation", () => {
     expect(onError).toHaveBeenCalledTimes(2);
   });
 
+  // oxlint-disable-next-line eslint-plugin-jest(max-expects)
   it("accepts multiple comma-separated exact MIME types", async () => {
+    setupPromptInputTests();
     const onSubmit = vi.fn();
     const onError = vi.fn();
     const user = userEvent.setup();
@@ -1462,6 +1532,7 @@ describe("File validation", () => {
   });
 
   it("accepts mixed wildcard and exact MIME type patterns", async () => {
+    setupPromptInputTests();
     const onSubmit = vi.fn();
     const onError = vi.fn();
     const user = userEvent.setup();
@@ -1543,6 +1614,7 @@ describe("File validation", () => {
   });
 
   it("handles accept with extra whitespace in patterns", async () => {
+    setupPromptInputTests();
     const onSubmit = vi.fn();
     const user = userEvent.setup();
 
@@ -1591,6 +1663,7 @@ describe("File validation", () => {
   });
 
   it("accepts all files when accept is empty string", async () => {
+    setupPromptInputTests();
     const onSubmit = vi.fn();
     const user = userEvent.setup();
 
@@ -1637,6 +1710,7 @@ describe("File validation", () => {
   });
 
   it("accepts all files when accept is only whitespace", async () => {
+    setupPromptInputTests();
     const onSubmit = vi.fn();
     const user = userEvent.setup();
 
@@ -1683,6 +1757,7 @@ describe("File validation", () => {
   });
 
   it("filters out empty patterns from comma-separated list", async () => {
+    setupPromptInputTests();
     const onSubmit = vi.fn();
     const onError = vi.fn();
     const user = userEvent.setup();
@@ -1734,6 +1809,7 @@ describe("File validation", () => {
   });
 
   it("enforces maxFiles limit when using PromptInputProvider", async () => {
+    setupPromptInputTests();
     const {
       PromptInputProvider,
       PromptInput,
@@ -1788,8 +1864,9 @@ describe("File validation", () => {
   });
 });
 
-describe("Drag and drop", () => {
+describe("drag and drop", () => {
   it("renders with globalDrop prop", () => {
+    setupPromptInputTests();
     const onSubmit = vi.fn();
 
     const { container } = render(
@@ -1804,6 +1881,7 @@ describe("Drag and drop", () => {
   });
 
   it("renders without globalDrop prop", () => {
+    setupPromptInputTests();
     const onSubmit = vi.fn();
 
     const { container } = render(
@@ -1818,8 +1896,9 @@ describe("Drag and drop", () => {
   });
 });
 
-describe("Paste functionality", () => {
+describe("paste functionality", () => {
   it("adds files from clipboard", async () => {
+    setupPromptInputTests();
     const onSubmit = vi.fn();
 
     const AttachmentConsumer = () => {
@@ -1847,14 +1926,15 @@ describe("Paste functionality", () => {
     const pasteEvent = new Event("paste", {
       bubbles: true,
       cancelable: true,
+      // oxlint-disable-next-line typescript-eslint(no-explicit-any)
     }) as any;
 
     // Mock clipboardData items
     pasteEvent.clipboardData = {
       items: [
         {
-          kind: "file",
           getAsFile: () => file,
+          kind: "file",
         },
       ],
     };
@@ -1869,6 +1949,7 @@ describe("Paste functionality", () => {
   });
 
   it("handles paste with no files", () => {
+    setupPromptInputTests();
     const onSubmit = vi.fn();
 
     render(
@@ -1887,25 +1968,24 @@ describe("Paste functionality", () => {
     const pasteEvent = new Event("paste", {
       bubbles: true,
       cancelable: true,
+      // oxlint-disable-next-line typescript-eslint(no-explicit-any)
     }) as any;
-
-    pasteEvent.clipboardData = {
-      items: [],
-    };
+    pasteEvent.clipboardData = { items: [] };
 
     // Should not throw
     expect(() => textarea.dispatchEvent(pasteEvent)).not.toThrow();
   });
 });
 
-describe("PromptInputAttachment", () => {
+describe("promptInputAttachment", () => {
   it("renders file attachment with icon", () => {
+    setupPromptInputTests();
     const onSubmit = vi.fn();
     const file = {
-      id: "1",
-      type: "file" as const,
       filename: "document.pdf",
+      id: "1",
       mediaType: "application/pdf",
+      type: "file" as const,
       url: "blob:test",
     };
 
@@ -1923,12 +2003,13 @@ describe("PromptInputAttachment", () => {
   });
 
   it("renders image attachment", () => {
+    setupPromptInputTests();
     const onSubmit = vi.fn();
     const file = {
-      id: "1",
-      type: "file" as const,
       filename: "image.png",
+      id: "1",
       mediaType: "image/png",
+      type: "file" as const,
       url: "blob:test",
     };
 
@@ -1945,6 +2026,7 @@ describe("PromptInputAttachment", () => {
   });
 
   it("removes attachment when remove button clicked", async () => {
+    setupPromptInputTests();
     const onSubmit = vi.fn();
     const user = userEvent.setup();
 
@@ -1992,7 +2074,9 @@ describe("PromptInputAttachment", () => {
     expect(screen.queryByText("test.txt")).not.toBeInTheDocument();
   });
 
+  // oxlint-disable-next-line eslint-plugin-jest(max-expects)
   it("removes attachment if backspace key is pressed and textarea is empty", async () => {
+    setupPromptInputTests();
     const onSubmit = vi.fn();
     const user = userEvent.setup();
 
@@ -2058,6 +2142,7 @@ describe("PromptInputAttachment", () => {
   });
 
   it("does not remove attachment when backspace key is pressed and textarea has content", async () => {
+    setupPromptInputTests();
     const onSubmit = vi.fn();
     const user = userEvent.setup();
 
@@ -2105,16 +2190,17 @@ describe("PromptInputAttachment", () => {
   });
 });
 
-describe("PromptInputReferencedSource", () => {
+describe("promptInputReferencedSource", () => {
   it("renders referenced source with globe icon", () => {
+    setupPromptInputTests();
     const onSubmit = vi.fn();
     const source = {
+      filename: "doc.pdf",
       id: "1",
-      type: "source-document" as const,
+      mediaType: "application/pdf",
       sourceId: "source-1",
       title: "Test Document",
-      filename: "doc.pdf",
-      mediaType: "application/pdf",
+      type: "source-document" as const,
     };
 
     render(
@@ -2131,14 +2217,15 @@ describe("PromptInputReferencedSource", () => {
   });
 
   it("falls back to filename when title is not provided", () => {
+    setupPromptInputTests();
     const onSubmit = vi.fn();
     const source = {
+      filename: "document.pdf",
       id: "1",
-      type: "source-document" as const,
+      mediaType: "application/pdf",
       sourceId: "source-1",
       title: "",
-      filename: "document.pdf",
-      mediaType: "application/pdf",
+      type: "source-document" as const,
     };
 
     render(
@@ -2155,6 +2242,7 @@ describe("PromptInputReferencedSource", () => {
   });
 
   it("removes referenced source when remove button clicked", async () => {
+    setupPromptInputTests();
     const onSubmit = vi.fn();
     const user = userEvent.setup();
 
@@ -2166,10 +2254,10 @@ describe("PromptInputReferencedSource", () => {
             data-testid="add-source"
             onClick={() =>
               refs.add({
-                type: "source-document",
+                mediaType: "text/plain",
                 sourceId: "source-1",
                 title: "Test Source",
-                mediaType: "text/plain",
+                type: "source-document",
               })
             }
             type="button"
@@ -2208,8 +2296,9 @@ describe("PromptInputReferencedSource", () => {
   });
 });
 
-describe("PromptInputReferencedSources", () => {
+describe("promptInputReferencedSources", () => {
   it("renders multiple referenced sources", async () => {
+    setupPromptInputTests();
     const onSubmit = vi.fn();
     const user = userEvent.setup();
 
@@ -2222,16 +2311,16 @@ describe("PromptInputReferencedSources", () => {
             onClick={() =>
               refs.add([
                 {
-                  type: "source-document",
+                  mediaType: "text/plain",
                   sourceId: "s1",
                   title: "Source 1",
-                  mediaType: "text/plain",
+                  type: "source-document",
                 },
                 {
-                  type: "source-document",
+                  mediaType: "text/plain",
                   sourceId: "s2",
                   title: "Source 2",
-                  mediaType: "text/plain",
+                  type: "source-document",
                 },
               ])
             }
@@ -2262,6 +2351,7 @@ describe("PromptInputReferencedSources", () => {
   });
 
   it("does not render when no sources exist", () => {
+    setupPromptInputTests();
     const onSubmit = vi.fn();
 
     const ReferencedSourceConsumer = () => {
@@ -2286,6 +2376,8 @@ describe("PromptInputReferencedSources", () => {
   });
 
   it("clears referenced sources after successful form submission", async () => {
+    setupPromptInputTests();
+    // oxlint-disable-next-line eslint-plugin-promise(prefer-await-to-then)
     const onSubmit = vi.fn(() => Promise.resolve());
     const user = userEvent.setup();
 
@@ -2297,10 +2389,10 @@ describe("PromptInputReferencedSources", () => {
             data-testid="add-source"
             onClick={() =>
               refs.add({
-                type: "source-document",
+                mediaType: "text/plain",
                 sourceId: "s1",
                 title: "Test Source",
-                mediaType: "text/plain",
+                type: "source-document",
               })
             }
             type="button"
@@ -2337,17 +2429,21 @@ describe("PromptInputReferencedSources", () => {
 
     // Wait for async submission to complete
     await vi.waitFor(() => {
-      expect(onSubmit).toHaveBeenCalledTimes(1);
+      expect(onSubmit).toHaveBeenCalledOnce();
     });
 
     // Give time for promise resolution
-    await new Promise((resolve) => setTimeout(resolve, 100));
+    // oxlint-disable-next-line eslint-plugin-promise(avoid-new)
+    await new Promise((resolve) => {
+      setTimeout(resolve, 100);
+    });
 
     // Verify referenced source was cleared
     expect(screen.queryByText("Test Source")).not.toBeInTheDocument();
   });
 
   it("does not clear referenced sources when onSubmit throws an error", async () => {
+    setupPromptInputTests();
     const onSubmit = vi.fn(() => {
       throw new Error("Submission failed");
     });
@@ -2361,10 +2457,10 @@ describe("PromptInputReferencedSources", () => {
             data-testid="add-source"
             onClick={() =>
               refs.add({
-                type: "source-document",
+                mediaType: "text/plain",
                 sourceId: "s1",
                 title: "Test Source",
-                mediaType: "text/plain",
+                type: "source-document",
               })
             }
             type="button"
@@ -2401,7 +2497,7 @@ describe("PromptInputReferencedSources", () => {
 
     // Wait for submission attempt
     await vi.waitFor(() => {
-      expect(onSubmit).toHaveBeenCalledTimes(1);
+      expect(onSubmit).toHaveBeenCalledOnce();
     });
 
     // Verify referenced source was NOT cleared due to error
@@ -2409,8 +2505,10 @@ describe("PromptInputReferencedSources", () => {
   });
 
   it("does not clear referenced sources when async onSubmit rejects", async () => {
-    const onSubmit = vi.fn(() =>
-      Promise.reject(new Error("Async submission failed"))
+    setupPromptInputTests();
+    const onSubmit = vi.fn(
+      // oxlint-disable-next-line eslint-plugin-promise(prefer-await-to-then)
+      () => Promise.reject(new Error("Async submission failed"))
     );
     const user = userEvent.setup();
 
@@ -2422,10 +2520,10 @@ describe("PromptInputReferencedSources", () => {
             data-testid="add-source"
             onClick={() =>
               refs.add({
-                type: "source-document",
+                mediaType: "text/plain",
                 sourceId: "s1",
                 title: "Test Source",
-                mediaType: "text/plain",
+                type: "source-document",
               })
             }
             type="button"
@@ -2462,17 +2560,22 @@ describe("PromptInputReferencedSources", () => {
 
     // Wait for async submission attempt
     await vi.waitFor(() => {
-      expect(onSubmit).toHaveBeenCalledTimes(1);
+      expect(onSubmit).toHaveBeenCalledOnce();
     });
 
     // Give time for promise rejection
-    await new Promise((resolve) => setTimeout(resolve, 100));
+    // oxlint-disable-next-line eslint-plugin-promise(avoid-new)
+    await new Promise((resolve) => {
+      setTimeout(resolve, 100);
+    });
 
     // Verify referenced source was NOT cleared due to rejection
     expect(screen.getByText("Test Source")).toBeInTheDocument();
   });
 
   it("clears both attachments and referenced sources after successful submission", async () => {
+    setupPromptInputTests();
+    // oxlint-disable-next-line eslint-plugin-promise(prefer-await-to-then)
     const onSubmit = vi.fn(() => Promise.resolve());
     const user = userEvent.setup();
 
@@ -2494,10 +2597,10 @@ describe("PromptInputReferencedSources", () => {
             data-testid="add-source"
             onClick={() =>
               refs.add({
-                type: "source-document",
+                mediaType: "text/plain",
                 sourceId: "s1",
                 title: "Test Source",
-                mediaType: "text/plain",
+                type: "source-document",
               })
             }
             type="button"
@@ -2541,11 +2644,14 @@ describe("PromptInputReferencedSources", () => {
 
     // Wait for async submission
     await vi.waitFor(() => {
-      expect(onSubmit).toHaveBeenCalledTimes(1);
+      expect(onSubmit).toHaveBeenCalledOnce();
     });
 
     // Give time for promise resolution
-    await new Promise((resolve) => setTimeout(resolve, 100));
+    // oxlint-disable-next-line eslint-plugin-promise(avoid-new)
+    await new Promise((resolve) => {
+      setTimeout(resolve, 100);
+    });
 
     // Verify both were cleared
     expect(screen.queryByText("test.txt")).not.toBeInTheDocument();
@@ -2553,8 +2659,9 @@ describe("PromptInputReferencedSources", () => {
   });
 });
 
-describe("PromptInputActionAddAttachments", () => {
+describe("promptInputActionAddAttachments", () => {
   it("opens file dialog when clicked", async () => {
+    setupPromptInputTests();
     const onSubmit = vi.fn();
     const user = userEvent.setup();
 
@@ -2580,6 +2687,7 @@ describe("PromptInputActionAddAttachments", () => {
   });
 
   it("accepts custom label", async () => {
+    setupPromptInputTests();
     const onSubmit = vi.fn();
     const user = userEvent.setup();
 
@@ -2604,8 +2712,9 @@ describe("PromptInputActionAddAttachments", () => {
   });
 });
 
-describe("PromptInputHeader", () => {
+describe("promptInputHeader", () => {
   it("renders header content", async () => {
+    setupPromptInputTests();
     const { PromptInputHeader } = await import("../src/prompt-input");
     const onSubmit = vi.fn();
 
@@ -2622,6 +2731,7 @@ describe("PromptInputHeader", () => {
   });
 
   it("applies custom className", async () => {
+    setupPromptInputTests();
     const { PromptInputHeader } = await import("../src/prompt-input");
     const onSubmit = vi.fn();
 
@@ -2640,8 +2750,9 @@ describe("PromptInputHeader", () => {
   });
 });
 
-describe("PromptInputFooter", () => {
+describe("promptInputFooter", () => {
   it("renders footer content", async () => {
+    setupPromptInputTests();
     const { PromptInputFooter } = await import("../src/prompt-input");
     const onSubmit = vi.fn();
 
@@ -2658,6 +2769,7 @@ describe("PromptInputFooter", () => {
   });
 
   it("applies custom className", async () => {
+    setupPromptInputTests();
     const { PromptInputFooter } = await import("../src/prompt-input");
     const onSubmit = vi.fn();
 
@@ -2676,8 +2788,9 @@ describe("PromptInputFooter", () => {
   });
 });
 
-describe("PromptInputHoverCard", () => {
+describe("promptInputHoverCard", () => {
   it("renders hover card", async () => {
+    setupPromptInputTests();
     const {
       PromptInputHoverCard,
       PromptInputHoverCardTrigger,
@@ -2704,8 +2817,9 @@ describe("PromptInputHoverCard", () => {
   });
 });
 
-describe("PromptInputCommand", () => {
+describe("promptInputCommand", () => {
   it("renders command input", async () => {
+    setupPromptInputTests();
     const {
       PromptInputCommand,
       PromptInputCommandInput,
@@ -2717,7 +2831,7 @@ describe("PromptInputCommand", () => {
     const onSubmit = vi.fn();
 
     // Mock scrollIntoView for command
-    Element.prototype.scrollIntoView = vi.fn();
+    vi.spyOn(Element.prototype, "scrollIntoView").mockImplementation(vi.fn());
 
     render(
       <PromptInput onSubmit={onSubmit}>
@@ -2742,6 +2856,7 @@ describe("PromptInputCommand", () => {
   });
 
   it("shows empty state", async () => {
+    setupPromptInputTests();
     const {
       PromptInputCommand,
       PromptInputCommandInput,
@@ -2751,7 +2866,7 @@ describe("PromptInputCommand", () => {
     const onSubmit = vi.fn();
 
     // Mock scrollIntoView for command
-    Element.prototype.scrollIntoView = vi.fn();
+    vi.spyOn(Element.prototype, "scrollIntoView").mockImplementation(vi.fn());
 
     render(
       <PromptInput onSubmit={onSubmit}>
@@ -2772,6 +2887,7 @@ describe("PromptInputCommand", () => {
   });
 
   it("renders command separator", async () => {
+    setupPromptInputTests();
     const {
       PromptInputCommand,
       PromptInputCommandList,
@@ -2782,7 +2898,7 @@ describe("PromptInputCommand", () => {
     const onSubmit = vi.fn();
 
     // Mock scrollIntoView for command
-    Element.prototype.scrollIntoView = vi.fn();
+    vi.spyOn(Element.prototype, "scrollIntoView").mockImplementation(vi.fn());
 
     const { container } = render(
       <PromptInput onSubmit={onSubmit}>
@@ -2806,11 +2922,11 @@ describe("PromptInputCommand", () => {
   });
 });
 
-describe("PromptInputTab components", () => {
+describe("promptInputTab components", () => {
   it("renders tab list", async () => {
-    const { PromptInputTabsList, PromptInputTab } = await import(
-      "../src/prompt-input"
-    );
+    setupPromptInputTests();
+    const { PromptInputTabsList, PromptInputTab } =
+      await import("../src/prompt-input");
     const onSubmit = vi.fn();
 
     render(
@@ -2829,6 +2945,7 @@ describe("PromptInputTab components", () => {
   });
 
   it("renders tab with label and body", async () => {
+    setupPromptInputTests();
     const {
       PromptInputTab,
       PromptInputTabLabel,
@@ -2857,8 +2974,9 @@ describe("PromptInputTab components", () => {
   });
 });
 
-describe("PromptInputSelect components", () => {
+describe("promptInputSelect components", () => {
   it("renders model select with all subcomponents", () => {
+    setupPromptInputTests();
     const onSubmit = vi.fn();
 
     render(
@@ -2885,12 +3003,13 @@ describe("PromptInputSelect components", () => {
   });
 
   it("opens model select menu", async () => {
+    setupPromptInputTests();
     const onSubmit = vi.fn();
     const user = userEvent.setup();
 
     // Mock hasPointerCapture and releasePointerCapture for select
-    Element.prototype.hasPointerCapture = vi.fn(() => false);
-    Element.prototype.releasePointerCapture = vi.fn();
+    vi.spyOn(Element.prototype, "hasPointerCapture").mockReturnValue(false);
+    vi.spyOn(Element.prototype, "releasePointerCapture").mockImplementation();
 
     render(
       <PromptInput onSubmit={onSubmit}>
@@ -2919,8 +3038,9 @@ describe("PromptInputSelect components", () => {
   });
 });
 
-describe("PromptInputActionMenu subcomponents", () => {
+describe("promptInputActionMenu subcomponents", () => {
   it("renders action menu content", async () => {
+    setupPromptInputTests();
     const onSubmit = vi.fn();
     const user = userEvent.setup();
 
@@ -2948,6 +3068,7 @@ describe("PromptInputActionMenu subcomponents", () => {
   });
 
   it("handles menu item click", async () => {
+    setupPromptInputTests();
     const onSubmit = vi.fn();
     const onAction = vi.fn();
     const user = userEvent.setup();
@@ -2980,11 +3101,11 @@ describe("PromptInputActionMenu subcomponents", () => {
   });
 });
 
-describe("Integration tests", () => {
+describe("integration tests", () => {
   it("renders complete prompt input with all components", async () => {
-    const { PromptInputHeader, PromptInputFooter } = await import(
-      "../src/prompt-input"
-    );
+    setupPromptInputTests();
+    const { PromptInputHeader, PromptInputFooter } =
+      await import("../src/prompt-input");
     const onSubmit = vi.fn();
 
     render(

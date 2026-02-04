@@ -10,11 +10,11 @@ import {
 const Example = () => (
   <TestResults
     summary={{
-      passed: 10,
+      duration: 3500,
       failed: 2,
+      passed: 10,
       skipped: 1,
       total: 13,
-      duration: 3500,
     }}
   >
     <TestResultsHeader>

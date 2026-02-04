@@ -19,11 +19,11 @@ import {
 const Example = () => (
   <TestResults
     summary={{
-      passed: 12,
+      duration: 3245,
       failed: 2,
+      passed: 12,
       skipped: 1,
       total: 15,
-      duration: 3245,
     }}
   >
     <TestResultsHeader>

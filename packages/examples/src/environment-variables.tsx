@@ -17,13 +17,17 @@ import {
 const variables = [
   {
     name: "DATABASE_URL",
-    value: "postgresql://localhost:5432/mydb",
     required: true,
+    value: "postgresql://localhost:5432/mydb",
   },
-  { name: "API_KEY", value: "sk-1234567890abcdef", required: true },
-  { name: "NODE_ENV", value: "production", required: false },
-  { name: "PORT", value: "3000", required: false },
+  { name: "API_KEY", required: true, value: "sk-1234567890abcdef" },
+  { name: "NODE_ENV", required: false, value: "production" },
+  { name: "PORT", required: false, value: "3000" },
 ];
+
+const handleCopy = () => {
+  console.log("Copied!");
+};
 
 const Example = () => (
   <EnvironmentVariables defaultShowValues={false}>
@@ -46,7 +50,7 @@ const Example = () => (
             <EnvironmentVariableValue />
             <EnvironmentVariableCopyButton
               copyFormat="export"
-              onCopy={() => console.log("Copied!")}
+              onCopy={handleCopy}
             />
           </EnvironmentVariableGroup>
         </EnvironmentVariable>

@@ -1,7 +1,9 @@
+import type { StructuredData } from "fumadocs-core/mdx-plugins/remark-structure";
+
 import { createTokenizer as createTokenizerJapanese } from "@orama/tokenizers/japanese";
 import { createTokenizer as createTokenizerMandarin } from "@orama/tokenizers/mandarin";
-import type { StructuredData } from "fumadocs-core/mdx-plugins/remark-structure";
 import { createI18nSearchAPI } from "fumadocs-core/search/server";
+
 import { translations } from "@/geistdocs";
 import { i18n } from "@/lib/geistdocs/i18n";
 import {
@@ -10,8 +12,9 @@ import {
   examplesSource,
 } from "@/lib/geistdocs/source";
 
-const localeMap: {
-  [key: string]: {
+const localeMap: Record<
+  string,
+  {
     language?: string;
     components?: {
       tokenizer:
@@ -22,8 +25,8 @@ const localeMap: {
       threshold: number;
       tolerance: number;
     };
-  };
-} = Object.fromEntries(
+  }
+> = Object.fromEntries(
   Object.entries(translations).map(([locale, translation]) => [
     locale,
     { language: translation.displayName.toLowerCase() },
@@ -66,12 +69,12 @@ const indexes: {
 for (const lang of docsSource.getLanguages()) {
   for (const page of lang.pages) {
     indexes.push({
-      title: page.data.title,
       description: page.data.description,
-      structuredData: page.data.structuredData,
-      url: page.url,
       id: page.url,
       locale: lang.language,
+      structuredData: page.data.structuredData,
+      title: page.data.title,
+      url: page.url,
     });
   }
 }
@@ -79,12 +82,12 @@ for (const lang of docsSource.getLanguages()) {
 for (const lang of componentsSource.getLanguages()) {
   for (const page of lang.pages) {
     indexes.push({
-      title: page.data.title,
       description: page.data.description,
-      structuredData: page.data.structuredData,
-      url: page.url,
       id: page.url,
       locale: lang.language,
+      structuredData: page.data.structuredData,
+      title: page.data.title,
+      url: page.url,
     });
   }
 }
@@ -92,12 +95,12 @@ for (const lang of componentsSource.getLanguages()) {
 for (const lang of examplesSource.getLanguages()) {
   for (const page of lang.pages) {
     indexes.push({
-      title: page.data.title,
       description: page.data.description,
-      structuredData: page.data.structuredData,
-      url: page.url,
       id: page.url,
       locale: lang.language,
+      structuredData: page.data.structuredData,
+      title: page.data.title,
+      url: page.url,
     });
   }
 }

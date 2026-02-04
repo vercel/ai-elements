@@ -17,10 +17,10 @@ The `Agent` component displays an interface for showing AI agent configuration d
 Display an agent's configuration alongside your chat interface. Tools are displayed in an accordion where clicking the description expands to show the input schema.
 
 ```tsx title="app/page.tsx"
-'use client';
+"use client";
 
-import { tool } from 'ai';
-import { z } from 'zod';
+import { tool } from "ai";
+import { z } from "zod";
 import {
   Agent,
   AgentContent,
@@ -29,19 +29,19 @@ import {
   AgentOutput,
   AgentTool,
   AgentTools,
-} from '@/components/ai-elements/agent';
+} from "@/components/ai-elements/agent";
 
 const webSearch = tool({
-  description: 'Search the web for information',
+  description: "Search the web for information",
   inputSchema: z.object({
-    query: z.string().describe('The search query'),
+    query: z.string().describe("The search query"),
   }),
 });
 
 const readUrl = tool({
-  description: 'Read and parse content from a URL',
+  description: "Read and parse content from a URL",
   inputSchema: z.object({
-    url: z.string().url().describe('The URL to read'),
+    url: z.string().url().describe("The URL to read"),
   }),
 });
 
@@ -54,7 +54,10 @@ const outputSchema = `z.object({
 export default function Page() {
   return (
     <Agent>
-      <AgentHeader name="Sentiment Analyzer" model="anthropic/claude-sonnet-4-5" />
+      <AgentHeader
+        name="Sentiment Analyzer"
+        model="anthropic/claude-sonnet-4-5"
+      />
       <AgentContent>
         <AgentInstructions>
           Analyze the sentiment of the provided text and return a structured
@@ -86,8 +89,8 @@ export default function Page() {
 
 <TypeTable
   type={{
-    '...props': {
-      description: 'Any props are spread to the root div.',
+    "...props": {
+      description: "Any props are spread to the root div.",
       type: 'React.ComponentProps<"div">',
     },
   }}
@@ -98,16 +101,16 @@ export default function Page() {
 <TypeTable
   type={{
     name: {
-      description: 'The name of the agent.',
-      type: 'string',
+      description: "The name of the agent.",
+      type: "string",
       required: true,
     },
     model: {
       description: 'The model identifier (e.g. "anthropic/claude-sonnet-4-5").',
-      type: 'string',
+      type: "string",
     },
-    '...props': {
-      description: 'Any other props are spread to the container div.',
+    "...props": {
+      description: "Any other props are spread to the container div.",
       type: 'React.ComponentProps<"div">',
     },
   }}
@@ -117,8 +120,8 @@ export default function Page() {
 
 <TypeTable
   type={{
-    '...props': {
-      description: 'Any other props are spread to the container div.',
+    "...props": {
+      description: "Any other props are spread to the container div.",
       type: 'React.ComponentProps<"div">',
     },
   }}
@@ -129,12 +132,12 @@ export default function Page() {
 <TypeTable
   type={{
     children: {
-      description: 'The instruction text.',
-      type: 'string',
+      description: "The instruction text.",
+      type: "string",
       required: true,
     },
-    '...props': {
-      description: 'Any other props are spread to the container div.',
+    "...props": {
+      description: "Any other props are spread to the container div.",
       type: 'React.ComponentProps<"div">',
     },
   }}
@@ -144,9 +147,9 @@ export default function Page() {
 
 <TypeTable
   type={{
-    '...props': {
-      description: 'Any other props are spread to the Accordion component.',
-      type: 'React.ComponentProps<typeof Accordion>',
+    "...props": {
+      description: "Any other props are spread to the Accordion component.",
+      type: "React.ComponentProps<typeof Accordion>",
     },
   }}
 />
@@ -156,18 +159,19 @@ export default function Page() {
 <TypeTable
   type={{
     tool: {
-      description: 'The tool object from the AI SDK containing description and inputSchema.',
-      type: 'Tool',
+      description:
+        "The tool object from the AI SDK containing description and inputSchema.",
+      type: "Tool",
       required: true,
     },
     value: {
-      description: 'Unique identifier for the accordion item.',
-      type: 'string',
+      description: "Unique identifier for the accordion item.",
+      type: "string",
       required: true,
     },
-    '...props': {
-      description: 'Any other props are spread to the AccordionItem component.',
-      type: 'React.ComponentProps<typeof AccordionItem>',
+    "...props": {
+      description: "Any other props are spread to the AccordionItem component.",
+      type: "React.ComponentProps<typeof AccordionItem>",
     },
   }}
 />
@@ -177,12 +181,13 @@ export default function Page() {
 <TypeTable
   type={{
     schema: {
-      description: 'The output schema as a string (displayed with syntax highlighting).',
-      type: 'string',
+      description:
+        "The output schema as a string (displayed with syntax highlighting).",
+      type: "string",
       required: true,
     },
-    '...props': {
-      description: 'Any other props are spread to the container div.',
+    "...props": {
+      description: "Any other props are spread to the container div.",
       type: 'React.ComponentProps<"div">',
     },
   }}

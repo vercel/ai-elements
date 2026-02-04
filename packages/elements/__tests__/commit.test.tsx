@@ -1,6 +1,7 @@
 import { render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
+import { userEvent } from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
+
 import {
   Commit,
   CommitActions,
@@ -20,27 +21,27 @@ import {
 } from "../src/commit";
 
 const mockCommit = {
-  hash: "a1b2c3d4e5f6g7h8i9j0",
-  message: "feat: Add new feature",
   author: "John Doe",
-  timestamp: new Date("2024-01-15T10:00:00Z"),
   files: [
     {
-      path: "src/index.ts",
-      status: "added" as const,
       additions: 10,
       deletions: 0,
+      path: "src/index.ts",
+      status: "added" as const,
     },
     {
-      path: "src/utils.ts",
-      status: "modified" as const,
       additions: 5,
       deletions: 3,
+      path: "src/utils.ts",
+      status: "modified" as const,
     },
   ],
+  hash: "a1b2c3d4e5f6g7h8i9j0",
+  message: "feat: Add new feature",
+  timestamp: new Date("2024-01-15T10:00:00Z"),
 };
 
-describe("Commit", () => {
+describe("commit", () => {
   it("renders commit message", () => {
     render(
       <Commit>
@@ -67,12 +68,13 @@ describe("Commit", () => {
   });
 });
 
-describe("CommitCopyButton", () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+const setupCopyButtonTests = () => {
+  vi.clearAllMocks();
+};
 
+describe("commitCopyButton", () => {
   it("copies hash to clipboard", async () => {
+    setupCopyButtonTests();
     const user = userEvent.setup();
     const writeTextSpy = vi.spyOn(navigator.clipboard, "writeText");
 
@@ -109,7 +111,7 @@ describe("CommitCopyButton", () => {
   });
 });
 
-describe("CommitFile", () => {
+describe("commitFile", () => {
   it("renders file path", () => {
     render(
       <CommitFile>
@@ -168,7 +170,7 @@ describe("CommitFile", () => {
   });
 });
 
-describe("CommitFiles", () => {
+describe("commitFiles", () => {
   it("renders all files", async () => {
     const user = userEvent.setup();
     const { container } = render(

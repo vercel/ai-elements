@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+
 import { generateParams, getLLMText, getPage } from "@/lib/geistdocs/source";
 
 export const revalidate = false;

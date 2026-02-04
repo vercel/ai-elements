@@ -1,13 +1,14 @@
 import { act, render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
+import { userEvent } from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
+
 import {
   Reasoning,
   ReasoningContent,
   ReasoningTrigger,
 } from "../src/reasoning";
 
-describe("Reasoning", () => {
+describe("reasoning", () => {
   it("renders children", () => {
     render(<Reasoning>Content</Reasoning>);
     expect(screen.getByText("Content")).toBeInTheDocument();
@@ -15,7 +16,7 @@ describe("Reasoning", () => {
 
   it("throws error when components used outside Reasoning provider", () => {
     // Suppress console.error for this test
-    const spy = vi.spyOn(console, "error").mockImplementation(() => undefined);
+    const spy = vi.spyOn(console, "error").mockImplementation(vi.fn());
 
     expect(() => render(<ReasoningTrigger />)).toThrow(
       "Reasoning components must be used within Reasoning"
@@ -78,7 +79,7 @@ describe("Reasoning", () => {
     const trigger = screen.getByRole("button");
     await user.click(trigger);
 
-    expect(onOpenChange).toHaveBeenCalled();
+    expect(onOpenChange).toHaveBeenCalledWith(true);
   });
 
   it("auto-closes after delay when streaming stops", async () => {
@@ -133,7 +134,10 @@ describe("Reasoning", () => {
     expect(screen.getByText("Old reasoning content")).toBeVisible();
 
     // Wait past AUTO_CLOSE_DELAY (1000ms) - use real timer
-    await new Promise((resolve) => setTimeout(resolve, 1200));
+    // oxlint-disable-next-line eslint-plugin-promise(avoid-new)
+    await new Promise((resolve) => {
+      setTimeout(resolve, 1200);
+    });
 
     // Should still be open (no auto-close for messages that never streamed)
     expect(screen.getByText("Old reasoning content")).toBeVisible();
@@ -143,7 +147,7 @@ describe("Reasoning", () => {
   });
 });
 
-describe("ReasoningTrigger", () => {
+describe("reasoningTrigger", () => {
   it("renders default thinking message when streaming", () => {
     render(
       <Reasoning isStreaming>
@@ -227,7 +231,7 @@ describe("ReasoningTrigger", () => {
   });
 });
 
-describe("ReasoningContent", () => {
+describe("reasoningContent", () => {
   it("renders reasoning text", () => {
     render(
       <Reasoning defaultOpen>

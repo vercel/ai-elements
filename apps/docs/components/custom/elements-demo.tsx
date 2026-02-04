@@ -1,6 +1,7 @@
 import ChatGPTExample from "@repo/examples/demo-chatgpt";
 import ClaudeExample from "@repo/examples/demo-claude";
 import GrokExample from "@repo/examples/demo-grok";
+
 import {
   CodeBlockTab,
   CodeBlockTabs,
@@ -10,19 +11,19 @@ import {
 
 const tabs = [
   {
-    name: "ChatGPT",
     alt: "OpenAI",
     content: <ChatGPTExample />,
+    name: "ChatGPT",
   },
   {
-    name: "Claude",
     alt: "Anthropic",
     content: <ClaudeExample />,
+    name: "Claude",
   },
   {
-    name: "Grok",
     alt: "X AI",
     content: <GrokExample />,
+    name: "Grok",
   },
 ];
 

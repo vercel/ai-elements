@@ -1,3 +1,5 @@
+import type { Metadata } from "next";
+
 import Agent from "@repo/examples/agent";
 import ChainOfThought from "@repo/examples/chain-of-thought";
 import CodeBlock from "@repo/examples/code-block";
@@ -10,8 +12,9 @@ import Task from "@repo/examples/task";
 import Tool from "@repo/examples/tool";
 import { Button } from "@repo/shadcn-ui/components/ui/button";
 import DynamicLink from "fumadocs-core/dynamic-link";
-import type { Metadata } from "next";
+
 import { Installer } from "@/components/geistdocs/installer";
+
 import { CenteredSection } from "./components/centered-section";
 import { CTA } from "./components/cta";
 import { Hero } from "./components/hero";
@@ -24,60 +27,60 @@ const description =
   "A component library and custom registry built on top of shadcn/ui to help you build AI-native applications faster.";
 
 export const metadata: Metadata = {
-  title,
   description,
   openGraph: {
-    title,
     description,
+    title,
   },
+  title,
   twitter: {
     card: "summary_large_image",
-    title,
     description,
+    title,
   },
 };
 
 const templates = [
   {
-    title: "Chatbot",
     description:
       "A full-featured chat interface with streaming, markdown and file attachments.",
-    link: "/examples/chatbot",
     file: "demo-chatgpt",
+    link: "/examples/chatbot",
+    title: "Chatbot",
   },
   {
-    title: "IDE",
     description:
       "IDE-style interface with syntax highlighting, terminal output and file trees.",
-    link: "/examples/ide",
     file: "demo-cursor",
+    link: "/examples/ide",
+    title: "IDE",
   },
   {
-    title: "Workflow",
     description: "Visualize and interact with your AI workflows.",
-    link: "/examples/workflow",
     file: "demo-workflow",
+    link: "/examples/workflow",
+    title: "Workflow",
   },
 ];
 
 const textGridSection = [
   {
-    id: "1",
-    title: "Fully Composable",
     description:
       "Every component is a building block. Combine small, focused pieces to create exactly the UI you need.",
+    id: "1",
+    title: "Fully Composable",
   },
   {
-    id: "2",
-    title: "AI SDK Integration",
     description:
       "Deep integration with the AI SDK. Streaming, status states and type safety built-in.",
+    id: "2",
+    title: "AI SDK Integration",
   },
   {
-    id: "3",
-    title: "shadcn/ui Foundation",
     description:
       "Built on shadcn/ui conventions. Your existing theme and setup apply automatically.",
+    id: "3",
+    title: "shadcn/ui Foundation",
   },
 ];
 

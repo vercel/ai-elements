@@ -34,45 +34,46 @@ Root Dialog component that provides context for all child components. Manages bo
 <TypeTable
   type={{
     value: {
-      description: 'The selected voice ID (controlled).',
-      type: 'string',
+      description: "The selected voice ID (controlled).",
+      type: "string",
       optional: true,
     },
     defaultValue: {
-      description: 'The default selected voice ID (uncontrolled).',
-      type: 'string',
+      description: "The default selected voice ID (uncontrolled).",
+      type: "string",
       optional: true,
     },
     onValueChange: {
-      description: 'Callback fired when the selected voice changes.',
-      type: '(value: string | undefined) => void',
+      description: "Callback fired when the selected voice changes.",
+      type: "(value: string | undefined) => void",
       optional: true,
     },
     defaultOpen: {
-      description: 'The default open state (uncontrolled).',
-      type: 'boolean',
+      description: "The default open state (uncontrolled).",
+      type: "boolean",
       optional: true,
-      default: 'false',
+      default: "false",
     },
     open: {
-      description: 'The open state (controlled).',
-      type: 'boolean',
+      description: "The open state (controlled).",
+      type: "boolean",
       optional: true,
     },
     onOpenChange: {
-      description: 'Callback fired when the open state changes.',
-      type: '(open: boolean) => void',
+      description: "Callback fired when the open state changes.",
+      type: "(open: boolean) => void",
       optional: true,
     },
     modal: {
-      description: 'Whether the dialog is modal (blocks interaction with the rest of the page).',
-      type: 'boolean',
+      description:
+        "Whether the dialog is modal (blocks interaction with the rest of the page).",
+      type: "boolean",
       optional: true,
-      default: 'true',
+      default: "true",
     },
-    '...props': {
-      description: 'Any other props are spread to the Dialog component.',
-      type: 'React.ComponentProps<typeof Dialog>',
+    "...props": {
+      description: "Any other props are spread to the Dialog component.",
+      type: "React.ComponentProps<typeof Dialog>",
     },
   }}
 />
@@ -84,14 +85,15 @@ Button or element that opens the voice selector dialog.
 <TypeTable
   type={{
     asChild: {
-      description: 'Change the default rendered element for the one passed as a child, merging their props and behavior.',
-      type: 'boolean',
+      description:
+        "Change the default rendered element for the one passed as a child, merging their props and behavior.",
+      type: "boolean",
       optional: true,
-      default: 'false',
+      default: "false",
     },
-    '...props': {
-      description: 'Any other props are spread to the DialogTrigger component.',
-      type: 'React.ComponentProps<typeof DialogTrigger>',
+    "...props": {
+      description: "Any other props are spread to the DialogTrigger component.",
+      type: "React.ComponentProps<typeof DialogTrigger>",
     },
   }}
 />
@@ -103,19 +105,20 @@ Container for the Command component and voice list, rendered inside the dialog.
 <TypeTable
   type={{
     title: {
-      description: 'The title for screen readers. Hidden visually but accessible to assistive technologies.',
-      type: 'ReactNode',
+      description:
+        "The title for screen readers. Hidden visually but accessible to assistive technologies.",
+      type: "ReactNode",
       optional: true,
       default: '"Voice Selector"',
     },
     className: {
-      description: 'Additional CSS classes to apply to the dialog content.',
-      type: 'string',
+      description: "Additional CSS classes to apply to the dialog content.",
+      type: "string",
       optional: true,
     },
-    '...props': {
-      description: 'Any other props are spread to the DialogContent component.',
-      type: 'React.ComponentProps<typeof DialogContent>',
+    "...props": {
+      description: "Any other props are spread to the DialogContent component.",
+      type: "React.ComponentProps<typeof DialogContent>",
     },
   }}
 />
@@ -126,9 +129,9 @@ Alternative dialog implementation using CommandDialog for a full-screen command 
 
 <TypeTable
   type={{
-    '...props': {
-      description: 'Any other props are spread to the CommandDialog component.',
-      type: 'React.ComponentProps<typeof CommandDialog>',
+    "...props": {
+      description: "Any other props are spread to the CommandDialog component.",
+      type: "React.ComponentProps<typeof CommandDialog>",
     },
   }}
 />
@@ -140,18 +143,18 @@ Search input for filtering voices.
 <TypeTable
   type={{
     placeholder: {
-      description: 'Placeholder text for the search input.',
-      type: 'string',
+      description: "Placeholder text for the search input.",
+      type: "string",
       optional: true,
     },
     className: {
-      description: 'Additional CSS classes to apply.',
-      type: 'string',
+      description: "Additional CSS classes to apply.",
+      type: "string",
       optional: true,
     },
-    '...props': {
-      description: 'Any other props are spread to the CommandInput component.',
-      type: 'React.ComponentProps<typeof CommandInput>',
+    "...props": {
+      description: "Any other props are spread to the CommandInput component.",
+      type: "React.ComponentProps<typeof CommandInput>",
     },
   }}
 />
@@ -162,9 +165,9 @@ Scrollable container for voice items and groups.
 
 <TypeTable
   type={{
-    '...props': {
-      description: 'Any other props are spread to the CommandList component.',
-      type: 'React.ComponentProps<typeof CommandList>',
+    "...props": {
+      description: "Any other props are spread to the CommandList component.",
+      type: "React.ComponentProps<typeof CommandList>",
     },
   }}
 />
@@ -176,12 +179,12 @@ Message shown when no voices match the search query.
 <TypeTable
   type={{
     children: {
-      description: 'The message to display.',
-      type: 'ReactNode',
+      description: "The message to display.",
+      type: "ReactNode",
     },
-    '...props': {
-      description: 'Any other props are spread to the CommandEmpty component.',
-      type: 'React.ComponentProps<typeof CommandEmpty>',
+    "...props": {
+      description: "Any other props are spread to the CommandEmpty component.",
+      type: "React.ComponentProps<typeof CommandEmpty>",
     },
   }}
 />
@@ -193,13 +196,13 @@ Groups related voices together with an optional heading.
 <TypeTable
   type={{
     heading: {
-      description: 'The heading text for the group.',
-      type: 'string',
+      description: "The heading text for the group.",
+      type: "string",
       optional: true,
     },
-    '...props': {
-      description: 'Any other props are spread to the CommandGroup component.',
-      type: 'React.ComponentProps<typeof CommandGroup>',
+    "...props": {
+      description: "Any other props are spread to the CommandGroup component.",
+      type: "React.ComponentProps<typeof CommandGroup>",
     },
   }}
 />
@@ -211,17 +214,18 @@ Selectable item representing a voice.
 <TypeTable
   type={{
     value: {
-      description: 'The unique identifier for this voice. Used for search filtering.',
-      type: 'string',
+      description:
+        "The unique identifier for this voice. Used for search filtering.",
+      type: "string",
     },
     onSelect: {
-      description: 'Callback fired when the voice is selected.',
-      type: '(value: string) => void',
+      description: "Callback fired when the voice is selected.",
+      type: "(value: string) => void",
       optional: true,
     },
-    '...props': {
-      description: 'Any other props are spread to the CommandItem component.',
-      type: 'React.ComponentProps<typeof CommandItem>',
+    "...props": {
+      description: "Any other props are spread to the CommandItem component.",
+      type: "React.ComponentProps<typeof CommandItem>",
     },
   }}
 />
@@ -232,9 +236,10 @@ Visual separator between voice groups.
 
 <TypeTable
   type={{
-    '...props': {
-      description: 'Any other props are spread to the CommandSeparator component.',
-      type: 'React.ComponentProps<typeof CommandSeparator>',
+    "...props": {
+      description:
+        "Any other props are spread to the CommandSeparator component.",
+      type: "React.ComponentProps<typeof CommandSeparator>",
     },
   }}
 />
@@ -246,12 +251,12 @@ Displays the voice name with proper styling.
 <TypeTable
   type={{
     className: {
-      description: 'Additional CSS classes to apply.',
-      type: 'string',
+      description: "Additional CSS classes to apply.",
+      type: "string",
       optional: true,
     },
-    '...props': {
-      description: 'Any other props are spread to the span element.',
+    "...props": {
+      description: "Any other props are spread to the span element.",
       type: 'React.ComponentProps<"span">',
     },
   }}
@@ -264,22 +269,23 @@ Displays the voice gender metadata with icons from Lucide. Supports multiple gen
 <TypeTable
   type={{
     value: {
-      description: 'The gender value that determines which icon to display. Supported values: "male" (Mars), "female" (Venus), "transgender", "androgyne", "non-binary", "intersex". Defaults to a small circle if no value matches.',
+      description:
+        'The gender value that determines which icon to display. Supported values: "male" (Mars), "female" (Venus), "transgender", "androgyne", "non-binary", "intersex". Defaults to a small circle if no value matches.',
       type: '"male" | "female" | "transgender" | "androgyne" | "non-binary" | "intersex"',
       optional: true,
     },
     className: {
-      description: 'Additional CSS classes to apply.',
-      type: 'string',
+      description: "Additional CSS classes to apply.",
+      type: "string",
       optional: true,
     },
     children: {
-      description: 'Override the icon with custom content.',
-      type: 'ReactNode',
+      description: "Override the icon with custom content.",
+      type: "ReactNode",
       optional: true,
     },
-    '...props': {
-      description: 'Any other props are spread to the span element.',
+    "...props": {
+      description: "Any other props are spread to the span element.",
       type: 'React.ComponentProps<"span">',
     },
   }}
@@ -292,22 +298,23 @@ Displays the voice accent metadata with emoji flags representing different count
 <TypeTable
   type={{
     value: {
-      description: 'The accent value that determines which flag emoji to display. Supports 27 different accents including: "american" 🇺🇸, "british" 🇬🇧, "australian" 🇦🇺, "canadian" 🇨🇦, "irish" 🇮🇪, "scottish" 🏴󠁧󠁢󠁳󠁣󠁴󠁿, "indian" 🇮🇳, "south-african" 🇿🇦, "new-zealand" 🇳🇿, "spanish" 🇪🇸, "french" 🇫🇷, "german" 🇩🇪, "italian" 🇮🇹, "portuguese" 🇵🇹, "brazilian" 🇧🇷, "mexican" 🇲🇽, "argentinian" 🇦🇷, "japanese" 🇯🇵, "chinese" 🇨🇳, "korean" 🇰🇷, "russian" 🇷🇺, "arabic" 🇸🇦, "dutch" 🇳🇱, "swedish" 🇸🇪, "norwegian" 🇳🇴, "danish" 🇩🇰, "finnish" 🇫🇮, "polish" 🇵🇱, "turkish" 🇹🇷, "greek" 🇬🇷. Also accepts any custom string value.',
+      description:
+        'The accent value that determines which flag emoji to display. Supports 27 different accents including: "american" 🇺🇸, "british" 🇬🇧, "australian" 🇦🇺, "canadian" 🇨🇦, "irish" 🇮🇪, "scottish" 🏴󠁧󠁢󠁳󠁣󠁴󠁿, "indian" 🇮🇳, "south-african" 🇿🇦, "new-zealand" 🇳🇿, "spanish" 🇪🇸, "french" 🇫🇷, "german" 🇩🇪, "italian" 🇮🇹, "portuguese" 🇵🇹, "brazilian" 🇧🇷, "mexican" 🇲🇽, "argentinian" 🇦🇷, "japanese" 🇯🇵, "chinese" 🇨🇳, "korean" 🇰🇷, "russian" 🇷🇺, "arabic" 🇸🇦, "dutch" 🇳🇱, "swedish" 🇸🇪, "norwegian" 🇳🇴, "danish" 🇩🇰, "finnish" 🇫🇮, "polish" 🇵🇱, "turkish" 🇹🇷, "greek" 🇬🇷. Also accepts any custom string value.',
       type: '"american" | "british" | "australian" | "canadian" | "irish" | "scottish" | "indian" | "south-african" | "new-zealand" | "spanish" | "french" | "german" | "italian" | "portuguese" | "brazilian" | "mexican" | "argentinian" | "japanese" | "chinese" | "korean" | "russian" | "arabic" | "dutch" | "swedish" | "norwegian" | "danish" | "finnish" | "polish" | "turkish" | "greek" | string',
       optional: true,
     },
     className: {
-      description: 'Additional CSS classes to apply.',
-      type: 'string',
+      description: "Additional CSS classes to apply.",
+      type: "string",
       optional: true,
     },
     children: {
-      description: 'Override the flag emoji with custom content.',
-      type: 'ReactNode',
+      description: "Override the flag emoji with custom content.",
+      type: "ReactNode",
       optional: true,
     },
-    '...props': {
-      description: 'Any other props are spread to the span element.',
+    "...props": {
+      description: "Any other props are spread to the span element.",
       type: 'React.ComponentProps<"span">',
     },
   }}
@@ -320,12 +327,12 @@ Displays the voice age metadata with muted styling and tabular numbers for consi
 <TypeTable
   type={{
     className: {
-      description: 'Additional CSS classes to apply.',
-      type: 'string',
+      description: "Additional CSS classes to apply.",
+      type: "string",
       optional: true,
     },
-    '...props': {
-      description: 'Any other props are spread to the span element.',
+    "...props": {
+      description: "Any other props are spread to the span element.",
       type: 'React.ComponentProps<"span">',
     },
   }}
@@ -338,12 +345,12 @@ Displays a description for the voice with muted styling.
 <TypeTable
   type={{
     className: {
-      description: 'Additional CSS classes to apply.',
-      type: 'string',
+      description: "Additional CSS classes to apply.",
+      type: "string",
       optional: true,
     },
-    '...props': {
-      description: 'Any other props are spread to the span element.',
+    "...props": {
+      description: "Any other props are spread to the span element.",
       type: 'React.ComponentProps<"span">',
     },
   }}
@@ -356,12 +363,12 @@ Container for grouping voice attributes (gender, accent, age) together. Use with
 <TypeTable
   type={{
     className: {
-      description: 'Additional CSS classes to apply.',
-      type: 'string',
+      description: "Additional CSS classes to apply.",
+      type: "string",
       optional: true,
     },
-    '...props': {
-      description: 'Any other props are spread to the div element.',
+    "...props": {
+      description: "Any other props are spread to the div element.",
       type: 'React.ComponentProps<"div">',
     },
   }}
@@ -374,12 +381,12 @@ Displays a bullet separator (•) between voice attributes. Hidden from screen r
 <TypeTable
   type={{
     className: {
-      description: 'Additional CSS classes to apply.',
-      type: 'string',
+      description: "Additional CSS classes to apply.",
+      type: "string",
       optional: true,
     },
-    '...props': {
-      description: 'Any other props are spread to the span element.',
+    "...props": {
+      description: "Any other props are spread to the span element.",
       type: 'React.ComponentProps<"span">',
     },
   }}
@@ -391,9 +398,10 @@ Displays keyboard shortcuts for voice items.
 
 <TypeTable
   type={{
-    '...props': {
-      description: 'Any other props are spread to the CommandShortcut component.',
-      type: 'React.ComponentProps<typeof CommandShortcut>',
+    "...props": {
+      description:
+        "Any other props are spread to the CommandShortcut component.",
+      type: "React.ComponentProps<typeof CommandShortcut>",
     },
   }}
 />
@@ -405,27 +413,29 @@ A button that allows users to preview/play a voice sample before selecting it. S
 <TypeTable
   type={{
     playing: {
-      description: 'Whether the voice is currently playing. Shows pause icon when true.',
-      type: 'boolean',
+      description:
+        "Whether the voice is currently playing. Shows pause icon when true.",
+      type: "boolean",
       optional: true,
     },
     loading: {
-      description: 'Whether the voice preview is loading. Shows loading spinner and disables the button.',
-      type: 'boolean',
+      description:
+        "Whether the voice preview is loading. Shows loading spinner and disables the button.",
+      type: "boolean",
       optional: true,
     },
     onPlay: {
-      description: 'Callback fired when the preview button is clicked.',
-      type: '() => void',
+      description: "Callback fired when the preview button is clicked.",
+      type: "() => void",
       optional: true,
     },
     className: {
-      description: 'Additional CSS classes to apply.',
-      type: 'string',
+      description: "Additional CSS classes to apply.",
+      type: "string",
       optional: true,
     },
-    '...props': {
-      description: 'Any other props are spread to the button element.',
+    "...props": {
+      description: "Any other props are spread to the button element.",
       type: 'Omit<React.ComponentProps<"button">, "children">',
     },
   }}
@@ -446,9 +456,7 @@ export default function CustomVoiceDisplay() {
   return (
     <div>
       <p>Selected voice: {value ?? "None"}</p>
-      <button onClick={() => setOpen(!open)}>
-        Toggle Dialog
-      </button>
+      <button onClick={() => setOpen(!open)}>Toggle Dialog</button>
     </div>
   );
 }
@@ -459,20 +467,20 @@ export default function CustomVoiceDisplay() {
 <TypeTable
   type={{
     value: {
-      description: 'The currently selected voice ID.',
-      type: 'string | undefined',
+      description: "The currently selected voice ID.",
+      type: "string | undefined",
     },
     setValue: {
-      description: 'Function to update the selected voice ID.',
-      type: '(value: string | undefined) => void',
+      description: "Function to update the selected voice ID.",
+      type: "(value: string | undefined) => void",
     },
     open: {
-      description: 'Whether the dialog is currently open.',
-      type: 'boolean',
+      description: "Whether the dialog is currently open.",
+      type: "boolean",
     },
     setOpen: {
-      description: 'Function to control the dialog open state.',
-      type: '(open: boolean) => void',
+      description: "Function to control the dialog open state.",
+      type: "(open: boolean) => void",
     },
   }}
 />

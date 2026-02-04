@@ -1,6 +1,7 @@
 import { render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
+import { userEvent } from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
+
 import {
   Sandbox,
   SandboxContent,
@@ -12,7 +13,7 @@ import {
   SandboxTabsTrigger,
 } from "../src/sandbox";
 
-describe("Sandbox", () => {
+describe("sandbox", () => {
   it("renders children", () => {
     render(<Sandbox>Content</Sandbox>);
     expect(screen.getByText("Content")).toBeInTheDocument();
@@ -35,7 +36,7 @@ describe("Sandbox", () => {
   });
 });
 
-describe("SandboxHeader", () => {
+describe("sandboxHeader", () => {
   it("renders title", () => {
     render(
       <Sandbox>
@@ -122,7 +123,7 @@ describe("SandboxHeader", () => {
   });
 });
 
-describe("SandboxContent", () => {
+describe("sandboxContent", () => {
   it("renders content", () => {
     render(
       <Sandbox defaultOpen>
@@ -144,7 +145,7 @@ describe("SandboxContent", () => {
   });
 });
 
-describe("SandboxTabs", () => {
+describe("sandboxTabs", () => {
   it("renders tabs", () => {
     render(
       <Sandbox defaultOpen>
@@ -231,7 +232,7 @@ describe("SandboxTabs", () => {
   });
 });
 
-describe("SandboxTabsBar", () => {
+describe("sandboxTabsBar", () => {
   it("renders children", () => {
     render(
       <SandboxTabsBar>
@@ -251,7 +252,7 @@ describe("SandboxTabsBar", () => {
   });
 });
 
-describe("SandboxTabsList", () => {
+describe("sandboxTabsList", () => {
   it("applies custom className", () => {
     render(
       <Sandbox defaultOpen>
@@ -272,7 +273,7 @@ describe("SandboxTabsList", () => {
   });
 });
 
-describe("SandboxTabsTrigger", () => {
+describe("sandboxTabsTrigger", () => {
   it("applies custom className", () => {
     render(
       <Sandbox defaultOpen>
@@ -312,7 +313,7 @@ describe("SandboxTabsTrigger", () => {
   });
 });
 
-describe("SandboxTabContent", () => {
+describe("sandboxTabContent", () => {
   it("renders content for active tab", () => {
     render(
       <Sandbox defaultOpen>
@@ -353,7 +354,7 @@ describe("SandboxTabContent", () => {
   });
 });
 
-describe("Sandbox integration", () => {
+describe("sandbox integration", () => {
   it("renders complete sandbox with tabs", async () => {
     const user = userEvent.setup();
     render(

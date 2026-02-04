@@ -1,6 +1,7 @@
 import { render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
+import { userEvent } from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
+
 import {
   InlineCitation,
   InlineCitationCard,
@@ -22,7 +23,7 @@ const EXAMPLE_COM_PLUS_TWO_REGEX = /example\.com \+2/;
 const PREVIOUS_REGEX = /previous/i;
 const NEXT_REGEX = /next/i;
 
-describe("InlineCitation", () => {
+describe("inlineCitation", () => {
   it("renders children", () => {
     render(<InlineCitation>Citation content</InlineCitation>);
     expect(screen.getByText("Citation content")).toBeInTheDocument();
@@ -36,7 +37,7 @@ describe("InlineCitation", () => {
   });
 });
 
-describe("InlineCitationText", () => {
+describe("inlineCitationText", () => {
   it("renders text content", () => {
     render(<InlineCitationText>Cited text</InlineCitationText>);
     expect(screen.getByText("Cited text")).toBeInTheDocument();
@@ -48,7 +49,7 @@ describe("InlineCitationText", () => {
   });
 });
 
-describe("InlineCitationCard", () => {
+describe("inlineCitationCard", () => {
   it("renders card", () => {
     render(
       <InlineCitationCard>
@@ -59,7 +60,7 @@ describe("InlineCitationCard", () => {
   });
 });
 
-describe("InlineCitationCardTrigger", () => {
+describe("inlineCitationCardTrigger", () => {
   it("renders single source hostname", () => {
     render(
       <InlineCitationCard>
@@ -94,7 +95,7 @@ describe("InlineCitationCardTrigger", () => {
   });
 });
 
-describe("InlineCitationCardBody", () => {
+describe("inlineCitationCardBody", () => {
   it("renders body content", () => {
     render(
       <InlineCitationCard defaultOpen>
@@ -106,7 +107,7 @@ describe("InlineCitationCardBody", () => {
   });
 });
 
-describe("InlineCitationCarousel", () => {
+describe("inlineCitationCarousel", () => {
   it("renders carousel", () => {
     render(
       <InlineCitationCarousel>
@@ -119,14 +120,14 @@ describe("InlineCitationCarousel", () => {
   });
 });
 
-describe("InlineCitationCarouselHeader", () => {
+describe("inlineCitationCarouselHeader", () => {
   it("renders header", () => {
     render(<InlineCitationCarouselHeader>Header</InlineCitationCarouselHeader>);
     expect(screen.getByText("Header")).toBeInTheDocument();
   });
 });
 
-describe("InlineCitationSource", () => {
+describe("inlineCitationSource", () => {
   it("renders source with all props", () => {
     render(
       <InlineCitationSource
@@ -146,7 +147,7 @@ describe("InlineCitationSource", () => {
   });
 });
 
-describe("InlineCitationQuote", () => {
+describe("inlineCitationQuote", () => {
   it("renders quote", () => {
     render(<InlineCitationQuote>Quote text</InlineCitationQuote>);
     expect(screen.getByText("Quote text")).toBeInTheDocument();
@@ -160,7 +161,7 @@ describe("InlineCitationQuote", () => {
   });
 });
 
-describe("InlineCitationCarouselIndex", () => {
+describe("inlineCitationCarouselIndex", () => {
   it("renders index component", () => {
     const { container } = render(
       <InlineCitationCarousel>
@@ -211,7 +212,7 @@ describe("InlineCitationCarouselIndex", () => {
   });
 });
 
-describe("InlineCitationCarouselPrev", () => {
+describe("inlineCitationCarouselPrev", () => {
   it("renders previous button", () => {
     render(
       <InlineCitationCarousel>
@@ -281,7 +282,7 @@ describe("InlineCitationCarouselPrev", () => {
   });
 });
 
-describe("InlineCitationCarouselNext", () => {
+describe("inlineCitationCarouselNext", () => {
   it("renders next button", () => {
     render(
       <InlineCitationCarousel>

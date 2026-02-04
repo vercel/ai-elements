@@ -1,14 +1,6 @@
 import { render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
+import { userEvent } from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
-
-const BOLD_REGEX = /Bold/;
-const NEXT_REGEX = /next/i;
-const PREVIOUS_REGEX = /previous/i;
-const TWO_OF_TWO_REGEX = /2 of 2/;
-const ONE_OF_TWO_REGEX = /1 of 2/;
-const ONE_OF_THREE_REGEX = /1 of 3/;
-const THREE_OF_THREE_REGEX = /3 of 3/;
 
 import {
   Message,
@@ -24,7 +16,15 @@ import {
   MessageResponse,
 } from "../src/message";
 
-describe("Message", () => {
+const BOLD_REGEX = /Bold/;
+const NEXT_REGEX = /next/i;
+const PREVIOUS_REGEX = /previous/i;
+const TWO_OF_TWO_REGEX = /2 of 2/;
+const ONE_OF_TWO_REGEX = /1 of 2/;
+const ONE_OF_THREE_REGEX = /1 of 3/;
+const THREE_OF_THREE_REGEX = /3 of 3/;
+
+describe("message", () => {
   it("renders children", () => {
     render(<Message from="user">Content</Message>);
     expect(screen.getByText("Content")).toBeInTheDocument();
@@ -50,7 +50,7 @@ describe("Message", () => {
   });
 });
 
-describe("MessageContent", () => {
+describe("messageContent", () => {
   it("renders content", () => {
     render(<MessageContent>Message text</MessageContent>);
     expect(screen.getByText("Message text")).toBeInTheDocument();
@@ -74,7 +74,7 @@ describe("MessageContent", () => {
   });
 });
 
-describe("MessageActions", () => {
+describe("messageActions", () => {
   it("renders children", () => {
     render(
       <MessageActions>
@@ -94,7 +94,7 @@ describe("MessageActions", () => {
   });
 });
 
-describe("MessageAction", () => {
+describe("messageAction", () => {
   it("renders button with children", () => {
     render(<MessageAction>Click me</MessageAction>);
     expect(screen.getByText("Click me")).toBeInTheDocument();
@@ -124,7 +124,7 @@ describe("MessageAction", () => {
   });
 });
 
-describe("MessageResponse", () => {
+describe("messageResponse", () => {
   it("renders markdown content", () => {
     render(<MessageResponse>Plain text</MessageResponse>);
     expect(screen.getByText("Plain text")).toBeInTheDocument();
@@ -148,7 +148,7 @@ describe("MessageResponse", () => {
   });
 });
 
-describe("MessageBranch", () => {
+describe("messageBranch", () => {
   it("renders children", () => {
     render(<MessageBranch>Content</MessageBranch>);
     expect(screen.getByText("Content")).toBeInTheDocument();
@@ -156,7 +156,7 @@ describe("MessageBranch", () => {
 
   it("throws error when components used outside MessageBranch provider", () => {
     // Suppress console.error for this test
-    const spy = vi.spyOn(console, "error").mockImplementation(() => undefined);
+    const spy = vi.spyOn(console, "error").mockImplementation(vi.fn());
 
     expect(() => render(<MessageBranchNext />)).toThrow(
       "MessageBranch components must be used within MessageBranch"
@@ -175,7 +175,7 @@ describe("MessageBranch", () => {
           <div key="1">Branch 1</div>
           <div key="2">Branch 2</div>
         </MessageBranchContent>
-        <MessageBranchSelector from="assistant">
+        <MessageBranchSelector>
           <MessageBranchPrevious />
           <MessageBranchNext />
         </MessageBranchSelector>
@@ -189,7 +189,7 @@ describe("MessageBranch", () => {
   });
 });
 
-describe("MessageBranchContent", () => {
+describe("messageBranchContent", () => {
   it("renders active branch", () => {
     render(
       <MessageBranch>
@@ -204,14 +204,14 @@ describe("MessageBranchContent", () => {
   });
 });
 
-describe("MessageBranchSelector", () => {
+describe("messageBranchSelector", () => {
   it("hides when only one branch", () => {
     render(
       <MessageBranch>
         <MessageBranchContent>
           <div key="1">Single Branch</div>
         </MessageBranchContent>
-        <MessageBranchSelector from="assistant">
+        <MessageBranchSelector>
           <span>Selector</span>
         </MessageBranchSelector>
       </MessageBranch>
@@ -227,7 +227,7 @@ describe("MessageBranchSelector", () => {
           <div key="1">Branch 1</div>
           <div key="2">Branch 2</div>
         </MessageBranchContent>
-        <MessageBranchSelector from="assistant">
+        <MessageBranchSelector>
           <span>Selector</span>
         </MessageBranchSelector>
       </MessageBranch>
@@ -237,7 +237,7 @@ describe("MessageBranchSelector", () => {
   });
 });
 
-describe("MessageBranchPrevious", () => {
+describe("messageBranchPrevious", () => {
   it("renders previous button", () => {
     render(
       <MessageBranch>
@@ -304,7 +304,7 @@ describe("MessageBranchPrevious", () => {
   });
 });
 
-describe("MessageBranchNext", () => {
+describe("messageBranchNext", () => {
   it("renders next button", () => {
     render(
       <MessageBranch>
@@ -322,7 +322,7 @@ describe("MessageBranchNext", () => {
   });
 });
 
-describe("MessageBranchPage", () => {
+describe("messageBranchPage", () => {
   it("displays current page count", () => {
     render(
       <MessageBranch>

@@ -1,5 +1,7 @@
 "use client";
 
+import type { ComponentProps, HTMLAttributes } from "react";
+
 import { Avatar, AvatarFallback } from "@repo/shadcn-ui/components/ui/avatar";
 import { Button } from "@repo/shadcn-ui/components/ui/button";
 import {
@@ -16,13 +18,7 @@ import {
   MinusIcon,
   PlusIcon,
 } from "lucide-react";
-import {
-  type ComponentProps,
-  type HTMLAttributes,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 export type CommitProps = ComponentProps<typeof Collapsible>;
 
@@ -177,6 +173,9 @@ export const CommitTimestamp = ({
 
 export type CommitActionsProps = HTMLAttributes<HTMLDivElement>;
 
+const handleActionsClick = (e: React.MouseEvent) => e.stopPropagation();
+const handleActionsKeyDown = (e: React.KeyboardEvent) => e.stopPropagation();
+
 export const CommitActions = ({
   className,
   children,
@@ -186,8 +185,8 @@ export const CommitActions = ({
   // biome-ignore lint/a11y/useSemanticElements: fieldset doesn't fit this UI pattern
   <div
     className={cn("flex items-center gap-1", className)}
-    onClick={(e) => e.stopPropagation()}
-    onKeyDown={(e) => e.stopPropagation()}
+    onClick={handleActionsClick}
+    onKeyDown={handleActionsKeyDown}
     role="group"
     {...props}
   >
@@ -214,7 +213,7 @@ export const CommitCopyButton = ({
   const [isCopied, setIsCopied] = useState(false);
   const timeoutRef = useRef<number>(0);
 
-  const copyToClipboard = async () => {
+  const copyToClipboard = useCallback(async () => {
     if (typeof window === "undefined" || !navigator?.clipboard?.writeText) {
       onError?.(new Error("Clipboard API not available"));
       return;
@@ -233,7 +232,7 @@ export const CommitCopyButton = ({
     } catch (error) {
       onError?.(error as Error);
     }
-  };
+  }, [hash, onCopy, onError, timeout, isCopied]);
 
   useEffect(
     () => () => {
@@ -313,15 +312,15 @@ export const CommitFileInfo = ({
 
 const fileStatusStyles = {
   added: "text-green-600 dark:text-green-400",
-  modified: "text-yellow-600 dark:text-yellow-400",
   deleted: "text-red-600 dark:text-red-400",
+  modified: "text-yellow-600 dark:text-yellow-400",
   renamed: "text-blue-600 dark:text-blue-400",
 };
 
 const fileStatusLabels = {
   added: "A",
-  modified: "M",
   deleted: "D",
+  modified: "M",
   renamed: "R",
 };
 

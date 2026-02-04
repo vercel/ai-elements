@@ -13,22 +13,20 @@ const suggestions = [
   "Explain cloud computing basics",
 ];
 
-const Example = () => {
-  const handleSuggestionClick = (suggestion: string) => {
-    console.log("Selected suggestion:", suggestion);
-  };
-
-  return (
-    <Suggestions>
-      {suggestions.map((suggestion) => (
-        <Suggestion
-          key={suggestion}
-          onClick={handleSuggestionClick}
-          suggestion={suggestion}
-        />
-      ))}
-    </Suggestions>
-  );
+const handleSuggestionClick = (suggestion: string) => {
+  console.log("Selected suggestion:", suggestion);
 };
+
+const Example = () => (
+  <Suggestions>
+    {suggestions.map((suggestion) => (
+      <Suggestion
+        key={suggestion}
+        onClick={handleSuggestionClick}
+        suggestion={suggestion}
+      />
+    ))}
+  </Suggestions>
+);
 
 export default Example;

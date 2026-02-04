@@ -33,39 +33,40 @@ Root Popover component that provides context for all child components.
 <TypeTable
   type={{
     defaultValue: {
-      description: 'The default selected device ID (uncontrolled).',
-      type: 'string',
+      description: "The default selected device ID (uncontrolled).",
+      type: "string",
       optional: true,
     },
     value: {
-      description: 'The selected device ID (controlled).',
-      type: 'string',
+      description: "The selected device ID (controlled).",
+      type: "string",
       optional: true,
     },
     onValueChange: {
-      description: 'Callback fired when the selected device changes.',
-      type: '(deviceId: string) => void',
+      description: "Callback fired when the selected device changes.",
+      type: "(deviceId: string) => void",
       optional: true,
     },
     defaultOpen: {
-      description: 'The default open state (uncontrolled).',
-      type: 'boolean',
+      description: "The default open state (uncontrolled).",
+      type: "boolean",
       optional: true,
-      default: 'false',
+      default: "false",
     },
     open: {
-      description: 'The open state (controlled).',
-      type: 'boolean',
+      description: "The open state (controlled).",
+      type: "boolean",
       optional: true,
     },
     onOpenChange: {
-      description: 'Callback fired when the open state changes. Automatically requests microphone permission when opened without permission.',
-      type: '(open: boolean) => void',
+      description:
+        "Callback fired when the open state changes. Automatically requests microphone permission when opened without permission.",
+      type: "(open: boolean) => void",
       optional: true,
     },
-    '...props': {
-      description: 'Any other props are spread to the Popover component.',
-      type: 'React.ComponentProps<typeof Popover>',
+    "...props": {
+      description: "Any other props are spread to the Popover component.",
+      type: "React.ComponentProps<typeof Popover>",
     },
   }}
 />
@@ -76,9 +77,9 @@ Button that opens the microphone selector popover. Automatically tracks its widt
 
 <TypeTable
   type={{
-    '...props': {
-      description: 'Any other props are spread to the Button component.',
-      type: 'React.ComponentProps<typeof Button>',
+    "...props": {
+      description: "Any other props are spread to the Button component.",
+      type: "React.ComponentProps<typeof Button>",
     },
   }}
 />
@@ -89,8 +90,8 @@ Displays the currently selected microphone name or a placeholder.
 
 <TypeTable
   type={{
-    '...props': {
-      description: 'Any other props are spread to the span element.',
+    "...props": {
+      description: "Any other props are spread to the span element.",
       type: 'React.ComponentProps<"span">',
     },
   }}
@@ -103,13 +104,13 @@ Container for the Command component, rendered inside the popover.
 <TypeTable
   type={{
     popoverOptions: {
-      description: 'Props to pass to the underlying PopoverContent component.',
-      type: 'React.ComponentProps<typeof PopoverContent>',
+      description: "Props to pass to the underlying PopoverContent component.",
+      type: "React.ComponentProps<typeof PopoverContent>",
       optional: true,
     },
-    '...props': {
-      description: 'Any other props are spread to the Command component.',
-      type: 'React.ComponentProps<typeof Command>',
+    "...props": {
+      description: "Any other props are spread to the Command component.",
+      type: "React.ComponentProps<typeof Command>",
     },
   }}
 />
@@ -120,9 +121,9 @@ Search input for filtering microphones.
 
 <TypeTable
   type={{
-    '...props': {
-      description: 'Any other props are spread to the CommandInput component.',
-      type: 'React.ComponentProps<typeof CommandInput>',
+    "...props": {
+      description: "Any other props are spread to the CommandInput component.",
+      type: "React.ComponentProps<typeof CommandInput>",
     },
   }}
 />
@@ -134,11 +135,12 @@ Wrapper for the list of microphone items. Uses render props pattern to provide a
 <TypeTable
   type={{
     children: {
-      description: 'Render function that receives the array of available devices.',
-      type: '(devices: MediaDeviceInfo[]) => ReactNode',
+      description:
+        "Render function that receives the array of available devices.",
+      type: "(devices: MediaDeviceInfo[]) => ReactNode",
     },
-    '...props': {
-      description: 'Any other props are spread to the CommandList component.',
+    "...props": {
+      description: "Any other props are spread to the CommandList component.",
       type: 'Omit<React.ComponentProps<typeof CommandList>, "children">',
     },
   }}
@@ -151,13 +153,13 @@ Message shown when no microphones match the search.
 <TypeTable
   type={{
     children: {
-      description: 'The message to display.',
-      type: 'ReactNode',
+      description: "The message to display.",
+      type: "ReactNode",
       default: '"No microphone found."',
     },
-    '...props': {
-      description: 'Any other props are spread to the CommandEmpty component.',
-      type: 'React.ComponentProps<typeof CommandEmpty>',
+    "...props": {
+      description: "Any other props are spread to the CommandEmpty component.",
+      type: "React.ComponentProps<typeof CommandEmpty>",
     },
   }}
 />
@@ -169,12 +171,12 @@ Selectable item representing a microphone.
 <TypeTable
   type={{
     value: {
-      description: 'The device ID for this item.',
-      type: 'string',
+      description: "The device ID for this item.",
+      type: "string",
     },
-    '...props': {
-      description: 'Any other props are spread to the CommandItem component.',
-      type: 'React.ComponentProps<typeof CommandItem>',
+    "...props": {
+      description: "Any other props are spread to the CommandItem component.",
+      type: "React.ComponentProps<typeof CommandItem>",
     },
   }}
 />
@@ -186,11 +188,11 @@ Displays a formatted microphone label with intelligent device ID parsing. Automa
 <TypeTable
   type={{
     device: {
-      description: 'The MediaDeviceInfo object for the device.',
-      type: 'MediaDeviceInfo',
+      description: "The MediaDeviceInfo object for the device.",
+      type: "MediaDeviceInfo",
     },
-    '...props': {
-      description: 'Any other props are spread to the span element.',
+    "...props": {
+      description: "Any other props are spread to the span element.",
       type: 'React.ComponentProps<"span">',
     },
   }}
@@ -206,13 +208,14 @@ A custom hook for managing audio input devices. This hook is used internally by 
 import { useAudioDevices } from "@repo/elements/mic-selector";
 
 export default function Example() {
-  const { devices, loading, error, hasPermission, loadDevices } = useAudioDevices();
+  const { devices, loading, error, hasPermission, loadDevices } =
+    useAudioDevices();
 
   return (
     <div>
       {loading && <p>Loading devices...</p>}
       {error && <p>Error: {error}</p>}
-      {devices.map(device => (
+      {devices.map((device) => (
         <div key={device.deviceId}>{device.label}</div>
       ))}
       {!hasPermission && (
@@ -228,24 +231,25 @@ export default function Example() {
 <TypeTable
   type={{
     devices: {
-      description: 'Array of available audio input devices.',
-      type: 'MediaDeviceInfo[]',
+      description: "Array of available audio input devices.",
+      type: "MediaDeviceInfo[]",
     },
     loading: {
-      description: 'Whether devices are currently being loaded.',
-      type: 'boolean',
+      description: "Whether devices are currently being loaded.",
+      type: "boolean",
     },
     error: {
-      description: 'Error message if device loading failed.',
-      type: 'string | null',
+      description: "Error message if device loading failed.",
+      type: "string | null",
     },
     hasPermission: {
-      description: 'Whether microphone permission has been granted.',
-      type: 'boolean',
+      description: "Whether microphone permission has been granted.",
+      type: "boolean",
     },
     loadDevices: {
-      description: 'Function to request microphone permission and load device names.',
-      type: '() => Promise<void>',
+      description:
+        "Function to request microphone permission and load device names.",
+      type: "() => Promise<void>",
     },
   }}
 />
@@ -264,6 +268,7 @@ The component implements a two-stage permission approach:
 The `MicSelectorLabel` component intelligently parses device names that include hardware IDs in the format `(XXXX:XXXX)`. It splits the label into the device name and ID, styling the ID with muted text for better readability.
 
 For example: `"MacBook Pro Microphone (1a2b:3c4d)"` becomes:
+
 - Device name: `"MacBook Pro Microphone"`
 - Device ID: `"(1a2b:3c4d)"` (styled with muted color)
 

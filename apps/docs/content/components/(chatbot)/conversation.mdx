@@ -280,7 +280,8 @@ import { messagesToMarkdown } from "@/components/ai-elements/conversation";
 const markdown = messagesToMarkdown(messages);
 
 // With custom formatter
-const customMarkdown = messagesToMarkdown(messages, (msg, i) =>
-  `[${msg.role}]: ${msg.content}`
+const customMarkdown = messagesToMarkdown(
+  messages,
+  (msg, i) => `[${msg.role}]: ${msg.content}`
 );
 ```

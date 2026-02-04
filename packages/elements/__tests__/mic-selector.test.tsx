@@ -1,6 +1,7 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { describe, expect, it, vi } from "vitest";
+
 import {
   MicSelector,
   MicSelectorContent,
@@ -44,29 +45,25 @@ const mockGetUserMedia = vi.fn();
 
 const MACBOOK_PRO_MIC_REGEX = /MacBook Pro Microphone/;
 
-beforeEach(() => {
-  vi.spyOn(console, "warn").mockImplementation(() => undefined);
-  vi.spyOn(console, "error").mockImplementation(() => undefined);
-  vi.spyOn(console, "log").mockImplementation(() => undefined);
+class ResizeObserverMock {
+  observe = vi.fn();
+  unobserve = vi.fn();
+  disconnect = vi.fn();
+}
 
-  // Mock ResizeObserver as a proper class
-  class ResizeObserverMock {
-    observe = vi.fn();
-    unobserve = vi.fn();
-    disconnect = vi.fn();
-  }
-  window.ResizeObserver = ResizeObserverMock as any;
+const setupMocks = () => {
+  window.ResizeObserver =
+    ResizeObserverMock as unknown as typeof ResizeObserver;
 
-  // Setup navigator.mediaDevices mock
   Object.defineProperty(navigator, "mediaDevices", {
-    writable: true,
     configurable: true,
     value: {
+      addEventListener: vi.fn(),
       enumerateDevices: mockEnumerateDevices,
       getUserMedia: mockGetUserMedia,
-      addEventListener: vi.fn(),
       removeEventListener: vi.fn(),
     },
+    writable: true,
   });
 
   mockEnumerateDevices.mockResolvedValue(mockDevices);
@@ -76,26 +73,27 @@ beforeEach(() => {
     };
     return Promise.resolve(mockStream);
   });
-});
+};
 
-describe("MicSelectorLabel", () => {
+const [macbookMicDevice, externalMicDevice, usbMicDevice] = mockDevices;
+
+describe("micSelectorLabel", () => {
   it("renders simple device label", () => {
-    const device = mockDevices[1]; // External Microphone
-    render(<MicSelectorLabel device={device} />);
+    render(<MicSelectorLabel device={externalMicDevice} />);
     expect(screen.getByText("External Microphone")).toBeInTheDocument();
   });
 
   it("parses device ID from label", () => {
-    const device = mockDevices[0]; // MacBook Pro Microphone (1a2b:3c4d)
-    const { container } = render(<MicSelectorLabel device={device} />);
+    const { container } = render(
+      <MicSelectorLabel device={macbookMicDevice} />
+    );
 
     expect(container.textContent).toContain("MacBook Pro Microphone");
     expect(container.textContent).toContain("(1a2b:3c4d)");
   });
 
   it("applies muted styling to device ID", () => {
-    const device = mockDevices[2]; // USB Microphone (4e5f:6a7b)
-    const { container } = render(<MicSelectorLabel device={device} />);
+    const { container } = render(<MicSelectorLabel device={usbMicDevice} />);
 
     const mutedSpan = container.querySelector(".text-muted-foreground");
     expect(mutedSpan).toBeInTheDocument();
@@ -103,21 +101,39 @@ describe("MicSelectorLabel", () => {
   });
 
   it("accepts custom className prop", () => {
-    const device = mockDevices[1];
-    render(<MicSelectorLabel className="custom-label" device={device} />);
+    render(
+      <MicSelectorLabel className="custom-label" device={externalMicDevice} />
+    );
 
-    // Verify component renders
     expect(screen.getByText("External Microphone")).toBeInTheDocument();
   });
 });
 
+// Test display helpers - ternaries are acceptable in helper components
+// oxlint-disable-next-line eslint-plugin-jest(no-conditional-in-test)
+const LoadingDisplay = ({ loading }: { loading: boolean }) => (
+  <div data-testid="loading">{loading ? "Loading" : "Loaded"}</div>
+);
+
+const ErrorDisplay = ({ error }: { error: string | null }) => (
+  <div data-testid="error">{error ?? "No error"}</div>
+);
+
+// oxlint-disable-next-line eslint-plugin-jest(no-conditional-in-test)
+const PermissionDisplay = ({ hasPermission }: { hasPermission: boolean }) => (
+  <div data-testid="permission">
+    {hasPermission ? "Granted" : "Not granted"}
+  </div>
+);
+
 describe("useAudioDevices hook", () => {
   it("loads devices on mount", async () => {
+    setupMocks();
     const TestComponent = () => {
       const { devices, loading } = useAudioDevices();
       return (
         <div>
-          <div data-testid="loading">{loading ? "Loading" : "Loaded"}</div>
+          <LoadingDisplay loading={loading} />
           <div data-testid="count">{devices.length}</div>
         </div>
       );
@@ -170,14 +186,18 @@ describe("useAudioDevices hook", () => {
   });
 
   it("handles errors gracefully", async () => {
+    setupMocks();
+    const consoleErrorSpy = vi
+      .spyOn(console, "error")
+      .mockImplementation(vi.fn());
     mockEnumerateDevices.mockRejectedValueOnce(new Error("Permission denied"));
 
     const TestComponent = () => {
       const { error, loading } = useAudioDevices();
       return (
         <div>
-          <div data-testid="loading">{loading ? "Loading" : "Loaded"}</div>
-          <div data-testid="error">{error || "No error"}</div>
+          <LoadingDisplay loading={loading} />
+          <ErrorDisplay error={error} />
         </div>
       );
     };
@@ -199,9 +219,12 @@ describe("useAudioDevices hook", () => {
       },
       { timeout: 3000 }
     );
+
+    consoleErrorSpy.mockRestore();
   });
 
   it("requests permission when loadDevices is called", async () => {
+    setupMocks();
     const TestComponent = () => {
       const { loadDevices, hasPermission } = useAudioDevices();
       return (
@@ -209,9 +232,7 @@ describe("useAudioDevices hook", () => {
           <button onClick={loadDevices} type="button">
             Request Permission
           </button>
-          <div data-testid="permission">
-            {hasPermission ? "Granted" : "Not granted"}
-          </div>
+          <PermissionDisplay hasPermission={hasPermission} />
         </div>
       );
     };
@@ -275,9 +296,10 @@ describe("useAudioDevices hook", () => {
   });
 
   it("returns loading state initially", () => {
+    setupMocks();
     const TestComponent = () => {
       const { loading } = useAudioDevices();
-      return <div data-testid="loading">{loading ? "Loading" : "Loaded"}</div>;
+      return <LoadingDisplay loading={loading} />;
     };
 
     render(<TestComponent />);
@@ -291,14 +313,14 @@ describe("useAudioDevices hook", () => {
     const removeEventListener = vi.fn();
 
     Object.defineProperty(navigator, "mediaDevices", {
-      writable: true,
       configurable: true,
       value: {
+        addEventListener,
         enumerateDevices: mockEnumerateDevices,
         getUserMedia: mockGetUserMedia,
-        addEventListener,
         removeEventListener,
       },
+      writable: true,
     });
 
     const TestComponent = () => {
@@ -326,6 +348,7 @@ describe("useAudioDevices hook", () => {
   });
 
   it("prevents concurrent loadDevices calls", async () => {
+    setupMocks();
     const TestComponent = () => {
       const { loadDevices, loading } = useAudioDevices();
       return (
@@ -333,7 +356,7 @@ describe("useAudioDevices hook", () => {
           <button onClick={loadDevices} type="button">
             Load
           </button>
-          <div data-testid="loading">{loading ? "Loading" : "Loaded"}</div>
+          <LoadingDisplay loading={loading} />
         </div>
       );
     };
@@ -356,21 +379,25 @@ describe("useAudioDevices hook", () => {
     // Should only call getUserMedia once per actual load
     await waitFor(
       () => {
-        expect(mockGetUserMedia).toHaveBeenCalled();
+        expect(mockGetUserMedia).toHaveBeenCalledWith({ audio: true });
       },
       { timeout: 3000 }
     );
   });
 
   it("handles non-Error exception in loadDevicesWithoutPermission", async () => {
+    setupMocks();
+    const consoleErrorSpy = vi
+      .spyOn(console, "error")
+      .mockImplementation(vi.fn());
     mockEnumerateDevices.mockRejectedValueOnce("String error");
 
     const TestComponent = () => {
       const { error, loading } = useAudioDevices();
       return (
         <div>
-          <div data-testid="loading">{loading ? "Loading" : "Loaded"}</div>
-          <div data-testid="error">{error || "No error"}</div>
+          <LoadingDisplay loading={loading} />
+          <ErrorDisplay error={error} />
         </div>
       );
     };
@@ -392,9 +419,15 @@ describe("useAudioDevices hook", () => {
       },
       { timeout: 3000 }
     );
+
+    consoleErrorSpy.mockRestore();
   });
 
   it("handles non-Error exception in loadDevicesWithPermission", async () => {
+    setupMocks();
+    const consoleErrorSpy = vi
+      .spyOn(console, "error")
+      .mockImplementation(vi.fn());
     mockGetUserMedia.mockRejectedValueOnce("String error");
 
     const TestComponent = () => {
@@ -404,8 +437,8 @@ describe("useAudioDevices hook", () => {
           <button onClick={loadDevices} type="button">
             Load
           </button>
-          <div data-testid="loading">{loading ? "Loading" : "Loaded"}</div>
-          <div data-testid="error">{error || "No error"}</div>
+          <LoadingDisplay loading={loading} />
+          <ErrorDisplay error={error} />
         </div>
       );
     };
@@ -423,11 +456,14 @@ describe("useAudioDevices hook", () => {
         "Failed to get audio devices"
       );
     });
+
+    consoleErrorSpy.mockRestore();
   });
 });
 
-describe("MicSelector", () => {
+describe("micSelector", () => {
   it("renders with default props", () => {
+    setupMocks();
     render(
       <MicSelector>
         <MicSelectorTrigger>
@@ -599,12 +635,12 @@ describe("MicSelector", () => {
     await user.click(screen.getByText("External Microphone"));
 
     await waitFor(() => {
-      expect(onValueChange).toHaveBeenCalled();
+      expect(onValueChange).toHaveBeenCalledWith("device-2");
     });
   });
 });
 
-describe("MicSelectorTrigger", () => {
+describe("micSelectorTrigger", () => {
   it("renders children", () => {
     render(
       <MicSelector>
@@ -631,7 +667,7 @@ describe("MicSelectorTrigger", () => {
   });
 });
 
-describe("MicSelectorContent", () => {
+describe("micSelectorContent", () => {
   it("renders with custom className", async () => {
     const user = userEvent.setup();
 
@@ -652,7 +688,7 @@ describe("MicSelectorContent", () => {
   });
 });
 
-describe("MicSelectorInput", () => {
+describe("micSelectorInput", () => {
   it("renders with default placeholder", async () => {
     const user = userEvent.setup();
 
@@ -694,7 +730,7 @@ describe("MicSelectorInput", () => {
   });
 });
 
-describe("MicSelectorEmpty", () => {
+describe("micSelectorEmpty", () => {
   it("renders default empty message", async () => {
     const user = userEvent.setup();
     mockEnumerateDevices.mockResolvedValueOnce([]);
@@ -738,7 +774,7 @@ describe("MicSelectorEmpty", () => {
   });
 });
 
-describe("MicSelectorValue", () => {
+describe("micSelectorValue", () => {
   it("shows placeholder when no value selected", () => {
     render(
       <MicSelector>

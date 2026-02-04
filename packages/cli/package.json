@@ -2,6 +2,14 @@
   "name": "ai-elements",
   "version": "1.8.2",
   "description": "AI Elements is a component library and custom registry built on top of shadcn/ui to help you build AI-native applications faster.",
+  "homepage": "https://elements.ai-sdk.dev",
+  "license": "Apache-2.0",
+  "author": "Hayden Bleasel <hayden.bleasel@vercel.com>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vercel/ai-elements.git",
+    "directory": "packages/cli"
+  },
   "bin": {
     "elements": "index.js"
   },
@@ -9,13 +17,5 @@
     "index.js",
     "README.md",
     "LICENSE"
-  ],
-  "homepage": "https://elements.ai-sdk.dev",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/vercel/ai-elements.git",
-    "directory": "packages/cli"
-  },
-  "author": "Hayden Bleasel <hayden.bleasel@vercel.com>",
-  "license": "Apache-2.0"
+  ]
 }

@@ -1,5 +1,13 @@
 "use client";
 
+import type { ComponentProps, CSSProperties, HTMLAttributes } from "react";
+import type {
+  BundledLanguage,
+  BundledTheme,
+  HighlighterGeneric,
+  ThemedToken,
+} from "shiki";
+
 import { Button } from "@repo/shadcn-ui/components/ui/button";
 import {
   Select,
@@ -11,32 +19,28 @@ import {
 import { cn } from "@repo/shadcn-ui/lib/utils";
 import { CheckIcon, CopyIcon } from "lucide-react";
 import {
-  type ComponentProps,
-  type CSSProperties,
   createContext,
-  type HTMLAttributes,
   memo,
+  useCallback,
   useContext,
   useEffect,
   useMemo,
   useRef,
   useState,
 } from "react";
-import {
-  type BundledLanguage,
-  type BundledTheme,
-  createHighlighter,
-  type HighlighterGeneric,
-  type ThemedToken,
-} from "shiki";
+import { createHighlighter } from "shiki";
 
 // Shiki uses bitflags for font styles: 1=italic, 2=bold, 4=underline
 // biome-ignore lint/suspicious/noBitwiseOperators: shiki bitflag check
+// eslint-disable-next-line no-bitwise -- shiki bitflag check
 const isItalic = (fontStyle: number | undefined) => fontStyle && fontStyle & 1;
 // biome-ignore lint/suspicious/noBitwiseOperators: shiki bitflag check
+// eslint-disable-next-line no-bitwise -- shiki bitflag check
+// oxlint-disable-next-line eslint(no-bitwise)
 const isBold = (fontStyle: number | undefined) => fontStyle && fontStyle & 2;
 const isUnderline = (fontStyle: number | undefined) =>
   // biome-ignore lint/suspicious/noBitwiseOperators: shiki bitflag check
+  // oxlint-disable-next-line eslint(no-bitwise)
   fontStyle && fontStyle & 4;
 
 // Transform tokens to include pre-computed keys to avoid noArrayIndexKey lint
@@ -53,8 +57,8 @@ const addKeysToTokens = (lines: ThemedToken[][]): KeyedLine[] =>
   lines.map((line, lineIdx) => ({
     key: `line-${lineIdx}`,
     tokens: line.map((token, tokenIdx) => ({
-      token,
       key: `line-${lineIdx}-${tokenIdx}`,
+      token,
     })),
   }));
 
@@ -64,12 +68,12 @@ const TokenSpan = ({ token }: { token: ThemedToken }) => (
     className="dark:!bg-[var(--shiki-dark-bg)] dark:!text-[var(--shiki-dark)]"
     style={
       {
-        color: token.color,
         backgroundColor: token.bgColor,
-        ...token.htmlStyle,
+        color: token.color,
         fontStyle: isItalic(token.fontStyle) ? "italic" : undefined,
         fontWeight: isBold(token.fontStyle) ? "bold" : undefined,
         textDecoration: isUnderline(token.fontStyle) ? "underline" : undefined,
+        ...token.htmlStyle,
       } as CSSProperties
     }
   >
@@ -143,8 +147,8 @@ const getHighlighter = (
   }
 
   const highlighterPromise = createHighlighter({
-    themes: ["github-light", "github-dark"],
     langs: [language],
+    themes: ["github-light", "github-dark"],
   });
 
   highlighterCache.set(language, highlighterPromise);
@@ -153,26 +157,27 @@ const getHighlighter = (
 
 // Create raw tokens for immediate display while highlighting loads
 const createRawTokens = (code: string): TokenizedCode => ({
+  bg: "transparent",
+  fg: "inherit",
   tokens: code.split("\n").map((line) =>
     line === ""
       ? []
       : [
           {
-            content: line,
             color: "inherit",
+            content: line,
           } as ThemedToken,
         ]
   ),
-  fg: "inherit",
-  bg: "transparent",
 });
 
 // Synchronous highlight with callback for async results
-export function highlightCode(
+export const highlightCode = (
   code: string,
   language: BundledLanguage,
+  // oxlint-disable-next-line eslint-plugin-promise(prefer-await-to-callbacks)
   callback?: (result: TokenizedCode) => void
-): TokenizedCode | null {
+): TokenizedCode | null => {
   const tokensCacheKey = getTokensCacheKey(code, language);
 
   // Return cached result if available
@@ -189,8 +194,9 @@ export function highlightCode(
     subscribers.get(tokensCacheKey)?.add(callback);
   }
 
-  // Start highlighting in background
+  // Start highlighting in background - fire-and-forget async pattern
   getHighlighter(language)
+    // oxlint-disable-next-line eslint-plugin-promise(prefer-await-to-then)
     .then((highlighter) => {
       const availableLangs = highlighter.getLoadedLanguages();
       const langToUse = availableLangs.includes(language) ? language : "text";
@@ -198,15 +204,15 @@ export function highlightCode(
       const result = highlighter.codeToTokens(code, {
         lang: langToUse,
         themes: {
-          light: "github-light",
           dark: "github-dark",
+          light: "github-light",
         },
       });
 
       const tokenized: TokenizedCode = {
-        tokens: result.tokens,
-        fg: result.fg ?? "inherit",
         bg: result.bg ?? "transparent",
+        fg: result.fg ?? "inherit",
+        tokens: result.tokens,
       };
 
       // Cache the result
@@ -221,13 +227,14 @@ export function highlightCode(
         subscribers.delete(tokensCacheKey);
       }
     })
+    // oxlint-disable-next-line eslint-plugin-promise(prefer-await-to-then), eslint-plugin-promise(prefer-await-to-callbacks)
     .catch((error) => {
       console.error("Failed to highlight code:", error);
       subscribers.delete(tokensCacheKey);
     });
 
   return null;
-}
+};
 
 // Line number styles using CSS counters
 const LINE_NUMBER_CLASSES = cn(
@@ -297,6 +304,8 @@ const CodeBlockBody = memo(
     prevProps.className === nextProps.className
 );
 
+CodeBlockBody.displayName = "CodeBlockBody";
+
 export const CodeBlockContainer = ({
   className,
   language,
@@ -310,8 +319,8 @@ export const CodeBlockContainer = ({
     )}
     data-language={language}
     style={{
-      contentVisibility: "auto",
       containIntrinsicSize: "auto 200px",
+      contentVisibility: "auto",
       ...style,
     }}
     {...props}
@@ -437,7 +446,7 @@ export const CodeBlockCopyButton = ({
   const timeoutRef = useRef<number>(0);
   const { code } = useContext(CodeBlockContext);
 
-  const copyToClipboard = async () => {
+  const copyToClipboard = useCallback(async () => {
     if (typeof window === "undefined" || !navigator?.clipboard?.writeText) {
       onError?.(new Error("Clipboard API not available"));
       return;
@@ -456,7 +465,7 @@ export const CodeBlockCopyButton = ({
     } catch (error) {
       onError?.(error as Error);
     }
-  };
+  }, [code, onCopy, onError, timeout, isCopied]);
 
   useEffect(
     () => () => {

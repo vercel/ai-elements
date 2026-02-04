@@ -1,5 +1,7 @@
 "use client";
 
+import type { ToolUIPart } from "ai";
+
 import {
   Tool,
   ToolContent,
@@ -7,24 +9,23 @@ import {
   ToolInput,
   ToolOutput,
 } from "@repo/elements/tool";
-import type { ToolUIPart } from "ai";
 
 const toolCall: ToolUIPart = {
-  type: "tool-api_request" as const,
-  toolCallId: "api_request_1",
-  state: "output-error" as const,
+  errorText:
+    "Connection timeout: The request took longer than 5000ms to complete. Please check your network connection and try again.",
   input: {
-    url: "https://api.example.com/data",
-    method: "GET",
     headers: {
       Authorization: "Bearer token123",
       "Content-Type": "application/json",
     },
+    method: "GET",
     timeout: 5000,
+    url: "https://api.example.com/data",
   },
   output: undefined,
-  errorText:
-    "Connection timeout: The request took longer than 5000ms to complete. Please check your network connection and try again.",
+  state: "output-error" as const,
+  toolCallId: "api_request_1",
+  type: "tool-api_request" as const,
 };
 
 const Example = () => (

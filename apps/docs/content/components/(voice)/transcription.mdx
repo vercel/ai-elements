@@ -32,26 +32,28 @@ Root component that provides context and manages transcript state. Uses render p
 <TypeTable
   type={{
     segments: {
-      description: 'Array of transcription segments from AI SDK transcribe() function.',
-      type: 'TranscriptionSegment[]',
+      description:
+        "Array of transcription segments from AI SDK transcribe() function.",
+      type: "TranscriptionSegment[]",
     },
     currentTime: {
-      description: 'Current playback time in seconds (controlled).',
-      type: 'number',
+      description: "Current playback time in seconds (controlled).",
+      type: "number",
       optional: true,
-      default: '0',
+      default: "0",
     },
     onSeek: {
-      description: 'Callback fired when a segment is clicked or when currentTime changes.',
-      type: '(time: number) => void',
+      description:
+        "Callback fired when a segment is clicked or when currentTime changes.",
+      type: "(time: number) => void",
       optional: true,
     },
     children: {
-      description: 'Render function that receives each segment and its index.',
-      type: '(segment: TranscriptionSegment, index: number) => ReactNode',
+      description: "Render function that receives each segment and its index.",
+      type: "(segment: TranscriptionSegment, index: number) => ReactNode",
     },
-    '...props': {
-      description: 'Any other props are spread to the root div element.',
+    "...props": {
+      description: "Any other props are spread to the root div element.",
       type: 'Omit<React.ComponentProps<"div">, "children">',
     },
   }}
@@ -64,15 +66,15 @@ Individual segment button with automatic state styling and click-to-seek functio
 <TypeTable
   type={{
     segment: {
-      description: 'The transcription segment data.',
-      type: 'TranscriptionSegment',
+      description: "The transcription segment data.",
+      type: "TranscriptionSegment",
     },
     index: {
-      description: 'The segment index.',
-      type: 'number',
+      description: "The segment index.",
+      type: "number",
     },
-    '...props': {
-      description: 'Any other props are spread to the button element.',
+    "...props": {
+      description: "Any other props are spread to the button element.",
       type: 'React.ComponentProps<"button">',
     },
   }}
@@ -126,6 +128,7 @@ The component uses data attributes for custom styling:
 - `data-index`: The segment's index in the array
 
 Default segment appearance:
+
 - Active segment: `text-primary` (primary brand color)
 - Past segments: `text-muted-foreground`
 - Future segments: `text-muted-foreground/60` (dimmed)

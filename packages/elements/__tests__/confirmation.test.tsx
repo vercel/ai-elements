@@ -2,6 +2,7 @@ import { render, screen } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import { CheckIcon, XIcon } from "lucide-react";
 import { describe, expect, it, vi } from "vitest";
+
 import {
   Confirmation,
   ConfirmationAccepted,
@@ -11,7 +12,7 @@ import {
   ConfirmationRequest,
 } from "../src/confirmation";
 
-describe("Confirmation", () => {
+describe("confirmation", () => {
   it("renders children when approval is present", () => {
     render(
       <Confirmation approval={{ id: "test-id" }} state="approval-requested">
@@ -62,7 +63,7 @@ describe("Confirmation", () => {
   });
 });
 
-describe("ConfirmationRequest, ConfirmationAccepted, ConfirmationRejected", () => {
+describe("confirmationRequest, ConfirmationAccepted, ConfirmationRejected", () => {
   it("renders ConfirmationRequest when state is approval-requested", () => {
     render(
       <Confirmation approval={{ id: "test-id" }} state="approval-requested">
@@ -79,7 +80,7 @@ describe("ConfirmationRequest, ConfirmationAccepted, ConfirmationRejected", () =
   it("renders ConfirmationAccepted when approved and state is approval-responded", () => {
     render(
       <Confirmation
-        approval={{ id: "test-id", approved: true }}
+        approval={{ approved: true, id: "test-id" }}
         state="approval-responded"
       >
         <ConfirmationRequest>Custom approval message</ConfirmationRequest>
@@ -103,7 +104,7 @@ describe("ConfirmationRequest, ConfirmationAccepted, ConfirmationRejected", () =
   it("renders ConfirmationRejected when not approved and state is output-denied", () => {
     render(
       <Confirmation
-        approval={{ id: "test-id", approved: false }}
+        approval={{ approved: false, id: "test-id" }}
         state="output-denied"
       >
         <ConfirmationRequest>Custom approval message</ConfirmationRequest>
@@ -125,7 +126,7 @@ describe("ConfirmationRequest, ConfirmationAccepted, ConfirmationRejected", () =
   });
 });
 
-describe("ConfirmationActions", () => {
+describe("confirmationActions", () => {
   it("renders custom children buttons", () => {
     render(
       <Confirmation approval={{ id: "test-id" }} state="approval-requested">
@@ -180,7 +181,7 @@ describe("ConfirmationActions", () => {
     );
 
     await user.click(screen.getByText("Accept"));
-    expect(handleAccept).toHaveBeenCalledTimes(1);
+    expect(handleAccept).toHaveBeenCalledOnce();
   });
 
   it("calls onClick when reject button is clicked", async () => {
@@ -198,7 +199,7 @@ describe("ConfirmationActions", () => {
     );
 
     await user.click(screen.getByText("Reject"));
-    expect(handleReject).toHaveBeenCalledTimes(1);
+    expect(handleReject).toHaveBeenCalledOnce();
   });
 
   it("disables buttons when disabled prop is true", () => {
@@ -232,11 +233,11 @@ describe("ConfirmationActions", () => {
   });
 });
 
-describe("ConfirmationAccepted", () => {
+describe("confirmationAccepted", () => {
   it("renders accepted status with icon", () => {
     render(
       <Confirmation
-        approval={{ id: "test-id", approved: true }}
+        approval={{ approved: true, id: "test-id" }}
         state="approval-responded"
       >
         <ConfirmationRequest>Request</ConfirmationRequest>
@@ -251,11 +252,11 @@ describe("ConfirmationAccepted", () => {
   });
 });
 
-describe("ConfirmationRejected", () => {
+describe("confirmationRejected", () => {
   it("renders rejected status with icon", () => {
     render(
       <Confirmation
-        approval={{ id: "test-id", approved: false }}
+        approval={{ approved: false, id: "test-id" }}
         state="output-denied"
       >
         <ConfirmationRequest>Request</ConfirmationRequest>

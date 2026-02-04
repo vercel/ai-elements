@@ -1,9 +1,10 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
+
 import { Canvas } from "../src/canvas";
 import { Panel } from "../src/panel";
 
-describe("Panel", () => {
+describe("panel", () => {
   it("renders children within Canvas", () => {
     render(
       <Canvas edges={[]} nodes={[]}>

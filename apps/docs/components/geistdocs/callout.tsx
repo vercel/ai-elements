@@ -1,3 +1,5 @@
+import type { ComponentProps } from "react";
+
 import { cn } from "@repo/shadcn-ui/lib/utils";
 import {
   CalloutContainer as CalloutContainerPrimitive,
@@ -5,7 +7,6 @@ import {
   Callout as CalloutPrimitive,
   CalloutTitle as CalloutTitlePrimitive,
 } from "fumadocs-ui/components/callout";
-import type { ComponentProps } from "react";
 
 type CalloutProps = ComponentProps<typeof CalloutPrimitive>;
 

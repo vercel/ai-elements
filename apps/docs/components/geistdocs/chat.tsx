@@ -1,6 +1,8 @@
 "use client";
 
 import type { UIMessage } from "@ai-sdk/react";
+import type { PromptInputProps } from "@repo/elements/prompt-input";
+
 import { useChat } from "@ai-sdk/react";
 import {
   Attachment,
@@ -23,7 +25,6 @@ import {
   PromptInputBody,
   PromptInputFooter,
   PromptInputHeader,
-  type PromptInputProps,
   PromptInputProvider,
   PromptInputSubmit,
   PromptInputTextarea,
@@ -52,9 +53,12 @@ import { ChevronRightIcon, MessagesSquareIcon, Trash } from "lucide-react";
 import { Portal } from "radix-ui";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
+
 import type { MyUIMessage } from "@/app/api/chat/types";
+
 import { useChatContext } from "@/hooks/geistdocs/use-chat";
 import { db } from "@/lib/geistdocs/db";
+
 import { CopyChat } from "./copy-chat";
 import { MessageMetadata } from "./message-metadata";
 
@@ -110,8 +114,8 @@ export const useChatPersistence = () => {
         const baseTimestamp = Date.now();
         const messagesToStore = messages.map((message, index) => ({
           ...message,
-          timestamp: baseTimestamp + index * 1000,
           sequence: index,
+          timestamp: baseTimestamp + index * 1000,
         }));
 
         await db.transaction("rw", db.messages, async () => {
@@ -144,10 +148,10 @@ export const useChatPersistence = () => {
   );
 
   return {
+    clearMessages,
     initialMessages,
     isLoading,
     saveMessages,
-    clearMessages,
   };
 };
 
@@ -193,14 +197,14 @@ const ChatInner = ({ basePath, suggestions, isOpen }: ChatInnerProps) => {
     useChatPersistence();
 
   const { messages, sendMessage, status, setMessages, stop } = useChat({
-    transport: new DefaultChatTransport({
-      api: basePath ? `${basePath}/api/chat` : "/api/chat",
-    }),
     onError: (error) => {
       toast.error(error.message, {
         description: error.message,
       });
     },
+    transport: new DefaultChatTransport({
+      api: basePath ? `${basePath}/api/chat` : "/api/chat",
+    }),
   });
 
   // Sync external prompt changes to local state and force provider remount

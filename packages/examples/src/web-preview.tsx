@@ -16,7 +16,31 @@ import {
   MousePointerClickIcon,
   RefreshCcwIcon,
 } from "lucide-react";
-import { useState } from "react";
+import { useCallback, useState } from "react";
+
+const handleUrlChange = (url: string) => {
+  console.log("URL changed to:", url);
+};
+
+const handleGoBack = () => {
+  console.log("Go back");
+};
+
+const handleGoForward = () => {
+  console.log("Go forward");
+};
+
+const handleReload = () => {
+  console.log("Reload");
+};
+
+const handleSelect = () => {
+  console.log("Select");
+};
+
+const handleOpenInNewTab = () => {
+  console.log("Open in new tab");
+};
 
 const exampleLogs = [
   {
@@ -37,48 +61,44 @@ const exampleLogs = [
 ];
 
 const Example = () => {
-  const [fullscreen, setFullscreen] = useState(false);
+  const [_fullscreen, setFullscreen] = useState(false);
+
+  const handleToggleFullscreen = useCallback(
+    () => setFullscreen((prev) => !prev),
+    []
+  );
 
   return (
     <WebPreview
       defaultUrl="/"
-      onUrlChange={(url) => console.log("URL changed to:", url)}
+      onUrlChange={handleUrlChange}
       style={{ height: "400px" }}
     >
       <WebPreviewNavigation>
-        <WebPreviewNavigationButton
-          onClick={() => console.log("Go back")}
-          tooltip="Go back"
-        >
+        <WebPreviewNavigationButton onClick={handleGoBack} tooltip="Go back">
           <ArrowLeftIcon className="size-4" />
         </WebPreviewNavigationButton>
         <WebPreviewNavigationButton
-          onClick={() => console.log("Go forward")}
+          onClick={handleGoForward}
           tooltip="Go forward"
         >
           <ArrowRightIcon className="size-4" />
         </WebPreviewNavigationButton>
-        <WebPreviewNavigationButton
-          onClick={() => console.log("Reload")}
-          tooltip="Reload"
-        >
+        <WebPreviewNavigationButton onClick={handleReload} tooltip="Reload">
           <RefreshCcwIcon className="size-4" />
         </WebPreviewNavigationButton>
         <WebPreviewUrl />
-        <WebPreviewNavigationButton
-          onClick={() => console.log("Select")}
-          tooltip="Select"
-        >
+        <WebPreviewNavigationButton onClick={handleSelect} tooltip="Select">
           <MousePointerClickIcon className="size-4" />
         </WebPreviewNavigationButton>
         <WebPreviewNavigationButton
-          onClick={() => console.log("Open in new tab")}
+          onClick={handleOpenInNewTab}
           tooltip="Open in new tab"
         >
           <ExternalLinkIcon className="size-4" />
         </WebPreviewNavigationButton>
         <WebPreviewNavigationButton
-          onClick={() => setFullscreen(!fullscreen)}
+          onClick={handleToggleFullscreen}
           tooltip="Maximize"
         >
           <Maximize2Icon className="size-4" />

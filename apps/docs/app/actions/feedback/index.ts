@@ -1,7 +1,9 @@
 "use server";
 
 import { headers } from "next/headers";
+
 import type { Feedback } from "@/components/geistdocs/feedback";
+
 import { emotions } from "./emotions";
 
 const protocol = process.env.NODE_ENV === "production" ? "https" : "http";
@@ -16,17 +18,17 @@ export const sendFeedback = async (
   const headersList = await headers();
 
   const response = await fetch(endpoint, {
-    method: "POST",
+    body: JSON.stringify({
+      emotion: emoji,
+      ip: headersList.get("x-real-ip") || headersList.get("x-forwarded-for"),
+      note: feedback.message,
+      ua: headersList.get("user-agent") ?? undefined,
+      url: new URL(url, baseUrl).toString(),
+    }),
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({
-      note: feedback.message,
-      url: new URL(url, baseUrl).toString(),
-      emotion: emoji,
-      ua: headersList.get("user-agent") ?? undefined,
-      ip: headersList.get("x-real-ip") || headersList.get("x-forwarded-for"),
-    }),
+    method: "POST",
   });
 
   if (!response.ok) {

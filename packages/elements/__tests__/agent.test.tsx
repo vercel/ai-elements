@@ -1,7 +1,8 @@
 import { render, screen, waitFor } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
+import { userEvent } from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 import { z } from "zod";
+
 import {
   Agent,
   AgentContent,
@@ -22,7 +23,7 @@ const mockTool = {
 // Zod v4 serializes schemas with "type": "object" format
 const ZOD_OBJECT_REGEX = /"type":\s*"object"/;
 
-describe("Agent", () => {
+describe("agent", () => {
   it("renders children", () => {
     render(<Agent>Content</Agent>);
     expect(screen.getByText("Content")).toBeInTheDocument();
@@ -34,7 +35,7 @@ describe("Agent", () => {
   });
 });
 
-describe("AgentHeader", () => {
+describe("agentHeader", () => {
   it("renders agent name", () => {
     render(<AgentHeader name="Research Assistant" />);
     expect(screen.getByText("Research Assistant")).toBeInTheDocument();
@@ -60,7 +61,7 @@ describe("AgentHeader", () => {
   });
 });
 
-describe("AgentContent", () => {
+describe("agentContent", () => {
   it("renders content", () => {
     render(<AgentContent>Content text</AgentContent>);
     expect(screen.getByText("Content text")).toBeInTheDocument();
@@ -74,7 +75,7 @@ describe("AgentContent", () => {
   });
 });
 
-describe("AgentInstructions", () => {
+describe("agentInstructions", () => {
   it("renders instructions label", () => {
     render(<AgentInstructions>Test instructions</AgentInstructions>);
     expect(screen.getByText("Instructions")).toBeInTheDocument();
@@ -97,7 +98,7 @@ describe("AgentInstructions", () => {
   });
 });
 
-describe("AgentTools", () => {
+describe("agentTools", () => {
   it("renders tools label", () => {
     render(
       <AgentTools>
@@ -108,7 +109,7 @@ describe("AgentTools", () => {
   });
 });
 
-describe("AgentTool", () => {
+describe("agentTool", () => {
   it("renders tool description as trigger", () => {
     render(
       <AgentTools>
@@ -177,7 +178,7 @@ describe("AgentTool", () => {
   });
 });
 
-describe("AgentOutput", () => {
+describe("agentOutput", () => {
   it("renders output schema label", () => {
     render(<AgentOutput schema="z.object({ name: z.string() })" />);
     expect(screen.getByText("Output Schema")).toBeInTheDocument();
@@ -202,33 +203,43 @@ describe("AgentOutput", () => {
   });
 });
 
-describe("Agent integration", () => {
-  it("renders complete agent configuration", () => {
-    const schema = `z.object({
+const agentSchema = `z.object({
   sentiment: z.enum(['positive', 'negative']),
   score: z.number(),
 })`;
 
-    render(
-      <Agent>
-        <AgentHeader
-          model="anthropic/claude-sonnet-4-5"
-          name="Sentiment Analyzer"
-        />
-        <AgentContent>
-          <AgentInstructions>Analyze sentiment of text.</AgentInstructions>
-          <AgentTools>
-            <AgentTool tool={mockTool} value="analyze" />
-          </AgentTools>
-          <AgentOutput schema={schema} />
-        </AgentContent>
-      </Agent>
-    );
+const renderCompleteAgent = () =>
+  render(
+    <Agent>
+      <AgentHeader
+        model="anthropic/claude-sonnet-4-5"
+        name="Sentiment Analyzer"
+      />
+      <AgentContent>
+        <AgentInstructions>Analyze sentiment of text.</AgentInstructions>
+        <AgentTools>
+          <AgentTool tool={mockTool} value="analyze" />
+        </AgentTools>
+        <AgentOutput schema={agentSchema} />
+      </AgentContent>
+    </Agent>
+  );
 
+describe("agent integration", () => {
+  it("renders agent header", () => {
+    renderCompleteAgent();
     expect(screen.getByText("Sentiment Analyzer")).toBeInTheDocument();
     expect(screen.getByText("anthropic/claude-sonnet-4-5")).toBeInTheDocument();
+  });
+
+  it("renders agent instructions", () => {
+    renderCompleteAgent();
     expect(screen.getByText("Instructions")).toBeInTheDocument();
     expect(screen.getByText("Analyze sentiment of text.")).toBeInTheDocument();
+  });
+
+  it("renders agent tools and output schema", () => {
+    renderCompleteAgent();
     expect(screen.getByText("Tools")).toBeInTheDocument();
     expect(
       screen.getByText("Search the web for information")

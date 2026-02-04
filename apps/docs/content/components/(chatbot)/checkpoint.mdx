@@ -29,17 +29,24 @@ Build a chat interface with conversation checkpoints that allow users to restore
 Add the following component to your frontend:
 
 ```tsx title="app/page.tsx"
-'use client';
+"use client";
 
-import { useState, Fragment } from 'react';
-import { useChat } from '@ai-sdk/react';
+import { useState, Fragment } from "react";
+import { useChat } from "@ai-sdk/react";
 import {
   Checkpoint,
   CheckpointIcon,
   CheckpointTrigger,
-} from '@/components/ai-elements/checkpoint';
-import { Message, MessageContent, MessageResponse } from '@/components/ai-elements/message';
-import { Conversation, ConversationContent } from '@/components/ai-elements/conversation';
+} from "@/components/ai-elements/checkpoint";
+import {
+  Message,
+  MessageContent,
+  MessageResponse,
+} from "@/components/ai-elements/message";
+import {
+  Conversation,
+  ConversationContent,
+} from "@/components/ai-elements/conversation";
 
 type CheckpointType = {
   id: string;
@@ -66,7 +73,7 @@ const CheckpointDemo = () => {
     // Restore messages to checkpoint state
     setMessages(messages.slice(0, messageIndex + 1));
     // Remove checkpoints after this point
-    setCheckpoints(checkpoints.filter(cp => cp.messageIndex <= messageIndex));
+    setCheckpoints(checkpoints.filter((cp) => cp.messageIndex <= messageIndex));
   };
 
   return (
@@ -74,7 +81,9 @@ const CheckpointDemo = () => {
       <Conversation>
         <ConversationContent>
           {messages.map((message, index) => {
-            const checkpoint = checkpoints.find(cp => cp.messageIndex === index);
+            const checkpoint = checkpoints.find(
+              (cp) => cp.messageIndex === index
+            );
 
             return (
               <Fragment key={message.id}>
@@ -87,7 +96,9 @@ const CheckpointDemo = () => {
                   <Checkpoint>
                     <CheckpointIcon />
                     <CheckpointTrigger
-                      onClick={() => restoreToCheckpoint(checkpoint.messageIndex)}
+                      onClick={() =>
+                        restoreToCheckpoint(checkpoint.messageIndex)
+                      }
                     >
                       Restore checkpoint
                     </CheckpointTrigger>
@@ -152,12 +163,13 @@ const restoreAndBranch = (messageIndex: number) => {
 <TypeTable
   type={{
     children: {
-      description: 'The checkpoint icon and trigger components. Automatically includes a Separator at the end.',
-      type: 'React.ReactNode',
+      description:
+        "The checkpoint icon and trigger components. Automatically includes a Separator at the end.",
+      type: "React.ReactNode",
     },
-    '...props': {
-      description: 'Any other props are spread to the root div.',
-      type: 'React.HTMLAttributes<HTMLDivElement>',
+    "...props": {
+      description: "Any other props are spread to the root div.",
+      type: "React.HTMLAttributes<HTMLDivElement>",
     },
   }}
 />
@@ -167,12 +179,13 @@ const restoreAndBranch = (messageIndex: number) => {
 <TypeTable
   type={{
     children: {
-      description: 'Custom icon content. If not provided, defaults to a BookmarkIcon from lucide-react.',
-      type: 'React.ReactNode',
+      description:
+        "Custom icon content. If not provided, defaults to a BookmarkIcon from lucide-react.",
+      type: "React.ReactNode",
     },
-    '...props': {
-      description: 'Any other props are spread to the BookmarkIcon component.',
-      type: 'LucideProps',
+    "...props": {
+      description: "Any other props are spread to the BookmarkIcon component.",
+      type: "LucideProps",
     },
   }}
 />
@@ -182,22 +195,23 @@ const restoreAndBranch = (messageIndex: number) => {
 <TypeTable
   type={{
     children: {
-      description: 'The text or content to display in the trigger button.',
-      type: 'React.ReactNode',
+      description: "The text or content to display in the trigger button.",
+      type: "React.ReactNode",
     },
     variant: {
-      description: 'The button variant style.',
-      type: 'string',
+      description: "The button variant style.",
+      type: "string",
       default: '"ghost"',
     },
     size: {
-      description: 'The button size.',
-      type: 'string',
+      description: "The button size.",
+      type: "string",
       default: '"sm"',
     },
-    '...props': {
-      description: 'Any other props are spread to the underlying shadcn/ui Button component.',
-      type: 'React.ComponentProps<typeof Button>',
+    "...props": {
+      description:
+        "Any other props are spread to the underlying shadcn/ui Button component.",
+      type: "React.ComponentProps<typeof Button>",
     },
   }}
 />
