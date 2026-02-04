@@ -19,7 +19,7 @@ class MockSpeechRecognition {
 
   // EventTarget implementation
   // oxlint-disable-next-line typescript-eslint(no-explicit-any)
-  private listeners: Map<string, Set<(ev: any) => void>> = new Map();
+  private listeners = new Map<string, Set<(ev: any) => void>>();
 
   // oxlint-disable-next-line typescript-eslint(no-explicit-any)
   addEventListener(type: string, listener: (ev: any) => void) {
@@ -345,7 +345,9 @@ describe("speechInput - Speech Recognition", () => {
     });
 
     // Trigger error event
-    const errorEvent = Object.assign(new Event("error"), { error: "no-speech" });
+    const errorEvent = Object.assign(new Event("error"), {
+      error: "no-speech",
+    });
     instanceRef.current?.dispatchEvent(errorEvent);
 
     await waitFor(() => {
@@ -462,7 +464,7 @@ const createMockMediaRecorder = (context: MediaRecorderTestContext) =>
 
     // EventTarget implementation
     // oxlint-disable-next-line typescript-eslint(no-explicit-any)
-    private listeners: Map<string, Set<(ev: any) => void>> = new Map();
+    private listeners = new Map<string, Set<(ev: any) => void>>();
 
     constructor() {
       context.mediaRecorderInstances.push(this);

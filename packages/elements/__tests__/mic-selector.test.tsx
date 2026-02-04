@@ -187,7 +187,9 @@ describe("useAudioDevices hook", () => {
 
   it("handles errors gracefully", async () => {
     setupMocks();
-    const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(vi.fn());
+    const consoleErrorSpy = vi
+      .spyOn(console, "error")
+      .mockImplementation(vi.fn());
     mockEnumerateDevices.mockRejectedValueOnce(new Error("Permission denied"));
 
     const TestComponent = () => {
@@ -385,7 +387,9 @@ describe("useAudioDevices hook", () => {
 
   it("handles non-Error exception in loadDevicesWithoutPermission", async () => {
     setupMocks();
-    const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(vi.fn());
+    const consoleErrorSpy = vi
+      .spyOn(console, "error")
+      .mockImplementation(vi.fn());
     mockEnumerateDevices.mockRejectedValueOnce("String error");
 
     const TestComponent = () => {
@@ -421,7 +425,9 @@ describe("useAudioDevices hook", () => {
 
   it("handles non-Error exception in loadDevicesWithPermission", async () => {
     setupMocks();
-    const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(vi.fn());
+    const consoleErrorSpy = vi
+      .spyOn(console, "error")
+      .mockImplementation(vi.fn());
     mockGetUserMedia.mockRejectedValueOnce("String error");
 
     const TestComponent = () => {

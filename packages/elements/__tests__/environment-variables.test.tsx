@@ -1,3 +1,7 @@
+import { render, screen } from "@testing-library/react";
+import { userEvent } from "@testing-library/user-event";
+import { describe, expect, it, vi } from "vitest";
+
 import {
   EnvironmentVariable,
   EnvironmentVariableCopyButton,
@@ -9,9 +13,6 @@ import {
   EnvironmentVariablesTitle,
   EnvironmentVariablesToggle,
 } from "../src/environment-variables";
-import { render, screen } from "@testing-library/react";
-import { userEvent } from "@testing-library/user-event";
-import { describe, expect, it, vi } from "vitest";
 
 describe("environmentVariables", () => {
   it("renders children", () => {

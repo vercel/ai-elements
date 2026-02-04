@@ -20,7 +20,6 @@ import {
 } from "../src/model-selector";
 
 describe("modelSelector", () => {
-
   it("renders as a Dialog component", () => {
     const { container } = render(
       <ModelSelector>

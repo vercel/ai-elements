@@ -12,7 +12,12 @@ import {
 } from "../src/conversation";
 
 // Mock use-stick-to-bottom with module-level state using vi.hoisted
-const { mockState, mockScrollToBottom, StickToBottomMock, StickToBottomContent } = vi.hoisted(() => {
+const {
+  mockState,
+  mockScrollToBottom,
+  StickToBottomMock,
+  StickToBottomContent,
+} = vi.hoisted(() => {
   const mockState = { isAtBottom: true };
   const mockScrollToBottom = vi.fn();
 
@@ -21,17 +26,25 @@ const { mockState, mockScrollToBottom, StickToBottomMock, StickToBottomContent }
     [key: string]: unknown;
   }
 
+  // These components must be defined inside vi.hoisted() for mock setup
+  // oxlint-disable-next-line eslint-plugin-unicorn(consistent-function-scoping)
   const StickToBottomMock = ({ children, ...props }: MockProps) => (
     <div role="log" {...props}>
       {children}
     </div>
   );
 
+  // oxlint-disable-next-line eslint-plugin-unicorn(consistent-function-scoping)
   const StickToBottomContent = ({ children, ...props }: MockProps) => (
     <div {...props}>{children}</div>
   );
 
-  return { mockState, mockScrollToBottom, StickToBottomMock, StickToBottomContent };
+  return {
+    StickToBottomContent,
+    StickToBottomMock,
+    mockScrollToBottom,
+    mockState,
+  };
 });
 
 // oxlint-disable-next-line typescript-eslint(consistent-type-imports)

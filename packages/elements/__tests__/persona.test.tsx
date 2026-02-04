@@ -13,12 +13,12 @@ const {
   mockUseViewModelInstanceColor,
   MockRiveComponent,
 } = vi.hoisted(() => ({
+  MockRiveComponent: vi.fn(() => <div data-testid="rive-component" />),
   mockUseRive: vi.fn(),
   mockUseStateMachineInput: vi.fn(),
   mockUseViewModel: vi.fn(),
   mockUseViewModelInstance: vi.fn(),
   mockUseViewModelInstanceColor: vi.fn(),
-  MockRiveComponent: vi.fn(() => <div data-testid="rive-component" />),
 }));
 
 // oxlint-disable-next-line typescript-eslint(consistent-type-imports)
