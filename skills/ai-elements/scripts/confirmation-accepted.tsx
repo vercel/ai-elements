@@ -13,7 +13,7 @@ import { nanoid } from "nanoid";
 const Example = () => (
   <div className="w-full max-w-2xl">
     <Confirmation
-      approval={{ id: nanoid(), approved: true }}
+      approval={{ approved: true, id: nanoid() }}
       state="approval-responded"
     >
       <ConfirmationTitle>

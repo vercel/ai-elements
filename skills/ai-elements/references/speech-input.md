@@ -44,11 +44,11 @@ The component extends the shadcn/ui Button component, so all Button props are av
 
 The component automatically detects browser capabilities and uses the best available method:
 
-| Browser | Mode | Behavior |
-|---------|------|----------|
-| Chrome, Edge | Web Speech API | Real-time transcription, no server required |
-| Firefox, Safari | MediaRecorder | Records audio, sends to external transcription service |
-| Unsupported | Disabled | Button is disabled |
+| Browser         | Mode           | Behavior                                               |
+| --------------- | -------------- | ------------------------------------------------------ |
+| Chrome, Edge    | Web Speech API | Real-time transcription, no server required            |
+| Firefox, Safari | MediaRecorder  | Records audio, sends to external transcription service |
+| Unsupported     | Disabled       | Button is disabled                                     |
 
 ### Web Speech API Mode (Chrome, Edge)
 
@@ -92,12 +92,12 @@ The component only calls `onTranscriptionChange` with **final transcripts**. Int
 
 The component provides cross-browser support through a two-tier system:
 
-| Browser | API Used | Requirements |
-|---------|----------|--------------|
-| Chrome | Web Speech API | None |
-| Edge | Web Speech API | None |
-| Firefox | MediaRecorder | `onAudioRecorded` prop |
-| Safari | MediaRecorder | `onAudioRecorded` prop |
+| Browser | API Used       | Requirements           |
+| ------- | -------------- | ---------------------- |
+| Chrome  | Web Speech API | None                   |
+| Edge    | Web Speech API | None                   |
+| Firefox | MediaRecorder  | `onAudioRecorded` prop |
+| Safari  | MediaRecorder  | `onAudioRecorded` prop |
 
 For full cross-browser support, provide the `onAudioRecorded` callback that sends audio to a transcription service like OpenAI Whisper, Google Cloud Speech-to-Text, or AssemblyAI.
 
@@ -136,7 +136,7 @@ const handleAudioRecorded = async (audioBlob: Blob): Promise<string> => {
 <SpeechInput
   onTranscriptionChange={(text) => console.log(text)}
   onAudioRecorded={handleAudioRecorded}
-/>
+/>;
 ```
 
 ## Notes

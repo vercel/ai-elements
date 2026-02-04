@@ -225,9 +225,7 @@ export default function CustomVoiceDisplay() {
   return (
     <div>
       <p>Selected voice: {value ?? "None"}</p>
-      <button onClick={() => setOpen(!open)}>
-        Toggle Dialog
-      </button>
+      <button onClick={() => setOpen(!open)}>Toggle Dialog</button>
     </div>
   );
 }

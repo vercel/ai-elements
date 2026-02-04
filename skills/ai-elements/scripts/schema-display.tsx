@@ -18,77 +18,77 @@ const Example = () => (
     method="POST"
     parameters={[
       {
-        name: "userId",
-        type: "string",
-        required: true,
         description: "The unique identifier of the user",
         location: "path",
+        name: "userId",
+        required: true,
+        type: "string",
       },
       {
-        name: "draft",
-        type: "boolean",
-        required: false,
         description: "Save as draft instead of publishing",
         location: "query",
+        name: "draft",
+        required: false,
+        type: "boolean",
       },
     ]}
     path="/api/users/{userId}/posts"
     requestBody={[
       {
-        name: "title",
-        type: "string",
-        required: true,
         description: "The post title",
-      },
-      {
-        name: "content",
-        type: "string",
+        name: "title",
         required: true,
-        description: "The post content in markdown format",
+        type: "string",
       },
       {
-        name: "tags",
-        type: "array",
+        description: "The post content in markdown format",
+        name: "content",
+        required: true,
+        type: "string",
+      },
+      {
         description: "Tags for categorization",
         items: { name: "tag", type: "string" },
+        name: "tags",
+        type: "array",
       },
       {
-        name: "metadata",
-        type: "object",
         description: "Additional metadata",
+        name: "metadata",
         properties: [
           {
+            description: "SEO optimized title",
             name: "seoTitle",
             type: "string",
-            description: "SEO optimized title",
           },
           {
+            description: "Meta description",
             name: "seoDescription",
             type: "string",
-            description: "Meta description",
           },
         ],
+        type: "object",
       },
     ]}
     responseBody={[
-      { name: "id", type: "string", required: true, description: "Post ID" },
-      { name: "title", type: "string", required: true },
-      { name: "content", type: "string", required: true },
+      { description: "Post ID", name: "id", required: true, type: "string" },
+      { name: "title", required: true, type: "string" },
+      { name: "content", required: true, type: "string" },
       {
-        name: "createdAt",
-        type: "string",
-        required: true,
         description: "ISO 8601 timestamp",
+        name: "createdAt",
+        required: true,
+        type: "string",
       },
       {
         name: "author",
-        type: "object",
-        required: true,
         properties: [
-          { name: "id", type: "string", required: true },
-          { name: "name", type: "string", required: true },
+          { name: "id", required: true, type: "string" },
+          { name: "name", required: true, type: "string" },
           { name: "avatar", type: "string" },
         ],
+        required: true,
+        type: "object",
       },
     ]}
   >

@@ -115,7 +115,7 @@ const InputDemo = () => {
           model: model,
           webSearch: useWebSearch,
         },
-      },
+      }
     );
     setText("");
   };

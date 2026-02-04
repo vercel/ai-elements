@@ -19,23 +19,23 @@ Build a simple stateful weather app that renders the last message in a tool usin
 Add the following component to your frontend:
 
 ```tsx title="app/page.tsx"
-'use client';
+"use client";
 
-import { useChat } from '@ai-sdk/react';
-import { DefaultChatTransport, type ToolUIPart } from 'ai';
-import { Button } from '@/components/ui/button';
-import { MessageResponse } from '@/components/ai-elements/message';
+import { useChat } from "@ai-sdk/react";
+import { DefaultChatTransport, type ToolUIPart } from "ai";
+import { Button } from "@/components/ui/button";
+import { MessageResponse } from "@/components/ai-elements/message";
 import {
   Tool,
   ToolContent,
   ToolHeader,
   ToolInput,
   ToolOutput,
-} from '@/components/ai-elements/tool';
+} from "@/components/ai-elements/tool";
 
 type WeatherToolInput = {
   location: string;
-  units: 'celsius' | 'fahrenheit';
+  units: "celsius" | "fahrenheit";
 };
 
 type WeatherToolOutput = {
@@ -57,30 +57,33 @@ type WeatherToolUIPart = ToolUIPart<{
 const Example = () => {
   const { messages, sendMessage, status } = useChat({
     transport: new DefaultChatTransport({
-      api: '/api/weather',
+      api: "/api/weather",
     }),
   });
 
   const handleWeatherClick = () => {
-    sendMessage({ text: 'Get weather data for San Francisco in fahrenheit' });
+    sendMessage({ text: "Get weather data for San Francisco in fahrenheit" });
   };
 
   const latestMessage = messages[messages.length - 1];
   const weatherTool = latestMessage?.parts?.find(
-    (part) => part.type === 'tool-fetch_weather_data',
+    (part) => part.type === "tool-fetch_weather_data"
   ) as WeatherToolUIPart | undefined;
 
   return (
     <div className="max-w-4xl mx-auto p-6 relative size-full rounded-lg border h-[600px]">
       <div className="flex flex-col h-full">
         <div className="space-y-4">
-          <Button onClick={handleWeatherClick} disabled={status !== 'ready'}>
+          <Button onClick={handleWeatherClick} disabled={status !== "ready"}>
             Get Weather for San Francisco
           </Button>
 
           {weatherTool && (
             <Tool defaultOpen={true}>
-              <ToolHeader type="tool-fetch_weather_data" state={weatherTool.state} />
+              <ToolHeader
+                type="tool-fetch_weather_data"
+                state={weatherTool.state}
+              />
               <ToolContent>
                 <ToolInput input={weatherTool.input} />
                 <ToolOutput
@@ -117,8 +120,8 @@ export default Example;
 Add the following route to your backend:
 
 ```ts title="app/api/weather/route.tsx"
-import { streamText, UIMessage, convertToModelMessages } from 'ai';
-import { z } from 'zod';
+import { streamText, UIMessage, convertToModelMessages } from "ai";
+import { z } from "zod";
 
 // Allow streaming responses up to 30 seconds
 export const maxDuration = 30;
@@ -127,38 +130,38 @@ export async function POST(req: Request) {
   const { messages }: { messages: UIMessage[] } = await req.json();
 
   const result = streamText({
-    model: 'openai/gpt-4o',
+    model: "openai/gpt-4o",
     messages: await convertToModelMessages(messages),
     tools: {
       fetch_weather_data: {
-        description: 'Fetch weather information for a specific location',
+        description: "Fetch weather information for a specific location",
         parameters: z.object({
           location: z
             .string()
-            .describe('The city or location to get weather for'),
+            .describe("The city or location to get weather for"),
           units: z
-            .enum(['celsius', 'fahrenheit'])
-            .default('celsius')
-            .describe('Temperature units'),
+            .enum(["celsius", "fahrenheit"])
+            .default("celsius")
+            .describe("Temperature units"),
         }),
         inputSchema: z.object({
           location: z.string(),
-          units: z.enum(['celsius', 'fahrenheit']).default('celsius'),
+          units: z.enum(["celsius", "fahrenheit"]).default("celsius"),
         }),
         execute: async ({ location, units }) => {
           await new Promise((resolve) => setTimeout(resolve, 1500));
 
           const temp =
-            units === 'celsius'
+            units === "celsius"
               ? Math.floor(Math.random() * 35) + 5
               : Math.floor(Math.random() * 63) + 41;
 
           return {
             location,
-            temperature: `${temp}°${units === 'celsius' ? 'C' : 'F'}`,
-            conditions: 'Sunny',
+            temperature: `${temp}°${units === "celsius" ? "C" : "F"}`,
+            conditions: "Sunny",
             humidity: `12%`,
-            windSpeed: `35 ${units === 'celsius' ? 'km/h' : 'mph'}`,
+            windSpeed: `35 ${units === "celsius" ? "km/h" : "mph"}`,
             lastUpdated: new Date().toLocaleString(),
           };
         },
@@ -265,13 +268,14 @@ type ToolPart = ToolUIPart | DynamicToolUIPart;
 Returns a Badge component with icon and label based on tool state.
 
 ```tsx
-import { getStatusBadge } from '@/components/ai-elements/tool';
+import { getStatusBadge } from "@/components/ai-elements/tool";
 
 // Returns a Badge with appropriate icon and label
-const badge = getStatusBadge('output-available');
+const badge = getStatusBadge("output-available");
 ```
 
 Supported states:
+
 - `input-streaming` - "Pending"
 - `input-available` - "Running"
 - `approval-requested` - "Awaiting Approval"

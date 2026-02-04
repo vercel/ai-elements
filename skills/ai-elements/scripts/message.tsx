@@ -27,7 +27,7 @@ import {
   ThumbsUpIcon,
 } from "lucide-react";
 import { nanoid } from "nanoid";
-import { useState } from "react";
+import { memo, useCallback, useState } from "react";
 
 const messages: {
   key: string;
@@ -43,32 +43,31 @@ const messages: {
   }[];
 }[] = [
   {
-    key: nanoid(),
-    from: "user",
-    content: "How do React hooks work and when should I use them?",
     attachments: [
       {
+        filename: "palace-of-fine-arts.jpg",
         id: nanoid(),
+        mediaType: "image/jpeg",
         type: "file",
         url: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=400&fit=crop",
-        mediaType: "image/jpeg",
-        filename: "palace-of-fine-arts.jpg",
       },
       {
+        filename: "react-hooks-guide.pdf",
         id: nanoid(),
+        mediaType: "application/pdf",
         type: "file",
         url: "",
-        mediaType: "application/pdf",
-        filename: "react-hooks-guide.pdf",
       },
     ],
+    content: "How do React hooks work and when should I use them?",
+    from: "user",
+    key: nanoid(),
   },
   {
-    key: nanoid(),
     from: "assistant",
+    key: nanoid(),
     versions: [
       {
-        id: nanoid(),
         content: `# React Hooks Guide
 
 React hooks are functions that let you "hook into" React state and lifecycle features from function components. Here's what you need to know:
@@ -115,9 +114,9 @@ useEffect(() => {
 2. Only call hooks from **React functions** (components or custom hooks)
 
 Would you like to explore more advanced hooks like \`useCallback\` or \`useMemo\`?`,
+        id: nanoid(),
       },
       {
-        id: nanoid(),
         content: `React hooks are special functions that let you use React features in function components. The most common ones are:
 
 - **useState** - for managing component state
@@ -140,9 +139,9 @@ function Counter() {
 \`\`\`
 
 Which specific hook would you like to learn more about?`,
+        id: nanoid(),
       },
       {
-        id: nanoid(),
         content: `Absolutely! React hooks are a powerful feature introduced in React 16.8. They solve several problems:
 
 ## Key Benefits
@@ -163,22 +162,108 @@ Which specific hook would you like to learn more about?`,
 | useMemo | Memoize values |
 
 The beauty of hooks is that they let you reuse stateful logic without changing your component hierarchy. Want to dive into a specific hook?`,
+        id: nanoid(),
       },
     ],
   },
 ];
 
+const handleCopy = (content: string) => {
+  navigator.clipboard.writeText(content);
+};
+
+const handleRetry = () => {
+  console.log("Retrying...");
+};
+
+interface LikeActionProps {
+  messageKey: string;
+  isLiked: boolean;
+  onToggle: (key: string) => void;
+}
+
+const LikeAction = memo(
+  ({ messageKey, isLiked, onToggle }: LikeActionProps) => {
+    const handleClick = useCallback(
+      () => onToggle(messageKey),
+      [messageKey, onToggle]
+    );
+    return (
+      <MessageAction
+        label="Like"
+        onClick={handleClick}
+        tooltip="Like this response"
+      >
+        <ThumbsUpIcon
+          className="size-4"
+          fill={isLiked ? "currentColor" : "none"}
+        />
+      </MessageAction>
+    );
+  }
+);
+
+LikeAction.displayName = "LikeAction";
+
+interface DislikeActionProps {
+  messageKey: string;
+  isDisliked: boolean;
+  onToggle: (key: string) => void;
+}
+
+const DislikeAction = memo(
+  ({ messageKey, isDisliked, onToggle }: DislikeActionProps) => {
+    const handleClick = useCallback(
+      () => onToggle(messageKey),
+      [messageKey, onToggle]
+    );
+    return (
+      <MessageAction
+        label="Dislike"
+        onClick={handleClick}
+        tooltip="Dislike this response"
+      >
+        <ThumbsDownIcon
+          className="size-4"
+          fill={isDisliked ? "currentColor" : "none"}
+        />
+      </MessageAction>
+    );
+  }
+);
+
+DislikeAction.displayName = "DislikeAction";
+
+interface CopyActionProps {
+  content: string;
+}
+
+const CopyAction = memo(({ content }: CopyActionProps) => {
+  const handleClick = useCallback(() => handleCopy(content), [content]);
+  return (
+    <MessageAction
+      label="Copy"
+      onClick={handleClick}
+      tooltip="Copy to clipboard"
+    >
+      <CopyIcon className="size-4" />
+    </MessageAction>
+  );
+});
+
+CopyAction.displayName = "CopyAction";
+
 const Example = () => {
   const [liked, setLiked] = useState<Record<string, boolean>>({});
   const [disliked, setDisliked] = useState<Record<string, boolean>>({});
 
-  const handleCopy = (content: string) => {
-    navigator.clipboard.writeText(content);
-  };
+  const handleToggleLike = useCallback((key: string) => {
+    setLiked((prev) => ({ ...prev, [key]: !prev[key] }));
+  }, []);
 
-  const handleRetry = () => {
-    console.log("Retrying...");
-  };
+  const handleToggleDislike = useCallback((key: string) => {
+    setDisliked((prev) => ({ ...prev, [key]: !prev[key] }));
+  }, []);
 
   return (
     <div className="flex flex-col gap-4">
@@ -196,7 +281,7 @@ const Example = () => {
               </MessageBranchContent>
               {message.from === "assistant" && (
                 <MessageToolbar>
-                  <MessageBranchSelector from={message.from}>
+                  <MessageBranchSelector>
                     <MessageBranchPrevious />
                     <MessageBranchPage />
                     <MessageBranchNext />
@@ -209,47 +294,21 @@ const Example = () => {
                     >
                       <RefreshCcwIcon className="size-4" />
                     </MessageAction>
-                    <MessageAction
-                      label="Like"
-                      onClick={() =>
-                        setLiked((prev) => ({
-                          ...prev,
-                          [message.key]: !prev[message.key],
-                        }))
+                    <LikeAction
+                      isLiked={liked[message.key] ?? false}
+                      messageKey={message.key}
+                      onToggle={handleToggleLike}
+                    />
+                    <DislikeAction
+                      isDisliked={disliked[message.key] ?? false}
+                      messageKey={message.key}
+                      onToggle={handleToggleDislike}
+                    />
+                    <CopyAction
+                      content={
+                        message.versions?.find((v) => v.id)?.content || ""
                       }
-                      tooltip="Like this response"
-                    >
-                      <ThumbsUpIcon
-                        className="size-4"
-                        fill={liked[message.key] ? "currentColor" : "none"}
-                      />
-                    </MessageAction>
-                    <MessageAction
-                      label="Dislike"
-                      onClick={() =>
-                        setDisliked((prev) => ({
-                          ...prev,
-                          [message.key]: !prev[message.key],
-                        }))
-                      }
-                      tooltip="Dislike this response"
-                    >
-                      <ThumbsDownIcon
-                        className="size-4"
-                        fill={disliked[message.key] ? "currentColor" : "none"}
-                      />
-                    </MessageAction>
-                    <MessageAction
-                      label="Copy"
-                      onClick={() =>
-                        handleCopy(
-                          message.versions?.find((v) => v.id)?.content || ""
-                        )
-                      }
-                      tooltip="Copy to clipboard"
-                    >
-                      <CopyIcon className="size-4" />
-                    </MessageAction>
+                    />
                   </MessageActions>
                 </MessageToolbar>
               )}
@@ -282,43 +341,17 @@ const Example = () => {
                   >
                     <RefreshCcwIcon className="size-4" />
                   </MessageAction>
-                  <MessageAction
-                    label="Like"
-                    onClick={() =>
-                      setLiked((prev) => ({
-                        ...prev,
-                        [message.key]: !prev[message.key],
-                      }))
-                    }
-                    tooltip="Like this response"
-                  >
-                    <ThumbsUpIcon
-                      className="size-4"
-                      fill={liked[message.key] ? "currentColor" : "none"}
-                    />
-                  </MessageAction>
-                  <MessageAction
-                    label="Dislike"
-                    onClick={() =>
-                      setDisliked((prev) => ({
-                        ...prev,
-                        [message.key]: !prev[message.key],
-                      }))
-                    }
-                    tooltip="Dislike this response"
-                  >
-                    <ThumbsDownIcon
-                      className="size-4"
-                      fill={disliked[message.key] ? "currentColor" : "none"}
-                    />
-                  </MessageAction>
-                  <MessageAction
-                    label="Copy"
-                    onClick={() => handleCopy(message.content || "")}
-                    tooltip="Copy to clipboard"
-                  >
-                    <CopyIcon className="size-4" />
-                  </MessageAction>
+                  <LikeAction
+                    isLiked={liked[message.key] ?? false}
+                    messageKey={message.key}
+                    onToggle={handleToggleLike}
+                  />
+                  <DislikeAction
+                    isDisliked={disliked[message.key] ?? false}
+                    messageKey={message.key}
+                    onToggle={handleToggleDislike}
+                  />
+                  <CopyAction content={message.content || ""} />
                 </MessageActions>
               )}
             </div>

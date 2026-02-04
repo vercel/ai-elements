@@ -10,6 +10,14 @@ import {
 } from "@/components/ai-elements/code-block";
 import { FileIcon } from "lucide-react";
 
+const handleCopy = () => {
+  console.log("Copied code to clipboard");
+};
+
+const handleCopyError = () => {
+  console.error("Failed to copy code to clipboard");
+};
+
 const code = `function MyComponent(props) {
   return (
     <div>
@@ -28,10 +36,7 @@ const Example = () => (
           <CodeBlockFilename>MyComponent.jsx</CodeBlockFilename>
         </CodeBlockTitle>
         <CodeBlockActions>
-          <CodeBlockCopyButton
-            onCopy={() => console.log("Copied code to clipboard")}
-            onError={() => console.error("Failed to copy code to clipboard")}
-          />
+          <CodeBlockCopyButton onCopy={handleCopy} onError={handleCopyError} />
         </CodeBlockActions>
       </CodeBlockHeader>
     </CodeBlock>

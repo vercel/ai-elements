@@ -7,12 +7,12 @@ const Example = () => (
     method="POST"
     path="/api/posts"
     requestBody={[
-      { name: "title", type: "string", required: true },
-      { name: "content", type: "string", required: true },
+      { name: "title", required: true, type: "string" },
+      { name: "content", required: true, type: "string" },
     ]}
     responseBody={[
-      { name: "id", type: "string", required: true },
-      { name: "createdAt", type: "string", required: true },
+      { name: "id", required: true, type: "string" },
+      { name: "createdAt", required: true, type: "string" },
     ]}
   />
 );

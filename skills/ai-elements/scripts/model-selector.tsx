@@ -15,278 +15,314 @@ import {
 } from "@/components/ai-elements/model-selector";
 import { Button } from "@/components/ui/button";
 import { CheckIcon } from "lucide-react";
-import { useState } from "react";
+import { memo, useCallback, useState } from "react";
 
 const models = [
   {
+    chef: "OpenAI",
+    chefSlug: "openai",
     id: "gpt-4o",
     name: "GPT-4o",
-    chef: "OpenAI",
-    chefSlug: "openai",
     providers: ["openai", "azure"],
   },
   {
+    chef: "OpenAI",
+    chefSlug: "openai",
     id: "gpt-4o-mini",
     name: "GPT-4o Mini",
-    chef: "OpenAI",
-    chefSlug: "openai",
     providers: ["openai", "azure"],
   },
   {
+    chef: "OpenAI",
+    chefSlug: "openai",
     id: "o1",
     name: "o1",
-    chef: "OpenAI",
-    chefSlug: "openai",
     providers: ["openai", "azure"],
   },
   {
+    chef: "OpenAI",
+    chefSlug: "openai",
     id: "o1-mini",
     name: "o1 Mini",
-    chef: "OpenAI",
-    chefSlug: "openai",
     providers: ["openai", "azure"],
   },
   {
+    chef: "Anthropic",
+    chefSlug: "anthropic",
     id: "claude-opus-4-20250514",
     name: "Claude 4 Opus",
-    chef: "Anthropic",
-    chefSlug: "anthropic",
     providers: ["anthropic", "azure", "google-vertex", "amazon-bedrock"],
   },
   {
+    chef: "Anthropic",
+    chefSlug: "anthropic",
     id: "claude-sonnet-4-20250514",
     name: "Claude 4 Sonnet",
-    chef: "Anthropic",
-    chefSlug: "anthropic",
     providers: ["anthropic", "azure", "google-vertex", "amazon-bedrock"],
   },
   {
+    chef: "Anthropic",
+    chefSlug: "anthropic",
     id: "claude-3.5-sonnet",
     name: "Claude 3.5 Sonnet",
-    chef: "Anthropic",
-    chefSlug: "anthropic",
     providers: ["anthropic", "azure", "google-vertex", "amazon-bedrock"],
   },
   {
+    chef: "Anthropic",
+    chefSlug: "anthropic",
     id: "claude-3.5-haiku",
     name: "Claude 3.5 Haiku",
-    chef: "Anthropic",
-    chefSlug: "anthropic",
     providers: ["anthropic", "azure", "google-vertex", "amazon-bedrock"],
   },
   {
+    chef: "Google",
+    chefSlug: "google",
     id: "gemini-2.0-flash-exp",
     name: "Gemini 2.0 Flash",
-    chef: "Google",
-    chefSlug: "google",
     providers: ["google", "google-vertex"],
   },
   {
+    chef: "Google",
+    chefSlug: "google",
     id: "gemini-1.5-pro",
     name: "Gemini 1.5 Pro",
-    chef: "Google",
-    chefSlug: "google",
     providers: ["google", "google-vertex"],
   },
   {
+    chef: "Google",
+    chefSlug: "google",
     id: "gemini-1.5-flash",
     name: "Gemini 1.5 Flash",
-    chef: "Google",
-    chefSlug: "google",
     providers: ["google", "google-vertex"],
   },
   {
-    id: "llama-3.3-70b",
-    name: "Llama 3.3 70B",
     chef: "Meta",
     chefSlug: "llama",
+    id: "llama-3.3-70b",
+    name: "Llama 3.3 70B",
     providers: ["groq", "togetherai", "amazon-bedrock"],
   },
   {
-    id: "llama-3.1-405b",
-    name: "Llama 3.1 405B",
     chef: "Meta",
     chefSlug: "llama",
+    id: "llama-3.1-405b",
+    name: "Llama 3.1 405B",
     providers: ["togetherai", "amazon-bedrock"],
   },
   {
-    id: "llama-3.1-70b",
-    name: "Llama 3.1 70B",
     chef: "Meta",
     chefSlug: "llama",
+    id: "llama-3.1-70b",
+    name: "Llama 3.1 70B",
     providers: ["groq", "togetherai", "amazon-bedrock"],
   },
   {
-    id: "llama-3.1-8b",
-    name: "Llama 3.1 8B",
     chef: "Meta",
     chefSlug: "llama",
+    id: "llama-3.1-8b",
+    name: "Llama 3.1 8B",
     providers: ["groq", "togetherai"],
   },
   {
+    chef: "DeepSeek",
+    chefSlug: "deepseek",
     id: "deepseek-r1",
     name: "DeepSeek R1",
-    chef: "DeepSeek",
-    chefSlug: "deepseek",
     providers: ["deepseek", "openrouter"],
   },
   {
+    chef: "DeepSeek",
+    chefSlug: "deepseek",
     id: "deepseek-v3",
     name: "DeepSeek V3",
-    chef: "DeepSeek",
-    chefSlug: "deepseek",
     providers: ["deepseek", "openrouter"],
   },
   {
+    chef: "DeepSeek",
+    chefSlug: "deepseek",
     id: "deepseek-coder-v2",
     name: "DeepSeek Coder V2",
-    chef: "DeepSeek",
-    chefSlug: "deepseek",
     providers: ["deepseek", "openrouter"],
   },
   {
+    chef: "Mistral AI",
+    chefSlug: "mistral",
     id: "mistral-large",
     name: "Mistral Large",
-    chef: "Mistral AI",
-    chefSlug: "mistral",
     providers: ["mistral", "azure"],
   },
   {
+    chef: "Mistral AI",
+    chefSlug: "mistral",
     id: "mistral-small",
     name: "Mistral Small",
-    chef: "Mistral AI",
-    chefSlug: "mistral",
     providers: ["mistral", "azure"],
   },
   {
-    id: "codestral",
-    name: "Codestral",
     chef: "Mistral AI",
     chefSlug: "mistral",
+    id: "codestral",
+    name: "Codestral",
     providers: ["mistral"],
   },
   {
+    chef: "Alibaba",
+    chefSlug: "alibaba",
     id: "qwen-2.5-72b",
     name: "Qwen 2.5 72B",
-    chef: "Alibaba",
-    chefSlug: "alibaba",
     providers: ["alibaba", "openrouter"],
   },
   {
+    chef: "Alibaba",
+    chefSlug: "alibaba",
     id: "qwen-2.5-coder-32b",
     name: "Qwen 2.5 Coder 32B",
-    chef: "Alibaba",
-    chefSlug: "alibaba",
     providers: ["alibaba", "openrouter"],
   },
   {
-    id: "qwen-max",
-    name: "Qwen Max",
     chef: "Alibaba",
     chefSlug: "alibaba",
+    id: "qwen-max",
+    name: "Qwen Max",
     providers: ["alibaba"],
   },
   {
+    chef: "Cohere",
+    chefSlug: "cohere",
     id: "command-r-plus",
     name: "Command R+",
-    chef: "Cohere",
-    chefSlug: "cohere",
     providers: ["cohere", "azure", "amazon-bedrock"],
   },
   {
+    chef: "Cohere",
+    chefSlug: "cohere",
     id: "command-r",
     name: "Command R",
-    chef: "Cohere",
-    chefSlug: "cohere",
     providers: ["cohere", "azure", "amazon-bedrock"],
   },
   {
+    chef: "xAI",
+    chefSlug: "xai",
     id: "grok-3",
     name: "Grok 3",
-    chef: "xAI",
-    chefSlug: "xai",
     providers: ["xai"],
   },
   {
+    chef: "xAI",
+    chefSlug: "xai",
     id: "grok-2-1212",
     name: "Grok 2 1212",
-    chef: "xAI",
-    chefSlug: "xai",
     providers: ["xai"],
   },
   {
+    chef: "xAI",
+    chefSlug: "xai",
     id: "grok-vision",
     name: "Grok Vision",
-    chef: "xAI",
-    chefSlug: "xai",
     providers: ["xai"],
   },
   {
+    chef: "Moonshot AI",
+    chefSlug: "moonshotai",
     id: "moonshot-v1-128k",
     name: "Moonshot v1 128K",
-    chef: "Moonshot AI",
-    chefSlug: "moonshotai",
     providers: ["moonshotai"],
   },
   {
+    chef: "Moonshot AI",
+    chefSlug: "moonshotai",
     id: "moonshot-v1-32k",
     name: "Moonshot v1 32K",
-    chef: "Moonshot AI",
-    chefSlug: "moonshotai",
     providers: ["moonshotai"],
   },
   {
+    chef: "Perplexity",
+    chefSlug: "perplexity",
     id: "sonar-pro",
     name: "Sonar Pro",
-    chef: "Perplexity",
-    chefSlug: "perplexity",
     providers: ["perplexity"],
   },
   {
+    chef: "Perplexity",
+    chefSlug: "perplexity",
     id: "sonar",
     name: "Sonar",
-    chef: "Perplexity",
-    chefSlug: "perplexity",
     providers: ["perplexity"],
   },
   {
-    id: "v0-chat",
-    name: "v0 Chat",
     chef: "Vercel",
     chefSlug: "v0",
+    id: "v0-chat",
+    name: "v0 Chat",
     providers: ["vercel"],
   },
   {
+    chef: "Amazon",
+    chefSlug: "amazon-bedrock",
     id: "nova-pro",
     name: "Nova Pro",
-    chef: "Amazon",
-    chefSlug: "amazon-bedrock",
     providers: ["amazon-bedrock"],
   },
   {
+    chef: "Amazon",
+    chefSlug: "amazon-bedrock",
     id: "nova-lite",
     name: "Nova Lite",
-    chef: "Amazon",
-    chefSlug: "amazon-bedrock",
     providers: ["amazon-bedrock"],
   },
   {
-    id: "nova-micro",
-    name: "Nova Micro",
     chef: "Amazon",
     chefSlug: "amazon-bedrock",
+    id: "nova-micro",
+    name: "Nova Micro",
     providers: ["amazon-bedrock"],
   },
 ];
+
+interface ModelItemProps {
+  model: (typeof models)[0];
+  selectedModel: string;
+  onSelect: (id: string) => void;
+}
+
+const ModelItem = memo(({ model, selectedModel, onSelect }: ModelItemProps) => {
+  const handleSelect = useCallback(
+    () => onSelect(model.id),
+    [onSelect, model.id]
+  );
+  return (
+    <ModelSelectorItem key={model.id} onSelect={handleSelect} value={model.id}>
+      <ModelSelectorLogo provider={model.chefSlug} />
+      <ModelSelectorName>{model.name}</ModelSelectorName>
+      <ModelSelectorLogoGroup>
+        {model.providers.map((provider) => (
+          <ModelSelectorLogo key={provider} provider={provider} />
+        ))}
+      </ModelSelectorLogoGroup>
+      {selectedModel === model.id ? (
+        <CheckIcon className="ml-auto size-4" />
+      ) : (
+        <div className="ml-auto size-4" />
+      )}
+    </ModelSelectorItem>
+  );
+});
+
+ModelItem.displayName = "ModelItem";
 
 const Example = () => {
   const [open, setOpen] = useState(false);
   const [selectedModel, setSelectedModel] = useState<string>("gpt-4o");
 
+  const handleModelSelect = useCallback((id: string) => {
+    setSelectedModel(id);
+    setOpen(false);
+  }, []);
+
   const selectedModelData = models.find((model) => model.id === selectedModel);
 
   // Get unique chefs in order of appearance
-  const chefs = Array.from(new Set(models.map((model) => model.chef)));
+  const chefs = [...new Set(models.map((model) => model.chef))];
 
   return (
     <div className="flex size-full items-center justify-center p-8">
@@ -310,30 +346,12 @@ const Example = () => {
                 {models
                   .filter((model) => model.chef === chef)
                   .map((model) => (
-                    <ModelSelectorItem
+                    <ModelItem
                       key={model.id}
-                      onSelect={() => {
-                        setSelectedModel(model.id);
-                        setOpen(false);
-                      }}
-                      value={model.id}
-                    >
-                      <ModelSelectorLogo provider={model.chefSlug} />
-                      <ModelSelectorName>{model.name}</ModelSelectorName>
-                      <ModelSelectorLogoGroup>
-                        {model.providers.map((provider) => (
-                          <ModelSelectorLogo
-                            key={provider}
-                            provider={provider}
-                          />
-                        ))}
-                      </ModelSelectorLogoGroup>
-                      {selectedModel === model.id ? (
-                        <CheckIcon className="ml-auto size-4" />
-                      ) : (
-                        <div className="ml-auto size-4" />
-                      )}
-                    </ModelSelectorItem>
+                      model={model}
+                      onSelect={handleModelSelect}
+                      selectedModel={selectedModel}
+                    />
                   ))}
               </ModelSelectorGroup>
             ))}

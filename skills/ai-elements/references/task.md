@@ -19,18 +19,18 @@ Build a mock async programming agent using [`experimental_generateObject`](/docs
 Add the following component to your frontend:
 
 ```tsx title="app/page.tsx"
-'use client';
+"use client";
 
-import { experimental_useObject as useObject } from '@ai-sdk/react';
+import { experimental_useObject as useObject } from "@ai-sdk/react";
 import {
   Task,
   TaskItem,
   TaskItemFile,
   TaskTrigger,
   TaskContent,
-} from '@/components/ai-elements/task';
-import { Button } from '@/components/ui/button';
-import { tasksSchema } from '@/app/api/task/route';
+} from "@/components/ai-elements/task";
+import { Button } from "@/components/ui/button";
+import { tasksSchema } from "@/app/api/task/route";
 import {
   SiReact,
   SiTypescript,
@@ -39,21 +39,21 @@ import {
   SiHtml5,
   SiJson,
   SiMarkdown,
-} from '@icons-pack/react-simple-icons';
+} from "@icons-pack/react-simple-icons";
 
 const iconMap = {
-  react: { component: SiReact, color: '#149ECA' },
-  typescript: { component: SiTypescript, color: '#3178C6' },
-  javascript: { component: SiJavascript, color: '#F7DF1E' },
-  css: { component: SiCss, color: '#1572B6' },
-  html: { component: SiHtml5, color: '#E34F26' },
-  json: { component: SiJson, color: '#000000' },
-  markdown: { component: SiMarkdown, color: '#000000' },
+  react: { component: SiReact, color: "#149ECA" },
+  typescript: { component: SiTypescript, color: "#3178C6" },
+  javascript: { component: SiJavascript, color: "#F7DF1E" },
+  css: { component: SiCss, color: "#1572B6" },
+  html: { component: SiHtml5, color: "#E34F26" },
+  json: { component: SiJson, color: "#000000" },
+  markdown: { component: SiMarkdown, color: "#000000" },
 };
 
 const TaskDemo = () => {
   const { object, submit, isLoading } = useObject({
-    api: '/api/agent',
+    api: "/api/agent",
     schema: tasksSchema,
   });
 
@@ -62,7 +62,7 @@ const TaskDemo = () => {
   };
 
   const renderTaskItem = (item: any, index: number) => {
-    if (item?.type === 'file' && item.file) {
+    if (item?.type === "file" && item.file) {
       const iconInfo = iconMap[item.file.icon as keyof typeof iconMap];
       if (iconInfo) {
         const IconComponent = iconInfo.component;
@@ -80,7 +80,7 @@ const TaskDemo = () => {
         );
       }
     }
-    return item?.text || '';
+    return item?.text || "";
   };
 
   return (
@@ -88,7 +88,7 @@ const TaskDemo = () => {
       <div className="flex flex-col h-full">
         <div className="flex gap-2 mb-6 flex-wrap">
           <Button
-            onClick={() => handleSubmit('React component development')}
+            onClick={() => handleSubmit("React component development")}
             disabled={isLoading}
             variant="outline"
           >
@@ -103,7 +103,7 @@ const TaskDemo = () => {
 
           {object?.tasks?.map((task: any, taskIndex: number) => (
             <Task key={taskIndex} defaultOpen={taskIndex === 0}>
-              <TaskTrigger title={task.title || 'Loading...'} />
+              <TaskTrigger title={task.title || "Loading..."} />
               <TaskContent>
                 {task.items?.map((item: any, itemIndex: number) => (
                   <TaskItem key={itemIndex}>
@@ -125,11 +125,11 @@ export default TaskDemo;
 Add the following route to your backend:
 
 ```ts title="app/api/agent.ts"
-import { streamObject } from 'ai';
-import { z } from 'zod';
+import { streamObject } from "ai";
+import { z } from "zod";
 
 export const taskItemSchema = z.object({
-  type: z.enum(['text', 'file']),
+  type: z.enum(["text", "file"]),
   text: z.string(),
   file: z
     .object({
@@ -143,7 +143,7 @@ export const taskItemSchema = z.object({
 export const taskSchema = z.object({
   title: z.string(),
   items: z.array(taskItemSchema),
-  status: z.enum(['pending', 'in_progress', 'completed']),
+  status: z.enum(["pending", "in_progress", "completed"]),
 });
 
 export const tasksSchema = z.object({
@@ -157,7 +157,7 @@ export async function POST(req: Request) {
   const { prompt } = await req.json();
 
   const result = streamObject({
-    model: 'openai/gpt-4o',
+    model: "openai/gpt-4o",
     schema: tasksSchema,
     prompt: `You are an AI assistant that generates realistic development task workflows. Generate a set of tasks that would occur during ${prompt}.
 

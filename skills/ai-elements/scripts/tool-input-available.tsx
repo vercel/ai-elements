@@ -4,17 +4,17 @@ import { Tool, ToolContent, ToolHeader, ToolInput } from "@/components/ai-elemen
 import { nanoid } from "nanoid";
 
 const toolCall = {
-  type: "tool-image_generation" as const,
-  toolCallId: nanoid(),
-  state: "input-available" as const,
+  errorText: undefined,
   input: {
     prompt: "A futuristic cityscape at sunset with flying cars",
-    style: "digital_art",
-    resolution: "1024x1024",
     quality: "high",
+    resolution: "1024x1024",
+    style: "digital_art",
   },
   output: undefined,
-  errorText: undefined,
+  state: "input-available" as const,
+  toolCallId: nanoid(),
+  type: "tool-image_generation" as const,
 };
 
 const Example = () => (

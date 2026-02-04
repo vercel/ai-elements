@@ -12,11 +12,19 @@ import {
   MicSelectorValue,
 } from "@/components/ai-elements/mic-selector";
 
+const handleOpenChange = (open: boolean) => {
+  console.log("MicSelector is open?", open);
+};
+
+const handleValueChange = (newValue: string) => {
+  console.log("MicSelector value:", newValue);
+};
+
 const Example = () => (
   <div className="flex size-full flex-col items-center justify-center gap-4">
     <MicSelector
-      onOpenChange={(open) => console.log("MicSelector is open?", open)}
-      onValueChange={(newValue) => console.log("MicSelector value:", newValue)}
+      onOpenChange={handleOpenChange}
+      onValueChange={handleValueChange}
     >
       <MicSelectorTrigger className="w-full max-w-sm">
         <MicSelectorValue />

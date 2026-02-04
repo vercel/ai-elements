@@ -19,9 +19,9 @@ Build an error display tool that shows stack traces from AI-generated code using
 Add the following component to your frontend:
 
 ```tsx title="app/page.tsx"
-'use client';
+"use client";
 
-import { useChat } from '@ai-sdk/react';
+import { useChat } from "@ai-sdk/react";
 import {
   StackTrace,
   StackTraceHeader,
@@ -33,22 +33,22 @@ import {
   StackTraceExpandButton,
   StackTraceContent,
   StackTraceFrames,
-} from '@/components/ai-elements/stack-trace';
+} from "@/components/ai-elements/stack-trace";
 
 export default function Page() {
   const { messages } = useChat({
-    api: '/api/run-code',
+    api: "/api/run-code",
   });
 
   return (
     <div className="max-w-4xl mx-auto p-6">
       {messages.map((message) => {
         const toolInvocations = message.parts?.filter(
-          (part) => part.type === 'tool-invocation'
+          (part) => part.type === "tool-invocation"
         );
 
         return toolInvocations?.map((tool) => {
-          if (tool.toolName === 'runCode' && tool.result?.error) {
+          if (tool.toolName === "runCode" && tool.result?.error) {
             return (
               <StackTrace
                 key={tool.toolCallId}
@@ -82,18 +82,18 @@ export default function Page() {
 Add the following route to your backend:
 
 ```tsx title="api/run-code/route.ts"
-import { streamText, tool } from 'ai';
-import { z } from 'zod';
+import { streamText, tool } from "ai";
+import { z } from "zod";
 
 export async function POST(req: Request) {
   const { messages } = await req.json();
 
   const result = streamText({
-    model: 'openai/gpt-4o',
+    model: "openai/gpt-4o",
     messages,
     tools: {
       runCode: tool({
-        description: 'Execute JavaScript code and return any errors',
+        description: "Execute JavaScript code and return any errors",
         parameters: z.object({
           code: z.string(),
         }),

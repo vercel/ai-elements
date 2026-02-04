@@ -28,8 +28,8 @@ const readUrlTool = {
 const summarizeTool = {
   description: "Summarize text into key points",
   inputSchema: z.object({
-    text: z.string().describe("The text to summarize"),
     maxPoints: z.number().optional().describe("Maximum number of key points"),
+    text: z.string().describe("The text to summarize"),
   }),
 };
 

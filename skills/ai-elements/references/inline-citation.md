@@ -19,9 +19,9 @@ Build citations for AI-generated content using [`experimental_generateObject`](/
 Add the following component to your frontend:
 
 ```tsx title="app/page.tsx"
-'use client';
+"use client";
 
-import { experimental_useObject as useObject } from '@ai-sdk/react';
+import { experimental_useObject as useObject } from "@ai-sdk/react";
 import {
   InlineCitation,
   InlineCitationText,
@@ -37,13 +37,13 @@ import {
   InlineCitationCarouselNext,
   InlineCitationSource,
   InlineCitationQuote,
-} from '@/components/ai-elements/inline-citation';
-import { Button } from '@/components/ui/button';
-import { citationSchema } from '@/app/api/citation/route';
+} from "@/components/ai-elements/inline-citation";
+import { Button } from "@/components/ui/button";
+import { citationSchema } from "@/app/api/citation/route";
 
 const CitationDemo = () => {
   const { object, submit, isLoading } = useObject({
-    api: '/api/citation',
+    api: "/api/citation",
     schema: citationSchema,
   });
 
@@ -55,14 +55,14 @@ const CitationDemo = () => {
     <div className="max-w-4xl mx-auto p-6 space-y-6">
       <div className="flex gap-2 mb-6">
         <Button
-          onClick={() => handleSubmit('artificial intelligence')}
+          onClick={() => handleSubmit("artificial intelligence")}
           disabled={isLoading}
           variant="outline"
         >
           Generate AI Content
         </Button>
         <Button
-          onClick={() => handleSubmit('climate change')}
+          onClick={() => handleSubmit("climate change")}
           disabled={isLoading}
           variant="outline"
         >
@@ -84,7 +84,7 @@ const CitationDemo = () => {
               if (citationMatch) {
                 const citationNumber = citationMatch[1];
                 const citation = object.citations?.find(
-                  (c: any) => c.number === citationNumber,
+                  (c: any) => c.number === citationNumber
                 );
 
                 if (citation) {
@@ -135,8 +135,8 @@ export default CitationDemo;
 Add the following route to your backend:
 
 ```ts title="app/api/citation/route.ts"
-import { streamObject } from 'ai';
-import { z } from 'zod';
+import { streamObject } from "ai";
+import { z } from "zod";
 
 export const citationSchema = z.object({
   content: z.string(),
@@ -147,7 +147,7 @@ export const citationSchema = z.object({
       url: z.string(),
       description: z.string().optional(),
       quote: z.string().optional(),
-    }),
+    })
   ),
 });
 
@@ -158,7 +158,7 @@ export async function POST(req: Request) {
   const { prompt } = await req.json();
 
   const result = streamObject({
-    model: 'openai/gpt-4o',
+    model: "openai/gpt-4o",
     schema: citationSchema,
     prompt: `Generate a well-researched paragraph about ${prompt} with proper citations. 
     

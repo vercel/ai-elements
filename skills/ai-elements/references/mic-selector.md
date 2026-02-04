@@ -119,13 +119,14 @@ A custom hook for managing audio input devices. This hook is used internally by 
 import { useAudioDevices } from "@repo/elements/mic-selector";
 
 export default function Example() {
-  const { devices, loading, error, hasPermission, loadDevices } = useAudioDevices();
+  const { devices, loading, error, hasPermission, loadDevices } =
+    useAudioDevices();
 
   return (
     <div>
       {loading && <p>Loading devices...</p>}
       {error && <p>Error: {error}</p>}
-      {devices.map(device => (
+      {devices.map((device) => (
         <div key={device.deviceId}>{device.label}</div>
       ))}
       {!hasPermission && (
@@ -160,6 +161,7 @@ The component implements a two-stage permission approach:
 The `MicSelectorLabel` component intelligently parses device names that include hardware IDs in the format `(XXXX:XXXX)`. It splits the label into the device name and ID, styling the ID with muted text for better readability.
 
 For example: `"MacBook Pro Microphone (1a2b:3c4d)"` becomes:
+
 - Device name: `"MacBook Pro Microphone"`
 - Device ID: `"(1a2b:3c4d)"` (styled with muted color)
 

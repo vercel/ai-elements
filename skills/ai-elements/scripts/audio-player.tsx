@@ -1,5 +1,7 @@
 "use client";
 
+import type { Experimental_SpeechResult as SpeechResult } from "ai";
+
 import {
   AudioPlayer,
   AudioPlayerControlBar,
@@ -13,7 +15,6 @@ import {
   AudioPlayerTimeRange,
   AudioPlayerVolumeRange,
 } from "@/components/ai-elements/audio-player";
-import type { Experimental_SpeechResult as SpeechResult } from "ai";
 import { useEffect, useState } from "react";
 
 const Example = () => {
@@ -28,9 +29,9 @@ const Example = () => {
       const base64 = Buffer.from(arrayBuffer).toString("base64");
 
       const newData: SpeechResult["audio"] = {
-        mediaType: "audio/mpeg",
         base64,
         format: "mp3",
+        mediaType: "audio/mpeg",
         uint8Array: new Uint8Array(arrayBuffer),
       };
 

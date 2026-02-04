@@ -18,6 +18,26 @@ import {
   ShareIcon,
 } from "lucide-react";
 
+const handleRun = () => {
+  console.log("Run");
+};
+
+const handleCopy = () => {
+  console.log("Copy");
+};
+
+const handleRegenerate = () => {
+  console.log("Regenerate");
+};
+
+const handleDownload = () => {
+  console.log("Download");
+};
+
+const handleShare = () => {
+  console.log("Share");
+};
+
 const code = `# Dijkstra's Algorithm implementation
 import heapq
 
@@ -55,7 +75,7 @@ const Example = () => (
   <Artifact>
     <ArtifactHeader>
       <div>
-        <ArtifactTitle>Dijkstra's Algorithm Implementation</ArtifactTitle>
+        <ArtifactTitle>Dijkstra&apos;s Algorithm Implementation</ArtifactTitle>
         <ArtifactDescription>Updated 1 minute ago</ArtifactDescription>
       </div>
       <div className="flex items-center gap-2">
@@ -63,31 +83,31 @@ const Example = () => (
           <ArtifactAction
             icon={PlayIcon}
             label="Run"
-            onClick={() => console.log("Run")}
+            onClick={handleRun}
             tooltip="Run code"
           />
           <ArtifactAction
             icon={CopyIcon}
             label="Copy"
-            onClick={() => console.log("Copy")}
+            onClick={handleCopy}
             tooltip="Copy to clipboard"
           />
           <ArtifactAction
             icon={RefreshCwIcon}
             label="Regenerate"
-            onClick={() => console.log("Regenerate")}
+            onClick={handleRegenerate}
             tooltip="Regenerate content"
           />
           <ArtifactAction
             icon={DownloadIcon}
             label="Download"
-            onClick={() => console.log("Download")}
+            onClick={handleDownload}
             tooltip="Download file"
           />
           <ArtifactAction
             icon={ShareIcon}
             label="Share"
-            onClick={() => console.log("Share")}
+            onClick={handleShare}
             tooltip="Share artifact"
           />
         </ArtifactActions>

@@ -23,12 +23,12 @@ npx ai-elements@latest add commit
 
 ## File Status
 
-| Status | Label | Color |
-|--------|-------|-------|
-| `added` | A | Green |
-| `modified` | M | Yellow |
-| `deleted` | D | Red |
-| `renamed` | R | Blue |
+| Status     | Label | Color  |
+| ---------- | ----- | ------ |
+| `added`    | A     | Green  |
+| `modified` | M     | Yellow |
+| `deleted`  | D     | Red    |
+| `renamed`  | R     | Blue   |
 
 ## Props
 

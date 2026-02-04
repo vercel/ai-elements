@@ -9,13 +9,13 @@ const Example = () => (
     requestBody={[
       {
         name: "author",
-        type: "object",
         properties: [
           { name: "id", type: "string" },
           { name: "name", type: "string" },
         ],
+        type: "object",
       },
-      { name: "title", type: "string", required: true },
+      { name: "title", required: true, type: "string" },
     ]}
   />
 );

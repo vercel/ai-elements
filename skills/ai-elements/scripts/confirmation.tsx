@@ -12,6 +12,14 @@ import {
 import { CheckIcon, XIcon } from "lucide-react";
 import { nanoid } from "nanoid";
 
+const handleReject = () => {
+  // In production, call respondToConfirmationRequest with approved: false
+};
+
+const handleApprove = () => {
+  // In production, call respondToConfirmationRequest with approved: true
+};
+
 const Example = () => (
   <div className="w-full max-w-2xl">
     <Confirmation approval={{ id: nanoid() }} state="approval-requested">
@@ -33,20 +41,10 @@ const Example = () => (
         </ConfirmationRejected>
       </ConfirmationTitle>
       <ConfirmationActions>
-        <ConfirmationAction
-          onClick={() => {
-            // In production, call respondToConfirmationRequest with approved: false
-          }}
-          variant="outline"
-        >
+        <ConfirmationAction onClick={handleReject} variant="outline">
           Reject
         </ConfirmationAction>
-        <ConfirmationAction
-          onClick={() => {
-            // In production, call respondToConfirmationRequest with approved: true
-          }}
-          variant="default"
-        >
+        <ConfirmationAction onClick={handleApprove} variant="default">
           Approve
         </ConfirmationAction>
       </ConfirmationActions>

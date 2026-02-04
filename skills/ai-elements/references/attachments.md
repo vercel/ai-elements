@@ -17,7 +17,7 @@ npx ai-elements@latest add attachments
 Display user-uploaded files in chat messages or input areas.
 
 ```tsx title="app/page.tsx"
-'use client';
+"use client";
 
 import {
   Attachments,
@@ -25,8 +25,8 @@ import {
   AttachmentPreview,
   AttachmentInfo,
   AttachmentRemove,
-} from '@/components/ai-elements/attachments';
-import type { FileUIPart } from 'ai';
+} from "@/components/ai-elements/attachments";
+import type { FileUIPart } from "ai";
 
 interface MessageProps {
   attachments: (FileUIPart & { id: string })[];
@@ -172,7 +172,7 @@ Empty state component when no attachments are present.
 Returns the media category for an attachment.
 
 ```tsx
-import { getMediaCategory } from '@/components/ai-elements/attachments';
+import { getMediaCategory } from "@/components/ai-elements/attachments";
 
 const category = getMediaCategory(attachment);
 // Returns: "image" | "video" | "audio" | "document" | "source" | "unknown"
@@ -183,7 +183,7 @@ const category = getMediaCategory(attachment);
 Returns the display label for an attachment.
 
 ```tsx
-import { getAttachmentLabel } from '@/components/ai-elements/attachments';
+import { getAttachmentLabel } from "@/components/ai-elements/attachments";
 
 const label = getAttachmentLabel(attachment);
 // Returns filename or fallback like "Image" or "Attachment"

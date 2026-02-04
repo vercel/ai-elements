@@ -95,6 +95,7 @@ The component uses data attributes for custom styling:
 - `data-index`: The segment's index in the array
 
 Default segment appearance:
+
 - Active segment: `text-primary` (primary brand color)
 - Past segments: `text-muted-foreground`
 - Future segments: `text-muted-foreground/60` (dimmed)

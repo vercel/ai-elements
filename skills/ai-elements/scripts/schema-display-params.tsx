@@ -6,8 +6,8 @@ const Example = () => (
   <SchemaDisplay
     method="GET"
     parameters={[
-      { name: "userId", type: "string", required: true, location: "path" },
-      { name: "include", type: "string", location: "query" },
+      { location: "path", name: "userId", required: true, type: "string" },
+      { location: "query", name: "include", type: "string" },
     ]}
     path="/api/users/{userId}"
   />

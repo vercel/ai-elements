@@ -1,5 +1,7 @@
 "use client";
 
+import type { QueueMessage, QueueTodo } from "@/components/ai-elements/queue";
+
 import {
   Queue,
   QueueItem,
@@ -12,103 +14,190 @@ import {
   QueueItemImage,
   QueueItemIndicator,
   QueueList,
-  type QueueMessage,
   QueueSection,
   QueueSectionContent,
   QueueSectionLabel,
   QueueSectionTrigger,
-  type QueueTodo,
 } from "@/components/ai-elements/queue";
 import { ArrowUp, Trash2 } from "lucide-react";
-import { useState } from "react";
+import { memo, useCallback, useState } from "react";
 
 const sampleMessages: QueueMessage[] = [
   {
     id: "msg-1",
-    parts: [{ type: "text", text: "How do I set up the project?" }],
+    parts: [{ text: "How do I set up the project?", type: "text" }],
   },
   {
     id: "msg-2",
-    parts: [{ type: "text", text: "What is the roadmap for Q4?" }],
+    parts: [{ text: "What is the roadmap for Q4?", type: "text" }],
   },
   {
     id: "msg-3",
     parts: [
-      { type: "text", text: "Update the default logo to this png." },
+      { text: "Update the default logo to this png.", type: "text" },
       {
-        type: "file",
-        url: "https://github.com/haydenbleasel.png",
         filename: "setup-guide.png",
         mediaType: "image/png",
+        type: "file",
+        url: "https://github.com/haydenbleasel.png",
       },
     ],
   },
   {
     id: "msg-4",
-    parts: [{ type: "text", text: "Please generate a changelog." }],
+    parts: [{ text: "Please generate a changelog.", type: "text" }],
   },
   {
     id: "msg-5",
-    parts: [{ type: "text", text: "Add dark mode support." }],
+    parts: [{ text: "Add dark mode support.", type: "text" }],
   },
   {
     id: "msg-6",
-    parts: [{ type: "text", text: "Optimize database queries." }],
+    parts: [{ text: "Optimize database queries.", type: "text" }],
   },
   {
     id: "msg-7",
-    parts: [{ type: "text", text: "Set up CI/CD pipeline." }],
+    parts: [{ text: "Set up CI/CD pipeline.", type: "text" }],
   },
 ];
 
 const sampleTodos: QueueTodo[] = [
   {
-    id: "todo-1",
-    title: "Write project documentation",
     description: "Complete the README and API docs",
+    id: "todo-1",
     status: "completed",
+    title: "Write project documentation",
   },
   {
     id: "todo-2",
+    status: "pending",
     title: "Implement authentication",
-    status: "pending",
   },
   {
-    id: "todo-3",
-    title: "Fix bug #42",
     description: "Resolve crash on settings page",
+    id: "todo-3",
     status: "pending",
+    title: "Fix bug #42",
   },
   {
-    id: "todo-4",
-    title: "Refactor queue logic",
     description: "Unify queue and todo state management",
+    id: "todo-4",
     status: "pending",
+    title: "Refactor queue logic",
   },
   {
-    id: "todo-5",
-    title: "Add unit tests",
     description: "Increase test coverage for hooks",
+    id: "todo-5",
     status: "pending",
+    title: "Add unit tests",
   },
 ];
+
+interface MessageActionsProps {
+  messageId: string;
+  onRemove: (e: React.MouseEvent, id: string) => void;
+  onSend: (e: React.MouseEvent, id: string) => void;
+}
+
+const MessageActions = memo(
+  ({ messageId, onRemove, onSend }: MessageActionsProps) => {
+    const handleRemove = useCallback(
+      (e: React.MouseEvent) => onRemove(e, messageId),
+      [onRemove, messageId]
+    );
+    const handleSend = useCallback(
+      (e: React.MouseEvent) => onSend(e, messageId),
+      [onSend, messageId]
+    );
+    return (
+      <QueueItemActions>
+        <QueueItemAction
+          aria-label="Remove from queue"
+          onClick={handleRemove}
+          title="Remove from queue"
+        >
+          <Trash2 size={12} />
+        </QueueItemAction>
+        <QueueItemAction aria-label="Send now" onClick={handleSend}>
+          <ArrowUp size={14} />
+        </QueueItemAction>
+      </QueueItemActions>
+    );
+  }
+);
+
+MessageActions.displayName = "MessageActions";
+
+interface TodoItemProps {
+  todo: QueueTodo;
+  onRemove: (id: string) => void;
+}
+
+const TodoItem = memo(({ todo, onRemove }: TodoItemProps) => {
+  const isCompleted = todo.status === "completed";
+  const handleRemove = useCallback(
+    () => onRemove(todo.id),
+    [onRemove, todo.id]
+  );
+
+  return (
+    <QueueItem key={todo.id}>
+      <div className="flex items-center gap-2">
+        <QueueItemIndicator completed={isCompleted} />
+        <QueueItemContent completed={isCompleted}>
+          {todo.title}
+        </QueueItemContent>
+        <QueueItemActions>
+          <QueueItemAction aria-label="Remove todo" onClick={handleRemove}>
+            <Trash2 size={12} />
+          </QueueItemAction>
+        </QueueItemActions>
+      </div>
+      {todo.description && (
+        <QueueItemDescription completed={isCompleted}>
+          {todo.description}
+        </QueueItemDescription>
+      )}
+    </QueueItem>
+  );
+});
+
+TodoItem.displayName = "TodoItem";
 
 const Example = () => {
   const [messages, setMessages] = useState(sampleMessages);
   const [todos, setTodos] = useState(sampleTodos);
 
-  const handleRemoveMessage = (id: string) => {
+  const handleRemoveMessage = useCallback((id: string) => {
     setMessages((prev) => prev.filter((msg) => msg.id !== id));
-  };
+  }, []);
 
-  const handleRemoveTodo = (id: string) => {
+  const handleRemoveTodo = useCallback((id: string) => {
     setTodos((prev) => prev.filter((todo) => todo.id !== id));
-  };
+  }, []);
 
-  const handleSendNow = (id: string) => {
+  const handleSendNow = useCallback((id: string) => {
     console.log("Send now:", id);
-    handleRemoveMessage(id);
-  };
+    setMessages((prev) => prev.filter((msg) => msg.id !== id));
+  }, []);
+
+  const handleMessageRemove = useCallback(
+    (e: React.MouseEvent, id: string) => {
+      e.preventDefault();
+      e.stopPropagation();
+      handleRemoveMessage(id);
+    },
+    [handleRemoveMessage]
+  );
+
+  const handleMessageSend = useCallback(
+    (e: React.MouseEvent, id: string) => {
+      e.preventDefault();
+      e.stopPropagation();
+      handleSendNow(id);
+    },
+    [handleSendNow]
+  );
 
   if (messages.length === 0 && todos.length === 0) {
     return null;
@@ -144,29 +233,11 @@ const Example = () => {
                     <div className="flex items-center gap-2">
                       <QueueItemIndicator />
                       <QueueItemContent>{summary}</QueueItemContent>
-                      <QueueItemActions>
-                        <QueueItemAction
-                          aria-label="Remove from queue"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            handleRemoveMessage(message.id);
-                          }}
-                          title="Remove from queue"
-                        >
-                          <Trash2 size={12} />
-                        </QueueItemAction>
-                        <QueueItemAction
-                          aria-label="Send now"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            handleSendNow(message.id);
-                          }}
-                        >
-                          <ArrowUp size={14} />
-                        </QueueItemAction>
-                      </QueueItemActions>
+                      <MessageActions
+                        messageId={message.id}
+                        onRemove={handleMessageRemove}
+                        onSend={handleMessageSend}
+                      />
                     </div>
                     {hasFiles && (
                       <QueueItemAttachment>
@@ -207,33 +278,13 @@ const Example = () => {
           </QueueSectionTrigger>
           <QueueSectionContent>
             <QueueList>
-              {todos.map((todo) => {
-                const isCompleted = todo.status === "completed";
-
-                return (
-                  <QueueItem key={todo.id}>
-                    <div className="flex items-center gap-2">
-                      <QueueItemIndicator completed={isCompleted} />
-                      <QueueItemContent completed={isCompleted}>
-                        {todo.title}
-                      </QueueItemContent>
-                      <QueueItemActions>
-                        <QueueItemAction
-                          aria-label="Remove todo"
-                          onClick={() => handleRemoveTodo(todo.id)}
-                        >
-                          <Trash2 size={12} />
-                        </QueueItemAction>
-                      </QueueItemActions>
-                    </div>
-                    {todo.description && (
-                      <QueueItemDescription completed={isCompleted}>
-                        {todo.description}
-                      </QueueItemDescription>
-                    )}
-                  </QueueItem>
-                );
-              })}
+              {todos.map((todo) => (
+                <TodoItem
+                  key={todo.id}
+                  onRemove={handleRemoveTodo}
+                  todo={todo}
+                />
+              ))}
             </QueueList>
           </QueueSectionContent>
         </QueueSection>

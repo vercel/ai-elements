@@ -23,13 +23,13 @@ npx ai-elements@latest add schema-display
 
 ## Method Colors
 
-| Method | Color |
-|--------|-------|
-| `GET` | Green |
-| `POST` | Blue |
-| `PUT` | Orange |
-| `PATCH` | Yellow |
-| `DELETE` | Red |
+| Method   | Color  |
+| -------- | ------ |
+| `GET`    | Green  |
+| `POST`   | Blue   |
+| `PUT`    | Orange |
+| `PATCH`  | Yellow |
+| `DELETE` | Red    |
 
 ## Examples
 
@@ -83,7 +83,7 @@ interface SchemaProperty {
   required?: boolean;
   description?: string;
   properties?: SchemaProperty[]; // For objects
-  items?: SchemaProperty;        // For arrays
+  items?: SchemaProperty; // For arrays
 }
 ```
 

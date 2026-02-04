@@ -17,10 +17,10 @@ npx ai-elements@latest add agent
 Display an agent's configuration alongside your chat interface. Tools are displayed in an accordion where clicking the description expands to show the input schema.
 
 ```tsx title="app/page.tsx"
-'use client';
+"use client";
 
-import { tool } from 'ai';
-import { z } from 'zod';
+import { tool } from "ai";
+import { z } from "zod";
 import {
   Agent,
   AgentContent,
@@ -29,19 +29,19 @@ import {
   AgentOutput,
   AgentTool,
   AgentTools,
-} from '@/components/ai-elements/agent';
+} from "@/components/ai-elements/agent";
 
 const webSearch = tool({
-  description: 'Search the web for information',
+  description: "Search the web for information",
   inputSchema: z.object({
-    query: z.string().describe('The search query'),
+    query: z.string().describe("The search query"),
   }),
 });
 
 const readUrl = tool({
-  description: 'Read and parse content from a URL',
+  description: "Read and parse content from a URL",
   inputSchema: z.object({
-    url: z.string().url().describe('The URL to read'),
+    url: z.string().url().describe("The URL to read"),
   }),
 });
 
@@ -54,7 +54,10 @@ const outputSchema = `z.object({
 export default function Page() {
   return (
     <Agent>
-      <AgentHeader name="Sentiment Analyzer" model="anthropic/claude-sonnet-4-5" />
+      <AgentHeader
+        name="Sentiment Analyzer"
+        model="anthropic/claude-sonnet-4-5"
+      />
       <AgentContent>
         <AgentInstructions>
           Analyze the sentiment of the provided text and return a structured

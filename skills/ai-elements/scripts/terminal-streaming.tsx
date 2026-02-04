@@ -4,13 +4,13 @@ import { Terminal } from "@/components/ai-elements/terminal";
 import { useEffect, useState } from "react";
 
 const lines = [
-  "\x1b[36m$\x1b[0m npm install",
+  "\u001B[36m$\u001B[0m npm install",
   "Installing dependencies...",
-  "\x1b[32m✓\x1b[0m react@19.0.0",
-  "\x1b[32m✓\x1b[0m typescript@5.0.0",
-  "\x1b[32m✓\x1b[0m vite@5.0.0",
+  "\u001B[32m✓\u001B[0m react@19.0.0",
+  "\u001B[32m✓\u001B[0m typescript@5.0.0",
+  "\u001B[32m✓\u001B[0m vite@5.0.0",
   "",
-  "\x1b[32mDone!\x1b[0m Installed 3 packages in 1.2s",
+  "\u001B[32mDone!\u001B[0m Installed 3 packages in 1.2s",
 ];
 
 const Example = () => {
@@ -22,7 +22,7 @@ const Example = () => {
     const interval = setInterval(() => {
       if (lineIndex < lines.length) {
         setOutput((prev) => prev + (prev ? "\n" : "") + lines[lineIndex]);
-        lineIndex++;
+        lineIndex += 1;
       } else {
         setIsStreaming(false);
         clearInterval(interval);

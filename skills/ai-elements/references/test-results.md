@@ -23,11 +23,11 @@ npx ai-elements@latest add test-results
 
 ## Status Colors
 
-| Status | Color | Use Case |
-|--------|-------|----------|
-| `passed` | Green | Test succeeded |
-| `failed` | Red | Test failed |
-| `skipped` | Yellow | Test skipped |
+| Status    | Color           | Use Case         |
+| --------- | --------------- | ---------------- |
+| `passed`  | Green           | Test succeeded   |
+| `failed`  | Red             | Test failed      |
+| `skipped` | Yellow          | Test skipped     |
 | `running` | Blue (animated) | Test in progress |
 
 ## Examples

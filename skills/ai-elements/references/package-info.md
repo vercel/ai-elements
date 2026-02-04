@@ -21,13 +21,13 @@ npx ai-elements@latest add package-info
 
 ## Change Types
 
-| Type | Color | Use Case |
-|------|-------|----------|
-| `major` | Red | Breaking changes |
-| `minor` | Yellow | New features |
-| `patch` | Green | Bug fixes |
-| `added` | Blue | New dependency |
-| `removed` | Gray | Removed dependency |
+| Type      | Color  | Use Case           |
+| --------- | ------ | ------------------ |
+| `major`   | Red    | Breaking changes   |
+| `minor`   | Yellow | New features       |
+| `patch`   | Green  | Bug fixes          |
+| `added`   | Blue   | New dependency     |
+| `removed` | Gray   | Removed dependency |
 
 ## Props
 
