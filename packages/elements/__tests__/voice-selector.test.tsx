@@ -1,5 +1,6 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
+import { useCallback } from "react";
 import { describe, expect, it, vi } from "vitest";
 
 import {
@@ -23,6 +24,15 @@ import {
   VoiceSelectorShortcut,
   VoiceSelectorTrigger,
 } from "../src/voice-selector";
+
+// Helper components to avoid conditional ternaries in tests
+const ValueDisplay = ({ value }: { value: string | null }) => (
+  <div data-testid="value">{value ?? "none"}</div>
+);
+
+const OpenDisplay = ({ open }: { open: boolean }) => (
+  <div data-testid="open">{open ? "open" : "closed"}</div>
+);
 
 describe("voiceSelector", () => {
   it("renders children", () => {
@@ -751,10 +761,11 @@ describe("useVoiceSelector hook", () => {
   it("provides value and setValue", () => {
     const TestComponent = () => {
       const { value, setValue } = useVoiceSelector();
+      const handleClick = useCallback(() => setValue("new-voice"), [setValue]);
       return (
         <div>
-          <div data-testid="value">{value ?? "none"}</div>
-          <button onClick={() => setValue("new-voice")} type="button">
+          <ValueDisplay value={value ?? null} />
+          <button onClick={handleClick} type="button">
             Set Voice
           </button>
         </div>
@@ -775,10 +786,11 @@ describe("useVoiceSelector hook", () => {
 
     const TestComponent = () => {
       const { open, setOpen } = useVoiceSelector();
+      const handleClick = useCallback(() => setOpen(true), [setOpen]);
       return (
         <div>
-          <div data-testid="open">{open ? "open" : "closed"}</div>
-          <button onClick={() => setOpen(true)} type="button">
+          <OpenDisplay open={open} />
+          <button onClick={handleClick} type="button">
             Open
           </button>
         </div>
@@ -807,8 +819,9 @@ describe("useVoiceSelector hook", () => {
 
     const TestComponent = () => {
       const { setValue } = useVoiceSelector();
+      const handleClick = useCallback(() => setValue("test-voice"), [setValue]);
       return (
-        <button onClick={() => setValue("test-voice")} type="button">
+        <button onClick={handleClick} type="button">
           Select Voice
         </button>
       );

@@ -37,7 +37,8 @@ failOnConsole({
   },
 });
 
-// Cleanup after each test
+// Cleanup after each test - this is a global setup file
+// oxlint-disable-next-line eslint-plugin-jest(no-hooks)
 afterEach(() => {
   cleanup();
 });

@@ -1,6 +1,6 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
 import { SpeechInput } from "../src/speech-input";
 
@@ -11,7 +11,9 @@ class MockSpeechRecognition {
   lang = "";
   onstart: ((ev: Event) => void) | null = null;
   onend: ((ev: Event) => void) | null = null;
+  // oxlint-disable-next-line typescript-eslint(no-explicit-any)
   onresult: ((ev: any) => void) | null = null;
+  // oxlint-disable-next-line typescript-eslint(no-explicit-any)
   onerror: ((ev: any) => void) | null = null;
 
   start() {
@@ -27,20 +29,37 @@ class MockSpeechRecognition {
   }
 }
 
-// Mock console methods
-beforeEach(() => {
+// Trackable instance holder for tests that need to access the recognition instance
+interface InstanceRef {
+  current: MockSpeechRecognition | null;
+}
+
+// Factory to create a trackable mock that stores the instance in a ref
+const createTrackableMock = (instanceRef: InstanceRef) =>
+  class TrackableMockSpeechRecognition extends MockSpeechRecognition {
+    constructor() {
+      super();
+      instanceRef.current = this;
+    }
+  };
+
+// Setup function to reset window globals and mock console
+const setupSpeechInputTests = () => {
   vi.spyOn(console, "warn").mockImplementation(vi.fn());
   vi.spyOn(console, "error").mockImplementation(vi.fn());
 
   // Reset window.SpeechRecognition - delete properties instead of setting to undefined
   // because `in` operator checks property existence, not value
   // biome-ignore lint/performance/noDelete: delete required for `in` operator check
+  // oxlint-disable-next-line typescript-eslint(no-explicit-any)
   delete (window as any).SpeechRecognition;
   // biome-ignore lint/performance/noDelete: delete required for `in` operator check
+  // oxlint-disable-next-line typescript-eslint(no-explicit-any)
   delete (window as any).webkitSpeechRecognition;
 
   // Reset MediaRecorder to ensure consistent test behavior
   // biome-ignore lint/performance/noDelete: delete required for `in` operator check
+  // oxlint-disable-next-line typescript-eslint(no-explicit-any)
   delete (window as any).MediaRecorder;
   // Also mock navigator.mediaDevices to be undefined
   Object.defineProperty(navigator, "mediaDevices", {
@@ -48,22 +67,26 @@ beforeEach(() => {
     value: undefined,
     writable: true,
   });
-});
+};
 
 describe("speechInput", () => {
   it("renders button with microphone icon", () => {
+    setupSpeechInputTests();
     render(<SpeechInput />);
     const button = screen.getByRole("button");
     expect(button).toBeInTheDocument();
   });
 
   it("is disabled when SpeechRecognition is not available", () => {
+    setupSpeechInputTests();
     render(<SpeechInput />);
     const button = screen.getByRole("button");
     expect(button).toBeDisabled();
   });
 
   it("is enabled when SpeechRecognition is available", () => {
+    setupSpeechInputTests();
+    // oxlint-disable-next-line typescript-eslint(no-explicit-any)
     (window as any).SpeechRecognition = MockSpeechRecognition;
     render(<SpeechInput />);
     const button = screen.getByRole("button");
@@ -71,6 +94,8 @@ describe("speechInput", () => {
   });
 
   it("works with webkit prefix", () => {
+    setupSpeechInputTests();
+    // oxlint-disable-next-line typescript-eslint(no-explicit-any)
     (window as any).webkitSpeechRecognition = MockSpeechRecognition;
     render(<SpeechInput />);
     const button = screen.getByRole("button");
@@ -78,6 +103,8 @@ describe("speechInput", () => {
   });
 
   it("applies custom className", () => {
+    setupSpeechInputTests();
+    // oxlint-disable-next-line typescript-eslint(no-explicit-any)
     (window as any).SpeechRecognition = MockSpeechRecognition;
     render(<SpeechInput className="custom-class" />);
     const button = screen.getByRole("button");
@@ -85,6 +112,8 @@ describe("speechInput", () => {
   });
 
   it("accepts Button props", () => {
+    setupSpeechInputTests();
+    // oxlint-disable-next-line typescript-eslint(no-explicit-any)
     (window as any).SpeechRecognition = MockSpeechRecognition;
     render(<SpeechInput size="lg" variant="outline" />);
     const button = screen.getByRole("button");
@@ -92,12 +121,16 @@ describe("speechInput", () => {
   });
 });
 
-describe("speechInput - Speech Recognition", () => {
-  beforeEach(() => {
-    (window as any).SpeechRecognition = MockSpeechRecognition;
-  });
+// Helper to setup speech recognition tests
+const setupSpeechRecognitionTests = () => {
+  setupSpeechInputTests();
+  // oxlint-disable-next-line typescript-eslint(no-explicit-any)
+  (window as any).SpeechRecognition = MockSpeechRecognition;
+};
 
+describe("speechInput - Speech Recognition", () => {
   it("initializes SpeechRecognition with correct settings", async () => {
+    setupSpeechRecognitionTests();
     render(<SpeechInput />);
 
     await waitFor(() => {
@@ -108,6 +141,7 @@ describe("speechInput - Speech Recognition", () => {
   });
 
   it("starts listening when clicked", async () => {
+    setupSpeechRecognitionTests();
     const user = userEvent.setup();
     const startSpy = vi.spyOn(MockSpeechRecognition.prototype, "start");
 
@@ -124,6 +158,7 @@ describe("speechInput - Speech Recognition", () => {
   });
 
   it("stops listening when clicked again", async () => {
+    setupSpeechRecognitionTests();
     const user = userEvent.setup();
     const stopSpy = vi.spyOn(MockSpeechRecognition.prototype, "stop");
 
@@ -145,6 +180,7 @@ describe("speechInput - Speech Recognition", () => {
   });
 
   it("applies pulse animation when listening", async () => {
+    setupSpeechRecognitionTests();
     const user = userEvent.setup();
 
     const { container } = render(<SpeechInput />);
@@ -170,18 +206,12 @@ describe("speechInput - Speech Recognition", () => {
   });
 
   it("calls onTranscriptionChange with final transcript", async () => {
+    setupSpeechInputTests();
     const handleTranscription = vi.fn();
-    let recognitionInstance: any = null;
+    const instanceRef: InstanceRef = { current: null };
 
-    // Override MockSpeechRecognition to capture the instance
-    class TrackableMockSpeechRecognition extends MockSpeechRecognition {
-      constructor() {
-        super();
-        recognitionInstance = this;
-      }
-    }
-
-    (window as any).SpeechRecognition = TrackableMockSpeechRecognition;
+    // oxlint-disable-next-line typescript-eslint(no-explicit-any)
+    (window as any).SpeechRecognition = createTrackableMock(instanceRef);
 
     render(<SpeechInput onTranscriptionChange={handleTranscription} />);
 
@@ -193,12 +223,12 @@ describe("speechInput - Speech Recognition", () => {
     await userEvent.setup().click(button);
 
     await waitFor(() => {
-      expect(recognitionInstance).not.toBeNull();
+      expect(instanceRef.current).not.toBeNull();
     });
 
     // Simulate speech recognition result with final transcript
-    if (recognitionInstance?.onresult) {
-      recognitionInstance.onresult({
+    if (instanceRef.current?.onresult) {
+      instanceRef.current.onresult({
         resultIndex: 0,
         results: {
           0: {
@@ -221,17 +251,12 @@ describe("speechInput - Speech Recognition", () => {
   });
 
   it("does not call onTranscriptionChange for interim results", async () => {
+    setupSpeechInputTests();
     const handleTranscription = vi.fn();
-    let recognitionInstance: any = null;
+    const instanceRef: InstanceRef = { current: null };
 
-    class TrackableMockSpeechRecognition extends MockSpeechRecognition {
-      constructor() {
-        super();
-        recognitionInstance = this;
-      }
-    }
-
-    (window as any).SpeechRecognition = TrackableMockSpeechRecognition;
+    // oxlint-disable-next-line typescript-eslint(no-explicit-any)
+    (window as any).SpeechRecognition = createTrackableMock(instanceRef);
 
     render(<SpeechInput onTranscriptionChange={handleTranscription} />);
 
@@ -243,12 +268,12 @@ describe("speechInput - Speech Recognition", () => {
     await userEvent.setup().click(button);
 
     await waitFor(() => {
-      expect(recognitionInstance).not.toBeNull();
+      expect(instanceRef.current).not.toBeNull();
     });
 
     // Simulate interim result (should not trigger callback)
-    if (recognitionInstance?.onresult) {
-      recognitionInstance.onresult({
+    if (instanceRef.current?.onresult) {
+      instanceRef.current.onresult({
         resultIndex: 0,
         results: {
           0: {
@@ -266,6 +291,7 @@ describe("speechInput - Speech Recognition", () => {
     }
 
     // Wait a bit to ensure callback wasn't called
+    // oxlint-disable-next-line eslint-plugin-promise(avoid-new)
     await new Promise((resolve) => {
       setTimeout(resolve, 100);
     });
@@ -273,19 +299,14 @@ describe("speechInput - Speech Recognition", () => {
   });
 
   it("handles speech recognition errors and logs them", async () => {
+    setupSpeechInputTests();
     const consoleErrorSpy = vi
       .spyOn(console, "error")
       .mockImplementation(vi.fn());
-    let recognitionInstance: any = null;
+    const instanceRef: InstanceRef = { current: null };
 
-    class TrackableMockSpeechRecognition extends MockSpeechRecognition {
-      constructor() {
-        super();
-        recognitionInstance = this;
-      }
-    }
-
-    (window as any).SpeechRecognition = TrackableMockSpeechRecognition;
+    // oxlint-disable-next-line typescript-eslint(no-explicit-any)
+    (window as any).SpeechRecognition = createTrackableMock(instanceRef);
 
     render(<SpeechInput />);
 
@@ -297,12 +318,12 @@ describe("speechInput - Speech Recognition", () => {
     await userEvent.setup().click(button);
 
     await waitFor(() => {
-      expect(recognitionInstance).not.toBeNull();
+      expect(instanceRef.current).not.toBeNull();
     });
 
     // Trigger error event
-    if (recognitionInstance?.onerror) {
-      recognitionInstance.onerror({ error: "no-speech" });
+    if (instanceRef.current?.onerror) {
+      instanceRef.current.onerror({ error: "no-speech" });
     }
 
     await waitFor(() => {
@@ -316,17 +337,12 @@ describe("speechInput - Speech Recognition", () => {
   });
 
   it("handles empty transcript gracefully", async () => {
+    setupSpeechInputTests();
     const handleTranscription = vi.fn();
-    let recognitionInstance: any = null;
+    const instanceRef: InstanceRef = { current: null };
 
-    class TrackableMockSpeechRecognition extends MockSpeechRecognition {
-      constructor() {
-        super();
-        recognitionInstance = this;
-      }
-    }
-
-    (window as any).SpeechRecognition = TrackableMockSpeechRecognition;
+    // oxlint-disable-next-line typescript-eslint(no-explicit-any)
+    (window as any).SpeechRecognition = createTrackableMock(instanceRef);
 
     render(<SpeechInput onTranscriptionChange={handleTranscription} />);
 
@@ -338,12 +354,12 @@ describe("speechInput - Speech Recognition", () => {
     await userEvent.setup().click(button);
 
     await waitFor(() => {
-      expect(recognitionInstance).not.toBeNull();
+      expect(instanceRef.current).not.toBeNull();
     });
 
     // Simulate result with empty transcript
-    if (recognitionInstance?.onresult) {
-      recognitionInstance.onresult({
+    if (instanceRef.current?.onresult) {
+      instanceRef.current.onresult({
         resultIndex: 0,
         results: {
           0: {
@@ -358,6 +374,7 @@ describe("speechInput - Speech Recognition", () => {
     }
 
     // Wait to ensure callback wasn't called for empty transcript
+    // oxlint-disable-next-line eslint-plugin-promise(avoid-new)
     await new Promise((resolve) => {
       setTimeout(resolve, 100);
     });
@@ -365,10 +382,13 @@ describe("speechInput - Speech Recognition", () => {
   });
 
   it("does nothing when clicking button if recognition is not available", async () => {
+    setupSpeechInputTests();
     // No SpeechRecognition available - delete properties to ensure `in` check fails
     // biome-ignore lint/performance/noDelete: delete required for `in` operator check
+    // oxlint-disable-next-line typescript-eslint(no-explicit-any)
     delete (window as any).SpeechRecognition;
     // biome-ignore lint/performance/noDelete: delete required for `in` operator check
+    // oxlint-disable-next-line typescript-eslint(no-explicit-any)
     delete (window as any).webkitSpeechRecognition;
 
     render(<SpeechInput />);
@@ -384,6 +404,7 @@ describe("speechInput - Speech Recognition", () => {
   });
 
   it("cleans up recognition on unmount", async () => {
+    setupSpeechRecognitionTests();
     const stopSpy = vi.spyOn(MockSpeechRecognition.prototype, "stop");
 
     const { unmount } = render(<SpeechInput />);
@@ -398,20 +419,28 @@ describe("speechInput - Speech Recognition", () => {
   });
 });
 
-describe("speechInput - MediaRecorder Fallback", () => {
-  let mockTrack: any;
-  let mockStream: any;
-  let mediaRecorderInstances: any[];
+// MediaRecorder test helpers
+interface MediaRecorderTestContext {
+  // oxlint-disable-next-line typescript-eslint(no-explicit-any)
+  mockTrack: any;
+  // oxlint-disable-next-line typescript-eslint(no-explicit-any)
+  mockStream: any;
+  // oxlint-disable-next-line typescript-eslint(no-explicit-any)
+  mediaRecorderInstances: any[];
+}
 
-  // Mock MediaRecorder class that captures instances
+// Mock MediaRecorder class that captures instances
+const createMockMediaRecorder = (context: MediaRecorderTestContext) =>
   class MockMediaRecorder {
     state = "inactive";
+    // oxlint-disable-next-line typescript-eslint(no-explicit-any)
     ondataavailable: ((event: any) => void) | null = null;
     onstop: (() => void) | null = null;
+    // oxlint-disable-next-line typescript-eslint(no-explicit-any)
     onerror: ((event: any) => void) | null = null;
 
     constructor() {
-      mediaRecorderInstances.push(this);
+      context.mediaRecorderInstances.push(this);
     }
 
     start = vi.fn(() => {
@@ -424,41 +453,46 @@ describe("speechInput - MediaRecorder Fallback", () => {
         this.onstop();
       }
     });
-  }
+  };
 
-  beforeEach(() => {
-    mediaRecorderInstances = [];
+const setupMediaRecorderTests = (): MediaRecorderTestContext => {
+  setupSpeechInputTests();
 
-    // Remove SpeechRecognition to force MediaRecorder mode - delete properties
-    // biome-ignore lint/performance/noDelete: delete required for `in` operator check
-    delete (window as any).SpeechRecognition;
-    // biome-ignore lint/performance/noDelete: delete required for `in` operator check
-    delete (window as any).webkitSpeechRecognition;
+  const context: MediaRecorderTestContext = {
+    mediaRecorderInstances: [],
+    mockStream: null,
+    mockTrack: null,
+  };
 
-    // Create mock track
-    mockTrack = {
-      stop: vi.fn(),
-    };
+  // Create mock track
+  context.mockTrack = {
+    stop: vi.fn(),
+  };
 
-    // Create mock stream
-    mockStream = {
-      getTracks: vi.fn(() => [mockTrack]),
-    };
+  // Create mock stream
+  context.mockStream = {
+    getTracks: vi.fn(() => [context.mockTrack]),
+  };
 
-    // Mock MediaRecorder constructor
-    (window as any).MediaRecorder = MockMediaRecorder;
+  // Mock MediaRecorder constructor
+  // oxlint-disable-next-line typescript-eslint(no-explicit-any)
+  (window as any).MediaRecorder = createMockMediaRecorder(context);
 
-    // Mock navigator.mediaDevices
-    Object.defineProperty(navigator, "mediaDevices", {
-      configurable: true,
-      value: {
-        getUserMedia: vi.fn().mockResolvedValue(mockStream),
-      },
-      writable: true,
-    });
+  // Mock navigator.mediaDevices
+  Object.defineProperty(navigator, "mediaDevices", {
+    configurable: true,
+    value: {
+      getUserMedia: vi.fn().mockResolvedValue(context.mockStream),
+    },
+    writable: true,
   });
 
+  return context;
+};
+
+describe("speechInput - MediaRecorder Fallback", () => {
   it("is disabled when onAudioRecorded is not provided", async () => {
+    setupMediaRecorderTests();
     render(<SpeechInput />);
 
     await waitFor(() => {
@@ -468,6 +502,7 @@ describe("speechInput - MediaRecorder Fallback", () => {
   });
 
   it("is enabled when onAudioRecorded is provided", async () => {
+    setupMediaRecorderTests();
     const handleAudioRecorded = vi.fn().mockResolvedValue("test transcript");
 
     render(<SpeechInput onAudioRecorded={handleAudioRecorded} />);
@@ -479,6 +514,7 @@ describe("speechInput - MediaRecorder Fallback", () => {
   });
 
   it("starts recording when clicked", async () => {
+    const ctx = setupMediaRecorderTests();
     const user = userEvent.setup();
     const handleAudioRecorded = vi.fn().mockResolvedValue("test transcript");
 
@@ -498,12 +534,13 @@ describe("speechInput - MediaRecorder Fallback", () => {
     });
 
     await waitFor(() => {
-      expect(mediaRecorderInstances.length).toBeGreaterThan(0);
-      expect(mediaRecorderInstances[0].start).toHaveBeenCalledWith();
+      expect(ctx.mediaRecorderInstances.length).toBeGreaterThan(0);
+      expect(ctx.mediaRecorderInstances[0].start).toHaveBeenCalledWith();
     });
   });
 
   it("stops recording and transcribes when clicked again", async () => {
+    const ctx = setupMediaRecorderTests();
     const user = userEvent.setup();
     const handleAudioRecorded = vi.fn().mockResolvedValue("transcribed text");
     const handleTranscriptionChange = vi.fn();
@@ -525,10 +562,10 @@ describe("speechInput - MediaRecorder Fallback", () => {
     await user.click(button);
 
     await waitFor(() => {
-      expect(mediaRecorderInstances.length).toBeGreaterThan(0);
+      expect(ctx.mediaRecorderInstances.length).toBeGreaterThan(0);
     });
 
-    const [recorder] = mediaRecorderInstances;
+    const [recorder] = ctx.mediaRecorderInstances;
 
     // Simulate data available
     if (recorder.ondataavailable) {
@@ -552,6 +589,7 @@ describe("speechInput - MediaRecorder Fallback", () => {
   });
 
   it("releases microphone tracks on stop", async () => {
+    const ctx = setupMediaRecorderTests();
     const user = userEvent.setup();
     const handleAudioRecorded = vi.fn().mockResolvedValue("text");
 
@@ -567,10 +605,10 @@ describe("speechInput - MediaRecorder Fallback", () => {
     await user.click(button);
 
     await waitFor(() => {
-      expect(mediaRecorderInstances.length).toBeGreaterThan(0);
+      expect(ctx.mediaRecorderInstances.length).toBeGreaterThan(0);
     });
 
-    const [recorder] = mediaRecorderInstances;
+    const [recorder] = ctx.mediaRecorderInstances;
 
     // Simulate data available
     if (recorder.ondataavailable) {
@@ -583,11 +621,12 @@ describe("speechInput - MediaRecorder Fallback", () => {
     await user.click(button);
 
     await waitFor(() => {
-      expect(mockTrack.stop).toHaveBeenCalledWith();
+      expect(ctx.mockTrack.stop).toHaveBeenCalledWith();
     });
   });
 
   it("handles transcription errors gracefully", async () => {
+    const ctx = setupMediaRecorderTests();
     const user = userEvent.setup();
     const consoleErrorSpy = vi
       .spyOn(console, "error")
@@ -614,10 +653,10 @@ describe("speechInput - MediaRecorder Fallback", () => {
     await user.click(button);
 
     await waitFor(() => {
-      expect(mediaRecorderInstances.length).toBeGreaterThan(0);
+      expect(ctx.mediaRecorderInstances.length).toBeGreaterThan(0);
     });
 
-    const [recorder] = mediaRecorderInstances;
+    const [recorder] = ctx.mediaRecorderInstances;
 
     // Simulate data available
     if (recorder.ondataavailable) {

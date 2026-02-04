@@ -1,5 +1,5 @@
 import { render, waitFor } from "@testing-library/react";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
 import { Persona } from "../src/persona";
 
@@ -25,8 +25,8 @@ vi.mock<typeof import("@rive-app/react-webgl2")>(
   })
 );
 
-// Mock console methods
-beforeEach(() => {
+// Setup function for persona tests
+const setupPersonaTests = () => {
   vi.spyOn(console, "warn").mockImplementation(vi.fn());
   vi.spyOn(console, "error").mockImplementation(vi.fn());
 
@@ -51,10 +51,11 @@ beforeEach(() => {
   mockUseViewModel.mockReturnValue({});
   mockUseViewModelInstance.mockReturnValue({});
   mockUseViewModelInstanceColor.mockReturnValue({ setRgb: vi.fn() });
-});
+};
 
 describe("persona", () => {
   it("renders the Rive component", () => {
+    setupPersonaTests();
     const { getByTestId } = render(<Persona state="idle" />);
     expect(getByTestId("rive-component")).toBeInTheDocument();
   });

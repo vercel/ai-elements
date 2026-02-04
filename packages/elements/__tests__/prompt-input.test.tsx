@@ -1,7 +1,7 @@
 import { act, render, screen } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import React from "react";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
 import type { AttachmentData } from "../src/attachments";
 
@@ -109,8 +109,8 @@ const PromptInputReferencedSources = ({
   );
 };
 
-// Mock URL.createObjectURL and URL.revokeObjectURL for tests
-beforeEach(() => {
+// Setup function for prompt input tests
+const setupPromptInputTests = () => {
   vi.spyOn(window.URL, "createObjectURL").mockImplementation(
     (_blob) => `blob:mock-url-${Math.random()}`
   );
@@ -128,26 +128,35 @@ beforeEach(() => {
   });
 
   // Mock FileReader
+  // oxlint-disable-next-line eslint-plugin-react(no-this-in-sfc)
   window.FileReader = vi.fn(function FileReader(this: FileReader) {
+    // oxlint-disable-next-line eslint-plugin-react(no-this-in-sfc)
     this.readAsDataURL = vi.fn(function readAsDataURL(
       this: FileReader,
       _blob: Blob
     ) {
       // Simulate async file reading
       setTimeout(() => {
+        // oxlint-disable-next-line eslint-plugin-react(no-this-in-sfc)
         this.result = "data:text/plain;base64,dGVzdCBjb250ZW50";
+        // oxlint-disable-next-line eslint-plugin-react(no-this-in-sfc)
         this.onloadend?.(new ProgressEvent("loadend"));
       }, 0);
     });
+    // oxlint-disable-next-line eslint-plugin-react(no-this-in-sfc)
     this.result = null;
+    // oxlint-disable-next-line eslint-plugin-react(no-this-in-sfc)
     this.onloadend = null;
+    // oxlint-disable-next-line eslint-plugin-react(no-this-in-sfc)
     this.onerror = null;
+    // oxlint-disable-next-line eslint-plugin-react(no-this-in-sfc)
     return this;
   }) as unknown as typeof FileReader;
-});
+};
 
 describe("promptInput", () => {
   it("renders form", () => {
+    setupPromptInputTests();
     const onSubmit = vi.fn();
     const { container } = render(
       <PromptInput onSubmit={onSubmit}>

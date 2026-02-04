@@ -33,12 +33,13 @@ describe("snippet", () => {
   });
 });
 
-describe("snippetCopyButton", () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+const setupCopyButtonTests = () => {
+  vi.clearAllMocks();
+};
 
+describe("snippetCopyButton", () => {
   it("renders copy button", () => {
+    setupCopyButtonTests();
     render(
       <Snippet code="test">
         <SnippetCopyButton />

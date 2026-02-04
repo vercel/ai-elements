@@ -245,6 +245,48 @@ describe(messagesToMarkdown, () => {
   });
 });
 
+// Helper to setup URL mocks for download tests
+const setupDownloadMocks = () => {
+  const mockCreateObjectURL = vi.fn(() => "blob:test");
+  const mockRevokeObjectURL = vi.fn();
+  const originalCreateObjectURL = URL.createObjectURL;
+  const originalRevokeObjectURL = URL.revokeObjectURL;
+
+  URL.createObjectURL = mockCreateObjectURL;
+  URL.revokeObjectURL = mockRevokeObjectURL;
+
+  return {
+    mockCreateObjectURL,
+    mockRevokeObjectURL,
+    restore: () => {
+      URL.createObjectURL = originalCreateObjectURL;
+      URL.revokeObjectURL = originalRevokeObjectURL;
+    },
+  };
+};
+
+// Helper to setup DOM mocks for anchor click tracking
+const setupDomClickTracker = () => {
+  let linkClicked = false;
+  const originalAppendChild = document.body.appendChild.bind(document.body);
+  const originalRemoveChild = document.body.removeChild.bind(document.body);
+
+  vi.spyOn(document.body, "appendChild").mockImplementation((node: Node) => {
+    if (node instanceof HTMLAnchorElement) {
+      node.click = () => {
+        linkClicked = true;
+      };
+    }
+    return originalAppendChild(node);
+  });
+
+  vi.spyOn(document.body, "removeChild").mockImplementation((node: Node) =>
+    originalRemoveChild(node)
+  );
+
+  return { wasLinkClicked: () => linkClicked };
+};
+
 describe("conversationDownload", () => {
   const mockMessages = [
     { content: "Hello", role: "user" as const },
@@ -293,35 +335,8 @@ describe("conversationDownload", () => {
 
   it("triggers download on click", async () => {
     const user = userEvent.setup();
-    const mockCreateObjectURL = vi.fn(() => "blob:test");
-    const mockRevokeObjectURL = vi.fn();
-
-    // Store original methods
-    const originalCreateObjectURL = URL.createObjectURL;
-    const originalRevokeObjectURL = URL.revokeObjectURL;
-
-    // Override URL methods
-    URL.createObjectURL = mockCreateObjectURL;
-    URL.revokeObjectURL = mockRevokeObjectURL;
-
-    // Track if a link was clicked by checking if an anchor was added/removed
-    let linkClicked = false;
-    const originalAppendChild = document.body.appendChild.bind(document.body);
-    const originalRemoveChild = document.body.removeChild.bind(document.body);
-
-    vi.spyOn(document.body, "appendChild").mockImplementation((node: Node) => {
-      if (node instanceof HTMLAnchorElement) {
-        // Intercept click
-        node.click = () => {
-          linkClicked = true;
-        };
-      }
-      return originalAppendChild(node);
-    });
-
-    vi.spyOn(document.body, "removeChild").mockImplementation((node: Node) =>
-      originalRemoveChild(node)
-    );
+    const urlMocks = setupDownloadMocks();
+    const domTracker = setupDomClickTracker();
 
     render(
       <Conversation>
@@ -332,13 +347,11 @@ describe("conversationDownload", () => {
     const button = screen.getByRole("button");
     await user.click(button);
 
-    expect(mockCreateObjectURL).toHaveBeenCalledWith();
-    expect(linkClicked).toBeTruthy();
-    expect(mockRevokeObjectURL).toHaveBeenCalledWith();
+    expect(urlMocks.mockCreateObjectURL).toHaveBeenCalledWith();
+    expect(domTracker.wasLinkClicked()).toBeTruthy();
+    expect(urlMocks.mockRevokeObjectURL).toHaveBeenCalledWith();
 
-    // Restore
-    URL.createObjectURL = originalCreateObjectURL;
-    URL.revokeObjectURL = originalRevokeObjectURL;
+    urlMocks.restore();
     vi.restoreAllMocks();
   });
 });

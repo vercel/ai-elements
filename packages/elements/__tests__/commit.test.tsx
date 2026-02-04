@@ -68,12 +68,13 @@ describe("commit", () => {
   });
 });
 
-describe("commitCopyButton", () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+const setupCopyButtonTests = () => {
+  vi.clearAllMocks();
+};
 
+describe("commitCopyButton", () => {
   it("copies hash to clipboard", async () => {
+    setupCopyButtonTests();
     const user = userEvent.setup();
     const writeTextSpy = vi.spyOn(navigator.clipboard, "writeText");
 

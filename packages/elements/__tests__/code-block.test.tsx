@@ -46,12 +46,13 @@ describe("codeBlock", () => {
   });
 });
 
-describe("codeBlockCopyButton", () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+const setupCopyButtonTests = () => {
+  vi.clearAllMocks();
+};
 
+describe("codeBlockCopyButton", () => {
   it("renders copy button", () => {
+    setupCopyButtonTests();
     render(
       <CodeBlock code="test code" language="javascript">
         <CodeBlockCopyButton />

@@ -268,12 +268,13 @@ describe("stackTraceActions", () => {
   });
 });
 
-describe("stackTraceCopyButton", () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+const setupCopyButtonTests = () => {
+  vi.clearAllMocks();
+};
 
+describe("stackTraceCopyButton", () => {
   it("renders copy button", () => {
+    setupCopyButtonTests();
     render(
       <StackTrace trace={sampleStackTrace}>
         <StackTraceCopyButton />
