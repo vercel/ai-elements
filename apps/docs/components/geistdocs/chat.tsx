@@ -74,7 +74,9 @@ const isFromPreviousDay = (timestamp: number): boolean => {
 };
 
 export const useChatPersistence = () => {
-  const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>();
+  const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(
+    undefined
+  );
 
   // Load messages from Dexie with live query
   const storedMessages = useLiveQuery(() =>
