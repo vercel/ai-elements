@@ -264,7 +264,8 @@ const Example = () => {
 
   return (
     <div className="space-y-6 p-6">
-      {/** biome-ignore lint/a11y/useMediaCaption: "No caption needed" */}
+      {/* biome-ignore lint/a11y/useMediaCaption: "No caption needed" */}
+      {/* oxlint-disable-next-line eslint-plugin-jsx-a11y(media-has-caption) */}
       <audio controls onTimeUpdate={handleTimeUpdate} ref={audioRef}>
         <source src="https://ejiidnob33g9ap1r.public.blob.vercel-storage.com/ElevenLabs_2025-11-10T22_10_24_Hayden_pvc_sp110_s50_sb75_se0_b_m2.mp3" />
       </audio>

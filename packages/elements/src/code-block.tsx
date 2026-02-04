@@ -37,9 +37,9 @@ const isItalic = (fontStyle: number | undefined) => fontStyle && fontStyle & 1;
 // eslint-disable-next-line no-bitwise -- shiki bitflag check
 // oxlint-disable-next-line eslint(no-bitwise)
 const isBold = (fontStyle: number | undefined) => fontStyle && fontStyle & 2;
-// oxlint-disable-next-line eslint(no-bitwise)
 const isUnderline = (fontStyle: number | undefined) =>
   // biome-ignore lint/suspicious/noBitwiseOperators: shiki bitflag check
+  // oxlint-disable-next-line eslint(no-bitwise)
   fontStyle && fontStyle & 4;
 
 // Transform tokens to include pre-computed keys to avoid noArrayIndexKey lint
@@ -174,6 +174,7 @@ const createRawTokens = (code: string): TokenizedCode => ({
 export const highlightCode = (
   code: string,
   language: BundledLanguage,
+  // oxlint-disable-next-line eslint-plugin-promise(prefer-await-to-callbacks)
   callback?: (result: TokenizedCode) => void
 ): TokenizedCode | null => {
   const tokensCacheKey = getTokensCacheKey(code, language);
@@ -225,7 +226,7 @@ export const highlightCode = (
         subscribers.delete(tokensCacheKey);
       }
     })
-    // oxlint-disable-next-line eslint-plugin-promise(prefer-await-to-then)
+    // oxlint-disable-next-line eslint-plugin-promise(prefer-await-to-then), eslint-plugin-promise(prefer-await-to-callbacks)
     .catch((error) => {
       console.error("Failed to highlight code:", error);
       subscribers.delete(tokensCacheKey);

@@ -1,3 +1,4 @@
+// oxlint-disable eslint(max-classes-per-file)
 import { render, screen, waitFor } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";

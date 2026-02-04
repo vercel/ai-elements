@@ -223,6 +223,7 @@ describe("queueSection", () => {
       const contentAfterCollapse = screen.queryByText("Content");
       // Check if it's either not in the document or has been hidden
       expect(
+        // oxlint-disable-next-line eslint-plugin-jest(no-conditional-in-test)
         contentAfterCollapse === null || !contentAfterCollapse.offsetParent
       ).toBeTruthy();
     });

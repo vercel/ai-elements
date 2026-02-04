@@ -388,6 +388,7 @@ const Example = () => {
           )
         );
 
+        // oxlint-disable-next-line eslint-plugin-promise(avoid-new)
         await new Promise((resolve) => {
           setTimeout(resolve, Math.random() * 40 + 20);
         });
@@ -425,6 +426,7 @@ const Example = () => {
     for (const line of mockTerminalLines) {
       output += `${line}\n`;
       setTerminalOutput(output);
+      // oxlint-disable-next-line eslint-plugin-promise(avoid-new)
       await new Promise((resolve) => {
         setTimeout(resolve, 100);
       });
@@ -437,18 +439,21 @@ const Example = () => {
   useEffect(() => {
     const runAnimation = async () => {
       // Wait a bit before starting
+      // oxlint-disable-next-line eslint-plugin-promise(avoid-new)
       await new Promise((resolve) => {
         setTimeout(resolve, 500);
       });
 
       // Stream first message (user)
       await streamMessage(mockMessages[0]);
+      // oxlint-disable-next-line eslint-plugin-promise(avoid-new)
       await new Promise((resolve) => {
         setTimeout(resolve, 800);
       });
 
       // Stream second message (assistant)
       await streamMessage(mockMessages[1]);
+      // oxlint-disable-next-line eslint-plugin-promise(avoid-new)
       await new Promise((resolve) => {
         setTimeout(resolve, 500);
       });
@@ -464,6 +469,7 @@ const Example = () => {
       await streamTerminal();
 
       // Show checkpoint
+      // oxlint-disable-next-line eslint-plugin-promise(avoid-new)
       await new Promise((resolve) => {
         setTimeout(resolve, 300);
       });

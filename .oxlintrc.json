@@ -18,6 +18,8 @@
   ],
   "rules": {
     "import/no-relative-parent-imports": "off",
-    "nextjs/no-img-element": "off"
+    "nextjs/no-img-element": "off",
+    "eslint/complexity": "off",
+    "eslint/max-statements": "off"
   }
 }

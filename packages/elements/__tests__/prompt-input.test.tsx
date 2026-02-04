@@ -1,3 +1,4 @@
+// oxlint-disable eslint-plugin-jest(max-expects)
 import { act, render, screen } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import React from "react";
@@ -1365,6 +1366,7 @@ describe("file validation", () => {
     });
   });
 
+  // oxlint-disable-next-line eslint-plugin-jest(max-expects)
   it("accepts multiple comma-separated patterns with wildcards", async () => {
     setupPromptInputTests();
     const onSubmit = vi.fn();
@@ -1444,6 +1446,7 @@ describe("file validation", () => {
     expect(onError).toHaveBeenCalledTimes(2);
   });
 
+  // oxlint-disable-next-line eslint-plugin-jest(max-expects)
   it("accepts multiple comma-separated exact MIME types", async () => {
     setupPromptInputTests();
     const onSubmit = vi.fn();
@@ -2068,6 +2071,7 @@ describe("promptInputAttachment", () => {
     expect(screen.queryByText("test.txt")).not.toBeInTheDocument();
   });
 
+  // oxlint-disable-next-line eslint-plugin-jest(max-expects)
   it("removes attachment if backspace key is pressed and textarea is empty", async () => {
     setupPromptInputTests();
     const onSubmit = vi.fn();

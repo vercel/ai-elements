@@ -4,6 +4,7 @@ import { afterEach, vi } from "vitest";
 import failOnConsole from "vitest-fail-on-console";
 
 // Mock clipboard API for browser environment
+// oxlint-disable-next-line eslint-plugin-jest(require-hook)
 Object.defineProperty(navigator, "clipboard", {
   configurable: true,
   value: {
@@ -14,6 +15,7 @@ Object.defineProperty(navigator, "clipboard", {
 });
 
 // Fail the test if there are any console logs during test execution
+// oxlint-disable-next-line eslint-plugin-jest(require-hook)
 failOnConsole({
   shouldFailOnAssert: true,
   shouldFailOnDebug: true,
@@ -39,7 +41,7 @@ failOnConsole({
 });
 
 // Cleanup after each test - this is a global setup file
-// oxlint-disable-next-line eslint-plugin-jest(no-hooks)
+// oxlint-disable-next-line eslint-plugin-jest(no-hooks), eslint-plugin-jest(require-top-level-describe)
 afterEach(() => {
   cleanup();
 });

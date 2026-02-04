@@ -437,6 +437,7 @@ const Example = () => {
       if (reasoning) {
         await streamReasoning(messageKey, versionId, reasoning.content);
         // Pause between reasoning and content
+        // oxlint-disable-next-line eslint-plugin-promise(avoid-new)
         await new Promise((resolve) => {
           setTimeout(resolve, 500);
         });
@@ -558,6 +559,7 @@ const Example = () => {
         await streamMessage(mockMessages[i]);
 
         if (i < mockMessages.length - 1) {
+          // oxlint-disable-next-line eslint-plugin-promise(avoid-new)
           await new Promise((resolve) => {
             setTimeout(resolve, 1000);
           });

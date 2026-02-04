@@ -163,6 +163,7 @@ describe("composability", () => {
     const componentsFolderButton = screen
       .getByText("components")
       .closest("button");
+    // oxlint-disable-next-line eslint-plugin-jest(no-conditional-in-test)
     if (componentsFolderButton) {
       await user.click(componentsFolderButton);
     }

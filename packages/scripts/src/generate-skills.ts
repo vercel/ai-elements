@@ -265,5 +265,5 @@ const main = async (): Promise<void> => {
 };
 
 // Top-level error handling for CLI script
-// oxlint-disable-next-line eslint-plugin-promise(prefer-await-to-then)
+// oxlint-disable-next-line eslint-plugin-promise(prefer-await-to-then), eslint-plugin-jest(require-hook)
 main().catch(console.error);

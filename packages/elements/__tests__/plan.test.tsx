@@ -1,3 +1,4 @@
+// oxlint-disable eslint-plugin-jest(max-expects)
 import { render, screen } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
@@ -467,6 +468,7 @@ describe("plan", () => {
   });
 
   describe("integration", () => {
+    // oxlint-disable-next-line eslint-plugin-jest(max-expects)
     it("renders complete plan structure", () => {
       render(
         <Plan defaultOpen>

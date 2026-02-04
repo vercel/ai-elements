@@ -1,3 +1,4 @@
+// oxlint-disable eslint-plugin-react(jsx-handler-names)
 import { render, waitFor } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
@@ -466,6 +467,7 @@ describe("persona - Lifecycle Callbacks", () => {
     };
 
     render(
+      // oxlint-disable-next-line eslint-plugin-react(jsx-handler-names)
       <Persona
         onLoad={callbacks.onLoad}
         onLoadError={callbacks.onLoadError}
@@ -739,6 +741,7 @@ describe("persona - Integration", () => {
     };
 
     const { getByTestId } = render(
+      // oxlint-disable-next-line eslint-plugin-react(jsx-handler-names)
       <Persona
         className="size-64 rounded-full"
         onLoad={callbacks.onLoad}

@@ -765,6 +765,7 @@ describe("useVoiceSelector hook", () => {
       const handleClick = useCallback(() => setValue("new-voice"), [setValue]);
       return (
         <div>
+          {/* oxlint-disable-next-line eslint-plugin-jest(no-conditional-in-test) */}
           <ValueDisplay value={value ?? null} />
           <button onClick={handleClick} type="button">
             Set Voice

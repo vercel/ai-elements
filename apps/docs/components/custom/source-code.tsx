@@ -48,6 +48,7 @@ export const SourceCode = async ({ path, className }: SourceCodeProps) => {
       title={`${path}.tsx`}
     >
       {/* biome-ignore lint/security/noDangerouslySetInnerHtml: "this is needed." */}
+      {/* oxlint-disable-next-line eslint-plugin-react(no-danger) */}
       <pre dangerouslySetInnerHTML={{ __html: highlightedCode }} />
     </CodeBlock>
   );
