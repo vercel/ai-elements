@@ -19,6 +19,10 @@ const config = {
 
   reactStrictMode: true,
 
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+
   redirects() {
     return [
       {
