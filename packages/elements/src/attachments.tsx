@@ -77,6 +77,29 @@ export const getAttachmentLabel = (data: AttachmentData): string => {
   return data.filename || (category === "image" ? "Image" : "Attachment");
 };
 
+const renderAttachmentImage = (
+  url: string,
+  filename: string | undefined,
+  isGrid: boolean
+) =>
+  isGrid ? (
+    <img
+      alt={filename || "Image"}
+      className="size-full object-cover"
+      height={96}
+      src={url}
+      width={96}
+    />
+  ) : (
+    <img
+      alt={filename || "Image"}
+      className="size-full rounded object-cover"
+      height={20}
+      src={url}
+      width={20}
+    />
+  );
+
 // ============================================================================
 // Contexts
 // ============================================================================
@@ -211,36 +234,13 @@ export const AttachmentPreview = ({
 
   const iconSize = variant === "inline" ? "size-3" : "size-4";
 
-  const renderImage = (
-    url: string,
-    filename: string | undefined,
-    isGrid: boolean
-  ) =>
-    isGrid ? (
-      <img
-        alt={filename || "Image"}
-        className="size-full object-cover"
-        height={96}
-        src={url}
-        width={96}
-      />
-    ) : (
-      <img
-        alt={filename || "Image"}
-        className="size-full rounded object-cover"
-        height={20}
-        src={url}
-        width={20}
-      />
-    );
-
   const renderIcon = (Icon: typeof ImageIcon) => (
     <Icon className={cn(iconSize, "text-muted-foreground")} />
   );
 
   const renderContent = () => {
     if (mediaCategory === "image" && data.type === "file" && data.url) {
-      return renderImage(data.url, data.filename, variant === "grid");
+      return renderAttachmentImage(data.url, data.filename, variant === "grid");
     }
 
     if (mediaCategory === "video" && data.type === "file" && data.url) {

@@ -75,9 +75,7 @@ const setupMocks = () => {
   });
 };
 
-const externalMicDevice = mockDevices[1];
-const macbookMicDevice = mockDevices[0];
-const usbMicDevice = mockDevices[2];
+const [macbookMicDevice, externalMicDevice, usbMicDevice] = mockDevices;
 
 describe("micSelectorLabel", () => {
   it("renders simple device label", () => {
@@ -111,6 +109,8 @@ describe("micSelectorLabel", () => {
   });
 });
 
+// Test display helpers - ternaries are acceptable in helper components
+// oxlint-disable-next-line eslint-plugin-jest(no-conditional-in-test)
 const LoadingDisplay = ({ loading }: { loading: boolean }) => (
   <div data-testid="loading">{loading ? "Loading" : "Loaded"}</div>
 );
@@ -119,6 +119,7 @@ const ErrorDisplay = ({ error }: { error: string | null }) => (
   <div data-testid="error">{error ?? "No error"}</div>
 );
 
+// oxlint-disable-next-line eslint-plugin-jest(no-conditional-in-test)
 const PermissionDisplay = ({ hasPermission }: { hasPermission: boolean }) => (
   <div data-testid="permission">
     {hasPermission ? "Granted" : "Not granted"}

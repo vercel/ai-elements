@@ -15,22 +15,23 @@ import {
 const mockState = { isAtBottom: true };
 const mockScrollToBottom = vi.fn();
 
+interface MockProps {
+  children?: React.ReactNode;
+  [key: string]: unknown;
+}
+
+const StickToBottomMock = ({ children, ...props }: MockProps) => (
+  <div role="log" {...props}>
+    {children}
+  </div>
+);
+
+const StickToBottomContent = ({ children, ...props }: MockProps) => (
+  <div {...props}>{children}</div>
+);
+
+// oxlint-disable-next-line typescript-eslint(consistent-type-imports)
 vi.mock<typeof import("use-stick-to-bottom")>("use-stick-to-bottom", () => {
-  interface MockProps {
-    children?: React.ReactNode;
-    [key: string]: unknown;
-  }
-
-  const StickToBottomMock = ({ children, ...props }: MockProps) => (
-    <div role="log" {...props}>
-      {children}
-    </div>
-  );
-
-  const StickToBottomContent = ({ children, ...props }: MockProps) => (
-    <div {...props}>{children}</div>
-  );
-
   const MockComponent = StickToBottomMock as typeof StickToBottomMock & {
     Content: typeof StickToBottomContent;
   };
@@ -44,6 +45,10 @@ vi.mock<typeof import("use-stick-to-bottom")>("use-stick-to-bottom", () => {
     }),
   };
 });
+
+// Custom format function for messagesToMarkdown test
+const customFormatMessage = (msg: { role: string; content: string }) =>
+  `[${msg.role}]: ${msg.content}`;
 
 describe("conversation", () => {
   it("renders children", () => {
@@ -195,6 +200,8 @@ describe("conversationScrollButton", () => {
   });
 });
 
+// Function name as describe title is a valid testing pattern
+// oxlint-disable-next-line eslint-plugin-jest(valid-title)
 describe(messagesToMarkdown, () => {
   it("converts messages to markdown format", () => {
     const messages = [
@@ -218,10 +225,7 @@ describe(messagesToMarkdown, () => {
       { content: "Hi", role: "assistant" as const },
     ];
 
-    const customFormat = (msg: { role: string; content: string }) =>
-      `[${msg.role}]: ${msg.content}`;
-
-    const result = messagesToMarkdown(messages, customFormat);
+    const result = messagesToMarkdown(messages, customFormatMessage);
 
     expect(result).toBe("[user]: Hello\n\n[assistant]: Hi");
   });
@@ -344,14 +348,12 @@ describe("conversationDownload", () => {
       </Conversation>
     );
 
-    const button = screen.getByRole("button");
-    await user.click(button);
+    await user.click(screen.getByRole("button"));
 
     expect(urlMocks.mockCreateObjectURL).toHaveBeenCalledWith();
     expect(domTracker.wasLinkClicked()).toBeTruthy();
     expect(urlMocks.mockRevokeObjectURL).toHaveBeenCalledWith();
 
     urlMocks.restore();
-    vi.restoreAllMocks();
   });
 });

@@ -11,16 +11,21 @@ const mockUseViewModelInstance = vi.fn();
 const mockUseViewModelInstanceColor = vi.fn();
 const MockRiveComponent = vi.fn(() => <div data-testid="rive-component" />);
 
+// oxlint-disable-next-line typescript-eslint(consistent-type-imports)
 vi.mock<typeof import("@rive-app/react-webgl2")>(
   "@rive-app/react-webgl2",
   () => ({
-    useRive: (params: any) => mockUseRive(params),
-    useStateMachineInput: (rive: any, stateMachine: string, input: string) =>
-      mockUseStateMachineInput(rive, stateMachine, input),
-    useViewModel: (rive: any, options: any) => mockUseViewModel(rive, options),
-    useViewModelInstance: (viewModel: any, options: any) =>
+    useRive: (params: unknown) => mockUseRive(params),
+    useStateMachineInput: (
+      rive: unknown,
+      stateMachine: string,
+      input: string
+    ) => mockUseStateMachineInput(rive, stateMachine, input),
+    useViewModel: (rive: unknown, options: unknown) =>
+      mockUseViewModel(rive, options),
+    useViewModelInstance: (viewModel: unknown, options: unknown) =>
       mockUseViewModelInstance(viewModel, options),
-    useViewModelInstanceColor: (name: string, instance: any) =>
+    useViewModelInstanceColor: (name: string, instance: unknown) =>
       mockUseViewModelInstanceColor(name, instance),
   })
 );
@@ -61,6 +66,7 @@ describe("persona", () => {
   });
 
   it("uses default variant 'obsidian' when not specified", () => {
+    setupPersonaTests();
     render(<Persona state="idle" />);
 
     expect(mockUseRive).toHaveBeenCalledWith(
@@ -73,6 +79,7 @@ describe("persona", () => {
   });
 
   it("renders with obsidian variant", () => {
+    setupPersonaTests();
     render(<Persona state="idle" variant="obsidian" />);
 
     expect(mockUseRive).toHaveBeenCalledWith(
@@ -83,6 +90,7 @@ describe("persona", () => {
   });
 
   it("renders with mana variant", () => {
+    setupPersonaTests();
     render(<Persona state="idle" variant="mana" />);
 
     expect(mockUseRive).toHaveBeenCalledWith(
@@ -93,6 +101,7 @@ describe("persona", () => {
   });
 
   it("renders with opal variant", () => {
+    setupPersonaTests();
     render(<Persona state="idle" variant="opal" />);
 
     expect(mockUseRive).toHaveBeenCalledWith(
@@ -103,6 +112,7 @@ describe("persona", () => {
   });
 
   it("renders with halo variant", () => {
+    setupPersonaTests();
     render(<Persona state="idle" variant="halo" />);
 
     expect(mockUseRive).toHaveBeenCalledWith(
@@ -113,6 +123,7 @@ describe("persona", () => {
   });
 
   it("renders with glint variant", () => {
+    setupPersonaTests();
     render(<Persona state="idle" variant="glint" />);
 
     expect(mockUseRive).toHaveBeenCalledWith(
@@ -123,6 +134,7 @@ describe("persona", () => {
   });
 
   it("renders with command variant", () => {
+    setupPersonaTests();
     render(<Persona state="idle" variant="command" />);
 
     expect(mockUseRive).toHaveBeenCalledWith(
@@ -133,6 +145,7 @@ describe("persona", () => {
   });
 
   it("applies custom className", () => {
+    setupPersonaTests();
     MockRiveComponent.mockImplementation(({ className }) => (
       <div className={className} data-testid="rive-component" />
     ));
@@ -146,6 +159,7 @@ describe("persona", () => {
   });
 
   it("applies default size classes", () => {
+    setupPersonaTests();
     MockRiveComponent.mockImplementation(({ className }) => (
       <div className={className} data-testid="rive-component" />
     ));
@@ -158,6 +172,7 @@ describe("persona", () => {
   });
 
   it("merges custom className with default classes", () => {
+    setupPersonaTests();
     MockRiveComponent.mockImplementation(({ className }) => (
       <div className={className} data-testid="rive-component" />
     ));
@@ -172,6 +187,7 @@ describe("persona", () => {
   });
 
   it("initializes state machine inputs for listening, thinking, and speaking", () => {
+    setupPersonaTests();
     const mockRive = { id: "test-rive" };
     mockUseRive.mockReturnValue({
       RiveComponent: MockRiveComponent,
@@ -198,24 +214,26 @@ describe("persona", () => {
   });
 });
 
+// Helper to create state machine mock without conditionals
+const createStateMachineMock =
+  (inputs: Record<string, { value: boolean }>) =>
+  (_rive: unknown, _sm: string, input: string) =>
+    inputs[input] ?? { value: false };
+
 describe("persona - State Management", () => {
   it("sets listening input to true when state is listening", async () => {
+    setupPersonaTests();
     const mockListeningInput = { value: false };
     const mockThinkingInput = { value: false };
     const mockSpeakingInput = { value: false };
 
-    mockUseStateMachineInput.mockImplementation((_rive, _sm, input) => {
-      if (input === "listening") {
-        return mockListeningInput;
-      }
-      if (input === "thinking") {
-        return mockThinkingInput;
-      }
-      if (input === "speaking") {
-        return mockSpeakingInput;
-      }
-      return { value: false };
-    });
+    mockUseStateMachineInput.mockImplementation(
+      createStateMachineMock({
+        listening: mockListeningInput,
+        speaking: mockSpeakingInput,
+        thinking: mockThinkingInput,
+      })
+    );
 
     render(<Persona state="listening" />);
 
@@ -227,22 +245,18 @@ describe("persona - State Management", () => {
   });
 
   it("sets thinking input to true when state is thinking", async () => {
+    setupPersonaTests();
     const mockListeningInput = { value: false };
     const mockThinkingInput = { value: false };
     const mockSpeakingInput = { value: false };
 
-    mockUseStateMachineInput.mockImplementation((_rive, _sm, input) => {
-      if (input === "listening") {
-        return mockListeningInput;
-      }
-      if (input === "thinking") {
-        return mockThinkingInput;
-      }
-      if (input === "speaking") {
-        return mockSpeakingInput;
-      }
-      return { value: false };
-    });
+    mockUseStateMachineInput.mockImplementation(
+      createStateMachineMock({
+        listening: mockListeningInput,
+        speaking: mockSpeakingInput,
+        thinking: mockThinkingInput,
+      })
+    );
 
     render(<Persona state="thinking" />);
 
@@ -254,22 +268,18 @@ describe("persona - State Management", () => {
   });
 
   it("sets speaking input to true when state is speaking", async () => {
+    setupPersonaTests();
     const mockListeningInput = { value: false };
     const mockThinkingInput = { value: false };
     const mockSpeakingInput = { value: false };
 
-    mockUseStateMachineInput.mockImplementation((_rive, _sm, input) => {
-      if (input === "listening") {
-        return mockListeningInput;
-      }
-      if (input === "thinking") {
-        return mockThinkingInput;
-      }
-      if (input === "speaking") {
-        return mockSpeakingInput;
-      }
-      return { value: false };
-    });
+    mockUseStateMachineInput.mockImplementation(
+      createStateMachineMock({
+        listening: mockListeningInput,
+        speaking: mockSpeakingInput,
+        thinking: mockThinkingInput,
+      })
+    );
 
     render(<Persona state="speaking" />);
 
@@ -281,22 +291,18 @@ describe("persona - State Management", () => {
   });
 
   it("sets all inputs to false when state is idle", async () => {
+    setupPersonaTests();
     const mockListeningInput = { value: false };
     const mockThinkingInput = { value: false };
     const mockSpeakingInput = { value: false };
 
-    mockUseStateMachineInput.mockImplementation((_rive, _sm, input) => {
-      if (input === "listening") {
-        return mockListeningInput;
-      }
-      if (input === "thinking") {
-        return mockThinkingInput;
-      }
-      if (input === "speaking") {
-        return mockSpeakingInput;
-      }
-      return { value: false };
-    });
+    mockUseStateMachineInput.mockImplementation(
+      createStateMachineMock({
+        listening: mockListeningInput,
+        speaking: mockSpeakingInput,
+        thinking: mockThinkingInput,
+      })
+    );
 
     render(<Persona state="idle" />);
 
@@ -308,22 +314,18 @@ describe("persona - State Management", () => {
   });
 
   it("sets all inputs to false when state is asleep", async () => {
+    setupPersonaTests();
     const mockListeningInput = { value: false };
     const mockThinkingInput = { value: false };
     const mockSpeakingInput = { value: false };
 
-    mockUseStateMachineInput.mockImplementation((_rive, _sm, input) => {
-      if (input === "listening") {
-        return mockListeningInput;
-      }
-      if (input === "thinking") {
-        return mockThinkingInput;
-      }
-      if (input === "speaking") {
-        return mockSpeakingInput;
-      }
-      return { value: false };
-    });
+    mockUseStateMachineInput.mockImplementation(
+      createStateMachineMock({
+        listening: mockListeningInput,
+        speaking: mockSpeakingInput,
+        thinking: mockThinkingInput,
+      })
+    );
 
     render(<Persona state="asleep" />);
 
@@ -335,22 +337,18 @@ describe("persona - State Management", () => {
   });
 
   it("updates state inputs when state prop changes", async () => {
+    setupPersonaTests();
     const mockListeningInput = { value: false };
     const mockThinkingInput = { value: false };
     const mockSpeakingInput = { value: false };
 
-    mockUseStateMachineInput.mockImplementation((_rive, _sm, input) => {
-      if (input === "listening") {
-        return mockListeningInput;
-      }
-      if (input === "thinking") {
-        return mockThinkingInput;
-      }
-      if (input === "speaking") {
-        return mockSpeakingInput;
-      }
-      return { value: false };
-    });
+    mockUseStateMachineInput.mockImplementation(
+      createStateMachineMock({
+        listening: mockListeningInput,
+        speaking: mockSpeakingInput,
+        thinking: mockThinkingInput,
+      })
+    );
 
     const { rerender } = render(<Persona state="idle" />);
 
@@ -373,6 +371,7 @@ describe("persona - State Management", () => {
   });
 
   it("handles null state machine inputs gracefully", () => {
+    setupPersonaTests();
     mockUseStateMachineInput.mockReturnValue(null);
 
     // Should not throw an error
@@ -384,6 +383,7 @@ describe("persona - State Management", () => {
 
 describe("persona - Lifecycle Callbacks", () => {
   it("passes onLoad to useRive when provided", () => {
+    setupPersonaTests();
     const onLoad = vi.fn();
     render(<Persona onLoad={onLoad} state="idle" />);
 
@@ -395,6 +395,7 @@ describe("persona - Lifecycle Callbacks", () => {
   });
 
   it("passes onLoadError to useRive when provided", () => {
+    setupPersonaTests();
     const onLoadError = vi.fn();
     render(<Persona onLoadError={onLoadError} state="idle" />);
 
@@ -406,6 +407,7 @@ describe("persona - Lifecycle Callbacks", () => {
   });
 
   it("passes onReady as onRiveReady to useRive when provided", () => {
+    setupPersonaTests();
     const onReady = vi.fn();
     render(<Persona onReady={onReady} state="idle" />);
 
@@ -417,6 +419,7 @@ describe("persona - Lifecycle Callbacks", () => {
   });
 
   it("passes onPause to useRive when provided", () => {
+    setupPersonaTests();
     const onPause = vi.fn();
     render(<Persona onPause={onPause} state="idle" />);
 
@@ -428,6 +431,7 @@ describe("persona - Lifecycle Callbacks", () => {
   });
 
   it("passes onPlay to useRive when provided", () => {
+    setupPersonaTests();
     const onPlay = vi.fn();
     render(<Persona onPlay={onPlay} state="idle" />);
 
@@ -439,6 +443,7 @@ describe("persona - Lifecycle Callbacks", () => {
   });
 
   it("passes onStop to useRive when provided", () => {
+    setupPersonaTests();
     const onStop = vi.fn();
     render(<Persona onStop={onStop} state="idle" />);
 
@@ -450,6 +455,7 @@ describe("persona - Lifecycle Callbacks", () => {
   });
 
   it("passes all lifecycle callbacks to useRive simultaneously", () => {
+    setupPersonaTests();
     const callbacks = {
       onLoad: vi.fn(),
       onLoadError: vi.fn(),
@@ -486,6 +492,7 @@ describe("persona - Lifecycle Callbacks", () => {
 
 describe("persona - Callback Execution", () => {
   it("invokes onLoad callback when rive loads", () => {
+    setupPersonaTests();
     const onLoad = vi.fn();
 
     mockUseRive.mockImplementation((params) => {
@@ -503,6 +510,7 @@ describe("persona - Callback Execution", () => {
   });
 
   it("invokes onLoadError callback on error", () => {
+    setupPersonaTests();
     const onLoadError = vi.fn();
     const testError = new Error("Test error");
 
@@ -521,6 +529,7 @@ describe("persona - Callback Execution", () => {
   });
 
   it("invokes onReady callback when rive is ready", () => {
+    setupPersonaTests();
     const onReady = vi.fn();
 
     mockUseRive.mockImplementation((params) => {
@@ -538,6 +547,7 @@ describe("persona - Callback Execution", () => {
   });
 
   it("invokes onPause callback when paused", () => {
+    setupPersonaTests();
     const onPause = vi.fn();
     const pauseEvent = { type: "pause" };
 
@@ -555,6 +565,7 @@ describe("persona - Callback Execution", () => {
   });
 
   it("invokes onPlay callback when played", () => {
+    setupPersonaTests();
     const onPlay = vi.fn();
     const playEvent = { type: "play" };
 
@@ -572,6 +583,7 @@ describe("persona - Callback Execution", () => {
   });
 
   it("invokes onStop callback when stopped", () => {
+    setupPersonaTests();
     const onStop = vi.fn();
     const stopEvent = { type: "stop" };
 
@@ -591,26 +603,20 @@ describe("persona - Callback Execution", () => {
 
 describe("persona - Asleep State", () => {
   it("sets asleep input to true when state is asleep", async () => {
+    setupPersonaTests();
     const mockListeningInput = { value: false };
     const mockThinkingInput = { value: false };
     const mockSpeakingInput = { value: false };
     const mockAsleepInput = { value: false };
 
-    mockUseStateMachineInput.mockImplementation((_rive, _sm, input) => {
-      if (input === "listening") {
-        return mockListeningInput;
-      }
-      if (input === "thinking") {
-        return mockThinkingInput;
-      }
-      if (input === "speaking") {
-        return mockSpeakingInput;
-      }
-      if (input === "asleep") {
-        return mockAsleepInput;
-      }
-      return { value: false };
-    });
+    mockUseStateMachineInput.mockImplementation(
+      createStateMachineMock({
+        asleep: mockAsleepInput,
+        listening: mockListeningInput,
+        speaking: mockSpeakingInput,
+        thinking: mockThinkingInput,
+      })
+    );
 
     render(<Persona state="asleep" />);
 
@@ -625,6 +631,7 @@ describe("persona - Asleep State", () => {
 
 describe("persona - Invalid Variant", () => {
   it("throws error for invalid variant", () => {
+    setupPersonaTests();
     expect(() => {
       // @ts-expect-error - testing invalid variant
       render(<Persona state="idle" variant="invalid-variant" />);
@@ -634,6 +641,7 @@ describe("persona - Invalid Variant", () => {
 
 describe("persona - Dynamic Color", () => {
   it("sets RGB to white in dark theme for dynamic color variants", async () => {
+    setupPersonaTests();
     const mockSetRgb = vi.fn();
     mockUseViewModelInstanceColor.mockReturnValue({ setRgb: mockSetRgb });
 
@@ -650,6 +658,7 @@ describe("persona - Dynamic Color", () => {
   });
 
   it("sets RGB to black in light theme for dynamic color variants", async () => {
+    setupPersonaTests();
     const mockSetRgb = vi.fn();
     mockUseViewModelInstanceColor.mockReturnValue({ setRgb: mockSetRgb });
 
@@ -664,12 +673,14 @@ describe("persona - Dynamic Color", () => {
   });
 
   it("does not set RGB for non-dynamic-color variants", async () => {
+    setupPersonaTests();
     const mockSetRgb = vi.fn();
     mockUseViewModelInstanceColor.mockReturnValue({ setRgb: mockSetRgb });
 
     render(<Persona state="idle" variant="mana" />);
 
     // Wait a bit to ensure effect has run
+    // oxlint-disable-next-line eslint-plugin-promise(avoid-new)
     await new Promise((resolve) => {
       setTimeout(resolve, 50);
     });
@@ -678,6 +689,7 @@ describe("persona - Dynamic Color", () => {
   });
 
   it("does not set RGB when viewModelInstanceColor is null", () => {
+    setupPersonaTests();
     mockUseViewModelInstanceColor.mockReturnValue(null);
 
     // Should not throw
@@ -687,6 +699,7 @@ describe("persona - Dynamic Color", () => {
   });
 
   it("uses PersonaWithoutModel for variants without model", () => {
+    setupPersonaTests();
     // opal variant has hasModel: false
     render(<Persona state="idle" variant="opal" />);
 
@@ -702,22 +715,18 @@ describe("persona - Dynamic Color", () => {
 
 describe("persona - Integration", () => {
   it("renders with all props combined", async () => {
+    setupPersonaTests();
     const mockListeningInput = { value: false };
     const mockThinkingInput = { value: false };
     const mockSpeakingInput = { value: false };
 
-    mockUseStateMachineInput.mockImplementation((_rive, _sm, input) => {
-      if (input === "listening") {
-        return mockListeningInput;
-      }
-      if (input === "thinking") {
-        return mockThinkingInput;
-      }
-      if (input === "speaking") {
-        return mockSpeakingInput;
-      }
-      return { value: false };
-    });
+    mockUseStateMachineInput.mockImplementation(
+      createStateMachineMock({
+        listening: mockListeningInput,
+        speaking: mockSpeakingInput,
+        thinking: mockThinkingInput,
+      })
+    );
 
     MockRiveComponent.mockImplementation(({ className }) => (
       <div className={className} data-testid="rive-component" />
@@ -771,6 +780,7 @@ describe("persona - Integration", () => {
   });
 
   it("uses 'default' as the state machine name for all variants", () => {
+    setupPersonaTests();
     const variants = [
       "obsidian",
       "mana",
@@ -793,6 +803,7 @@ describe("persona - Integration", () => {
   });
 
   it("always sets autoplay to true", () => {
+    setupPersonaTests();
     const states = [
       "idle",
       "listening",

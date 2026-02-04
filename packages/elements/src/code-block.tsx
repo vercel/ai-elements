@@ -35,8 +35,9 @@ import { createHighlighter } from "shiki";
 const isItalic = (fontStyle: number | undefined) => fontStyle && fontStyle & 1;
 // biome-ignore lint/suspicious/noBitwiseOperators: shiki bitflag check
 // eslint-disable-next-line no-bitwise -- shiki bitflag check
+// oxlint-disable-next-line eslint(no-bitwise)
 const isBold = (fontStyle: number | undefined) => fontStyle && fontStyle & 2;
-// eslint-disable-next-line no-bitwise -- shiki bitflag check
+// oxlint-disable-next-line eslint(no-bitwise)
 const isUnderline = (fontStyle: number | undefined) =>
   // biome-ignore lint/suspicious/noBitwiseOperators: shiki bitflag check
   fontStyle && fontStyle & 4;
@@ -66,12 +67,12 @@ const TokenSpan = ({ token }: { token: ThemedToken }) => (
     className="dark:!bg-[var(--shiki-dark-bg)] dark:!text-[var(--shiki-dark)]"
     style={
       {
-        color: token.color,
         backgroundColor: token.bgColor,
-        ...token.htmlStyle,
+        color: token.color,
         fontStyle: isItalic(token.fontStyle) ? "italic" : undefined,
         fontWeight: isBold(token.fontStyle) ? "bold" : undefined,
         textDecoration: isUnderline(token.fontStyle) ? "underline" : undefined,
+        ...token.htmlStyle,
       } as CSSProperties
     }
   >
@@ -224,6 +225,7 @@ export const highlightCode = (
         subscribers.delete(tokensCacheKey);
       }
     })
+    // oxlint-disable-next-line eslint-plugin-promise(prefer-await-to-then)
     .catch((error) => {
       console.error("Failed to highlight code:", error);
       subscribers.delete(tokensCacheKey);

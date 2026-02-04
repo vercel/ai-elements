@@ -14,6 +14,8 @@ interface EnvironmentVariablesContextType {
   setShowValues: (show: boolean) => void;
 }
 
+// Default noop for context default value
+// oxlint-disable-next-line eslint(no-empty-function)
 const noop = () => {};
 
 const EnvironmentVariablesContext =
@@ -242,21 +244,23 @@ export const EnvironmentVariableCopyButton = ({
   const [isCopied, setIsCopied] = useState(false);
   const { name, value } = useContext(EnvironmentVariableContext);
 
+  const getTextToCopy = (): string => {
+    const formatMap = {
+      export: () => `export ${name}="${value}"`,
+      name: () => name,
+      value: () => value,
+    };
+    return formatMap[copyFormat]();
+  };
+
   const copyToClipboard = async () => {
     if (typeof window === "undefined" || !navigator?.clipboard?.writeText) {
       onError?.(new Error("Clipboard API not available"));
       return;
     }
 
-    let textToCopy = value;
-    if (copyFormat === "name") {
-      textToCopy = name;
-    } else if (copyFormat === "export") {
-      textToCopy = `export ${name}="${value}"`;
-    }
-
     try {
-      await navigator.clipboard.writeText(textToCopy);
+      await navigator.clipboard.writeText(getTextToCopy());
       setIsCopied(true);
       onCopy?.();
       setTimeout(() => setIsCopied(false), timeout);

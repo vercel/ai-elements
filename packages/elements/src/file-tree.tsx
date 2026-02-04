@@ -23,6 +23,8 @@ interface FileTreeContextType {
   onSelect?: (path: string) => void;
 }
 
+// Default noop for context default value
+// oxlint-disable-next-line eslint(no-empty-function)
 const noop = () => {};
 
 const FileTreeContext = createContext<FileTreeContextType>({

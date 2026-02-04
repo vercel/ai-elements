@@ -1,5 +1,5 @@
 import { act, render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
+import { userEvent } from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 
 import {
@@ -134,6 +134,7 @@ describe("reasoning", () => {
     expect(screen.getByText("Old reasoning content")).toBeVisible();
 
     // Wait past AUTO_CLOSE_DELAY (1000ms) - use real timer
+    // oxlint-disable-next-line eslint-plugin-promise(avoid-new)
     await new Promise((resolve) => {
       setTimeout(resolve, 1200);
     });

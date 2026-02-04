@@ -317,6 +317,8 @@ const Example = () => {
     for (let i = 0; i < words.length; i += 1) {
       currentContent += (i > 0 ? " " : "") + words[i];
 
+      // Intentionally capture currentContent at each iteration for streaming effect
+      // oxlint-disable-next-line eslint(no-loop-func)
       setMessages((prev) =>
         prev.map((msg) => {
           if (msg.key === messageKey) {
@@ -331,6 +333,7 @@ const Example = () => {
         })
       );
 
+      // oxlint-disable-next-line eslint-plugin-promise(avoid-new)
       await new Promise((resolve) => {
         setTimeout(resolve, Math.random() * 30 + 20);
       });
@@ -362,6 +365,8 @@ const Example = () => {
     for (let i = 0; i < words.length; i += 1) {
       currentContent += (i > 0 ? " " : "") + words[i];
 
+      // Intentionally capture currentContent at each iteration for streaming effect
+      // oxlint-disable-next-line eslint(no-loop-func)
       setMessages((prev) =>
         prev.map((msg) => {
           if (msg.key === messageKey) {
@@ -376,6 +381,7 @@ const Example = () => {
         })
       );
 
+      // oxlint-disable-next-line eslint-plugin-promise(avoid-new)
       await new Promise((resolve) => {
         setTimeout(resolve, Math.random() * 50 + 25);
       });

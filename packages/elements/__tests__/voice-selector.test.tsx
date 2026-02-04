@@ -25,11 +25,12 @@ import {
   VoiceSelectorTrigger,
 } from "../src/voice-selector";
 
-// Helper components to avoid conditional ternaries in tests
+// Helper components for test display
 const ValueDisplay = ({ value }: { value: string | null }) => (
   <div data-testid="value">{value ?? "none"}</div>
 );
 
+// oxlint-disable-next-line eslint-plugin-jest(no-conditional-in-test)
 const OpenDisplay = ({ open }: { open: boolean }) => (
   <div data-testid="open">{open ? "open" : "closed"}</div>
 );

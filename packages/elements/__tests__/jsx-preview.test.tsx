@@ -113,9 +113,8 @@ describe("jsxPreviewError", () => {
       </JSXPreview>
     );
     // Error may or may not show depending on parser behavior
-    const error = screen.queryByTestId("error");
-    // Verify query was performed (test passes whether error shows or not)
-    expect(error === null || error instanceof HTMLElement).toBeTruthy();
+    // The test passes as long as the component renders without throwing
+    expect(true).toBeTruthy();
   });
 
   it("renders custom children when provided", () => {

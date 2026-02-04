@@ -75,7 +75,7 @@ const Example = () => (
   <Artifact>
     <ArtifactHeader>
       <div>
-        <ArtifactTitle>Dijkstra's Algorithm Implementation</ArtifactTitle>
+        <ArtifactTitle>Dijkstra&apos;s Algorithm Implementation</ArtifactTitle>
         <ArtifactDescription>Updated 1 minute ago</ArtifactDescription>
       </div>
       <div className="flex items-center gap-2">

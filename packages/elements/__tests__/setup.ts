@@ -7,6 +7,7 @@ import failOnConsole from "vitest-fail-on-console";
 Object.defineProperty(navigator, "clipboard", {
   configurable: true,
   value: {
+    // oxlint-disable-next-line eslint-plugin-promise(prefer-await-to-then)
     writeText: vi.fn(() => Promise.resolve()),
   },
   writable: true,

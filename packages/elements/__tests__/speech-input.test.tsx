@@ -227,23 +227,21 @@ describe("speechInput - Speech Recognition", () => {
     });
 
     // Simulate speech recognition result with final transcript
-    if (instanceRef.current?.onresult) {
-      instanceRef.current.onresult({
-        resultIndex: 0,
-        results: {
-          0: {
-            0: { confidence: 0.9, transcript: "Hello world" },
-            isFinal: true,
-            item: (_index: number) => ({
-              confidence: 0.9,
-              transcript: "Hello world",
-            }),
-            length: 1,
-          },
+    instanceRef.current?.onresult?.({
+      resultIndex: 0,
+      results: {
+        0: {
+          0: { confidence: 0.9, transcript: "Hello world" },
+          isFinal: true,
+          item: (_index: number) => ({
+            confidence: 0.9,
+            transcript: "Hello world",
+          }),
           length: 1,
         },
-      });
-    }
+        length: 1,
+      },
+    });
 
     await waitFor(() => {
       expect(handleTranscription).toHaveBeenCalledWith("Hello world");
@@ -272,23 +270,21 @@ describe("speechInput - Speech Recognition", () => {
     });
 
     // Simulate interim result (should not trigger callback)
-    if (instanceRef.current?.onresult) {
-      instanceRef.current.onresult({
-        resultIndex: 0,
-        results: {
-          0: {
-            0: { confidence: 0.5, transcript: "Hello" },
-            isFinal: false,
-            item: (_index: number) => ({
-              confidence: 0.5,
-              transcript: "Hello",
-            }),
-            length: 1,
-          },
+    instanceRef.current?.onresult?.({
+      resultIndex: 0,
+      results: {
+        0: {
+          0: { confidence: 0.5, transcript: "Hello" },
+          isFinal: false,
+          item: (_index: number) => ({
+            confidence: 0.5,
+            transcript: "Hello",
+          }),
           length: 1,
         },
-      });
-    }
+        length: 1,
+      },
+    });
 
     // Wait a bit to ensure callback wasn't called
     // oxlint-disable-next-line eslint-plugin-promise(avoid-new)
@@ -322,9 +318,7 @@ describe("speechInput - Speech Recognition", () => {
     });
 
     // Trigger error event
-    if (instanceRef.current?.onerror) {
-      instanceRef.current.onerror({ error: "no-speech" });
-    }
+    instanceRef.current?.onerror?.({ error: "no-speech" });
 
     await waitFor(() => {
       expect(consoleErrorSpy).toHaveBeenCalledWith(
@@ -358,20 +352,18 @@ describe("speechInput - Speech Recognition", () => {
     });
 
     // Simulate result with empty transcript
-    if (instanceRef.current?.onresult) {
-      instanceRef.current.onresult({
-        resultIndex: 0,
-        results: {
-          0: {
-            0: { confidence: 0.9, transcript: "" },
-            isFinal: true,
-            item: (_index: number) => ({ confidence: 0.9, transcript: "" }),
-            length: 1,
-          },
+    instanceRef.current?.onresult?.({
+      resultIndex: 0,
+      results: {
+        0: {
+          0: { confidence: 0.9, transcript: "" },
+          isFinal: true,
+          item: (_index: number) => ({ confidence: 0.9, transcript: "" }),
           length: 1,
         },
-      });
-    }
+        length: 1,
+      },
+    });
 
     // Wait to ensure callback wasn't called for empty transcript
     // oxlint-disable-next-line eslint-plugin-promise(avoid-new)
@@ -464,7 +456,8 @@ const setupMediaRecorderTests = (): MediaRecorderTestContext => {
     mockTrack: null,
   };
 
-  // Create mock track
+  // Create mock track - sequential assignment needed for circular reference
+  // oxlint-disable-next-line eslint-plugin-unicorn(no-immediate-mutation)
   context.mockTrack = {
     stop: vi.fn(),
   };
@@ -568,11 +561,9 @@ describe("speechInput - MediaRecorder Fallback", () => {
     const [recorder] = ctx.mediaRecorderInstances;
 
     // Simulate data available
-    if (recorder.ondataavailable) {
-      recorder.ondataavailable({
-        data: new Blob(["test"], { type: "audio/webm" }),
-      });
-    }
+    recorder.ondataavailable?.({
+      data: new Blob(["test"], { type: "audio/webm" }),
+    });
 
     // Stop recording (second click)
     await user.click(button);
@@ -611,11 +602,9 @@ describe("speechInput - MediaRecorder Fallback", () => {
     const [recorder] = ctx.mediaRecorderInstances;
 
     // Simulate data available
-    if (recorder.ondataavailable) {
-      recorder.ondataavailable({
-        data: new Blob(["test"], { type: "audio/webm" }),
-      });
-    }
+    recorder.ondataavailable?.({
+      data: new Blob(["test"], { type: "audio/webm" }),
+    });
 
     // Stop recording
     await user.click(button);
@@ -659,11 +648,9 @@ describe("speechInput - MediaRecorder Fallback", () => {
     const [recorder] = ctx.mediaRecorderInstances;
 
     // Simulate data available
-    if (recorder.ondataavailable) {
-      recorder.ondataavailable({
-        data: new Blob(["test"], { type: "audio/webm" }),
-      });
-    }
+    recorder.ondataavailable?.({
+      data: new Blob(["test"], { type: "audio/webm" }),
+    });
 
     // Stop recording
     await user.click(button);

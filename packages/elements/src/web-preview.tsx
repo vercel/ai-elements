@@ -180,9 +180,9 @@ export const WebPreviewBody = ({
 
   return (
     <div className="flex-1">
-      {/* oxlint-disable-next-line eslint-plugin-react(iframe-missing-sandbox) -- sandbox config is intentional for preview functionality */}
       <iframe
         className={cn("size-full", className)}
+        // oxlint-disable-next-line eslint-plugin-react(iframe-missing-sandbox)
         sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-presentation"
         src={(src ?? url) || undefined}
         title="Preview"

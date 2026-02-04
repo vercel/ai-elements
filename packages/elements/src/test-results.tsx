@@ -34,6 +34,13 @@ interface TestResultsContextType {
 
 const TestResultsContext = createContext<TestResultsContextType>({});
 
+const formatDuration = (ms: number) => {
+  if (ms < 1000) {
+    return `${ms}ms`;
+  }
+  return `${(ms / 1000).toFixed(2)}s`;
+};
+
 export type TestResultsProps = HTMLAttributes<HTMLDivElement> & {
   summary?: TestResultsSummary;
 };
@@ -138,13 +145,6 @@ export const TestResultsDuration = ({
   if (!summary?.duration) {
     return null;
   }
-
-  const formatDuration = (ms: number) => {
-    if (ms < 1000) {
-      return `${ms}ms`;
-    }
-    return `${(ms / 1000).toFixed(2)}s`;
-  };
 
   return (
     <span className={cn("text-muted-foreground text-sm", className)} {...props}>
