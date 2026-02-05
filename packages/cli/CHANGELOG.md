@@ -1,5 +1,11 @@
 # ai-elements
 
+## 1.8.4
+
+### Patch Changes
+
+- 8bdd7fe: React improvements
+
 ## 1.8.3
 
 ### Patch Changes
