@@ -1,15 +1,18 @@
 "use client";
 
+import type { MotionProps } from "motion/react";
 import type { CSSProperties, ElementType, JSX } from "react";
 
 import { cn } from "@repo/shadcn-ui/lib/utils";
 import { motion } from "motion/react";
 import { memo, useMemo } from "react";
 
+type MotionHTMLProps = MotionProps & Record<string, unknown>;
+
 // Cache motion components at module level to avoid creating during render
 const motionComponentCache = new Map<
   keyof JSX.IntrinsicElements,
-  ReturnType<typeof motion.create>
+  React.ComponentType<MotionHTMLProps>
 >();
 
 const getMotionComponent = (element: keyof JSX.IntrinsicElements) => {
