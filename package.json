@@ -19,7 +19,7 @@
     "@vitest/browser-preview": "^4.0.17",
     "oxfmt": "^0.28.0",
     "oxlint": "^1.43.0",
-    "turbo": "2.7.5-canary.13",
+    "turbo": "2.8.3",
     "typescript": "5.9.3",
     "ultracite": "7.1.4",
     "vitest": "^4.0.17"
