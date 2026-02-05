@@ -6,6 +6,21 @@ import { cn } from "@repo/shadcn-ui/lib/utils";
 import { motion } from "motion/react";
 import { memo, useMemo } from "react";
 
+// Cache motion components at module level to avoid creating during render
+const motionComponentCache = new Map<
+  keyof JSX.IntrinsicElements,
+  ReturnType<typeof motion.create>
+>();
+
+const getMotionComponent = (element: keyof JSX.IntrinsicElements) => {
+  let component = motionComponentCache.get(element);
+  if (!component) {
+    component = motion.create(element);
+    motionComponentCache.set(element, component);
+  }
+  return component;
+};
+
 export interface TextShimmerProps {
   children: string;
   as?: ElementType;
@@ -21,9 +36,8 @@ const ShimmerComponent = ({
   duration = 2,
   spread = 2,
 }: TextShimmerProps) => {
-  const MotionComponent = useMemo(
-    () => motion.create(Component as keyof JSX.IntrinsicElements),
-    [Component]
+  const MotionComponent = getMotionComponent(
+    Component as keyof JSX.IntrinsicElements
   );
 
   const dynamicSpread = useMemo(
