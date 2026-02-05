@@ -16,7 +16,7 @@ import {
   CircleIcon,
   XCircleIcon,
 } from "lucide-react";
-import { createContext, useContext } from "react";
+import { createContext, useContext, useMemo } from "react";
 
 type TestStatus = "passed" | "failed" | "skipped" | "running";
 
@@ -50,22 +50,26 @@ export const TestResults = ({
   className,
   children,
   ...props
-}: TestResultsProps) => (
-  <TestResultsContext.Provider value={{ summary }}>
-    <div
-      className={cn("rounded-lg border bg-background", className)}
-      {...props}
-    >
-      {children ??
-        (summary && (
-          <TestResultsHeader>
-            <TestResultsSummary />
-            <TestResultsDuration />
-          </TestResultsHeader>
-        ))}
-    </div>
-  </TestResultsContext.Provider>
-);
+}: TestResultsProps) => {
+  const contextValue = useMemo(() => ({ summary }), [summary]);
+
+  return (
+    <TestResultsContext.Provider value={contextValue}>
+      <div
+        className={cn("rounded-lg border bg-background", className)}
+        {...props}
+      >
+        {children ??
+          (summary && (
+            <TestResultsHeader>
+              <TestResultsSummary />
+              <TestResultsDuration />
+            </TestResultsHeader>
+          ))}
+      </div>
+    </TestResultsContext.Provider>
+  );
+};
 
 export type TestResultsHeaderProps = HTMLAttributes<HTMLDivElement>;
 
@@ -228,13 +232,17 @@ export const TestSuite = ({
   className,
   children,
   ...props
-}: TestSuiteProps) => (
-  <TestSuiteContext.Provider value={{ name, status }}>
-    <Collapsible className={cn("rounded-lg border", className)} {...props}>
-      {children}
-    </Collapsible>
-  </TestSuiteContext.Provider>
-);
+}: TestSuiteProps) => {
+  const contextValue = useMemo(() => ({ name, status }), [name, status]);
+
+  return (
+    <TestSuiteContext.Provider value={contextValue}>
+      <Collapsible className={cn("rounded-lg border", className)} {...props}>
+        {children}
+      </Collapsible>
+    </TestSuiteContext.Provider>
+  );
+};
 
 export type TestSuiteNameProps = ComponentProps<typeof CollapsibleTrigger>;
 
@@ -336,22 +344,29 @@ export const Test = ({
   className,
   children,
   ...props
-}: TestProps) => (
-  <TestContext.Provider value={{ duration, name, status }}>
-    <div
-      className={cn("flex items-center gap-2 px-4 py-2 text-sm", className)}
-      {...props}
-    >
-      {children ?? (
-        <>
-          <TestStatus />
-          <TestName />
-          {duration !== undefined && <TestDuration />}
-        </>
-      )}
-    </div>
-  </TestContext.Provider>
-);
+}: TestProps) => {
+  const contextValue = useMemo(
+    () => ({ duration, name, status }),
+    [duration, name, status]
+  );
+
+  return (
+    <TestContext.Provider value={contextValue}>
+      <div
+        className={cn("flex items-center gap-2 px-4 py-2 text-sm", className)}
+        {...props}
+      >
+        {children ?? (
+          <>
+            <TestStatus />
+            <TestName />
+            {duration !== undefined && <TestDuration />}
+          </>
+        )}
+      </div>
+    </TestContext.Provider>
+  );
+};
 
 const statusStyles: Record<TestStatus, string> = {
   failed: "text-red-600 dark:text-red-400",

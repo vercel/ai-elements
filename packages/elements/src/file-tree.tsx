@@ -14,7 +14,13 @@ import {
   FolderIcon,
   FolderOpenIcon,
 } from "lucide-react";
-import { createContext, useCallback, useContext, useState } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useMemo,
+  useState,
+} from "react";
 
 interface FileTreeContextType {
   expandedPaths: Set<string>;
@@ -54,21 +60,27 @@ export const FileTree = ({
   const [internalExpanded, setInternalExpanded] = useState(defaultExpanded);
   const expandedPaths = controlledExpanded ?? internalExpanded;
 
-  const togglePath = (path: string) => {
-    const newExpanded = new Set(expandedPaths);
-    if (newExpanded.has(path)) {
-      newExpanded.delete(path);
-    } else {
-      newExpanded.add(path);
-    }
-    setInternalExpanded(newExpanded);
-    onExpandedChange?.(newExpanded);
-  };
+  const togglePath = useCallback(
+    (path: string) => {
+      const newExpanded = new Set(expandedPaths);
+      if (newExpanded.has(path)) {
+        newExpanded.delete(path);
+      } else {
+        newExpanded.add(path);
+      }
+      setInternalExpanded(newExpanded);
+      onExpandedChange?.(newExpanded);
+    },
+    [expandedPaths, onExpandedChange]
+  );
+
+  const contextValue = useMemo(
+    () => ({ expandedPaths, onSelect, selectedPath, togglePath }),
+    [expandedPaths, onSelect, selectedPath, togglePath]
+  );
 
   return (
-    <FileTreeContext.Provider
-      value={{ expandedPaths, onSelect, selectedPath, togglePath }}
-    >
+    <FileTreeContext.Provider value={contextValue}>
       <div
         className={cn(
           "rounded-lg border bg-background font-mono text-sm",
@@ -120,8 +132,13 @@ export const FileTreeFolder = ({
     onSelect?.(path);
   }, [onSelect, path]);
 
+  const folderContextValue = useMemo(
+    () => ({ isExpanded, name, path }),
+    [isExpanded, name, path]
+  );
+
   return (
-    <FileTreeFolderContext.Provider value={{ isExpanded, name, path }}>
+    <FileTreeFolderContext.Provider value={folderContextValue}>
       <Collapsible onOpenChange={handleOpenChange} open={isExpanded}>
         <div
           className={cn("", className)}
@@ -203,8 +220,10 @@ export const FileTreeFile = ({
     [onSelect, path]
   );
 
+  const fileContextValue = useMemo(() => ({ name, path }), [name, path]);
+
   return (
-    <FileTreeFileContext.Provider value={{ name, path }}>
+    <FileTreeFileContext.Provider value={fileContextValue}>
       <div
         className={cn(
           "flex cursor-pointer items-center gap-1 rounded px-2 py-1 transition-colors hover:bg-muted/50",

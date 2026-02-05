@@ -21,7 +21,7 @@ import {
   createContext,
   useCallback,
   useContext,
-  useEffect,
+  useMemo,
   useState,
 } from "react";
 
@@ -57,17 +57,23 @@ export const WebPreview = ({
   const [url, setUrl] = useState(defaultUrl);
   const [consoleOpen, setConsoleOpen] = useState(false);
 
-  const handleUrlChange = (newUrl: string) => {
-    setUrl(newUrl);
-    onUrlChange?.(newUrl);
-  };
+  const handleUrlChange = useCallback(
+    (newUrl: string) => {
+      setUrl(newUrl);
+      onUrlChange?.(newUrl);
+    },
+    [onUrlChange]
+  );
 
-  const contextValue: WebPreviewContextValue = {
-    consoleOpen,
-    setConsoleOpen,
-    setUrl: handleUrlChange,
-    url,
-  };
+  const contextValue = useMemo<WebPreviewContextValue>(
+    () => ({
+      consoleOpen,
+      setConsoleOpen,
+      setUrl: handleUrlChange,
+      url,
+    }),
+    [consoleOpen, handleUrlChange, url]
+  );
 
   return (
     <WebPreviewContext.Provider value={contextValue}>
@@ -140,12 +146,14 @@ export const WebPreviewUrl = ({
   ...props
 }: WebPreviewUrlProps) => {
   const { url, setUrl } = useWebPreview();
+  const [prevUrl, setPrevUrl] = useState(url);
   const [inputValue, setInputValue] = useState(url);
 
-  // Sync input value with context URL when it changes externally
-  useEffect(() => {
+  // Sync input value with context URL when it changes externally (derived state pattern)
+  if (url !== prevUrl) {
+    setPrevUrl(url);
     setInputValue(url);
-  }, [url]);
+  }
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(event.target.value);

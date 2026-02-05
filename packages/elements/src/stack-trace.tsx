@@ -21,7 +21,9 @@ import {
   memo,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
 
@@ -319,6 +321,7 @@ export const StackTraceCopyButton = memo(
     ...props
   }: StackTraceCopyButtonProps) => {
     const [isCopied, setIsCopied] = useState(false);
+    const timeoutRef = useRef<number>(0);
     const { raw } = useStackTrace();
 
     const copyToClipboard = useCallback(async () => {
@@ -331,11 +334,21 @@ export const StackTraceCopyButton = memo(
         await navigator.clipboard.writeText(raw);
         setIsCopied(true);
         onCopy?.();
-        setTimeout(() => setIsCopied(false), timeout);
+        timeoutRef.current = window.setTimeout(
+          () => setIsCopied(false),
+          timeout
+        );
       } catch (error) {
         onError?.(error as Error);
       }
     }, [raw, onCopy, onError, timeout]);
+
+    useEffect(
+      () => () => {
+        window.clearTimeout(timeoutRef.current);
+      },
+      []
+    );
 
     const Icon = isCopied ? CheckIcon : CopyIcon;
 

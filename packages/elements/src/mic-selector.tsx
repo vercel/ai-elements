@@ -23,6 +23,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from "react";
@@ -85,18 +86,21 @@ export const MicSelector = ({
     }
   }, [open, hasPermission, loading, loadDevices]);
 
+  const contextValue = useMemo(
+    () => ({
+      data: devices,
+      onOpenChange,
+      onValueChange,
+      open,
+      setWidth,
+      value,
+      width,
+    }),
+    [devices, onOpenChange, onValueChange, open, setWidth, value, width]
+  );
+
   return (
-    <MicSelectorContext.Provider
-      value={{
-        data: devices,
-        onOpenChange,
-        onValueChange,
-        open,
-        setWidth,
-        value,
-        width,
-      }}
-    >
+    <MicSelectorContext.Provider value={contextValue}>
       <Popover {...props} onOpenChange={onOpenChange} open={open} />
     </MicSelectorContext.Provider>
   );

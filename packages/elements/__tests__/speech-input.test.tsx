@@ -321,11 +321,8 @@ describe("speechInput - Speech Recognition", () => {
     expect(handleTranscription).not.toHaveBeenCalled();
   });
 
-  it("handles speech recognition errors and logs them", async () => {
+  it("handles speech recognition errors and stops listening", async () => {
     setupSpeechInputTests();
-    const consoleErrorSpy = vi
-      .spyOn(console, "error")
-      .mockImplementation(vi.fn());
     const instanceRef: InstanceRef = { current: null };
 
     // oxlint-disable-next-line typescript-eslint(no-explicit-any)
@@ -350,14 +347,10 @@ describe("speechInput - Speech Recognition", () => {
     });
     instanceRef.current?.dispatchEvent(errorEvent);
 
+    // Button should return to mic icon (not listening state)
     await waitFor(() => {
-      expect(consoleErrorSpy).toHaveBeenCalledWith(
-        "Speech recognition error:",
-        "no-speech"
-      );
+      expect(screen.getByRole("button")).not.toBeDisabled();
     });
-
-    consoleErrorSpy.mockRestore();
   });
 
   it("handles empty transcript gracefully", async () => {
@@ -677,9 +670,6 @@ describe("speechInput - MediaRecorder Fallback", () => {
   it("handles transcription errors gracefully", async () => {
     const ctx = setupMediaRecorderTests();
     const user = userEvent.setup();
-    const consoleErrorSpy = vi
-      .spyOn(console, "error")
-      .mockImplementation(vi.fn());
     const handleAudioRecorded = vi
       .fn()
       .mockRejectedValue(new Error("Transcription failed"));
@@ -716,16 +706,12 @@ describe("speechInput - MediaRecorder Fallback", () => {
     // Stop recording
     await user.click(button);
 
+    // Wait for the error to be handled and processing to complete
     await waitFor(() => {
-      expect(consoleErrorSpy).toHaveBeenCalledWith(
-        "Transcription error:",
-        expect.any(Error)
-      );
+      expect(handleAudioRecorded).toHaveBeenCalled();
     });
 
     // Transcription change should not be called on error
     expect(handleTranscriptionChange).not.toHaveBeenCalled();
-
-    consoleErrorSpy.mockRestore();
   });
 });

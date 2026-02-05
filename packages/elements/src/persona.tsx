@@ -198,14 +198,17 @@ export const Persona: FC<PersonaProps> = memo(
       onReady,
       onStop,
     });
-    callbacksRef.current = {
-      onLoad,
-      onLoadError,
-      onPause,
-      onPlay,
-      onReady,
-      onStop,
-    };
+
+    useEffect(() => {
+      callbacksRef.current = {
+        onLoad,
+        onLoadError,
+        onPause,
+        onPlay,
+        onReady,
+        onStop,
+      };
+    }, [onLoad, onLoadError, onPause, onPlay, onReady, onStop]);
 
     const stableCallbacks = useMemo(
       () => ({

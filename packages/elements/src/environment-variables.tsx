@@ -7,7 +7,15 @@ import { Button } from "@repo/shadcn-ui/components/ui/button";
 import { Switch } from "@repo/shadcn-ui/components/ui/switch";
 import { cn } from "@repo/shadcn-ui/lib/utils";
 import { CheckIcon, CopyIcon, EyeIcon, EyeOffIcon } from "lucide-react";
-import { createContext, useCallback, useContext, useState } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
 interface EnvironmentVariablesContextType {
   showValues: boolean;
@@ -42,13 +50,21 @@ export const EnvironmentVariables = ({
     useState(defaultShowValues);
   const showValues = controlledShowValues ?? internalShowValues;
 
-  const setShowValues = (show: boolean) => {
-    setInternalShowValues(show);
-    onShowValuesChange?.(show);
-  };
+  const setShowValues = useCallback(
+    (show: boolean) => {
+      setInternalShowValues(show);
+      onShowValuesChange?.(show);
+    },
+    [onShowValuesChange]
+  );
+
+  const contextValue = useMemo(
+    () => ({ setShowValues, showValues }),
+    [setShowValues, showValues]
+  );
 
   return (
-    <EnvironmentVariablesContext.Provider value={{ setShowValues, showValues }}>
+    <EnvironmentVariablesContext.Provider value={contextValue}>
       <div
         className={cn("rounded-lg border bg-background", className)}
         {...props}
@@ -146,26 +162,30 @@ export const EnvironmentVariable = ({
   className,
   children,
   ...props
-}: EnvironmentVariableProps) => (
-  <EnvironmentVariableContext.Provider value={{ name, value }}>
-    <div
-      className={cn(
-        "flex items-center justify-between gap-4 px-4 py-3",
-        className
-      )}
-      {...props}
-    >
-      {children ?? (
-        <>
-          <div className="flex items-center gap-2">
-            <EnvironmentVariableName />
-          </div>
-          <EnvironmentVariableValue />
-        </>
-      )}
-    </div>
-  </EnvironmentVariableContext.Provider>
-);
+}: EnvironmentVariableProps) => {
+  const envVarContextValue = useMemo(() => ({ name, value }), [name, value]);
+
+  return (
+    <EnvironmentVariableContext.Provider value={envVarContextValue}>
+      <div
+        className={cn(
+          "flex items-center justify-between gap-4 px-4 py-3",
+          className
+        )}
+        {...props}
+      >
+        {children ?? (
+          <>
+            <div className="flex items-center gap-2">
+              <EnvironmentVariableName />
+            </div>
+            <EnvironmentVariableValue />
+          </>
+        )}
+      </div>
+    </EnvironmentVariableContext.Provider>
+  );
+};
 
 export type EnvironmentVariableGroupProps = HTMLAttributes<HTMLDivElement>;
 
@@ -242,6 +262,7 @@ export const EnvironmentVariableCopyButton = ({
   ...props
 }: EnvironmentVariableCopyButtonProps) => {
   const [isCopied, setIsCopied] = useState(false);
+  const timeoutRef = useRef<number>(0);
   const { name, value } = useContext(EnvironmentVariableContext);
 
   const getTextToCopy = useCallback((): string => {
@@ -263,11 +284,18 @@ export const EnvironmentVariableCopyButton = ({
       await navigator.clipboard.writeText(getTextToCopy());
       setIsCopied(true);
       onCopy?.();
-      setTimeout(() => setIsCopied(false), timeout);
+      timeoutRef.current = window.setTimeout(() => setIsCopied(false), timeout);
     } catch (error) {
       onError?.(error as Error);
     }
   }, [getTextToCopy, onCopy, onError, timeout]);
+
+  useEffect(
+    () => () => {
+      window.clearTimeout(timeoutRef.current);
+    },
+    []
+  );
 
   const Icon = isCopied ? CheckIcon : CopyIcon;
 

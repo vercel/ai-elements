@@ -39,6 +39,15 @@ export type AttachmentMediaCategory =
 
 export type AttachmentVariant = "grid" | "inline" | "list";
 
+const mediaCategoryIcons: Record<AttachmentMediaCategory, typeof ImageIcon> = {
+  audio: Music2Icon,
+  document: FileTextIcon,
+  image: ImageIcon,
+  source: GlobeIcon,
+  unknown: PaperclipIcon,
+  video: VideoIcon,
+};
+
 // ============================================================================
 // Utility Functions
 // ============================================================================
@@ -247,16 +256,7 @@ export const AttachmentPreview = ({
       return <video className="size-full object-cover" muted src={data.url} />;
     }
 
-    const iconMap: Record<AttachmentMediaCategory, typeof ImageIcon> = {
-      audio: Music2Icon,
-      document: FileTextIcon,
-      image: ImageIcon,
-      source: GlobeIcon,
-      unknown: PaperclipIcon,
-      video: VideoIcon,
-    };
-
-    const Icon = iconMap[mediaCategory];
+    const Icon = mediaCategoryIcons[mediaCategory];
     return fallbackIcon ?? renderIcon(Icon);
   };
 

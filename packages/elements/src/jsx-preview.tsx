@@ -125,18 +125,19 @@ export const JSXPreview = memo(
     children,
     ...props
   }: JSXPreviewProps) => {
+    const [prevJsx, setPrevJsx] = useState(jsx);
     const [error, setError] = useState<Error | null>(null);
+
+    // Clear error when jsx changes (derived state pattern)
+    if (jsx !== prevJsx) {
+      setPrevJsx(jsx);
+      setError(null);
+    }
 
     const processedJsx = useMemo(
       () => (isStreaming ? completeJsxTag(jsx) : jsx),
       [jsx, isStreaming]
     );
-
-    // Clear error when jsx changes
-    // biome-ignore lint/correctness/useExhaustiveDependencies: jsx change should reset error
-    useEffect(() => {
-      setError(null);
-    }, [jsx]);
 
     return (
       <JSXPreviewContext.Provider

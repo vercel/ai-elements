@@ -394,11 +394,21 @@ export const CodeBlockContent = ({
   );
 
   useEffect(() => {
+    let cancelled = false;
+
     // Reset to raw tokens when code changes (shows current code, not stale tokens)
     setTokenized(highlightCode(code, language) ?? rawTokens);
 
     // Subscribe to async highlighting result
-    highlightCode(code, language, setTokenized);
+    highlightCode(code, language, (result) => {
+      if (!cancelled) {
+        setTokenized(result);
+      }
+    });
+
+    return () => {
+      cancelled = true;
+    };
   }, [code, language, rawTokens]);
 
   return (
@@ -415,18 +425,22 @@ export const CodeBlock = ({
   className,
   children,
   ...props
-}: CodeBlockProps) => (
-  <CodeBlockContext.Provider value={{ code }}>
-    <CodeBlockContainer className={className} language={language} {...props}>
-      {children}
-      <CodeBlockContent
-        code={code}
-        language={language}
-        showLineNumbers={showLineNumbers}
-      />
-    </CodeBlockContainer>
-  </CodeBlockContext.Provider>
-);
+}: CodeBlockProps) => {
+  const contextValue = useMemo(() => ({ code }), [code]);
+
+  return (
+    <CodeBlockContext.Provider value={contextValue}>
+      <CodeBlockContainer className={className} language={language} {...props}>
+        {children}
+        <CodeBlockContent
+          code={code}
+          language={language}
+          showLineNumbers={showLineNumbers}
+        />
+      </CodeBlockContainer>
+    </CodeBlockContext.Provider>
+  );
+};
 
 export type CodeBlockCopyButtonProps = ComponentProps<typeof Button> & {
   onCopy?: () => void;

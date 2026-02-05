@@ -11,6 +11,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from "react";
@@ -45,35 +46,40 @@ export const Terminal = ({
   className,
   children,
   ...props
-}: TerminalProps) => (
-  <TerminalContext.Provider
-    value={{ autoScroll, isStreaming, onClear, output }}
-  >
-    <div
-      className={cn(
-        "flex flex-col overflow-hidden rounded-lg border bg-zinc-950 text-zinc-100",
-        className
-      )}
-      {...props}
-    >
-      {children ?? (
-        <>
-          <TerminalHeader>
-            <TerminalTitle />
-            <div className="flex items-center gap-1">
-              <TerminalStatus />
-              <TerminalActions>
-                <TerminalCopyButton />
-                {onClear && <TerminalClearButton />}
-              </TerminalActions>
-            </div>
-          </TerminalHeader>
-          <TerminalContent />
-        </>
-      )}
-    </div>
-  </TerminalContext.Provider>
-);
+}: TerminalProps) => {
+  const contextValue = useMemo(
+    () => ({ autoScroll, isStreaming, onClear, output }),
+    [autoScroll, isStreaming, onClear, output]
+  );
+
+  return (
+    <TerminalContext.Provider value={contextValue}>
+      <div
+        className={cn(
+          "flex flex-col overflow-hidden rounded-lg border bg-zinc-950 text-zinc-100",
+          className
+        )}
+        {...props}
+      >
+        {children ?? (
+          <>
+            <TerminalHeader>
+              <TerminalTitle />
+              <div className="flex items-center gap-1">
+                <TerminalStatus />
+                <TerminalActions>
+                  <TerminalCopyButton />
+                  {onClear && <TerminalClearButton />}
+                </TerminalActions>
+              </div>
+            </TerminalHeader>
+            <TerminalContent />
+          </>
+        )}
+      </div>
+    </TerminalContext.Provider>
+  );
+};
 
 export type TerminalHeaderProps = HTMLAttributes<HTMLDivElement>;
 
@@ -159,6 +165,7 @@ export const TerminalCopyButton = ({
   ...props
 }: TerminalCopyButtonProps) => {
   const [isCopied, setIsCopied] = useState(false);
+  const timeoutRef = useRef<number>(0);
   const { output } = useContext(TerminalContext);
 
   const copyToClipboard = useCallback(async () => {
@@ -171,11 +178,18 @@ export const TerminalCopyButton = ({
       await navigator.clipboard.writeText(output);
       setIsCopied(true);
       onCopy?.();
-      setTimeout(() => setIsCopied(false), timeout);
+      timeoutRef.current = window.setTimeout(() => setIsCopied(false), timeout);
     } catch (error) {
       onError?.(error as Error);
     }
   }, [output, onCopy, onError, timeout]);
+
+  useEffect(
+    () => () => {
+      window.clearTimeout(timeoutRef.current);
+    },
+    []
+  );
 
   const Icon = isCopied ? CheckIcon : CopyIcon;
 
