@@ -267,8 +267,8 @@ importers:
         specifier: ^1.3.1
         version: 1.3.1
       use-stick-to-bottom:
-        specifier: ^1.1.1
-        version: 1.1.1(react@19.2.3)
+        specifier: ^1.1.2
+        version: 1.1.2(react@19.2.3)
     devDependencies:
       '@ai-sdk/react':
         specifier: ^3.0.41
@@ -2882,8 +2882,8 @@ packages:
   '@types/node@12.20.55':
     resolution: {integrity: sha512-J8xLz7q2OFulZ2cyGTLE1TbbZcjpno7FaN6zdJNrgAdrJ+DZzh/uFR6YrTb4C+nXakvud8Q4+rbhoIWlYQbUFQ==}
 
-  '@types/node@20.19.30':
-    resolution: {integrity: sha512-WJtwWJu7UdlvzEAUm484QNg5eAoq5QR08KDNx7g45Usrs2NtOPiX8ugDqmKdXkyL03rBqU5dYNYVQetEpBHq2g==}
+  '@types/node@20.19.31':
+    resolution: {integrity: sha512-5jsi0wpncvTD33Sh1UCgacK37FFwDn+EG7wCmEvs62fCvBL+n8/76cAYDok21NF6+jaVWIqKwCZyX7Vbu8eB3A==}
 
   '@types/node@22.19.7':
     resolution: {integrity: sha512-MciR4AKGHWl7xwxkBa6xUGxQJ4VBOmPTF7sL+iGzuahOFaO0jHCsuEfS80pan1ef4gWId1oWOweIhrDEYLuaOw==}
@@ -6216,8 +6216,8 @@ packages:
       '@types/react':
         optional: true
 
-  use-stick-to-bottom@1.1.1:
-    resolution: {integrity: sha512-JkDp0b0tSmv7HQOOpL1hT7t7QaoUBXkq045WWWOFDTlLGRzgIIyW7vyzOIJzY7L2XVIG7j1yUxeDj2LHm9Vwng==}
+  use-stick-to-bottom@1.1.2:
+    resolution: {integrity: sha512-ssUfMNvfH8a8hGLoAt5kcOsjbsVORknon2tbkECuf3EsVucFFBbyXl+Xnv3b58P8ZRuZelzO81fgb6M0eRo8cg==}
     peerDependencies:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
 
@@ -9098,7 +9098,7 @@ snapshots:
 
   '@types/node@12.20.55': {}
 
-  '@types/node@20.19.30':
+  '@types/node@20.19.31':
     dependencies:
       undici-types: 6.21.0
     optional: true
@@ -10510,7 +10510,7 @@ snapshots:
 
   happy-dom@20.0.8:
     dependencies:
-      '@types/node': 20.19.30
+      '@types/node': 20.19.31
       '@types/whatwg-mimetype': 3.0.2
       whatwg-mimetype: 3.0.0
     optional: true
@@ -13130,7 +13130,7 @@ snapshots:
     optionalDependencies:
       '@types/react': 19.2.8
 
-  use-stick-to-bottom@1.1.1(react@19.2.3):
+  use-stick-to-bottom@1.1.2(react@19.2.3):
     dependencies:
       react: 19.2.3
 
