@@ -148,23 +148,23 @@ import {
   MessageResponse,
 } from "@/components/ai-elements/message";
 import {
-  Input,
-  PromptInputTextarea,
+  PromptInput,
+  PromptInputBody,
+  PromptInputFooter,
+  PromptInputProvider,
   PromptInputSubmit,
+  PromptInputTextarea,
 } from "@/components/ai-elements/prompt-input";
 
 export default function ChatPage() {
-  const [text, setText] = useState("");
   const { messages, sendMessage, status } = useChat({
     transport: new DefaultChatTransport({
       api: "/api/chat",
     }),
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    sendMessage({ text });
-    setText("");
+  const handleSubmit = (message: { text: string }) => {
+    sendMessage({ text: message.text });
   };
 
   return (
@@ -185,16 +185,16 @@ export default function ChatPage() {
         </ConversationContent>
       </Conversation>
 
-      <Input onSubmit={handleSubmit} className="p-4">
-        <PromptInputTextarea
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-          placeholder="Type a message..."
-        />
-        <PromptInputSubmit
-          status={status === "streaming" ? "streaming" : "ready"}
-        />
-      </Input>
+      <PromptInputProvider>
+        <PromptInput onSubmit={handleSubmit} className="p-4">
+          <PromptInputBody>
+            <PromptInputTextarea placeholder="Type a message..." />
+          </PromptInputBody>
+          <PromptInputFooter>
+            <PromptInputSubmit status={status} />
+          </PromptInputFooter>
+        </PromptInput>
+      </PromptInputProvider>
     </div>
   );
 }
