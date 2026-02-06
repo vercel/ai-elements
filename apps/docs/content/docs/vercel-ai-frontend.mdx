@@ -58,17 +58,7 @@ Add `AI_GATEWAY_API_KEY` to your environment:
 AI_GATEWAY_API_KEY=your_api_key_here
 ```
 
-Then use it with the AI SDK:
-
-```ts title="app/api/chat/route.ts"
-import { createOpenAI } from "@ai-sdk/openai";
-
-const openai = createOpenAI({
-  apiKey: process.env.AI_GATEWAY_API_KEY,
-  baseURL:
-    "https://gateway.ai.cloudflare.com/v1/your_account_id_here/ai-gateway/openai",
-});
-```
+Then use it with the AI SDK by specifying a model string e.g. "openai/gpt-4o"
 
 ## AI SDK
 
@@ -87,15 +77,25 @@ The [AI SDK](https://ai-sdk.dev/) provides the foundation for AI interactions.
 import { useChat } from "@ai-sdk/react";
 
 function Chat() {
-  const { messages, input, handleInputChange, handleSubmit, status } =
-    useChat();
+  const [text, setText] = useState("");
+  const { messages, sendMessage, status } = useChat({
+    transport: new DefaultChatTransport({
+      api: "/api/weather",
+    }),
+  });
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    sendMessage({ text: text });
+    setText("");
+  };
 
   return (
     <form onSubmit={handleSubmit}>
       {messages.map((m) => (
         <div key={m.id}>{m.content}</div>
       ))}
-      <input value={input} onChange={handleInputChange} />
+      <input value={text} onChange={(e) => setText(e.target.value)} />
     </form>
   );
 }
@@ -105,17 +105,16 @@ function Chat() {
 
 ```ts title="app/api/chat/route.ts"
 import { streamText } from "ai";
-import { openai } from "@ai-sdk/openai";
 
 export async function POST(req: Request) {
   const { messages } = await req.json();
 
   const result = streamText({
-    model: openai("gpt-4o"),
+    model: "openai/gpt-4o",
     messages,
   });
 
-  return result.toDataStreamResponse();
+  return result.toUIMessageStreamResponse();
 }
 ```
 
@@ -152,8 +151,18 @@ import {
 } from "@/components/ai-elements/prompt-input";
 
 export default function ChatPage() {
-  const { messages, input, handleInputChange, handleSubmit, status } =
-    useChat();
+  const [text, setText] = useState("");
+  const { messages, sendMessage, status } = useChat({
+    transport: new DefaultChatTransport({
+      api: "/api/weather",
+    }),
+  });
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    sendMessage({ text });
+    setText("");
+  };
 
   return (
     <div className="h-screen flex flex-col">
@@ -165,7 +174,7 @@ export default function ChatPage() {
                 {message.parts.map((part, i) =>
                   part.type === "text" ? (
                     <MessageResponse key={i}>{part.text}</MessageResponse>
-                  ) : null
+                  ) : null,
                 )}
               </MessageContent>
             </Message>
@@ -175,8 +184,8 @@ export default function ChatPage() {
 
       <Input onSubmit={handleSubmit} className="p-4">
         <PromptInputTextarea
-          value={input}
-          onChange={handleInputChange}
+          value={text}
+          onChange={(e) => setText(e.target.value)}
           placeholder="Type a message..."
         />
         <PromptInputSubmit
