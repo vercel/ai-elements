@@ -58,7 +58,7 @@ Add `AI_GATEWAY_API_KEY` to your environment:
 AI_GATEWAY_API_KEY=your_api_key_here
 ```
 
-Then use it with the AI SDK by specifying a model string e.g. `openai/gpt-4o`.
+Then use it with the AI SDK by specifying a model string e.g. `anthropic/claude-sonnet-4.5`.
 
 ## AI SDK
 
@@ -112,8 +112,9 @@ export async function POST(req: Request) {
   const { messages } = await req.json();
 
   const result = streamText({
-    model: "openai/gpt-4o",
-    messages,
+    model: "anthropic/claude-sonnet-4.5",
+    system: "You are a helpful assistant.",
+    messages: await convertToModelMessages(messages),
   });
 
   return result.toUIMessageStreamResponse();
