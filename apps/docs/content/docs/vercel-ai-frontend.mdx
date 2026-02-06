@@ -82,7 +82,7 @@ function Chat() {
   const [text, setText] = useState("");
   const { messages, sendMessage, status } = useChat({
     transport: new DefaultChatTransport({
-      api: "/api/weather",
+      api: "/api/chat",
     }),
   });
 
@@ -156,7 +156,7 @@ export default function ChatPage() {
   const [text, setText] = useState("");
   const { messages, sendMessage, status } = useChat({
     transport: new DefaultChatTransport({
-      api: "/api/weather",
+      api: "/api/chat",
     }),
   });
 
