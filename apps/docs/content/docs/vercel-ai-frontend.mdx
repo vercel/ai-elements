@@ -58,7 +58,7 @@ Add `AI_GATEWAY_API_KEY` to your environment:
 AI_GATEWAY_API_KEY=your_api_key_here
 ```
 
-Then use it with the AI SDK by specifying a model string e.g. "openai/gpt-4o"
+Then use it with the AI SDK by specifying a model string e.g. `openai/gpt-4o`.
 
 ## AI SDK
 
@@ -74,6 +74,8 @@ The [AI SDK](https://ai-sdk.dev/) provides the foundation for AI interactions.
 ### React Hooks
 
 ```tsx title="example.tsx"
+"use client";
+
 import { useChat } from "@ai-sdk/react";
 
 function Chat() {
