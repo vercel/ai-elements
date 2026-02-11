@@ -46,19 +46,6 @@ const config = {
       },
     ];
   },
-
-  rewrites() {
-    return [
-      {
-        destination: "/:lang/llms.mdx/:path*",
-        source: "/:lang/:path*.mdx",
-      },
-      {
-        destination: "/:lang/llms.mdx/:path*",
-        source: "/:lang/:path*.md",
-      },
-    ];
-  },
 };
 
 export default withMDX(config);
