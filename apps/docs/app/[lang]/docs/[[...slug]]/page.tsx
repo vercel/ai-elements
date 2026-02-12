@@ -90,6 +90,11 @@ export const generateMetadata = async ({
       images: getPageImage(page).url,
     },
     title: page.data.title,
+    alternates: {
+      types: {
+        "text/markdown": `/docs/${slug}.md`,
+      },
+    },
   };
 
   return metadata;
