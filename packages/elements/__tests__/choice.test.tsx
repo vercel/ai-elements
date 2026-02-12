@@ -15,18 +15,20 @@ describe("choice", () => {
   it("renders a labelled options group", () => {
     render(
       <Choice>
-        <ChoiceQuestion>What should we focus on?</ChoiceQuestion>
+        <ChoiceQuestion>How detailed should the response be?</ChoiceQuestion>
         <ChoiceOptions>
-          <ChoiceOption value="crime">Crime</ChoiceOption>
-          <ChoiceOption value="events">Events</ChoiceOption>
+          <ChoiceOption value="brief">Brief</ChoiceOption>
+          <ChoiceOption value="detailed">Detailed</ChoiceOption>
         </ChoiceOptions>
       </Choice>
     );
 
     expect(
-      screen.getByRole("group", { name: "What should we focus on?" })
+      screen.getByRole("group", {
+        name: "How detailed should the response be?",
+      })
     ).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Crime" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Brief" })).toBeInTheDocument();
   });
 
   it("selects one option in single mode and auto-submits by default", async () => {
@@ -38,18 +40,18 @@ describe("choice", () => {
       <Choice onSubmit={onSubmit} onValueChange={onValueChange}>
         <ChoiceQuestion>Pick one</ChoiceQuestion>
         <ChoiceOptions>
-          <ChoiceOption value="high">High priority</ChoiceOption>
-          <ChoiceOption value="low">Low priority</ChoiceOption>
+          <ChoiceOption value="brief">Brief</ChoiceOption>
+          <ChoiceOption value="detailed">Detailed</ChoiceOption>
         </ChoiceOptions>
       </Choice>
     );
 
-    const high = screen.getByRole("button", { name: "High priority" });
-    await user.click(high);
+    const brief = screen.getByRole("button", { name: "Brief" });
+    await user.click(brief);
 
-    expect(onValueChange).toHaveBeenCalledWith("high");
-    expect(onSubmit).toHaveBeenCalledWith("high");
-    expect(high).toHaveAttribute("aria-pressed", "true");
+    expect(onValueChange).toHaveBeenCalledWith("brief");
+    expect(onSubmit).toHaveBeenCalledWith("brief");
+    expect(brief).toHaveAttribute("aria-pressed", "true");
   });
 
   it("toggles options in multiple mode", async () => {
@@ -60,24 +62,27 @@ describe("choice", () => {
       <Choice multiple onValueChange={onValueChange}>
         <ChoiceQuestion>Select all that apply</ChoiceQuestion>
         <ChoiceOptions>
-          <ChoiceOption value="alerts">Alerts</ChoiceOption>
-          <ChoiceOption value="permits">Permits</ChoiceOption>
+          <ChoiceOption value="key-points">Key points</ChoiceOption>
+          <ChoiceOption value="sources">Sources</ChoiceOption>
         </ChoiceOptions>
       </Choice>
     );
 
-    const alerts = screen.getByRole("button", { name: "Alerts" });
-    const permits = screen.getByRole("button", { name: "Permits" });
+    const keyPoints = screen.getByRole("button", { name: "Key points" });
+    const sources = screen.getByRole("button", { name: "Sources" });
 
-    await user.click(alerts);
-    await user.click(permits);
-    await user.click(alerts);
+    await user.click(keyPoints);
+    await user.click(sources);
+    await user.click(keyPoints);
 
-    expect(onValueChange).toHaveBeenNthCalledWith(1, ["alerts"]);
-    expect(onValueChange).toHaveBeenNthCalledWith(2, ["alerts", "permits"]);
-    expect(onValueChange).toHaveBeenNthCalledWith(3, ["permits"]);
-    expect(alerts).toHaveAttribute("aria-pressed", "false");
-    expect(permits).toHaveAttribute("aria-pressed", "true");
+    expect(onValueChange).toHaveBeenNthCalledWith(1, ["key-points"]);
+    expect(onValueChange).toHaveBeenNthCalledWith(2, [
+      "key-points",
+      "sources",
+    ]);
+    expect(onValueChange).toHaveBeenNthCalledWith(3, ["sources"]);
+    expect(keyPoints).toHaveAttribute("aria-pressed", "false");
+    expect(sources).toHaveAttribute("aria-pressed", "true");
   });
 
   it("submits selected values via ChoiceSubmit in multiple mode", async () => {
@@ -86,10 +91,10 @@ describe("choice", () => {
 
     render(
       <Choice multiple onSubmit={onSubmit} submitOnSelect={false}>
-        <ChoiceQuestion>Select categories</ChoiceQuestion>
+        <ChoiceQuestion>What should the summary include?</ChoiceQuestion>
         <ChoiceOptions>
-          <ChoiceOption value="events">Events</ChoiceOption>
-          <ChoiceOption value="news">News</ChoiceOption>
+          <ChoiceOption value="key-points">Key points</ChoiceOption>
+          <ChoiceOption value="sources">Sources</ChoiceOption>
         </ChoiceOptions>
         <ChoiceSubmit />
       </Choice>
@@ -98,11 +103,11 @@ describe("choice", () => {
     const submit = screen.getByRole("button", { name: "Confirm (0)" });
     expect(submit).toBeDisabled();
 
-    await user.click(screen.getByRole("button", { name: "Events" }));
+    await user.click(screen.getByRole("button", { name: "Key points" }));
     expect(screen.getByRole("button", { name: "Confirm (1)" })).toBeEnabled();
 
     await user.click(screen.getByRole("button", { name: "Confirm (1)" }));
-    expect(onSubmit).toHaveBeenCalledWith(["events"]);
+    expect(onSubmit).toHaveBeenCalledWith(["key-points"]);
   });
 
   it("prevents interactions when disabled", async () => {
@@ -112,14 +117,14 @@ describe("choice", () => {
 
     render(
       <Choice disabled onSubmit={onSubmit} onValueChange={onValueChange}>
-        <ChoiceQuestion>Disabled question</ChoiceQuestion>
+        <ChoiceQuestion>Pick a format</ChoiceQuestion>
         <ChoiceOptions>
-          <ChoiceOption value="crime">Crime</ChoiceOption>
+          <ChoiceOption value="brief">Brief</ChoiceOption>
         </ChoiceOptions>
       </Choice>
     );
 
-    const button = screen.getByRole("button", { name: "Crime" });
+    const button = screen.getByRole("button", { name: "Brief" });
     expect(button).toBeDisabled();
     await user.click(button);
 

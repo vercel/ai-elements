@@ -210,7 +210,7 @@ export const ChoiceOption = ({
   } = useChoiceContext();
 
   const isSelected = selectedValues.includes(value);
-  const resolvedVariant = variant ?? (isSelected ? "default" : "outline");
+  const resolvedVariant = variant ?? (isSelected ? "secondary" : "outline");
 
   const handleClick = useCallback(
     (event: MouseEvent<HTMLButtonElement>) => {
@@ -231,7 +231,9 @@ export const ChoiceOption = ({
       aria-describedby={description ? descriptionId : undefined}
       aria-pressed={isSelected}
       className={cn(
-        "h-auto max-w-full justify-start rounded-full px-4 py-2 text-left whitespace-normal",
+        "cursor-pointer rounded-full px-4",
+        description &&
+          "h-auto py-2 max-w-full justify-start text-left whitespace-normal",
         className
       )}
       disabled={disabled || rootDisabled}
@@ -241,17 +243,19 @@ export const ChoiceOption = ({
       {...props}
       onClick={handleClick}
     >
-      <span className="flex flex-col items-start gap-1">
-        <span>{children ?? value}</span>
-        {description ? (
+      {description ? (
+        <span className="flex flex-col items-start gap-1">
+          <span>{children ?? value}</span>
           <span
             className="text-muted-foreground text-xs leading-snug"
             id={descriptionId}
           >
             {description}
           </span>
-        ) : null}
-      </span>
+        </span>
+      ) : (
+        (children ?? value)
+      )}
     </Button>
   );
 };

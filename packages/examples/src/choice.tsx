@@ -9,6 +9,12 @@ import {
 } from "@repo/elements/choice";
 import { useCallback, useState } from "react";
 
+const labels: Record<string, string> = {
+  brief: "Brief",
+  standard: "Standard",
+  detailed: "Detailed",
+};
+
 const Example = () => {
   const [selected, setSelected] = useState<string>();
   const handleSubmit = useCallback((value: string | string[]) => {
@@ -19,27 +25,29 @@ const Example = () => {
 
   return (
     <div className="w-full max-w-2xl space-y-3">
-      <Choice onSubmit={handleSubmit}>
-        <ChoiceQuestion>How should I scope this briefing?</ChoiceQuestion>
-        <ChoiceOptions>
-          <ChoiceOption
-            description="Most recent 24 hours"
-            value="last-24-hours"
-          >
-            Last 24 hours
-          </ChoiceOption>
-          <ChoiceOption description="Past 7 days" value="last-week">
-            Last week
-          </ChoiceOption>
-          <ChoiceOption description="Past 30 days" value="last-month">
-            Last month
-          </ChoiceOption>
-        </ChoiceOptions>
-      </Choice>
       {selected ? (
-        <ChoiceStatus>Selected: {selected}</ChoiceStatus>
+        <ChoiceStatus>Response detail: {labels[selected]}</ChoiceStatus>
       ) : (
-        <ChoiceStatus>Choose one option to continue.</ChoiceStatus>
+        <Choice onSubmit={handleSubmit}>
+          <ChoiceQuestion>How detailed should the response be?</ChoiceQuestion>
+          <ChoiceOptions>
+            <ChoiceOption
+              description="A few sentences at most"
+              value="brief"
+            >
+              Brief
+            </ChoiceOption>
+            <ChoiceOption description="A balanced overview" value="standard">
+              Standard
+            </ChoiceOption>
+            <ChoiceOption
+              description="In-depth with examples"
+              value="detailed"
+            >
+              Detailed
+            </ChoiceOption>
+          </ChoiceOptions>
+        </Choice>
       )}
     </div>
   );

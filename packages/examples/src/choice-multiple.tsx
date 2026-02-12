@@ -10,6 +10,13 @@ import {
 } from "@repo/elements/choice";
 import { useCallback, useState } from "react";
 
+const labels: Record<string, string> = {
+  "key-points": "Key points",
+  "action-items": "Action items",
+  timeline: "Timeline",
+  sources: "Sources",
+};
+
 const Example = () => {
   const [selected, setSelected] = useState<string[]>([]);
   const handleSubmit = useCallback((value: string | string[]) => {
@@ -20,30 +27,43 @@ const Example = () => {
 
   return (
     <div className="w-full max-w-2xl space-y-3">
-      <Choice multiple onSubmit={handleSubmit} submitOnSelect={false}>
-        <ChoiceQuestion>Which categories should we include?</ChoiceQuestion>
-        <ChoiceOptions>
-          <ChoiceOption description="Incidents and safety trends" value="crime">
-            Crime
-          </ChoiceOption>
-          <ChoiceOption description="Permits and construction" value="permits">
-            Permits
-          </ChoiceOption>
-          <ChoiceOption description="Neighborhood events" value="events">
-            Events
-          </ChoiceOption>
-          <ChoiceOption description="Local headlines" value="news">
-            News
-          </ChoiceOption>
-        </ChoiceOptions>
-        <ChoiceSubmit />
-      </Choice>
       {selected.length > 0 ? (
-        <ChoiceStatus>Selected: {selected.join(", ")}</ChoiceStatus>
-      ) : (
         <ChoiceStatus>
-          Select one or more categories, then confirm.
+          Includes: {selected.map((v) => labels[v]).join(", ")}
         </ChoiceStatus>
+      ) : (
+        <Choice multiple onSubmit={handleSubmit} submitOnSelect={false}>
+          <ChoiceQuestion>
+            What should the summary include?
+          </ChoiceQuestion>
+          <ChoiceOptions>
+            <ChoiceOption
+              description="Main takeaways and findings"
+              value="key-points"
+            >
+              Key points
+            </ChoiceOption>
+            <ChoiceOption
+              description="Next steps and follow-ups"
+              value="action-items"
+            >
+              Action items
+            </ChoiceOption>
+            <ChoiceOption
+              description="Key dates and milestones"
+              value="timeline"
+            >
+              Timeline
+            </ChoiceOption>
+            <ChoiceOption
+              description="References and citations"
+              value="sources"
+            >
+              Sources
+            </ChoiceOption>
+          </ChoiceOptions>
+          <ChoiceSubmit />
+        </Choice>
       )}
     </div>
   );

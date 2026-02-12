@@ -4,7 +4,7 @@ description: A composable component for AI-driven clarification prompts where us
 path: elements/components/choice
 ---
 
-The `Choice` component is designed for AI workflows where the model asks users to resolve ambiguity with structured options (timeframe, severity, scope, category, and similar constraints).
+The `Choice` component lets users pick from a set of options when an AI model needs clarification before continuing.
 
 <Preview path="choice" />
 
@@ -22,7 +22,10 @@ Add the following component to your frontend:
 "use client";
 
 import type { ToolUIPart, UIMessage } from "ai";
-import { DefaultChatTransport, lastAssistantMessageIsCompleteWithToolCalls } from "ai";
+import {
+  DefaultChatTransport,
+  lastAssistantMessageIsCompleteWithToolCalls,
+} from "ai";
 import { useChat } from "@ai-sdk/react";
 import {
   Choice,
@@ -52,9 +55,8 @@ type AskUserPart = ToolUIPart<{
   };
 }>;
 
-const isAskUserPart = (
-  part: UIMessage["parts"][number]
-): part is AskUserPart => part.type === "tool-ask_user";
+const isAskUserPart = (part: UIMessage["parts"][number]): part is AskUserPart =>
+  part.type === "tool-ask_user";
 
 const Example = () => {
   const { messages, addToolOutput, status } = useChat({
@@ -71,6 +73,21 @@ const Example = () => {
           message.parts.map((part) => {
             if (!isAskUserPart(part) || part.state === "input-streaming") {
               return null;
+            }
+
+            // Show compact summary when choice has been submitted
+            if (part.state === "output-available") {
+              const output = part.output;
+              const values = Array.isArray(output) ? output : [output];
+              const labels = values.map(
+                (v) =>
+                  part.input.options.find((o) => o.value === v)?.label ?? v
+              );
+              return (
+                <ChoiceStatus key={part.toolCallId}>
+                  {labels.join(", ")}
+                </ChoiceStatus>
+              );
             }
 
             const multiSelect = Boolean(part.input.multi_select);
@@ -109,7 +126,8 @@ const Example = () => {
                 ) : null}
                 {part.state === "output-error" ? (
                   <ChoiceStatus status="error">
-                    {part.errorText ?? "Could not submit your selection. Try again."}
+                    {part.errorText ??
+                      "Could not submit your selection. Try again."}
                   </ChoiceStatus>
                 ) : null}
               </Choice>
@@ -127,7 +145,13 @@ export default Example;
 Add the following route to your backend:
 
 ```ts title="app/api/chat/route.ts"
-import { convertToModelMessages, stepCountIs, streamText, tool, UIMessage } from "ai";
+import {
+  convertToModelMessages,
+  stepCountIs,
+  streamText,
+  tool,
+  UIMessage,
+} from "ai";
 import { z } from "zod";
 
 export async function POST(req: Request) {
@@ -169,7 +193,7 @@ export async function POST(req: Request) {
 - Optional auto-submit on single selection
 - Built-in confirm action for multi-select workflows
 - Keyboard and screen-reader friendly option semantics
-- Composable structure for custom layouts and states
+- Composable structure for custom layouts and resolved states
 
 ## Examples
 
@@ -180,6 +204,10 @@ export async function POST(req: Request) {
 ### Multiple Select
 
 <Preview path="choice-multiple" />
+
+### Resolved State
+
+After submission, replace the interactive options with a compact summary. Both examples above demonstrate this pattern — select an option to see the resolved view.
 
 ## Props
 
