@@ -92,7 +92,7 @@ export const generateMetadata = async ({
     title: page.data.title,
     alternates: {
       types: {
-        "text/markdown": `/docs/${slug}.md`,
+        "text/markdown": slug ? `/docs/${slug}.md` : "/docs.md",
       },
     },
   };
