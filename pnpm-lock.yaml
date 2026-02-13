@@ -94,13 +94,13 @@ importers:
         version: 5.2.0
       fumadocs-core:
         specifier: 16.2.2
-        version: 16.2.2(@types/react@19.2.8)(lucide-react@0.555.0(react@19.2.3))(next@16.0.10(@babel/core@7.29.0)(@opentelemetry/api@1.9.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+        version: 16.2.2(@types/react@19.2.8)(lucide-react@0.563.0(react@19.2.3))(next@16.0.10(@babel/core@7.29.0)(@opentelemetry/api@1.9.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       fumadocs-mdx:
         specifier: 14.0.4
-        version: 14.0.4(fumadocs-core@16.2.2(@types/react@19.2.8)(lucide-react@0.555.0(react@19.2.3))(next@16.0.10(@babel/core@7.29.0)(@opentelemetry/api@1.9.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(next@16.0.10(@babel/core@7.29.0)(@opentelemetry/api@1.9.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)(vite@7.1.2(@types/node@24.10.9)(jiti@2.6.1)(lightningcss@1.30.2)(tsx@4.21.0)(yaml@2.8.1))
+        version: 14.0.4(fumadocs-core@16.2.2(@types/react@19.2.8)(lucide-react@0.563.0(react@19.2.3))(next@16.0.10(@babel/core@7.29.0)(@opentelemetry/api@1.9.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(next@16.0.10(@babel/core@7.29.0)(@opentelemetry/api@1.9.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)(vite@7.1.2(@types/node@24.10.9)(jiti@2.6.1)(lightningcss@1.30.2)(tsx@4.21.0)(yaml@2.8.1))
       fumadocs-ui:
         specifier: 16.2.2
-        version: 16.2.2(@types/react-dom@19.2.3(@types/react@19.2.8))(@types/react@19.2.8)(lucide-react@0.555.0(react@19.2.3))(next@16.0.10(@babel/core@7.29.0)(@opentelemetry/api@1.9.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(tailwindcss@4.1.18)
+        version: 16.2.2(@types/react-dom@19.2.3(@types/react@19.2.8))(@types/react@19.2.8)(lucide-react@0.563.0(react@19.2.3))(next@16.0.10(@babel/core@7.29.0)(@opentelemetry/api@1.9.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(tailwindcss@4.1.18)
       jotai:
         specifier: ^2.17.0
         version: 2.17.0(@babel/core@7.29.0)(@babel/template@7.28.6)(@types/react@19.2.8)(react@19.2.3)
@@ -108,8 +108,8 @@ importers:
         specifier: ^0.16.28
         version: 0.16.28
       lucide-react:
-        specifier: ^0.555.0
-        version: 0.555.0(react@19.2.3)
+        specifier: ^0.563.0
+        version: 0.563.0(react@19.2.3)
       mermaid:
         specifier: ^11.12.2
         version: 11.12.2
@@ -237,8 +237,8 @@ importers:
         specifier: ^0.16.28
         version: 0.16.28
       lucide-react:
-        specifier: ^0.562.0
-        version: 0.562.0(react@19.2.3)
+        specifier: ^0.563.0
+        version: 0.563.0(react@19.2.3)
       media-chrome:
         specifier: ^4.17.2
         version: 4.17.2(react@19.2.3)
@@ -331,8 +331,8 @@ importers:
         specifier: ^6.0.68
         version: 6.0.68(zod@4.3.6)
       lucide-react:
-        specifier: ^0.562.0
-        version: 0.562.0(react@19.2.3)
+        specifier: ^0.563.0
+        version: 0.563.0(react@19.2.3)
       nanoid:
         specifier: ^5.1.6
         version: 5.1.6
@@ -408,8 +408,8 @@ importers:
         specifier: ^1.4.2
         version: 1.4.2(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       lucide-react:
-        specifier: ^0.562.0
-        version: 0.562.0(react@19.2.3)
+        specifier: ^0.563.0
+        version: 0.563.0(react@19.2.3)
       next-themes:
         specifier: ^0.4.6
         version: 0.4.6(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
@@ -2882,8 +2882,8 @@ packages:
   '@types/node@12.20.55':
     resolution: {integrity: sha512-J8xLz7q2OFulZ2cyGTLE1TbbZcjpno7FaN6zdJNrgAdrJ+DZzh/uFR6YrTb4C+nXakvud8Q4+rbhoIWlYQbUFQ==}
 
-  '@types/node@20.19.30':
-    resolution: {integrity: sha512-WJtwWJu7UdlvzEAUm484QNg5eAoq5QR08KDNx7g45Usrs2NtOPiX8ugDqmKdXkyL03rBqU5dYNYVQetEpBHq2g==}
+  '@types/node@20.19.31':
+    resolution: {integrity: sha512-5jsi0wpncvTD33Sh1UCgacK37FFwDn+EG7wCmEvs62fCvBL+n8/76cAYDok21NF6+jaVWIqKwCZyX7Vbu8eB3A==}
 
   '@types/node@22.19.7':
     resolution: {integrity: sha512-MciR4AKGHWl7xwxkBa6xUGxQJ4VBOmPTF7sL+iGzuahOFaO0jHCsuEfS80pan1ef4gWId1oWOweIhrDEYLuaOw==}
@@ -4721,13 +4721,8 @@ packages:
   lru-cache@5.1.1:
     resolution: {integrity: sha512-KpNARQA3Iwv+jTA0utUVVbrh+Jlrr1Fv0e56GGzAFOXN7dk/FviaDW8LHmK52DlcH4WP2n6gI8vN1aesBFgo9w==}
 
-  lucide-react@0.555.0:
-    resolution: {integrity: sha512-D8FvHUGbxWBRQM90NZeIyhAvkFfsh3u9ekrMvJ30Z6gnpBHS6HC6ldLg7tL45hwiIz/u66eKDtdA23gwwGsAHA==}
-    peerDependencies:
-      react: ^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0
-
-  lucide-react@0.562.0:
-    resolution: {integrity: sha512-82hOAu7y0dbVuFfmO4bYF1XEwYk/mEbM5E+b1jgci/udUBEE/R7LF5Ip0CCEmXe8AybRM8L+04eP+LGZeDvkiw==}
+  lucide-react@0.563.0:
+    resolution: {integrity: sha512-8dXPB2GI4dI8jV4MgUDGBeLdGk8ekfqVZ0BdLcrRzocGgG75ltNEmWS+gE7uokKF/0oSUuczNDT+g9hFJ23FkA==}
     peerDependencies:
       react: ^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0
 
@@ -9098,7 +9093,7 @@ snapshots:
 
   '@types/node@12.20.55': {}
 
-  '@types/node@20.19.30':
+  '@types/node@20.19.31':
     dependencies:
       undici-types: 6.21.0
     optional: true
@@ -10329,7 +10324,7 @@ snapshots:
   fsevents@2.3.3:
     optional: true
 
-  fumadocs-core@16.2.2(@types/react@19.2.8)(lucide-react@0.555.0(react@19.2.3))(next@16.0.10(@babel/core@7.29.0)(@opentelemetry/api@1.9.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3):
+  fumadocs-core@16.2.2(@types/react@19.2.8)(lucide-react@0.563.0(react@19.2.3))(next@16.0.10(@babel/core@7.29.0)(@opentelemetry/api@1.9.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3):
     dependencies:
       '@formatjs/intl-localematcher': 0.6.2
       '@orama/orama': 3.1.18
@@ -10351,21 +10346,21 @@ snapshots:
       unist-util-visit: 5.0.0
     optionalDependencies:
       '@types/react': 19.2.8
-      lucide-react: 0.555.0(react@19.2.3)
+      lucide-react: 0.563.0(react@19.2.3)
       next: 16.0.10(@babel/core@7.29.0)(@opentelemetry/api@1.9.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       react: 19.2.3
       react-dom: 19.2.3(react@19.2.3)
     transitivePeerDependencies:
       - supports-color
 
-  fumadocs-mdx@14.0.4(fumadocs-core@16.2.2(@types/react@19.2.8)(lucide-react@0.555.0(react@19.2.3))(next@16.0.10(@babel/core@7.29.0)(@opentelemetry/api@1.9.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(next@16.0.10(@babel/core@7.29.0)(@opentelemetry/api@1.9.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)(vite@7.1.2(@types/node@24.10.9)(jiti@2.6.1)(lightningcss@1.30.2)(tsx@4.21.0)(yaml@2.8.1)):
+  fumadocs-mdx@14.0.4(fumadocs-core@16.2.2(@types/react@19.2.8)(lucide-react@0.563.0(react@19.2.3))(next@16.0.10(@babel/core@7.29.0)(@opentelemetry/api@1.9.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(next@16.0.10(@babel/core@7.29.0)(@opentelemetry/api@1.9.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)(vite@7.1.2(@types/node@24.10.9)(jiti@2.6.1)(lightningcss@1.30.2)(tsx@4.21.0)(yaml@2.8.1)):
     dependencies:
       '@mdx-js/mdx': 3.1.1
       '@standard-schema/spec': 1.1.0
       chokidar: 5.0.0
       esbuild: 0.27.2
       estree-util-value-to-estree: 3.5.0
-      fumadocs-core: 16.2.2(@types/react@19.2.8)(lucide-react@0.555.0(react@19.2.3))(next@16.0.10(@babel/core@7.29.0)(@opentelemetry/api@1.9.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+      fumadocs-core: 16.2.2(@types/react@19.2.8)(lucide-react@0.563.0(react@19.2.3))(next@16.0.10(@babel/core@7.29.0)(@opentelemetry/api@1.9.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       js-yaml: 4.1.1
       lru-cache: 11.2.2
       mdast-util-to-markdown: 2.1.2
@@ -10386,7 +10381,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  fumadocs-ui@16.2.2(@types/react-dom@19.2.3(@types/react@19.2.8))(@types/react@19.2.8)(lucide-react@0.555.0(react@19.2.3))(next@16.0.10(@babel/core@7.29.0)(@opentelemetry/api@1.9.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(tailwindcss@4.1.18):
+  fumadocs-ui@16.2.2(@types/react-dom@19.2.3(@types/react@19.2.8))(@types/react@19.2.8)(lucide-react@0.563.0(react@19.2.3))(next@16.0.10(@babel/core@7.29.0)(@opentelemetry/api@1.9.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(tailwindcss@4.1.18):
     dependencies:
       '@radix-ui/react-accordion': 1.2.12(@types/react-dom@19.2.3(@types/react@19.2.8))(@types/react@19.2.8)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@radix-ui/react-collapsible': 1.1.12(@types/react-dom@19.2.3(@types/react@19.2.8))(@types/react@19.2.8)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
@@ -10399,7 +10394,7 @@ snapshots:
       '@radix-ui/react-slot': 1.2.4(@types/react@19.2.8)(react@19.2.3)
       '@radix-ui/react-tabs': 1.1.13(@types/react-dom@19.2.3(@types/react@19.2.8))(@types/react@19.2.8)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       class-variance-authority: 0.7.1
-      fumadocs-core: 16.2.2(@types/react@19.2.8)(lucide-react@0.555.0(react@19.2.3))(next@16.0.10(@babel/core@7.29.0)(@opentelemetry/api@1.9.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+      fumadocs-core: 16.2.2(@types/react@19.2.8)(lucide-react@0.563.0(react@19.2.3))(next@16.0.10(@babel/core@7.29.0)(@opentelemetry/api@1.9.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       lodash.merge: 4.6.2
       next-themes: 0.4.6(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       postcss-selector-parser: 7.1.1
@@ -10510,7 +10505,7 @@ snapshots:
 
   happy-dom@20.0.8:
     dependencies:
-      '@types/node': 20.19.30
+      '@types/node': 20.19.31
       '@types/whatwg-mimetype': 3.0.2
       whatwg-mimetype: 3.0.0
     optional: true
@@ -11070,11 +11065,7 @@ snapshots:
     dependencies:
       yallist: 3.1.1
 
-  lucide-react@0.555.0(react@19.2.3):
-    dependencies:
-      react: 19.2.3
-
-  lucide-react@0.562.0(react@19.2.3):
+  lucide-react@0.563.0(react@19.2.3):
     dependencies:
       react: 19.2.3
 

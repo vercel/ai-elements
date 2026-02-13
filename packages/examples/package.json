@@ -11,7 +11,7 @@
     "@repo/elements": "workspace:*",
     "@xyflow/react": "^12.10.0",
     "ai": "^6.0.68",
-    "lucide-react": "^0.562.0",
+    "lucide-react": "^0.563.0",
     "nanoid": "^5.1.6",
     "react": "19.2.3",
     "sonner": "^2.0.7",
