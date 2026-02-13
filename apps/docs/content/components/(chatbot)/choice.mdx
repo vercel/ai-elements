@@ -1,0 +1,339 @@
+---
+title: Choice
+description: A composable component for AI-driven clarification prompts where users must choose one or more options.
+path: elements/components/choice
+---
+
+The `Choice` component lets users pick from a set of options when an AI model needs clarification before continuing.
+
+<Preview path="choice" />
+
+## Installation
+
+<ElementsInstaller path="choice" />
+
+## Usage with AI SDK
+
+Use `Choice` to render a client-side tool call (for example, `ask_user`) and send the selected value(s) back with [`addToolOutput`](/docs/reference/ai-sdk-ui/use-chat).
+
+Add the following component to your frontend:
+
+```tsx title="app/page.tsx"
+"use client";
+
+import type { ToolUIPart, UIMessage } from "ai";
+import {
+  DefaultChatTransport,
+  lastAssistantMessageIsCompleteWithToolCalls,
+} from "ai";
+import { useChat } from "@ai-sdk/react";
+import {
+  Choice,
+  ChoiceOption,
+  ChoiceOptions,
+  ChoiceQuestion,
+  ChoiceStatus,
+  ChoiceSubmit,
+} from "@/components/ai-elements/choice";
+
+type AskUserInput = {
+  question: string;
+  multi_select?: boolean;
+  options: Array<{
+    value: string;
+    label: string;
+    description?: string;
+  }>;
+};
+
+type AskUserOutput = string | string[];
+
+type AskUserPart = ToolUIPart<{
+  ask_user: {
+    input: AskUserInput;
+    output: AskUserOutput;
+  };
+}>;
+
+const isAskUserPart = (part: UIMessage["parts"][number]): part is AskUserPart =>
+  part.type === "tool-ask_user";
+
+const Example = () => {
+  const { messages, addToolOutput, status } = useChat({
+    transport: new DefaultChatTransport({
+      api: "/api/chat",
+    }),
+    sendAutomaticallyWhen: lastAssistantMessageIsCompleteWithToolCalls,
+  });
+
+  return (
+    <div className="max-w-4xl mx-auto p-6 relative size-full rounded-lg border h-[600px]">
+      <div className="flex h-full flex-col gap-3 overflow-auto">
+        {messages.map((message) =>
+          message.parts.map((part) => {
+            if (!isAskUserPart(part) || part.state === "input-streaming") {
+              return null;
+            }
+
+            // Show compact summary when choice has been submitted
+            if (part.state === "output-available") {
+              const output = part.output;
+              const values = Array.isArray(output) ? output : [output];
+              const labels = values.map(
+                (v) =>
+                  part.input.options.find((o) => o.value === v)?.label ?? v
+              );
+              return (
+                <ChoiceStatus key={part.toolCallId}>
+                  {labels.join(", ")}
+                </ChoiceStatus>
+              );
+            }
+
+            const multiSelect = Boolean(part.input.multi_select);
+            const allowSubmit =
+              part.state === "input-available" || part.state === "output-error";
+
+            return (
+              <Choice
+                className="rounded-lg border p-3"
+                key={part.toolCallId}
+                multiple={multiSelect}
+                submitOnSelect={!multiSelect}
+                onSubmit={(selection) =>
+                  addToolOutput({
+                    output: selection,
+                    tool: "ask_user",
+                    toolCallId: part.toolCallId,
+                  })
+                }
+              >
+                <ChoiceQuestion>{part.input.question}</ChoiceQuestion>
+                <ChoiceOptions>
+                  {part.input.options.map((option) => (
+                    <ChoiceOption
+                      description={option.description}
+                      disabled={!allowSubmit || status !== "ready"}
+                      key={option.value}
+                      value={option.value}
+                    >
+                      {option.label}
+                    </ChoiceOption>
+                  ))}
+                </ChoiceOptions>
+                {multiSelect && allowSubmit ? (
+                  <ChoiceSubmit disabled={status !== "ready"} />
+                ) : null}
+                {part.state === "output-error" ? (
+                  <ChoiceStatus status="error">
+                    {part.errorText ??
+                      "Could not submit your selection. Try again."}
+                  </ChoiceStatus>
+                ) : null}
+              </Choice>
+            );
+          })
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default Example;
+```
+
+Add the following route to your backend:
+
+```ts title="app/api/chat/route.ts"
+import {
+  convertToModelMessages,
+  stepCountIs,
+  streamText,
+  tool,
+  UIMessage,
+} from "ai";
+import { z } from "zod";
+
+export async function POST(req: Request) {
+  const { messages }: { messages: UIMessage[] } = await req.json();
+
+  const result = streamText({
+    model: "openai/gpt-4o-mini",
+    messages: await convertToModelMessages(messages),
+    tools: {
+      ask_user: tool({
+        description: "Ask the user to choose one or more clarifying options.",
+        inputSchema: z.object({
+          question: z.string(),
+          multi_select: z.boolean().default(false),
+          options: z
+            .array(
+              z.object({
+                value: z.string(),
+                label: z.string(),
+                description: z.string().optional(),
+              })
+            )
+            .min(2)
+            .max(6),
+        }),
+      }),
+    },
+    stopWhen: stepCountIs(5),
+  });
+
+  return result.toUIMessageStreamResponse();
+}
+```
+
+## Features
+
+- Single-select and multi-select modes
+- Controlled and uncontrolled selection state
+- Optional auto-submit on single selection
+- Built-in confirm action for multi-select workflows
+- Keyboard and screen-reader friendly option semantics
+- Composable structure for custom layouts and resolved states
+
+## Examples
+
+### Single Select
+
+<Preview path="choice" />
+
+### Multiple Select
+
+<Preview path="choice-multiple" />
+
+### Resolved State
+
+After submission, replace the interactive options with a compact summary. Both examples above demonstrate this pattern — select an option to see the resolved view.
+
+## Props
+
+### `<Choice />`
+
+<TypeTable
+  type={{
+    multiple: {
+      description: "Enables multi-select mode when true.",
+      type: "boolean",
+    },
+    disabled: {
+      description: "Disables all child interactions.",
+      type: "boolean",
+    },
+    value: {
+      description:
+        "Controlled selection value. Use a string for single-select or string[] for multi-select.",
+      type: "string | string[]",
+    },
+    defaultValue: {
+      description:
+        "Initial selection for uncontrolled usage. Use a string for single-select or string[] for multi-select.",
+      type: "string | string[]",
+    },
+    onValueChange: {
+      description:
+        "Called whenever selection changes. Returns string in single-select mode and string[] in multi-select mode.",
+      type: "(value: string | string[] | undefined) => void",
+    },
+    onSubmit: {
+      description:
+        "Called when selection is submitted. Returns string in single-select mode and string[] in multi-select mode.",
+      type: "(value: string | string[]) => void",
+    },
+    submitOnSelect: {
+      description:
+        "When true (default), single-select mode submits immediately after click.",
+      type: "boolean",
+    },
+    "...props": {
+      description: "Any other props are spread to the root div element.",
+      type: "React.ComponentProps<'div'>",
+    },
+  }}
+/>
+
+### `<ChoiceQuestion />`
+
+<TypeTable
+  type={{
+    "...props": {
+      description:
+        "Any other props are spread to the question paragraph element.",
+      type: "React.ComponentProps<'p'>",
+    },
+  }}
+/>
+
+### `<ChoiceOptions />`
+
+<TypeTable
+  type={{
+    "...props": {
+      description:
+        "Any other props are spread to the options container element.",
+      type: "React.ComponentProps<'div'>",
+    },
+  }}
+/>
+
+### `<ChoiceOption />`
+
+<TypeTable
+  type={{
+    value: {
+      description: "Machine-readable option value used in selection output.",
+      type: "string",
+      required: true,
+    },
+    description: {
+      description: "Optional helper text shown beneath the option label.",
+      type: "ReactNode",
+    },
+    onSelect: {
+      description:
+        "Called when this option is selected (after the internal toggle runs).",
+      type: "(value: string) => void",
+    },
+    "...props": {
+      description:
+        "Any other props are spread to the underlying shadcn/ui Button component.",
+      type: "Omit<React.ComponentProps<typeof Button>, 'value'>",
+    },
+  }}
+/>
+
+### `<ChoiceSubmit />`
+
+<TypeTable
+  type={{
+    showCount: {
+      description:
+        "When true (default), multi-select mode shows selected count in the label.",
+      type: "boolean",
+    },
+    "...props": {
+      description:
+        "Any other props are spread to the underlying shadcn/ui Button component.",
+      type: "React.ComponentProps<typeof Button>",
+    },
+  }}
+/>
+
+### `<ChoiceStatus />`
+
+<TypeTable
+  type={{
+    status: {
+      description: "Status styling and ARIA role (`info` or `error`).",
+      type: '"info" | "error"',
+    },
+    "...props": {
+      description:
+        "Any other props are spread to the underlying paragraph element.",
+      type: "React.ComponentProps<'p'>",
+    },
+  }}
+/>
