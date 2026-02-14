@@ -1,5 +1,7 @@
 "use client";
 
+import type { ComponentProps } from "react";
+
 import { useControllableState } from "@radix-ui/react-use-controllable-state";
 import { Button } from "@repo/shadcn-ui/components/ui/button";
 import {
@@ -14,8 +16,16 @@ import {
   ChevronDownIcon,
   CopyIcon,
 } from "lucide-react";
-import type { ComponentProps } from "react";
-import { createContext, memo, useContext, useMemo, useState } from "react";
+import {
+  createContext,
+  memo,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
 // Regex patterns for parsing stack traces
 const STACK_FRAME_WITH_PARENS_REGEX = /^at\s+(.+?)\s+\((.+):(\d+):(\d+)\)$/;
@@ -69,12 +79,12 @@ const parseStackFrame = (line: string): StackFrame => {
       filePath.startsWith("node:") ||
       filePath.includes("internal/");
     return {
-      raw: trimmed,
-      functionName: functionName ?? null,
-      filePath: filePath ?? null,
-      lineNumber: lineNum ? Number.parseInt(lineNum, 10) : null,
       columnNumber: colNum ? Number.parseInt(colNum, 10) : null,
+      filePath: filePath ?? null,
+      functionName: functionName ?? null,
       isInternal,
+      lineNumber: lineNum ? Number.parseInt(lineNum, 10) : null,
+      raw: trimmed,
     };
   }
 
@@ -87,23 +97,23 @@ const parseStackFrame = (line: string): StackFrame => {
       (filePath?.startsWith("node:") ?? false) ||
       (filePath?.includes("internal/") ?? false);
     return {
-      raw: trimmed,
-      functionName: null,
-      filePath: filePath ?? null,
-      lineNumber: lineNum ? Number.parseInt(lineNum, 10) : null,
       columnNumber: colNum ? Number.parseInt(colNum, 10) : null,
+      filePath: filePath ?? null,
+      functionName: null,
       isInternal,
+      lineNumber: lineNum ? Number.parseInt(lineNum, 10) : null,
+      raw: trimmed,
     };
   }
 
   // Fallback: unparseable line
   return {
-    raw: trimmed,
-    functionName: null,
-    filePath: null,
-    lineNumber: null,
     columnNumber: null,
+    filePath: null,
+    functionName: null,
     isInternal: trimmed.includes("node_modules") || trimmed.includes("node:"),
+    lineNumber: null,
+    raw: trimmed,
   };
 };
 
@@ -112,8 +122,8 @@ const parseStackTrace = (trace: string): ParsedStackTrace => {
 
   if (lines.length === 0) {
     return {
-      errorType: null,
       errorMessage: trace,
+      errorType: null,
       frames: [],
       raw: trace,
     };
@@ -126,8 +136,9 @@ const parseStackTrace = (trace: string): ParsedStackTrace => {
   // Try to extract error type from "ErrorType: message" format
   const errorMatch = firstLine.match(ERROR_TYPE_REGEX);
   if (errorMatch) {
-    errorType = errorMatch[1];
-    errorMessage = errorMatch[2] || "";
+    const [, type, msg] = errorMatch;
+    errorType = type;
+    errorMessage = msg || "";
   }
 
   // Parse stack frames (lines starting with "at")
@@ -137,8 +148,8 @@ const parseStackTrace = (trace: string): ParsedStackTrace => {
     .map(parseStackFrame);
 
   return {
-    errorType,
     errorMessage,
+    errorType,
     frames,
     raw: trace,
   };
@@ -164,20 +175,20 @@ export const StackTrace = memo(
     ...props
   }: StackTraceProps) => {
     const [isOpen, setIsOpen] = useControllableState({
-      prop: open,
       defaultProp: defaultOpen,
       onChange: onOpenChange,
+      prop: open,
     });
 
     const parsedTrace = useMemo(() => parseStackTrace(trace), [trace]);
 
     const contextValue = useMemo(
       () => ({
-        trace: parsedTrace,
-        raw: trace,
         isOpen,
-        setIsOpen,
         onFilePathClick,
+        raw: trace,
+        setIsOpen,
+        trace: parsedTrace,
       }),
       [parsedTrace, trace, isOpen, setIsOpen, onFilePathClick]
     );
@@ -271,18 +282,21 @@ export const StackTraceErrorMessage = memo(
 
 export type StackTraceActionsProps = ComponentProps<"div">;
 
+const handleActionsClick = (e: React.MouseEvent) => e.stopPropagation();
+const handleActionsKeyDown = (e: React.KeyboardEvent) => {
+  if (e.key === "Enter" || e.key === " ") {
+    e.stopPropagation();
+  }
+};
+
 export const StackTraceActions = memo(
   ({ className, children, ...props }: StackTraceActionsProps) => (
     // biome-ignore lint/a11y/noNoninteractiveElementInteractions: stopPropagation required for nested interactions
     // biome-ignore lint/a11y/useSemanticElements: fieldset doesn't fit this UI pattern
     <div
       className={cn("flex shrink-0 items-center gap-1", className)}
-      onClick={(e) => e.stopPropagation()}
-      onKeyDown={(e) => {
-        if (e.key === "Enter" || e.key === " ") {
-          e.stopPropagation();
-        }
-      }}
+      onClick={handleActionsClick}
+      onKeyDown={handleActionsKeyDown}
       role="group"
       {...props}
     >
@@ -307,9 +321,10 @@ export const StackTraceCopyButton = memo(
     ...props
   }: StackTraceCopyButtonProps) => {
     const [isCopied, setIsCopied] = useState(false);
+    const timeoutRef = useRef<number>(0);
     const { raw } = useStackTrace();
 
-    const copyToClipboard = async () => {
+    const copyToClipboard = useCallback(async () => {
       if (typeof window === "undefined" || !navigator?.clipboard?.writeText) {
         onError?.(new Error("Clipboard API not available"));
         return;
@@ -319,11 +334,21 @@ export const StackTraceCopyButton = memo(
         await navigator.clipboard.writeText(raw);
         setIsCopied(true);
         onCopy?.();
-        setTimeout(() => setIsCopied(false), timeout);
+        timeoutRef.current = window.setTimeout(
+          () => setIsCopied(false),
+          timeout
+        );
       } catch (error) {
         onError?.(error as Error);
       }
-    };
+    }, [raw, onCopy, onError, timeout]);
+
+    useEffect(
+      () => () => {
+        window.clearTimeout(timeoutRef.current);
+      },
+      []
+    );
 
     const Icon = isCopied ? CheckIcon : CopyIcon;
 
@@ -400,6 +425,47 @@ export type StackTraceFramesProps = ComponentProps<"div"> & {
   showInternalFrames?: boolean;
 };
 
+interface FilePathButtonProps {
+  frame: StackFrame;
+  onFilePathClick?: (
+    filePath: string,
+    lineNumber?: number,
+    columnNumber?: number
+  ) => void;
+}
+
+const FilePathButton = memo(
+  ({ frame, onFilePathClick }: FilePathButtonProps) => {
+    const handleClick = useCallback(() => {
+      if (frame.filePath) {
+        onFilePathClick?.(
+          frame.filePath,
+          frame.lineNumber ?? undefined,
+          frame.columnNumber ?? undefined
+        );
+      }
+    }, [frame, onFilePathClick]);
+
+    return (
+      <button
+        className={cn(
+          "underline decoration-dotted hover:text-primary",
+          onFilePathClick && "cursor-pointer"
+        )}
+        disabled={!onFilePathClick}
+        onClick={handleClick}
+        type="button"
+      >
+        {frame.filePath}
+        {frame.lineNumber !== null && `:${frame.lineNumber}`}
+        {frame.columnNumber !== null && `:${frame.columnNumber}`}
+      </button>
+    );
+  }
+);
+
+FilePathButton.displayName = "FilePathButton";
+
 export const StackTraceFrames = memo(
   ({
     className,
@@ -433,27 +499,10 @@ export const StackTraceFrames = memo(
             {frame.filePath && (
               <>
                 <span className="text-muted-foreground">(</span>
-                <button
-                  className={cn(
-                    "underline decoration-dotted hover:text-primary",
-                    onFilePathClick && "cursor-pointer"
-                  )}
-                  disabled={!onFilePathClick}
-                  onClick={() => {
-                    if (frame.filePath) {
-                      onFilePathClick?.(
-                        frame.filePath,
-                        frame.lineNumber ?? undefined,
-                        frame.columnNumber ?? undefined
-                      );
-                    }
-                  }}
-                  type="button"
-                >
-                  {frame.filePath}
-                  {frame.lineNumber !== null && `:${frame.lineNumber}`}
-                  {frame.columnNumber !== null && `:${frame.columnNumber}`}
-                </button>
+                <FilePathButton
+                  frame={frame}
+                  onFilePathClick={onFilePathClick}
+                />
                 <span className="text-muted-foreground">)</span>
               </>
             )}

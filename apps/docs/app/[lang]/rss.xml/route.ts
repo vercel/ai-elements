@@ -1,5 +1,7 @@
-import { Feed } from "feed";
 import type { NextRequest } from "next/server";
+
+import { Feed } from "feed";
+
 import { title } from "@/geistdocs";
 import {
   componentsSource,
@@ -18,11 +20,11 @@ export const GET = async (
 ) => {
   const { lang } = await params;
   const feed = new Feed({
-    title,
-    id: baseUrl,
-    link: baseUrl,
-    language: lang,
     copyright: `All rights reserved ${new Date().getFullYear()}, Vercel`,
+    id: baseUrl,
+    language: lang,
+    link: baseUrl,
+    title,
   });
 
   const pages = [
@@ -33,16 +35,16 @@ export const GET = async (
 
   for (const page of pages) {
     feed.addItem({
-      id: page.url,
-      title: page.data.title,
-      description: page.data.description,
-      link: `${baseUrl}${page.url}`,
-      date: new Date(),
       author: [
         {
           name: "Vercel",
         },
       ],
+      date: new Date(),
+      description: page.data.description,
+      id: page.url,
+      link: `${baseUrl}${page.url}`,
+      title: page.data.title,
     });
   }
 

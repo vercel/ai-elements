@@ -24,8 +24,8 @@ import {
   CodeBlockFilename,
   CodeBlockHeader,
   CodeBlockTitle,
-} from '@/components/ai-elements/code-block';
-import { FileIcon } from 'lucide-react';
+} from "@/components/ai-elements/code-block";
+import { FileIcon } from "lucide-react";
 
 export const Example = () => (
   <CodeBlock code={code} language="typescript">
@@ -73,25 +73,25 @@ Add a language selector to switch between different code implementations:
 <TypeTable
   type={{
     code: {
-      description: 'The code content to display.',
-      type: 'string',
+      description: "The code content to display.",
+      type: "string",
     },
     language: {
-      description: 'The programming language for syntax highlighting.',
-      type: 'BundledLanguage',
+      description: "The programming language for syntax highlighting.",
+      type: "BundledLanguage",
     },
     showLineNumbers: {
-      description: 'Whether to show line numbers.',
-      type: 'boolean',
-      default: 'false',
+      description: "Whether to show line numbers.",
+      type: "boolean",
+      default: "false",
     },
     children: {
-      description: 'Child elements like CodeBlockHeader.',
-      type: 'React.ReactNode',
+      description: "Child elements like CodeBlockHeader.",
+      type: "React.ReactNode",
     },
     className: {
-      description: 'Additional CSS classes.',
-      type: 'string',
+      description: "Additional CSS classes.",
+      type: "string",
     },
   }}
 />
@@ -103,12 +103,12 @@ Container for the header row. Uses flexbox with `justify-between`.
 <TypeTable
   type={{
     children: {
-      description: 'Header content (CodeBlockTitle, CodeBlockActions, etc.).',
-      type: 'React.ReactNode',
+      description: "Header content (CodeBlockTitle, CodeBlockActions, etc.).",
+      type: "React.ReactNode",
     },
     className: {
-      description: 'Additional CSS classes.',
-      type: 'string',
+      description: "Additional CSS classes.",
+      type: "string",
     },
   }}
 />
@@ -120,12 +120,12 @@ Left-aligned container for icon and filename. Uses flexbox with `gap-2`.
 <TypeTable
   type={{
     children: {
-      description: 'Title content (icon, CodeBlockFilename, etc.).',
-      type: 'React.ReactNode',
+      description: "Title content (icon, CodeBlockFilename, etc.).",
+      type: "React.ReactNode",
     },
     className: {
-      description: 'Additional CSS classes.',
-      type: 'string',
+      description: "Additional CSS classes.",
+      type: "string",
     },
   }}
 />
@@ -137,12 +137,12 @@ Displays the filename in monospace font.
 <TypeTable
   type={{
     children: {
-      description: 'The filename to display.',
-      type: 'React.ReactNode',
+      description: "The filename to display.",
+      type: "React.ReactNode",
     },
     className: {
-      description: 'Additional CSS classes.',
-      type: 'string',
+      description: "Additional CSS classes.",
+      type: "string",
     },
   }}
 />
@@ -154,12 +154,13 @@ Right-aligned container for action buttons. Uses flexbox with `gap-2`.
 <TypeTable
   type={{
     children: {
-      description: 'Action buttons (CodeBlockCopyButton, CodeBlockLanguageSelector, etc.).',
-      type: 'React.ReactNode',
+      description:
+        "Action buttons (CodeBlockCopyButton, CodeBlockLanguageSelector, etc.).",
+      type: "React.ReactNode",
     },
     className: {
-      description: 'Additional CSS classes.',
-      type: 'string',
+      description: "Additional CSS classes.",
+      type: "string",
     },
   }}
 />
@@ -169,25 +170,26 @@ Right-aligned container for action buttons. Uses flexbox with `gap-2`.
 <TypeTable
   type={{
     onCopy: {
-      description: 'Callback fired after a successful copy.',
-      type: '() => void',
+      description: "Callback fired after a successful copy.",
+      type: "() => void",
     },
     onError: {
-      description: 'Callback fired if copying fails.',
-      type: '(error: Error) => void',
+      description: "Callback fired if copying fails.",
+      type: "(error: Error) => void",
     },
     timeout: {
-      description: 'How long to show the copied state (ms).',
-      type: 'number',
-      default: '2000',
+      description: "How long to show the copied state (ms).",
+      type: "number",
+      default: "2000",
     },
     children: {
-      description: 'Custom content for the button. Defaults to copy/check icons.',
-      type: 'React.ReactNode',
+      description:
+        "Custom content for the button. Defaults to copy/check icons.",
+      type: "React.ReactNode",
     },
     className: {
-      description: 'Additional CSS classes.',
-      type: 'string',
+      description: "Additional CSS classes.",
+      type: "string",
     },
   }}
 />
@@ -199,16 +201,16 @@ Wrapper for the language selector. Extends shadcn/ui Select.
 <TypeTable
   type={{
     value: {
-      description: 'The currently selected language.',
-      type: 'string',
+      description: "The currently selected language.",
+      type: "string",
     },
     onValueChange: {
-      description: 'Callback when the language changes.',
-      type: '(value: string) => void',
+      description: "Callback when the language changes.",
+      type: "(value: string) => void",
     },
     children: {
-      description: 'Selector components (Trigger, Content, Items).',
-      type: 'React.ReactNode',
+      description: "Selector components (Trigger, Content, Items).",
+      type: "React.ReactNode",
     },
   }}
 />
@@ -232,12 +234,12 @@ Individual language option in the dropdown.
 <TypeTable
   type={{
     value: {
-      description: 'The language value.',
-      type: 'string',
+      description: "The language value.",
+      type: "string",
     },
     children: {
-      description: 'The display label.',
-      type: 'React.ReactNode',
+      description: "The display label.",
+      type: "React.ReactNode",
     },
   }}
 />
@@ -253,17 +255,17 @@ Low-level component that handles syntax highlighting. Used internally by CodeBlo
 <TypeTable
   type={{
     code: {
-      description: 'The code content to display.',
-      type: 'string',
+      description: "The code content to display.",
+      type: "string",
     },
     language: {
-      description: 'The programming language for syntax highlighting.',
-      type: 'BundledLanguage',
+      description: "The programming language for syntax highlighting.",
+      type: "BundledLanguage",
     },
     showLineNumbers: {
-      description: 'Whether to show line numbers.',
-      type: 'boolean',
-      default: 'false',
+      description: "Whether to show line numbers.",
+      type: "boolean",
+      default: "false",
     },
   }}
 />

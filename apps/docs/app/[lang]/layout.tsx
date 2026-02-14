@@ -1,10 +1,12 @@
 import "../global.css";
 import { cn } from "@repo/shadcn-ui/lib/utils";
+
 import { Footer } from "@/components/geistdocs/footer";
 import { Navbar } from "@/components/geistdocs/navbar";
 import { GeistdocsProvider } from "@/components/geistdocs/provider";
 import { basePath } from "@/geistdocs";
 import { mono, sans } from "@/lib/geistdocs/fonts";
+
 import "katex/dist/katex.min.css";
 
 const Layout = async ({ children, params }: LayoutProps<"/[lang]">) => {

@@ -1,12 +1,13 @@
 /** biome-ignore-all lint/suspicious/noConsole: "server only" */
 
+import type { NextRequest } from "next/server";
+import type { Registry, RegistryItem } from "shadcn/schema";
+
+import { track } from "@vercel/analytics/server";
+import { NextResponse } from "next/server";
 import { promises as fs, readdirSync } from "node:fs";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
-import { track } from "@vercel/analytics/server";
-import type { NextRequest } from "next/server";
-import { NextResponse } from "next/server";
-import type { Registry, RegistryItem } from "shadcn/schema";
 import { Project } from "ts-morph";
 
 const getRegistryUrl = (request: NextRequest) => {
@@ -17,7 +18,7 @@ const getRegistryUrl = (request: NextRequest) => {
 
 const packageDir = join(process.cwd(), "..", "..", "packages", "elements");
 const packagePath = join(packageDir, "package.json");
-const packageJson = JSON.parse(await readFile(packagePath, "utf-8"));
+const packageJson = JSON.parse(await readFile(packagePath, "utf8"));
 
 const examplesDir = join(
   process.cwd(),
@@ -61,8 +62,8 @@ dependenciesSet.add("ai");
 dependenciesSet.add("@ai-sdk/react");
 dependenciesSet.add("zod");
 
-const dependencies = Array.from(dependenciesSet);
-const devDependencies = Array.from(devDependenciesSet);
+const dependencies = new Set(dependenciesSet);
+const devDependencies = [...devDependenciesSet];
 
 // Normalize to package root (supports scoped and deep subpath imports)
 const getBasePackageName = (specifier: string) => {
@@ -108,15 +109,15 @@ const files: {
 const fileContents = await Promise.all(
   tsxFiles.map(async (tsxFile) => {
     const filePath = join(srcDir, tsxFile.name);
-    const content = await fs.readFile(filePath, "utf-8");
+    const content = await fs.readFile(filePath, "utf8");
     const parsedContent = content
-      .replace(/@repo\/shadcn-ui\/components\/ui\//g, "@/registry/default/ui/")
-      .replace(/@repo\/shadcn-ui\/lib\//g, "@/lib/");
+      .replaceAll("@repo/shadcn-ui/components/ui/", "@/registry/default/ui/")
+      .replaceAll("@repo/shadcn-ui/lib/", "@/lib/");
 
     return {
-      type: "registry:component",
-      path: `registry/default/ai-elements/${tsxFile.name}`,
       content: parsedContent,
+      path: `registry/default/ai-elements/${tsxFile.name}`,
+      type: "registry:component",
     };
   })
 );
@@ -124,16 +125,16 @@ const fileContents = await Promise.all(
 const exampleContents = await Promise.all(
   exampleTsxFiles.map(async (exampleFile) => {
     const filePath = join(examplesDir, exampleFile.name);
-    const content = await fs.readFile(filePath, "utf-8");
+    const content = await fs.readFile(filePath, "utf8");
     const parsedContent = content
-      .replace(/@repo\/shadcn-ui\/components\/ui\//g, "@/registry/default/ui/")
-      .replace(/@repo\/shadcn-ui\/lib\//g, "@/lib/")
-      .replace(/@repo\/elements\//g, "@/components/ai-elements/");
+      .replaceAll("@repo/shadcn-ui/components/ui/", "@/registry/default/ui/")
+      .replaceAll("@repo/shadcn-ui/lib/", "@/lib/")
+      .replaceAll("@repo/elements/", "@/components/ai-elements/");
 
     return {
-      type: "registry:block",
-      path: `registry/default/examples/${exampleFile.name}`,
       content: parsedContent,
+      path: `registry/default/examples/${exampleFile.name}`,
+      type: "registry:block",
     };
   })
 );
@@ -175,20 +176,20 @@ const componentItems: RegistryItem[] = tsxFiles.map((componentFile) => {
   const componentName = componentFile.name.replace(".tsx", "");
 
   const item: RegistryItem = {
-    name: componentName,
-    type: "registry:component",
-    title: componentName
-      .split("-")
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(" "),
     description: `AI-powered ${componentName.replace("-", " ")} component.`,
     files: [
       {
         path: `registry/default/ai-elements/${componentFile.name}`,
-        type: "registry:component",
         target: `components/ai-elements/${componentFile.name}.tsx`,
+        type: "registry:component",
       },
     ],
+    name: componentName,
+    title: componentName
+      .split("-")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" "),
+    type: "registry:component",
   };
 
   return item;
@@ -198,20 +199,20 @@ const exampleItems: RegistryItem[] = exampleTsxFiles.map((exampleFile) => {
   const exampleName = exampleFile.name.replace(".tsx", "");
 
   const item: RegistryItem = {
-    name: `example-${exampleName}`,
-    type: "registry:block",
-    title: `${exampleName
-      .split("-")
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(" ")} Example`,
     description: `Example implementation of ${exampleName.replace("-", " ")}.`,
     files: [
       {
         path: `registry/default/examples/${exampleFile.name}`,
-        type: "registry:block",
         target: `components/ai-elements/examples/${exampleFile.name}.tsx`,
+        type: "registry:block",
       },
     ],
+    name: `example-${exampleName}`,
+    title: `${exampleName
+      .split("-")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ")} Example`,
+    type: "registry:block",
   };
 
   return item;
@@ -220,9 +221,9 @@ const exampleItems: RegistryItem[] = exampleTsxFiles.map((exampleFile) => {
 const items: RegistryItem[] = [...componentItems, ...exampleItems];
 
 const getResponse = (registryUrl: string): Registry => ({
-  name: "ai-elements",
   homepage: new URL("/elements", registryUrl).toString(),
   items,
+  name: "ai-elements",
 });
 
 interface RequestProps {
@@ -267,10 +268,10 @@ export const GET = async (request: NextRequest, { params }: RequestProps) => {
 
       if (file) {
         allFiles.push({
-          path: file.path,
-          type: file.type as RegistryItem["type"],
           content: file.content,
+          path: file.path,
           target: `components/ai-elements/${componentFile.name}`,
+          type: file.type as RegistryItem["type"],
         });
 
         // Parse imports for dependencies
@@ -288,7 +289,7 @@ export const GET = async (request: NextRequest, { params }: RequestProps) => {
 
             const pkg = getBasePackageName(moduleName);
             // Check if it's a regular dependency
-            if (dependencies.includes(pkg)) {
+            if (dependencies.has(pkg)) {
               allDependencies.add(pkg);
               // Check if it has a corresponding @types/ package
               const typePkgs = typesDevDepsMap.get(pkg);
@@ -320,14 +321,14 @@ export const GET = async (request: NextRequest, { params }: RequestProps) => {
 
     const allComponentsItem: RegistryItem = {
       $schema: "https://ui.shadcn.com/schema/registry-item.json",
-      name: "all",
-      type: "registry:component",
-      title: "All AI Elements",
+      dependencies: [...allDependencies],
       description: "Bundle containing all AI-powered components.",
+      devDependencies: [...allDevDependencies],
       files: allFiles,
-      dependencies: Array.from(allDependencies),
-      devDependencies: Array.from(allDevDependencies),
-      registryDependencies: Array.from(allRegistryDependencies),
+      name: "all",
+      registryDependencies: [...allRegistryDependencies],
+      title: "All AI Elements",
+      type: "registry:component",
     };
 
     return NextResponse.json(allComponentsItem);
@@ -407,7 +408,7 @@ export const GET = async (request: NextRequest, { params }: RequestProps) => {
 
       const pkg = getBasePackageName(moduleName);
       // Check if it's a regular dependency
-      if (dependencies.includes(pkg)) {
+      if (dependencies.has(pkg)) {
         usedDependencies.add(pkg);
         // Check if it has a corresponding @types/ package
         const typePkgs = typesDevDepsMap.get(pkg);
@@ -455,27 +456,27 @@ export const GET = async (request: NextRequest, { params }: RequestProps) => {
 
   const itemResponse: RegistryItem = {
     $schema: "https://ui.shadcn.com/schema/registry-item.json",
-    name: item.name,
-    type: item.type as Exclude<
-      RegistryItem["type"],
-      "registry:base" | "registry:font"
-    >,
-    title: item.title,
+    dependencies: [...usedDependencies],
     description: item.description,
+    devDependencies: [...usedDevDependencies],
     files: [
       {
+        content: file.content,
         path: file.path,
+        target: `components/ai-elements/${item.name}.tsx`,
         type: file.type as Exclude<
           RegistryItem["type"],
           "registry:base" | "registry:font"
         >,
-        content: file.content,
-        target: `components/ai-elements/${item.name}.tsx`,
       },
     ],
-    dependencies: Array.from(usedDependencies),
-    devDependencies: Array.from(usedDevDependencies),
-    registryDependencies: Array.from(usedRegistryDependencies),
+    name: item.name,
+    registryDependencies: [...usedRegistryDependencies],
+    title: item.title,
+    type: item.type as Exclude<
+      RegistryItem["type"],
+      "registry:base" | "registry:font"
+    >,
   };
 
   return NextResponse.json(itemResponse);

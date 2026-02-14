@@ -1,5 +1,7 @@
 "use client";
 
+import type { ComponentProps, HTMLAttributes } from "react";
+
 import { Badge } from "@repo/shadcn-ui/components/ui/badge";
 import {
   Collapsible,
@@ -8,12 +10,7 @@ import {
 } from "@repo/shadcn-ui/components/ui/collapsible";
 import { cn } from "@repo/shadcn-ui/lib/utils";
 import { ChevronRightIcon } from "lucide-react";
-import {
-  type ComponentProps,
-  createContext,
-  type HTMLAttributes,
-  useContext,
-} from "react";
+import { createContext, useContext, useMemo } from "react";
 
 type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
 
@@ -67,38 +64,54 @@ export const SchemaDisplay = ({
   className,
   children,
   ...props
-}: SchemaDisplayProps) => (
-  <SchemaDisplayContext.Provider
-    value={{ method, path, description, parameters, requestBody, responseBody }}
-  >
-    <div
-      className={cn(
-        "overflow-hidden rounded-lg border bg-background",
-        className
-      )}
-      {...props}
-    >
-      {children ?? (
-        <>
-          <SchemaDisplayHeader>
-            <div className="flex items-center gap-3">
-              <SchemaDisplayMethod />
-              <SchemaDisplayPath />
-            </div>
-          </SchemaDisplayHeader>
-          {description && <SchemaDisplayDescription />}
-          <SchemaDisplayContent>
-            {parameters && parameters.length > 0 && <SchemaDisplayParameters />}
-            {requestBody && requestBody.length > 0 && <SchemaDisplayRequest />}
-            {responseBody && responseBody.length > 0 && (
-              <SchemaDisplayResponse />
-            )}
-          </SchemaDisplayContent>
-        </>
-      )}
-    </div>
-  </SchemaDisplayContext.Provider>
-);
+}: SchemaDisplayProps) => {
+  const contextValue = useMemo(
+    () => ({
+      description,
+      method,
+      parameters,
+      path,
+      requestBody,
+      responseBody,
+    }),
+    [description, method, parameters, path, requestBody, responseBody]
+  );
+
+  return (
+    <SchemaDisplayContext.Provider value={contextValue}>
+      <div
+        className={cn(
+          "overflow-hidden rounded-lg border bg-background",
+          className
+        )}
+        {...props}
+      >
+        {children ?? (
+          <>
+            <SchemaDisplayHeader>
+              <div className="flex items-center gap-3">
+                <SchemaDisplayMethod />
+                <SchemaDisplayPath />
+              </div>
+            </SchemaDisplayHeader>
+            {description && <SchemaDisplayDescription />}
+            <SchemaDisplayContent>
+              {parameters && parameters.length > 0 && (
+                <SchemaDisplayParameters />
+              )}
+              {requestBody && requestBody.length > 0 && (
+                <SchemaDisplayRequest />
+              )}
+              {responseBody && responseBody.length > 0 && (
+                <SchemaDisplayResponse />
+              )}
+            </SchemaDisplayContent>
+          </>
+        )}
+      </div>
+    </SchemaDisplayContext.Provider>
+  );
+};
 
 export type SchemaDisplayHeaderProps = HTMLAttributes<HTMLDivElement>;
 
@@ -116,12 +129,12 @@ export const SchemaDisplayHeader = ({
 );
 
 const methodStyles: Record<HttpMethod, string> = {
+  DELETE: "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400",
   GET: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400",
-  POST: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400",
-  PUT: "bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400",
   PATCH:
     "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400",
-  DELETE: "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400",
+  POST: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400",
+  PUT: "bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400",
 };
 
 export type SchemaDisplayMethodProps = ComponentProps<typeof Badge>;
@@ -154,7 +167,7 @@ export const SchemaDisplayPath = ({
   const { path } = useContext(SchemaDisplayContext);
 
   // Highlight path parameters
-  const highlightedPath = path.replace(
+  const highlightedPath = path.replaceAll(
     /\{([^}]+)\}/g,
     '<span class="text-blue-600 dark:text-blue-400">{$1}</span>'
   );
@@ -163,6 +176,7 @@ export const SchemaDisplayPath = ({
     <span
       className={cn("font-mono text-sm", className)}
       // biome-ignore lint/security/noDangerouslySetInnerHtml: "needed for parameter highlighting"
+      // oxlint-disable-next-line eslint-plugin-react(no-danger)
       dangerouslySetInnerHTML={{ __html: children ?? highlightedPath }}
       {...props}
     />
@@ -418,7 +432,8 @@ export const SchemaDisplayProperty = ({
       {...props}
     >
       <div className="flex items-center gap-2">
-        <span className="size-4" /> {/* Spacer for alignment */}
+        {/* Spacer for alignment */}
+        <span className="size-4" />
         <span className="font-mono text-sm">{name}</span>
         <Badge className="text-xs" variant="outline">
           {type}

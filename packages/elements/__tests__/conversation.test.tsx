@@ -1,26 +1,61 @@
 import { render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
+import { userEvent } from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 
-// Mock use-stick-to-bottom with module-level state
-const mockState = { isAtBottom: true };
-const mockScrollToBottom = vi.fn();
+import {
+  Conversation,
+  ConversationContent,
+  ConversationDownload,
+  ConversationEmptyState,
+  ConversationScrollButton,
+  messagesToMarkdown,
+} from "../src/conversation";
 
-vi.mock("use-stick-to-bottom", () => {
-  const StickToBottomMock = ({ children, ...props }: any) => (
+// Mock use-stick-to-bottom with module-level state using vi.hoisted
+const {
+  mockState,
+  mockScrollToBottom,
+  StickToBottomMock,
+  StickToBottomContent,
+} = vi.hoisted(() => {
+  const mockState = { isAtBottom: true };
+  const mockScrollToBottom = vi.fn();
+
+  interface MockProps {
+    children?: React.ReactNode;
+    [key: string]: unknown;
+  }
+
+  // These components must be defined inside vi.hoisted() for mock setup
+  // oxlint-disable-next-line eslint-plugin-unicorn(consistent-function-scoping)
+  const StickToBottomMock = ({ children, ...props }: MockProps) => (
     <div role="log" {...props}>
       {children}
     </div>
   );
 
-  const StickToBottomContent = ({ children, ...props }: any) => (
+  // oxlint-disable-next-line eslint-plugin-unicorn(consistent-function-scoping)
+  const StickToBottomContent = ({ children, ...props }: MockProps) => (
     <div {...props}>{children}</div>
   );
 
-  (StickToBottomMock as any).Content = StickToBottomContent;
+  return {
+    StickToBottomContent,
+    StickToBottomMock,
+    mockScrollToBottom,
+    mockState,
+  };
+});
+
+// oxlint-disable-next-line typescript-eslint(consistent-type-imports)
+vi.mock<typeof import("use-stick-to-bottom")>("use-stick-to-bottom", () => {
+  const MockComponent = StickToBottomMock as typeof StickToBottomMock & {
+    Content: typeof StickToBottomContent;
+  };
+  MockComponent.Content = StickToBottomContent;
 
   return {
-    StickToBottom: StickToBottomMock,
+    StickToBottom: MockComponent,
     useStickToBottomContext: () => ({
       isAtBottom: mockState.isAtBottom,
       scrollToBottom: mockScrollToBottom,
@@ -28,14 +63,11 @@ vi.mock("use-stick-to-bottom", () => {
   };
 });
 
-import {
-  Conversation,
-  ConversationContent,
-  ConversationEmptyState,
-  ConversationScrollButton,
-} from "../src/conversation";
+// Custom format function for messagesToMarkdown test
+const customFormatMessage = (msg: { role: string; content: string }) =>
+  `[${msg.role}]: ${msg.content}`;
 
-describe("Conversation", () => {
+describe("conversation", () => {
   it("renders children", () => {
     render(
       <Conversation>
@@ -64,7 +96,7 @@ describe("Conversation", () => {
   });
 });
 
-describe("ConversationContent", () => {
+describe("conversationContent", () => {
   it("renders content", () => {
     render(
       <Conversation>
@@ -75,7 +107,7 @@ describe("ConversationContent", () => {
   });
 });
 
-describe("ConversationEmptyState", () => {
+describe("conversationEmptyState", () => {
   it("renders default empty state", () => {
     render(<ConversationEmptyState />);
     expect(screen.getByText("No messages yet")).toBeInTheDocument();
@@ -110,7 +142,7 @@ describe("ConversationEmptyState", () => {
   });
 });
 
-describe("ConversationScrollButton", () => {
+describe("conversationScrollButton", () => {
   it("renders scroll button when not at bottom", () => {
     mockState.isAtBottom = false;
 
@@ -179,8 +211,164 @@ describe("ConversationScrollButton", () => {
     const button = screen.getByRole("button");
     await user.click(button);
 
-    expect(mockScrollToBottom).toHaveBeenCalled();
+    expect(mockScrollToBottom).toHaveBeenCalledWith();
 
     mockState.isAtBottom = true;
+  });
+});
+
+// Function name as describe title is a valid testing pattern
+// oxlint-disable-next-line eslint-plugin-jest(valid-title)
+describe(messagesToMarkdown, () => {
+  it("converts messages to markdown format", () => {
+    const messages = [
+      { content: "Hello", role: "user" as const },
+      { content: "Hi there!", role: "assistant" as const },
+    ];
+
+    const result = messagesToMarkdown(messages);
+
+    expect(result).toBe("**User:** Hello\n\n**Assistant:** Hi there!");
+  });
+
+  it("handles empty messages array", () => {
+    const result = messagesToMarkdown([]);
+    expect(result).toBe("");
+  });
+
+  it("uses custom formatMessage function", () => {
+    const messages = [
+      { content: "Hello", role: "user" as const },
+      { content: "Hi", role: "assistant" as const },
+    ];
+
+    const result = messagesToMarkdown(messages, customFormatMessage);
+
+    expect(result).toBe("[user]: Hello\n\n[assistant]: Hi");
+  });
+
+  it("handles all role types", () => {
+    const messages = [
+      { content: "User msg", role: "user" as const },
+      { content: "Assistant msg", role: "assistant" as const },
+      { content: "System msg", role: "system" as const },
+      { content: "Tool msg", role: "tool" as const },
+      { content: "Data msg", role: "data" as const },
+    ];
+
+    const result = messagesToMarkdown(messages);
+
+    expect(result).toContain("**User:** User msg");
+    expect(result).toContain("**Assistant:** Assistant msg");
+    expect(result).toContain("**System:** System msg");
+    expect(result).toContain("**Tool:** Tool msg");
+    expect(result).toContain("**Data:** Data msg");
+  });
+});
+
+// Helper to setup URL mocks for download tests
+const setupDownloadMocks = () => {
+  const mockCreateObjectURL = vi.fn(() => "blob:test");
+  const mockRevokeObjectURL = vi.fn();
+  const originalCreateObjectURL = URL.createObjectURL;
+  const originalRevokeObjectURL = URL.revokeObjectURL;
+
+  URL.createObjectURL = mockCreateObjectURL;
+  URL.revokeObjectURL = mockRevokeObjectURL;
+
+  return {
+    mockCreateObjectURL,
+    mockRevokeObjectURL,
+    restore: () => {
+      URL.createObjectURL = originalCreateObjectURL;
+      URL.revokeObjectURL = originalRevokeObjectURL;
+    },
+  };
+};
+
+// Helper to setup DOM mocks for anchor click tracking
+const setupDomClickTracker = () => {
+  let linkClicked = false;
+  const originalCreateElement = document.createElement.bind(document);
+
+  vi.spyOn(document, "createElement").mockImplementation((tagName: string) => {
+    const element = originalCreateElement(tagName);
+    if (tagName === "a") {
+      const originalClick = element.click.bind(element);
+      element.click = () => {
+        linkClicked = true;
+        originalClick();
+      };
+    }
+    return element;
+  });
+
+  return { wasLinkClicked: () => linkClicked };
+};
+
+describe("conversationDownload", () => {
+  const mockMessages = [
+    { content: "Hello", role: "user" as const },
+    { content: "Hi there!", role: "assistant" as const },
+  ];
+
+  it("renders download button", () => {
+    render(
+      <Conversation>
+        <ConversationContent>
+          <div>Content</div>
+        </ConversationContent>
+        <ConversationDownload messages={mockMessages} />
+      </Conversation>
+    );
+
+    const button = screen.getByRole("button");
+    expect(button).toBeInTheDocument();
+  });
+
+  it("renders custom children", () => {
+    render(
+      <Conversation>
+        <ConversationDownload messages={mockMessages}>
+          Download Chat
+        </ConversationDownload>
+      </Conversation>
+    );
+
+    expect(screen.getByText("Download Chat")).toBeInTheDocument();
+  });
+
+  it("applies custom className", () => {
+    render(
+      <Conversation>
+        <ConversationDownload
+          className="custom-class"
+          messages={mockMessages}
+        />
+      </Conversation>
+    );
+
+    const button = screen.getByRole("button");
+    expect(button).toHaveClass("custom-class");
+  });
+
+  it("triggers download on click", async () => {
+    const user = userEvent.setup();
+    const urlMocks = setupDownloadMocks();
+    const domTracker = setupDomClickTracker();
+
+    render(
+      <Conversation>
+        <ConversationDownload messages={mockMessages} />
+      </Conversation>
+    );
+
+    await user.click(screen.getByRole("button"));
+
+    expect(urlMocks.mockCreateObjectURL).toHaveBeenCalledWith(expect.any(Blob));
+    expect(domTracker.wasLinkClicked()).toBeTruthy();
+    expect(urlMocks.mockRevokeObjectURL).toHaveBeenCalledWith("blob:test");
+
+    urlMocks.restore();
   });
 });

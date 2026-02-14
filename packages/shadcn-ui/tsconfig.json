@@ -10,7 +10,8 @@
     "paths": {
       "@repo/shadcn-ui/*": ["./*"],
       "@repo/*": ["../*"]
-    }
+    },
+    "strictNullChecks": true
   },
   "include": ["**/*.ts", "**/*.tsx"],
   "exclude": ["node_modules"]

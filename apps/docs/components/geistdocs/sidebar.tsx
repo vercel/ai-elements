@@ -1,5 +1,8 @@
 "use client";
 
+import type { Node } from "fumadocs-core/page-tree";
+import type { SidebarPageTreeComponents } from "fumadocs-ui/components/sidebar/page-tree";
+
 import {
   Sheet,
   SheetContent,
@@ -7,7 +10,6 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@repo/shadcn-ui/components/ui/sheet";
-import type { Node } from "fumadocs-core/page-tree";
 import {
   SidebarFolder,
   SidebarFolderContent,
@@ -16,11 +18,12 @@ import {
   SidebarItem,
   SidebarSeparator,
 } from "fumadocs-ui/components/sidebar/base";
-import type { SidebarPageTreeComponents } from "fumadocs-ui/components/sidebar/page-tree";
 import { useTreeContext, useTreePath } from "fumadocs-ui/contexts/tree";
 import { usePathname } from "next/navigation";
 import { Fragment, useEffect, useRef } from "react";
+
 import { useSidebarContext } from "@/hooks/geistdocs/use-sidebar";
+
 import { SearchButton } from "./search";
 
 export const Sidebar = () => {

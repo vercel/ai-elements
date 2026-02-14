@@ -1,12 +1,14 @@
 "use client";
 
+import type { Experimental_SpeechResult as SpeechResult } from "ai";
+import type { ComponentProps, CSSProperties } from "react";
+
 import { Button } from "@repo/shadcn-ui/components/ui/button";
 import {
   ButtonGroup,
   ButtonGroupText,
 } from "@repo/shadcn-ui/components/ui/button-group";
 import { cn } from "@repo/shadcn-ui/lib/utils";
-import type { Experimental_SpeechResult as SpeechResult } from "ai";
 import {
   MediaControlBar,
   MediaController,
@@ -19,7 +21,6 @@ import {
   MediaTimeRange,
   MediaVolumeRange,
 } from "media-chrome/react";
-import type { ComponentProps, CSSProperties } from "react";
 
 export type AudioPlayerProps = Omit<
   ComponentProps<typeof MediaController>,
@@ -27,7 +28,6 @@ export type AudioPlayerProps = Omit<
 >;
 
 export const AudioPlayer = ({
-  className,
   children,
   style,
   ...props
@@ -37,26 +37,26 @@ export const AudioPlayer = ({
     data-slot="audio-player"
     style={
       {
-        "--media-button-icon-width": "1rem",
+        "--media-background-color": "transparent",
         "--media-button-icon-height": "1rem",
-        "--media-icon-color": "currentColor",
-        "--media-font": "var(--font-sans)",
-        "--media-font-size": "10px",
+        "--media-button-icon-width": "1rem",
         "--media-control-background": "transparent",
         "--media-control-hover-background": "var(--color-accent)",
         "--media-control-padding": "0",
-        "--media-background-color": "transparent",
-        "--media-primary-color": "var(--color-primary)",
-        "--media-secondary-color": "var(--color-secondary)",
-        "--media-text-color": "var(--color-foreground)",
-        "--media-tooltip-background": "var(--color-background)",
-        "--media-range-bar-color": "var(--color-primary)",
-        "--media-tooltip-arrow-display": "none",
-        "--media-tooltip-border-radius": "var(--radius-md)",
-        "--media-preview-time-text-shadow": "none",
+        "--media-font": "var(--font-sans)",
+        "--media-font-size": "10px",
+        "--media-icon-color": "currentColor",
         "--media-preview-time-background": "var(--color-background)",
         "--media-preview-time-border-radius": "var(--radius-md)",
+        "--media-preview-time-text-shadow": "none",
+        "--media-primary-color": "var(--color-primary)",
+        "--media-range-bar-color": "var(--color-primary)",
         "--media-range-track-background": "var(--color-secondary)",
+        "--media-secondary-color": "var(--color-secondary)",
+        "--media-text-color": "var(--color-foreground)",
+        "--media-tooltip-arrow-display": "none",
+        "--media-tooltip-background": "var(--color-background)",
+        "--media-tooltip-border-radius": "var(--radius-md)",
         ...style,
       } as CSSProperties
     }
@@ -77,6 +77,7 @@ export type AudioPlayerElementProps = Omit<ComponentProps<"audio">, "src"> &
   );
 
 export const AudioPlayerElement = ({ ...props }: AudioPlayerElementProps) => (
+  // oxlint-disable-next-line eslint-plugin-jsx-a11y(media-has-caption) -- audio player captions are provided by consumer
   <audio
     data-slot="audio-player-element"
     slot="media"

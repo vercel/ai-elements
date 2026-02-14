@@ -13,6 +13,14 @@ import {
   StackTraceHeader,
 } from "@repo/elements/stack-trace";
 
+const handleFilePathClick = (path: string, line: number, col: number) => {
+  console.log(`Open file: ${path}:${line}:${col}`);
+};
+
+const handleCopy = () => {
+  console.log("Stack trace copied");
+};
+
 const sampleStackTrace = `TypeError: Cannot read properties of undefined (reading 'map')
     at UserList (/app/components/UserList.tsx:15:23)
     at renderWithHooks (node_modules/react-dom/cjs/react-dom.development.js:14985:18)
@@ -28,9 +36,7 @@ const sampleStackTrace = `TypeError: Cannot read properties of undefined (readin
 const Example = () => (
   <StackTrace
     defaultOpen
-    onFilePathClick={(path, line, col) =>
-      console.log(`Open file: ${path}:${line}:${col}`)
-    }
+    onFilePathClick={handleFilePathClick}
     trace={sampleStackTrace}
   >
     <StackTraceHeader>
@@ -39,9 +45,7 @@ const Example = () => (
         <StackTraceErrorMessage />
       </StackTraceError>
       <StackTraceActions>
-        <StackTraceCopyButton
-          onCopy={() => console.log("Stack trace copied")}
-        />
+        <StackTraceCopyButton onCopy={handleCopy} />
         <StackTraceExpandButton />
       </StackTraceActions>
     </StackTraceHeader>

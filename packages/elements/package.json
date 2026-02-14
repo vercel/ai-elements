@@ -1,15 +1,15 @@
 {
   "name": "@repo/elements",
-  "description": "AI components including message, conversation, input, response, suggestion, sources, context, tool and branch components for building chat interfaces.",
   "version": "0.0.0",
   "private": true,
+  "description": "AI components including message, conversation, input, response, suggestion, sources, context, tool and branch components for building chat interfaces.",
+  "exports": {
+    "./*": "./src/*.tsx"
+  },
   "scripts": {
     "test": "vitest run",
     "test:watch": "vitest --watch",
     "test:coverage": "vitest run --coverage"
-  },
-  "exports": {
-    "./*": "./src/*.tsx"
   },
   "dependencies": {
     "@radix-ui/react-use-controllable-state": "^1.2.2",
@@ -30,6 +30,7 @@
     "nanoid": "^5.1.6",
     "react": "19.2.3",
     "react-dom": "19.2.3",
+    "react-jsx-parser": "^2.2.0",
     "shiki": "3.22.0",
     "streamdown": "^2.1.0",
     "tokenlens": "^1.3.1",

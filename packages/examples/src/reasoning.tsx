@@ -25,7 +25,8 @@ const Example = () => {
     const tokens: string[] = [];
     let i = 0;
     while (i < text.length) {
-      const chunkSize = Math.floor(Math.random() * 2) + 3; // Random size between 3-4
+      // Random size between 3-4
+      const chunkSize = Math.floor(Math.random() * 2) + 3;
       tokens.push(text.slice(i, i + chunkSize));
       i += chunkSize;
     }
@@ -48,10 +49,11 @@ const Example = () => {
       return;
     }
 
+    // Faster interval since we're streaming smaller chunks
     const timer = setTimeout(() => {
       setContent((prev) => prev + tokens[currentTokenIndex]);
       setCurrentTokenIndex((prev) => prev + 1);
-    }, 25); // Faster interval since we're streaming smaller chunks
+    }, 25);
 
     return () => clearTimeout(timer);
   }, [isStreaming, currentTokenIndex, tokens]);

@@ -5,8 +5,10 @@ import {
   stepCountIs,
   streamText,
 } from "ai";
-import { createTools } from "./tools";
+
 import type { MyUIMessage } from "./types";
+
+import { createTools } from "./tools";
 import { createSystemPrompt } from "./utils";
 
 export const maxDuration = 800;
@@ -59,7 +61,6 @@ export async function POST(req: Request) {
             ...lastMessage,
             parts: [
               {
-                type: "text",
                 text: `Here's the content from the current page:
 
 **Page:** ${pageContext.title}
@@ -72,6 +73,7 @@ ${pageContext.content}
 ---
 
 User question: ${userQuestion}`,
+                type: "text",
               },
             ],
           },
@@ -80,23 +82,23 @@ User question: ${userQuestion}`,
     }
 
     const stream = createUIMessageStream({
-      originalMessages: messages,
       execute: async ({ writer }) => {
         const result = streamText({
-          model: "openai/gpt-4.1-mini",
           messages: await convertToModelMessages(processedMessages),
-          stopWhen: stepCountIs(10),
-          tools: createTools(writer),
-          system: createSystemPrompt(currentRoute),
+          model: "openai/gpt-4.1-mini",
           prepareStep: ({ stepNumber }) => {
             if (stepNumber === 0) {
-              return { toolChoice: { type: "tool", toolName: "search_docs" } };
+              return { toolChoice: { toolName: "search_docs", type: "tool" } };
             }
           },
+          stopWhen: stepCountIs(10),
+          system: createSystemPrompt(currentRoute),
+          tools: createTools(writer),
         });
 
         writer.merge(result.toUIMessageStream());
       },
+      originalMessages: messages,
     });
 
     return createUIMessageStreamResponse({ stream });
@@ -108,8 +110,8 @@ User question: ${userQuestion}`,
         error: "Failed to process chat request. Please try again.",
       }),
       {
-        status: 500,
         headers: { "Content-Type": "application/json" },
+        status: 500,
       }
     );
   }

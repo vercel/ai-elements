@@ -1,5 +1,7 @@
-import { DocsLayout as FumadocsDocsLayout } from "fumadocs-ui/layouts/docs";
 import type { ComponentProps, CSSProperties, ReactNode } from "react";
+
+import { DocsLayout as FumadocsDocsLayout } from "fumadocs-ui/layouts/docs";
+
 import {
   Folder,
   Item,

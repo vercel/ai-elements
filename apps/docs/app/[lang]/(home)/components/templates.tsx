@@ -1,6 +1,6 @@
+import { CodeBlockContent } from "@repo/elements/src/code-block";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
-import { CodeBlockContent } from "@repo/elements/src/code-block";
 
 interface TemplatePreviewProps {
   title: string;
@@ -31,7 +31,7 @@ const TemplatePreview = async ({
       "src",
       `${file}.tsx`
     ),
-    "utf-8"
+    "utf8"
   );
 
   return (

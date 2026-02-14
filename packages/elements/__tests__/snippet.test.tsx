@@ -1,9 +1,10 @@
 import { render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
+import { userEvent } from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
+
 import { Snippet, SnippetCopyButton, SnippetInput } from "../src/snippet";
 
-describe("Snippet", () => {
+describe("snippet", () => {
   it("renders code via SnippetInput", () => {
     render(
       <Snippet code="npm install">
@@ -32,12 +33,13 @@ describe("Snippet", () => {
   });
 });
 
-describe("SnippetCopyButton", () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+const setupCopyButtonTests = () => {
+  vi.clearAllMocks();
+};
 
+describe("snippetCopyButton", () => {
   it("renders copy button", () => {
+    setupCopyButtonTests();
     render(
       <Snippet code="test">
         <SnippetCopyButton />

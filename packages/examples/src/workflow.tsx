@@ -13,74 +13,74 @@ import {
 import { nanoid } from "nanoid";
 
 const nodeIds = {
-  start: nanoid(),
-  process1: nanoid(),
-  process2: nanoid(),
   decision: nanoid(),
   output1: nanoid(),
   output2: nanoid(),
+  process1: nanoid(),
+  process2: nanoid(),
+  start: nanoid(),
 };
 
 const nodes = [
   {
-    id: nodeIds.start,
-    type: "workflow",
-    position: { x: 0, y: 0 },
     data: {
-      label: "Start",
       description: "Initialize workflow",
-      handles: { target: false, source: true },
+      handles: { source: true, target: false },
+      label: "Start",
     },
+    id: nodeIds.start,
+    position: { x: 0, y: 0 },
+    type: "workflow",
   },
   {
-    id: nodeIds.process1,
-    type: "workflow",
-    position: { x: 500, y: 0 },
     data: {
-      label: "Process Data",
       description: "Transform input",
-      handles: { target: true, source: true },
+      handles: { source: true, target: true },
+      label: "Process Data",
     },
+    id: nodeIds.process1,
+    position: { x: 500, y: 0 },
+    type: "workflow",
   },
   {
-    id: nodeIds.decision,
-    type: "workflow",
-    position: { x: 1000, y: 0 },
     data: {
-      label: "Decision Point",
       description: "Route based on conditions",
-      handles: { target: true, source: true },
+      handles: { source: true, target: true },
+      label: "Decision Point",
     },
+    id: nodeIds.decision,
+    position: { x: 1000, y: 0 },
+    type: "workflow",
   },
   {
-    id: nodeIds.output1,
-    type: "workflow",
-    position: { x: 1500, y: -100 },
     data: {
-      label: "Success Path",
       description: "Handle success case",
-      handles: { target: true, source: true },
+      handles: { source: true, target: true },
+      label: "Success Path",
     },
+    id: nodeIds.output1,
+    position: { x: 1500, y: -100 },
+    type: "workflow",
   },
   {
-    id: nodeIds.output2,
-    type: "workflow",
-    position: { x: 1500, y: 100 },
     data: {
-      label: "Error Path",
       description: "Handle error case",
-      handles: { target: true, source: true },
+      handles: { source: true, target: true },
+      label: "Error Path",
     },
+    id: nodeIds.output2,
+    position: { x: 1500, y: 100 },
+    type: "workflow",
   },
   {
-    id: nodeIds.process2,
-    type: "workflow",
-    position: { x: 2000, y: 0 },
     data: {
-      label: "Complete",
       description: "Finalize workflow",
-      handles: { target: true, source: false },
+      handles: { source: false, target: true },
+      label: "Complete",
     },
+    id: nodeIds.process2,
+    position: { x: 2000, y: 0 },
+    type: "workflow",
   },
 ];
 

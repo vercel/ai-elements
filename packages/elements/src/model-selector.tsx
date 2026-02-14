@@ -1,3 +1,5 @@
+import type { ComponentProps, ReactNode } from "react";
+
 import {
   Command,
   CommandDialog,
@@ -16,7 +18,6 @@ import {
   DialogTrigger,
 } from "@repo/shadcn-ui/components/ui/dialog";
 import { cn } from "@repo/shadcn-ui/lib/utils";
-import type { ComponentProps, ReactNode } from "react";
 
 export type ModelSelectorProps = ComponentProps<typeof Dialog>;
 
@@ -41,6 +42,7 @@ export const ModelSelectorContent = ({
   ...props
 }: ModelSelectorContentProps) => (
   <DialogContent
+    aria-describedby={undefined}
     className={cn(
       "outline! border-none! p-0 outline-border! outline-solid!",
       className
@@ -168,6 +170,7 @@ export type ModelSelectorLogoProps = Omit<
     | "scaleway"
     | "amazon-bedrock"
     | "cerebras"
+    // oxlint-disable-next-line typescript-eslint(ban-types) -- intentional pattern for autocomplete-friendly string union
     | (string & {});
 };
 

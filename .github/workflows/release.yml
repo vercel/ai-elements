@@ -19,7 +19,6 @@ jobs:
     timeout-minutes: 10
 
     steps:
-
       - name: Generate GitHub App Token
         id: generate-token
         uses: actions/create-github-app-token@v2
@@ -42,8 +41,8 @@ jobs:
 
       - uses: actions/setup-node@v6
         with:
-          node-version: '24'
-          registry-url: 'https://registry.npmjs.org'
+          node-version: "24"
+          registry-url: "https://registry.npmjs.org"
 
       # Ensure npm 11.5.1 or later is installed
       - name: Update npm

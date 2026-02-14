@@ -1,9 +1,11 @@
 #!/usr/bin/env node
 
+// CLI script - Node.js modules are valid here
+// oxlint-disable-next-line eslint-plugin-import(no-nodejs-modules)
 const { spawnSync } = require("node:child_process");
 
 // Function to detect the command used to invoke this script
-function getCommandPrefix() {
+const getCommandPrefix = () => {
   // Check for common package manager environment variables
   if (process.env.npm_config_user_agent) {
     const userAgent = process.env.npm_config_user_agent;
@@ -21,7 +23,7 @@ function getCommandPrefix() {
 
   // Default fallback
   return "npx -y";
-}
+};
 
 const commandPrefix = getCommandPrefix();
 
@@ -43,8 +45,8 @@ const targetUrls = components
 
 const fullCommand = `${commandPrefix} shadcn@latest add ${targetUrls}`;
 const result = spawnSync(fullCommand, {
-  stdio: "inherit",
   shell: true,
+  stdio: "inherit",
 });
 
 if (result.error) {

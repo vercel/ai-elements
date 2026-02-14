@@ -1,5 +1,7 @@
 "use client";
 
+import type { PromptInputMessage } from "@repo/elements/prompt-input";
+
 import {
   ModelSelector,
   ModelSelectorContent,
@@ -24,107 +26,55 @@ import {
   PromptInputButton,
   PromptInputFooter,
   PromptInputHeader,
-  type PromptInputMessage,
   PromptInputProvider,
   PromptInputSubmit,
   PromptInputTextarea,
   PromptInputTools,
   usePromptInputAttachments,
-  usePromptInputController
 } from "@repo/elements/prompt-input";
-import { Button } from "@repo/shadcn-ui/components/ui/button";
-import { ButtonGroup } from "@repo/shadcn-ui/components/ui/button-group";
 import { CheckIcon, GlobeIcon } from "lucide-react";
-import { useState } from "react";
+import { memo, useCallback, useState } from "react";
 
 const models = [
   {
+    chef: "OpenAI",
+    chefSlug: "openai",
     id: "gpt-4o",
     name: "GPT-4o",
-    chef: "OpenAI",
-    chefSlug: "openai",
     providers: ["openai", "azure"],
   },
   {
+    chef: "OpenAI",
+    chefSlug: "openai",
     id: "gpt-4o-mini",
     name: "GPT-4o Mini",
-    chef: "OpenAI",
-    chefSlug: "openai",
     providers: ["openai", "azure"],
   },
   {
+    chef: "Anthropic",
+    chefSlug: "anthropic",
     id: "claude-opus-4-20250514",
     name: "Claude 4 Opus",
-    chef: "Anthropic",
-    chefSlug: "anthropic",
     providers: ["anthropic", "azure", "google", "amazon-bedrock"],
   },
   {
+    chef: "Anthropic",
+    chefSlug: "anthropic",
     id: "claude-sonnet-4-20250514",
     name: "Claude 4 Sonnet",
-    chef: "Anthropic",
-    chefSlug: "anthropic",
     providers: ["anthropic", "azure", "google", "amazon-bedrock"],
   },
   {
-    id: "gemini-2.0-flash-exp",
-    name: "Gemini 2.0 Flash",
     chef: "Google",
     chefSlug: "google",
+    id: "gemini-2.0-flash-exp",
+    name: "Gemini 2.0 Flash",
     providers: ["google"],
   },
 ];
 
 const SUBMITTING_TIMEOUT = 200;
 const STREAMING_TIMEOUT = 2000;
-
-const HeaderControls = () => {
-  const controller = usePromptInputController();
-
-  return (
-    <header className="mt-8 flex items-center justify-between">
-      <p className="text-sm">
-        Header Controls via{" "}
-        <code className="rounded-md bg-muted p-1 font-bold">
-          PromptInputProvider
-        </code>
-      </p>
-      <ButtonGroup>
-        <Button
-          onClick={() => {
-            controller.textInput.clear();
-          }}
-          size="sm"
-          type="button"
-          variant="outline"
-        >
-          Clear input
-        </Button>
-        <Button
-          onClick={() => {
-            controller.textInput.setInput("Inserted via PromptInputProvider");
-          }}
-          size="sm"
-          type="button"
-          variant="outline"
-        >
-          Set input
-        </Button>
-
-        <Button
-          onClick={() => {
-            controller.attachments.clear();
-          }}
-          size="sm"
-          type="button"
-          variant="outline"
-        >
-          Clear attachments
-        </Button>
-      </ButtonGroup>
-    </header>
-  );
-};
 
 const AttachmentsHeader = () => {
   const attachments = usePromptInputAttachments();
@@ -136,6 +86,34 @@ const AttachmentsHeader = () => {
   );
 };
 
+interface ModelItemProps {
+  m: (typeof models)[0];
+  selectedModel: string;
+  onSelect: (id: string) => void;
+}
+
+const ModelItem = memo(({ m, selectedModel, onSelect }: ModelItemProps) => {
+  const handleSelect = useCallback(() => onSelect(m.id), [onSelect, m.id]);
+  return (
+    <ModelSelectorItem key={m.id} onSelect={handleSelect} value={m.id}>
+      <ModelSelectorLogo provider={m.chefSlug} />
+      <ModelSelectorName>{m.name}</ModelSelectorName>
+      <ModelSelectorLogoGroup>
+        {m.providers.map((provider) => (
+          <ModelSelectorLogo key={provider} provider={provider} />
+        ))}
+      </ModelSelectorLogoGroup>
+      {selectedModel === m.id ? (
+        <CheckIcon className="ml-auto size-4" />
+      ) : (
+        <div className="ml-auto size-4" />
+      )}
+    </ModelSelectorItem>
+  );
+});
+
+ModelItem.displayName = "ModelItem";
+
 const Example = () => {
   const [model, setModel] = useState<string>(models[0].id);
   const [modelSelectorOpen, setModelSelectorOpen] = useState(false);
@@ -144,7 +122,12 @@ const Example = () => {
   >("ready");
   const selectedModelData = models.find((m) => m.id === model);
 
-  const handleSubmit = (message: PromptInputMessage) => {
+  const handleModelSelect = useCallback((id: string) => {
+    setModel(id);
+    setModelSelectorOpen(false);
+  }, []);
+
+  const handleSubmit = useCallback((message: PromptInputMessage) => {
     const hasText = Boolean(message.text);
     const hasAttachments = Boolean(message.files?.length);
 
@@ -164,7 +147,7 @@ const Example = () => {
     setTimeout(() => {
       setStatus("ready");
     }, STREAMING_TIMEOUT);
-  };
+  }, []);
 
   return (
     <div className="size-full">
@@ -213,30 +196,12 @@ const Example = () => {
                         {models
                           .filter((m) => m.chef === chef)
                           .map((m) => (
-                            <ModelSelectorItem
+                            <ModelItem
                               key={m.id}
-                              onSelect={() => {
-                                setModel(m.id);
-                                setModelSelectorOpen(false);
-                              }}
-                              value={m.id}
-                            >
-                              <ModelSelectorLogo provider={m.chefSlug} />
-                              <ModelSelectorName>{m.name}</ModelSelectorName>
-                              <ModelSelectorLogoGroup>
-                                {m.providers.map((provider) => (
-                                  <ModelSelectorLogo
-                                    key={provider}
-                                    provider={provider}
-                                  />
-                                ))}
-                              </ModelSelectorLogoGroup>
-                              {model === m.id ? (
-                                <CheckIcon className="ml-auto size-4" />
-                              ) : (
-                                <div className="ml-auto size-4" />
-                              )}
-                            </ModelSelectorItem>
+                              m={m}
+                              onSelect={handleModelSelect}
+                              selectedModel={model}
+                            />
                           ))}
                       </ModelSelectorGroup>
                     ))}
@@ -247,8 +212,6 @@ const Example = () => {
             <PromptInputSubmit status={status} />
           </PromptInputFooter>
         </PromptInput>
-
-        <HeaderControls />
       </PromptInputProvider>
     </div>
   );

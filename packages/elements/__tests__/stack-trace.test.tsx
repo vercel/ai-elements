@@ -1,6 +1,7 @@
 import { render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
+import { userEvent } from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
+
 import {
   StackTrace,
   StackTraceActions,
@@ -32,14 +33,14 @@ const nodeInternalTrace = `Error: ENOENT
     at readFile (node:fs:123:10)
     at internal/modules/cjs/loader.js:50:20`;
 
-describe("StackTrace", () => {
+describe("stackTrace", () => {
   it("renders children", () => {
     render(<StackTrace trace={sampleStackTrace}>Content</StackTrace>);
     expect(screen.getByText("Content")).toBeInTheDocument();
   });
 
   it("throws error when component used outside provider", () => {
-    const spy = vi.spyOn(console, "error").mockImplementation(() => undefined);
+    const spy = vi.spyOn(console, "error").mockImplementation(vi.fn());
 
     expect(() => render(<StackTraceHeader>Test</StackTraceHeader>)).toThrow(
       "StackTrace components must be used within StackTrace"
@@ -110,7 +111,7 @@ describe("StackTrace", () => {
   });
 });
 
-describe("StackTraceHeader", () => {
+describe("stackTraceHeader", () => {
   it("renders as clickable trigger", () => {
     const { container } = render(
       <StackTrace trace={sampleStackTrace}>
@@ -153,7 +154,7 @@ describe("StackTraceHeader", () => {
   });
 });
 
-describe("StackTraceError", () => {
+describe("stackTraceError", () => {
   it("renders children", () => {
     render(
       <StackTrace trace={sampleStackTrace}>
@@ -175,7 +176,7 @@ describe("StackTraceError", () => {
   });
 });
 
-describe("StackTraceErrorType", () => {
+describe("stackTraceErrorType", () => {
   it("renders parsed error type", () => {
     render(
       <StackTrace trace={sampleStackTrace}>
@@ -210,7 +211,7 @@ describe("StackTraceErrorType", () => {
   });
 });
 
-describe("StackTraceErrorMessage", () => {
+describe("stackTraceErrorMessage", () => {
   it("renders parsed error message", () => {
     render(
       <StackTrace trace={sampleStackTrace}>
@@ -234,7 +235,7 @@ describe("StackTraceErrorMessage", () => {
   });
 });
 
-describe("StackTraceActions", () => {
+describe("stackTraceActions", () => {
   it("renders children", () => {
     render(
       <StackTrace trace={sampleStackTrace}>
@@ -267,12 +268,13 @@ describe("StackTraceActions", () => {
   });
 });
 
-describe("StackTraceCopyButton", () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+const setupCopyButtonTests = () => {
+  vi.clearAllMocks();
+};
 
+describe("stackTraceCopyButton", () => {
   it("renders copy button", () => {
+    setupCopyButtonTests();
     render(
       <StackTrace trace={sampleStackTrace}>
         <StackTraceCopyButton />
@@ -338,9 +340,9 @@ describe("StackTraceCopyButton", () => {
 
     const originalClipboard = navigator.clipboard;
     Object.defineProperty(navigator, "clipboard", {
+      configurable: true,
       value: { writeText: undefined },
       writable: true,
-      configurable: true,
     });
 
     render(
@@ -358,14 +360,14 @@ describe("StackTraceCopyButton", () => {
     );
 
     Object.defineProperty(navigator, "clipboard", {
+      configurable: true,
       value: originalClipboard,
       writable: true,
-      configurable: true,
     });
   });
 });
 
-describe("StackTraceExpandButton", () => {
+describe("stackTraceExpandButton", () => {
   it("renders chevron icon", () => {
     const { container } = render(
       <StackTrace trace={sampleStackTrace}>
@@ -399,7 +401,7 @@ describe("StackTraceExpandButton", () => {
   });
 });
 
-describe("StackTraceContent", () => {
+describe("stackTraceContent", () => {
   it("renders content when open", () => {
     render(
       <StackTrace defaultOpen trace={sampleStackTrace}>
@@ -437,7 +439,7 @@ describe("StackTraceContent", () => {
   });
 });
 
-describe("StackTraceFrames", () => {
+describe("stackTraceFrames", () => {
   it("renders stack frames", () => {
     const { container } = render(
       <StackTrace defaultOpen trace={simpleStackTrace}>
@@ -449,7 +451,7 @@ describe("StackTraceFrames", () => {
 
     // Check frames are rendered
     const frames = container.querySelectorAll(".text-xs");
-    expect(frames.length).toBe(2);
+    expect(frames).toHaveLength(2);
   });
 
   it("renders file paths with line numbers", () => {
@@ -489,7 +491,7 @@ describe("StackTraceFrames", () => {
 
     // Should only have 1 frame (UserList), not the node_modules frames
     const frames = container.querySelectorAll(".text-xs");
-    expect(frames.length).toBe(1);
+    expect(frames).toHaveLength(1);
     expect(screen.queryByText(RENDER_WITH_HOOKS_REGEX)).not.toBeInTheDocument();
     expect(screen.queryByText(BEGIN_WORK_REGEX)).not.toBeInTheDocument();
   });
@@ -544,7 +546,7 @@ describe("StackTraceFrames", () => {
   });
 });
 
-describe("Stack trace parsing", () => {
+describe("stack trace parsing", () => {
   it("parses TypeError correctly", () => {
     render(
       <StackTrace trace={sampleStackTrace}>

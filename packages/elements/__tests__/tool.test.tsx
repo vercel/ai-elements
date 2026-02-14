@@ -1,8 +1,6 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
-const QUERY_REGEX = /"query"/;
-
 import {
   Tool,
   ToolContent,
@@ -11,7 +9,9 @@ import {
   ToolOutput,
 } from "../src/tool";
 
-describe("Tool", () => {
+const QUERY_REGEX = /"query"/;
+
+describe("tool", () => {
   it("renders children", () => {
     render(<Tool>Content</Tool>);
     expect(screen.getByText("Content")).toBeInTheDocument();
@@ -23,7 +23,7 @@ describe("Tool", () => {
   });
 });
 
-describe("ToolHeader", () => {
+describe("toolHeader", () => {
   it("renders tool name", () => {
     render(
       <Tool defaultOpen>
@@ -115,7 +115,7 @@ describe("ToolHeader", () => {
   });
 });
 
-describe("ToolHeader with DynamicToolUIPart", () => {
+describe("toolHeader with DynamicToolUIPart", () => {
   it("renders dynamic tool name from toolName prop", () => {
     render(
       <Tool defaultOpen>
@@ -170,7 +170,7 @@ describe("ToolHeader with DynamicToolUIPart", () => {
   });
 });
 
-describe("ToolContent", () => {
+describe("toolContent", () => {
   it("renders content", () => {
     render(
       <Tool defaultOpen>
@@ -182,7 +182,7 @@ describe("ToolContent", () => {
   });
 });
 
-describe("ToolInput", () => {
+describe("toolInput", () => {
   it("renders input parameters", async () => {
     const input = { query: "test search" };
     render(
@@ -213,7 +213,7 @@ describe("ToolInput", () => {
   });
 });
 
-describe("ToolOutput", () => {
+describe("toolOutput", () => {
   it("renders output", () => {
     render(
       <Tool>
@@ -243,7 +243,7 @@ describe("ToolOutput", () => {
   });
 
   it("renders object output as JSON", () => {
-    const output = { result: "success", data: [1, 2, 3] };
+    const output = { data: [1, 2, 3], result: "success" };
     render(
       <Tool>
         <ToolOutput errorText={undefined} output={output} />

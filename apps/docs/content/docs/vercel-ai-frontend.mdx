@@ -1,6 +1,10 @@
 ---
 title: The Vercel AI Frontend Stack
 description: How AI Gateway, AI SDK, and AI Elements work together.
+type: conceptual
+summary: How AI Gateway, AI SDK, and AI Elements work together.
+related:
+  - /docs/setup
 ---
 
 Vercel provides a complete stack for building AI-powered applications. Here's how the pieces fit together.
@@ -58,16 +62,7 @@ Add `AI_GATEWAY_API_KEY` to your environment:
 AI_GATEWAY_API_KEY=your_api_key_here
 ```
 
-Then use it with the AI SDK:
-
-```ts title="app/api/chat/route.ts"
-import { createOpenAI } from '@ai-sdk/openai';
-
-const openai = createOpenAI({
-  apiKey: process.env.AI_GATEWAY_API_KEY,
-  baseURL: 'https://gateway.ai.cloudflare.com/v1/your_account_id_here/ai-gateway/openai',
-});
-```
+Then use it with the AI SDK by specifying a model string e.g. `anthropic/claude-sonnet-4.5`.
 
 ## AI SDK
 
@@ -83,17 +78,30 @@ The [AI SDK](https://ai-sdk.dev/) provides the foundation for AI interactions.
 ### React Hooks
 
 ```tsx title="example.tsx"
-import { useChat } from '@ai-sdk/react';
+"use client";
+
+import { useChat } from "@ai-sdk/react";
 
 function Chat() {
-  const { messages, input, handleInputChange, handleSubmit, status } = useChat();
+  const [text, setText] = useState("");
+  const { messages, sendMessage, status } = useChat({
+    transport: new DefaultChatTransport({
+      api: "/api/chat",
+    }),
+  });
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    sendMessage({ text: text });
+    setText("");
+  };
 
   return (
     <form onSubmit={handleSubmit}>
-      {messages.map(m => (
+      {messages.map((m) => (
         <div key={m.id}>{m.content}</div>
       ))}
-      <input value={input} onChange={handleInputChange} />
+      <input value={text} onChange={(e) => setText(e.target.value)} />
     </form>
   );
 }
@@ -102,18 +110,18 @@ function Chat() {
 ### Server Integration
 
 ```ts title="app/api/chat/route.ts"
-import { streamText } from 'ai';
-import { openai } from '@ai-sdk/openai';
+import { streamText } from "ai";
 
 export async function POST(req: Request) {
   const { messages } = await req.json();
 
   const result = streamText({
-    model: openai('gpt-4o'),
-    messages,
+    model: "anthropic/claude-sonnet-4.5",
+    system: "You are a helpful assistant.",
+    messages: await convertToModelMessages(messages),
   });
 
-  return result.toDataStreamResponse();
+  return result.toUIMessageStreamResponse();
 }
 ```
 
@@ -131,27 +139,49 @@ AI Elements provides the UI layer on top of the AI SDK.
 ### Integration Example
 
 ```tsx title="app/chat/page.tsx"
-'use client';
+"use client";
 
-import { useChat } from '@ai-sdk/react';
-import { Conversation, ConversationContent } from '@/components/ai-elements/conversation';
-import { Message, MessageContent, MessageResponse } from '@/components/ai-elements/message';
-import { Input, PromptInputTextarea, PromptInputSubmit } from '@/components/ai-elements/prompt-input';
+import { useChat } from "@ai-sdk/react";
+import {
+  Conversation,
+  ConversationContent,
+} from "@/components/ai-elements/conversation";
+import {
+  Message,
+  MessageContent,
+  MessageResponse,
+} from "@/components/ai-elements/message";
+import {
+  PromptInput,
+  PromptInputBody,
+  PromptInputFooter,
+  PromptInputProvider,
+  PromptInputSubmit,
+  PromptInputTextarea,
+} from "@/components/ai-elements/prompt-input";
 
 export default function ChatPage() {
-  const { messages, input, handleInputChange, handleSubmit, status } = useChat();
+  const { messages, sendMessage, status } = useChat({
+    transport: new DefaultChatTransport({
+      api: "/api/chat",
+    }),
+  });
+
+  const handleSubmit = (message: { text: string }) => {
+    sendMessage({ text: message.text });
+  };
 
   return (
     <div className="h-screen flex flex-col">
       <Conversation className="flex-1">
         <ConversationContent>
-          {messages.map(message => (
+          {messages.map((message) => (
             <Message key={message.id} from={message.role}>
               <MessageContent>
                 {message.parts.map((part, i) =>
-                  part.type === 'text' ? (
+                  part.type === "text" ? (
                     <MessageResponse key={i}>{part.text}</MessageResponse>
-                  ) : null
+                  ) : null,
                 )}
               </MessageContent>
             </Message>
@@ -159,16 +189,16 @@ export default function ChatPage() {
         </ConversationContent>
       </Conversation>
 
-      <Input onSubmit={handleSubmit} className="p-4">
-        <PromptInputTextarea
-          value={input}
-          onChange={handleInputChange}
-          placeholder="Type a message..."
-        />
-        <PromptInputSubmit
-          status={status === 'streaming' ? 'streaming' : 'ready'}
-        />
-      </Input>
+      <PromptInputProvider>
+        <PromptInput onSubmit={handleSubmit} className="p-4">
+          <PromptInputBody>
+            <PromptInputTextarea placeholder="Type a message..." />
+          </PromptInputBody>
+          <PromptInputFooter>
+            <PromptInputSubmit status={status} />
+          </PromptInputFooter>
+        </PromptInput>
+      </PromptInputProvider>
     </div>
   );
 }
@@ -185,10 +215,10 @@ The full flow:
 
 Each layer handles its responsibility:
 
-| Layer | Responsibility |
-|-------|----------------|
-| AI Gateway | Model access, caching, observability |
-| AI SDK | Streaming, hooks, server integration |
+| Layer       | Responsibility                        |
+| ----------- | ------------------------------------- |
+| AI Gateway  | Model access, caching, observability  |
+| AI SDK      | Streaming, hooks, server integration  |
 | AI Elements | UI components, theming, accessibility |
 
 This separation means you can swap any layer independently. Use a different model provider, build custom hooks, or create your own components—the stack remains flexible.

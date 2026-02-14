@@ -1,5 +1,24 @@
 # ai-elements
 
+## 1.8.4
+
+### Patch Changes
+
+- 8bdd7fe: React improvements
+
+## 1.8.3
+
+### Patch Changes
+
+- f0c9bd5: Migrate to Oxlint
+- cf808a4: Add ability to download conversation as markdown
+- 357c01d: Fix type generic issue in Reasoning
+- 9348f89: Fix autoclosing Reasoning components
+- f54b3ef: PromptInput tooltip & keyboard configuration support
+- a689aec: Fix PromptInput responsiveness
+- c163d7a: feat(examples): wire SpeechInput into chatbot prompt footer
+- d98785d: JSX Preview component
+
 ## 1.8.2
 
 ### Patch Changes

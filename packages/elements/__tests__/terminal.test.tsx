@@ -1,6 +1,7 @@
 import { render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
+import { userEvent } from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
+
 import {
   Terminal,
   TerminalActions,
@@ -12,7 +13,7 @@ import {
   TerminalTitle,
 } from "../src/terminal";
 
-describe("Terminal", () => {
+describe("terminal", () => {
   it("renders output text", () => {
     render(<Terminal output="Hello World" />);
     expect(screen.getByText("Hello World")).toBeInTheDocument();
@@ -40,7 +41,7 @@ describe("Terminal", () => {
   });
 });
 
-describe("TerminalHeader", () => {
+describe("terminalHeader", () => {
   it("renders custom title", () => {
     render(
       <Terminal output="">
@@ -53,7 +54,7 @@ describe("TerminalHeader", () => {
   });
 });
 
-describe("TerminalStatus", () => {
+describe("terminalStatus", () => {
   it("shows shimmer when streaming", () => {
     const { container } = render(
       <Terminal isStreaming={true} output="">
@@ -81,12 +82,9 @@ describe("TerminalStatus", () => {
   });
 });
 
-describe("TerminalCopyButton", () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
+describe("terminalCopyButton", () => {
   it("copies output to clipboard", async () => {
+    vi.clearAllMocks();
     const user = userEvent.setup();
     const writeTextSpy = vi.spyOn(navigator.clipboard, "writeText");
 
@@ -127,7 +125,7 @@ describe("TerminalCopyButton", () => {
   });
 });
 
-describe("TerminalClearButton", () => {
+describe("terminalClearButton", () => {
   it("calls onClear when clicked", async () => {
     const onClear = vi.fn();
     const user = userEvent.setup();
@@ -163,9 +161,9 @@ describe("TerminalClearButton", () => {
   });
 });
 
-describe("TerminalContent", () => {
+describe("terminalContent", () => {
   it("renders ANSI colored text", () => {
-    const ansiText = "\x1b[32mGreen Text\x1b[0m";
+    const ansiText = "\u001B[32mGreen Text\u001B[0m";
     render(<Terminal output={ansiText} />);
     expect(screen.getByText("Green Text")).toBeInTheDocument();
   });
@@ -176,7 +174,7 @@ describe("TerminalContent", () => {
   });
 });
 
-describe("Composability", () => {
+describe("composability", () => {
   it("renders with all subcomponents", () => {
     const onClear = vi.fn();
     render(

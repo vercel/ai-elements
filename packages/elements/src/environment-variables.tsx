@@ -1,15 +1,19 @@
 "use client";
 
+import type { ComponentProps, HTMLAttributes } from "react";
+
 import { Badge } from "@repo/shadcn-ui/components/ui/badge";
 import { Button } from "@repo/shadcn-ui/components/ui/button";
 import { Switch } from "@repo/shadcn-ui/components/ui/switch";
 import { cn } from "@repo/shadcn-ui/lib/utils";
 import { CheckIcon, CopyIcon, EyeIcon, EyeOffIcon } from "lucide-react";
 import {
-  type ComponentProps,
   createContext,
-  type HTMLAttributes,
+  useCallback,
   useContext,
+  useEffect,
+  useMemo,
+  useRef,
   useState,
 } from "react";
 
@@ -18,10 +22,14 @@ interface EnvironmentVariablesContextType {
   setShowValues: (show: boolean) => void;
 }
 
+// Default noop for context default value
+// oxlint-disable-next-line eslint(no-empty-function)
+const noop = () => {};
+
 const EnvironmentVariablesContext =
   createContext<EnvironmentVariablesContextType>({
+    setShowValues: noop,
     showValues: false,
-    setShowValues: () => undefined,
   });
 
 export type EnvironmentVariablesProps = HTMLAttributes<HTMLDivElement> & {
@@ -42,13 +50,21 @@ export const EnvironmentVariables = ({
     useState(defaultShowValues);
   const showValues = controlledShowValues ?? internalShowValues;
 
-  const setShowValues = (show: boolean) => {
-    setInternalShowValues(show);
-    onShowValuesChange?.(show);
-  };
+  const setShowValues = useCallback(
+    (show: boolean) => {
+      setInternalShowValues(show);
+      onShowValuesChange?.(show);
+    },
+    [onShowValuesChange]
+  );
+
+  const contextValue = useMemo(
+    () => ({ setShowValues, showValues }),
+    [setShowValues, showValues]
+  );
 
   return (
-    <EnvironmentVariablesContext.Provider value={{ showValues, setShowValues }}>
+    <EnvironmentVariablesContext.Provider value={contextValue}>
       <div
         className={cn("rounded-lg border bg-background", className)}
         {...props}
@@ -146,26 +162,30 @@ export const EnvironmentVariable = ({
   className,
   children,
   ...props
-}: EnvironmentVariableProps) => (
-  <EnvironmentVariableContext.Provider value={{ name, value }}>
-    <div
-      className={cn(
-        "flex items-center justify-between gap-4 px-4 py-3",
-        className
-      )}
-      {...props}
-    >
-      {children ?? (
-        <>
-          <div className="flex items-center gap-2">
-            <EnvironmentVariableName />
-          </div>
-          <EnvironmentVariableValue />
-        </>
-      )}
-    </div>
-  </EnvironmentVariableContext.Provider>
-);
+}: EnvironmentVariableProps) => {
+  const envVarContextValue = useMemo(() => ({ name, value }), [name, value]);
+
+  return (
+    <EnvironmentVariableContext.Provider value={envVarContextValue}>
+      <div
+        className={cn(
+          "flex items-center justify-between gap-4 px-4 py-3",
+          className
+        )}
+        {...props}
+      >
+        {children ?? (
+          <>
+            <div className="flex items-center gap-2">
+              <EnvironmentVariableName />
+            </div>
+            <EnvironmentVariableValue />
+          </>
+        )}
+      </div>
+    </EnvironmentVariableContext.Provider>
+  );
+};
 
 export type EnvironmentVariableGroupProps = HTMLAttributes<HTMLDivElement>;
 
@@ -242,30 +262,40 @@ export const EnvironmentVariableCopyButton = ({
   ...props
 }: EnvironmentVariableCopyButtonProps) => {
   const [isCopied, setIsCopied] = useState(false);
+  const timeoutRef = useRef<number>(0);
   const { name, value } = useContext(EnvironmentVariableContext);
 
-  const copyToClipboard = async () => {
+  const getTextToCopy = useCallback((): string => {
+    const formatMap = {
+      export: () => `export ${name}="${value}"`,
+      name: () => name,
+      value: () => value,
+    };
+    return formatMap[copyFormat]();
+  }, [name, value, copyFormat]);
+
+  const copyToClipboard = useCallback(async () => {
     if (typeof window === "undefined" || !navigator?.clipboard?.writeText) {
       onError?.(new Error("Clipboard API not available"));
       return;
     }
 
-    let textToCopy = value;
-    if (copyFormat === "name") {
-      textToCopy = name;
-    } else if (copyFormat === "export") {
-      textToCopy = `export ${name}="${value}"`;
-    }
-
     try {
-      await navigator.clipboard.writeText(textToCopy);
+      await navigator.clipboard.writeText(getTextToCopy());
       setIsCopied(true);
       onCopy?.();
-      setTimeout(() => setIsCopied(false), timeout);
+      timeoutRef.current = window.setTimeout(() => setIsCopied(false), timeout);
     } catch (error) {
       onError?.(error as Error);
     }
-  };
+  }, [getTextToCopy, onCopy, onError, timeout]);
+
+  useEffect(
+    () => () => {
+      window.clearTimeout(timeoutRef.current);
+    },
+    []
+  );
 
   const Icon = isCopied ? CheckIcon : CopyIcon;
 

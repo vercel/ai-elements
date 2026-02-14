@@ -1,5 +1,7 @@
 "use client";
 
+import type { ComponentProps, HTMLAttributes } from "react";
+
 import { Badge } from "@repo/shadcn-ui/components/ui/badge";
 import {
   Collapsible,
@@ -14,12 +16,7 @@ import {
   CircleIcon,
   XCircleIcon,
 } from "lucide-react";
-import {
-  type ComponentProps,
-  createContext,
-  type HTMLAttributes,
-  useContext,
-} from "react";
+import { createContext, useContext, useMemo } from "react";
 
 type TestStatus = "passed" | "failed" | "skipped" | "running";
 
@@ -37,6 +34,13 @@ interface TestResultsContextType {
 
 const TestResultsContext = createContext<TestResultsContextType>({});
 
+const formatDuration = (ms: number) => {
+  if (ms < 1000) {
+    return `${ms}ms`;
+  }
+  return `${(ms / 1000).toFixed(2)}s`;
+};
+
 export type TestResultsProps = HTMLAttributes<HTMLDivElement> & {
   summary?: TestResultsSummary;
 };
@@ -46,22 +50,26 @@ export const TestResults = ({
   className,
   children,
   ...props
-}: TestResultsProps) => (
-  <TestResultsContext.Provider value={{ summary }}>
-    <div
-      className={cn("rounded-lg border bg-background", className)}
-      {...props}
-    >
-      {children ??
-        (summary && (
-          <TestResultsHeader>
-            <TestResultsSummary />
-            <TestResultsDuration />
-          </TestResultsHeader>
-        ))}
-    </div>
-  </TestResultsContext.Provider>
-);
+}: TestResultsProps) => {
+  const contextValue = useMemo(() => ({ summary }), [summary]);
+
+  return (
+    <TestResultsContext.Provider value={contextValue}>
+      <div
+        className={cn("rounded-lg border bg-background", className)}
+        {...props}
+      >
+        {children ??
+          (summary && (
+            <TestResultsHeader>
+              <TestResultsSummary />
+              <TestResultsDuration />
+            </TestResultsHeader>
+          ))}
+      </div>
+    </TestResultsContext.Provider>
+  );
+};
 
 export type TestResultsHeaderProps = HTMLAttributes<HTMLDivElement>;
 
@@ -141,13 +149,6 @@ export const TestResultsDuration = ({
   if (!summary?.duration) {
     return null;
   }
-
-  const formatDuration = (ms: number) => {
-    if (ms < 1000) {
-      return `${ms}ms`;
-    }
-    return `${(ms / 1000).toFixed(2)}s`;
-  };
 
   return (
     <span className={cn("text-muted-foreground text-sm", className)} {...props}>
@@ -231,13 +232,17 @@ export const TestSuite = ({
   className,
   children,
   ...props
-}: TestSuiteProps) => (
-  <TestSuiteContext.Provider value={{ name, status }}>
-    <Collapsible className={cn("rounded-lg border", className)} {...props}>
-      {children}
-    </Collapsible>
-  </TestSuiteContext.Provider>
-);
+}: TestSuiteProps) => {
+  const contextValue = useMemo(() => ({ name, status }), [name, status]);
+
+  return (
+    <TestSuiteContext.Provider value={contextValue}>
+      <Collapsible className={cn("rounded-lg border", className)} {...props}>
+        {children}
+      </Collapsible>
+    </TestSuiteContext.Provider>
+  );
+};
 
 export type TestSuiteNameProps = ComponentProps<typeof CollapsibleTrigger>;
 
@@ -339,35 +344,42 @@ export const Test = ({
   className,
   children,
   ...props
-}: TestProps) => (
-  <TestContext.Provider value={{ name, status, duration }}>
-    <div
-      className={cn("flex items-center gap-2 px-4 py-2 text-sm", className)}
-      {...props}
-    >
-      {children ?? (
-        <>
-          <TestStatus />
-          <TestName />
-          {duration !== undefined && <TestDuration />}
-        </>
-      )}
-    </div>
-  </TestContext.Provider>
-);
+}: TestProps) => {
+  const contextValue = useMemo(
+    () => ({ duration, name, status }),
+    [duration, name, status]
+  );
+
+  return (
+    <TestContext.Provider value={contextValue}>
+      <div
+        className={cn("flex items-center gap-2 px-4 py-2 text-sm", className)}
+        {...props}
+      >
+        {children ?? (
+          <>
+            <TestStatus />
+            <TestName />
+            {duration !== undefined && <TestDuration />}
+          </>
+        )}
+      </div>
+    </TestContext.Provider>
+  );
+};
 
 const statusStyles: Record<TestStatus, string> = {
-  passed: "text-green-600 dark:text-green-400",
   failed: "text-red-600 dark:text-red-400",
-  skipped: "text-yellow-600 dark:text-yellow-400",
+  passed: "text-green-600 dark:text-green-400",
   running: "text-blue-600 dark:text-blue-400",
+  skipped: "text-yellow-600 dark:text-yellow-400",
 };
 
 const statusIcons: Record<TestStatus, React.ReactNode> = {
-  passed: <CheckCircle2Icon className="size-4" />,
   failed: <XCircleIcon className="size-4" />,
-  skipped: <CircleIcon className="size-4" />,
+  passed: <CheckCircle2Icon className="size-4" />,
   running: <CircleDotIcon className="size-4 animate-pulse" />,
+  skipped: <CircleIcon className="size-4" />,
 };
 
 const TestStatusIcon = ({ status }: { status: TestStatus }) => (

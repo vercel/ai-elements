@@ -1,3 +1,5 @@
+import type { ComponentProps } from "react";
+
 import { cn } from "@repo/shadcn-ui/lib/utils";
 import {
   Tabs,
@@ -5,7 +7,6 @@ import {
   TabsList,
   TabsTrigger,
 } from "fumadocs-ui/components/tabs.unstyled";
-import type { ComponentProps } from "react";
 
 export const CodeBlockTabsList = (props: ComponentProps<typeof TabsList>) => (
   <TabsList

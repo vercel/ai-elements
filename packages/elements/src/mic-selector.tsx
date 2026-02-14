@@ -1,5 +1,7 @@
 "use client";
 
+import type { ComponentProps, ReactNode } from "react";
+
 import { useControllableState } from "@radix-ui/react-use-controllable-state";
 import { Button } from "@repo/shadcn-ui/components/ui/button";
 import {
@@ -17,12 +19,11 @@ import {
 import { cn } from "@repo/shadcn-ui/lib/utils";
 import { ChevronsUpDownIcon } from "lucide-react";
 import {
-  type ComponentProps,
   createContext,
-  type ReactNode,
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from "react";
@@ -41,12 +42,12 @@ interface MicSelectorContextType {
 
 const MicSelectorContext = createContext<MicSelectorContextType>({
   data: [],
-  value: undefined,
+  onOpenChange: undefined,
   onValueChange: undefined,
   open: false,
-  onOpenChange: undefined,
-  width: 200,
   setWidth: undefined,
+  value: undefined,
+  width: 200,
 });
 
 export type MicSelectorProps = ComponentProps<typeof Popover> & {
@@ -68,13 +69,13 @@ export const MicSelector = ({
 }: MicSelectorProps) => {
   const [value, onValueChange] = useControllableState<string | undefined>({
     defaultProp: defaultValue,
-    prop: controlledValue,
     onChange: controlledOnValueChange,
+    prop: controlledValue,
   });
   const [open, onOpenChange] = useControllableState({
     defaultProp: defaultOpen,
-    prop: controlledOpen,
     onChange: controlledOnOpenChange,
+    prop: controlledOpen,
   });
   const [width, setWidth] = useState(200);
   const { devices, loading, hasPermission, loadDevices } = useAudioDevices();
@@ -85,18 +86,21 @@ export const MicSelector = ({
     }
   }, [open, hasPermission, loading, loadDevices]);
 
+  const contextValue = useMemo(
+    () => ({
+      data: devices,
+      onOpenChange,
+      onValueChange,
+      open,
+      setWidth,
+      value,
+      width,
+    }),
+    [devices, onOpenChange, onValueChange, open, setWidth, value, width]
+  );
+
   return (
-    <MicSelectorContext.Provider
-      value={{
-        data: devices,
-        value,
-        onValueChange,
-        open,
-        onOpenChange,
-        width,
-        setWidth,
-      }}
-    >
+    <MicSelectorContext.Provider value={contextValue}>
       <Popover {...props} onOpenChange={onOpenChange} open={open} />
     </MicSelectorContext.Provider>
   );
@@ -205,15 +209,15 @@ export type MicSelectorItemProps = ComponentProps<typeof CommandItem>;
 export const MicSelectorItem = (props: MicSelectorItemProps) => {
   const { onValueChange, onOpenChange } = useContext(MicSelectorContext);
 
-  return (
-    <CommandItem
-      onSelect={(currentValue) => {
-        onValueChange?.(currentValue);
-        onOpenChange?.(false);
-      }}
-      {...props}
-    />
+  const handleSelect = useCallback(
+    (currentValue: string) => {
+      onValueChange?.(currentValue);
+      onOpenChange?.(false);
+    },
+    [onValueChange, onOpenChange]
   );
+
+  return <CommandItem onSelect={handleSelect} {...props} />;
 };
 
 export type MicSelectorLabelProps = ComponentProps<"span"> & {
@@ -226,8 +230,6 @@ export const MicSelectorLabel = ({
   ...props
 }: MicSelectorLabelProps) => {
   const matches = device.label.match(deviceIdRegex);
-
-  console.log(matches, device.label);
 
   if (!matches) {
     return (
@@ -291,9 +293,9 @@ export const useAudioDevices = () => {
       );
 
       setDevices(audioInputs);
-    } catch (err) {
+    } catch (error) {
       const message =
-        err instanceof Error ? err.message : "Failed to get audio devices";
+        error instanceof Error ? error.message : "Failed to get audio devices";
 
       setError(message);
       console.error("Error getting audio devices:", message);
@@ -326,9 +328,9 @@ export const useAudioDevices = () => {
 
       setDevices(audioInputs);
       setHasPermission(true);
-    } catch (err) {
+    } catch (error) {
       const message =
-        err instanceof Error ? err.message : "Failed to get audio devices";
+        error instanceof Error ? error.message : "Failed to get audio devices";
 
       setError(message);
       console.error("Error getting audio devices:", message);
@@ -362,9 +364,9 @@ export const useAudioDevices = () => {
 
   return {
     devices,
-    loading,
     error,
     hasPermission,
     loadDevices: loadDevicesWithPermission,
+    loading,
   };
 };

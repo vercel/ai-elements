@@ -1,5 +1,7 @@
 "use client";
 
+import type { ToolUIPart } from "ai";
+
 import { CodeBlock, CodeBlockCopyButton } from "@repo/elements/code-block";
 import {
   Sandbox,
@@ -24,8 +26,7 @@ import {
   StackTraceHeader,
 } from "@repo/elements/stack-trace";
 import { Button } from "@repo/shadcn-ui/components/ui/button";
-import type { ToolUIPart } from "ai";
-import { useState } from "react";
+import { memo, useCallback, useState } from "react";
 
 const code = `import math
 
@@ -47,8 +48,8 @@ if __name__ == "__main__":
     print(primes)`;
 
 const outputs: Record<ToolUIPart["state"], string | undefined> = {
-  "input-streaming": undefined,
   "input-available": undefined,
+  "input-streaming": undefined,
   "output-available": `Found 15 prime numbers up to 50:
 [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47]`,
   "output-error": `TypeError: Cannot read properties of undefined (reading 'map')
@@ -66,21 +67,47 @@ const states: ToolUIPart["state"][] = [
   "output-error",
 ];
 
+interface StateButtonProps {
+  s: ToolUIPart["state"];
+  currentState: ToolUIPart["state"];
+  onStateChange: (state: ToolUIPart["state"]) => void;
+}
+
+const StateButton = memo(
+  ({ s, currentState, onStateChange }: StateButtonProps) => {
+    const handleClick = useCallback(() => onStateChange(s), [onStateChange, s]);
+    return (
+      <Button
+        key={s}
+        onClick={handleClick}
+        size="sm"
+        variant={currentState === s ? "default" : "outline"}
+      >
+        {s}
+      </Button>
+    );
+  }
+);
+
+StateButton.displayName = "StateButton";
+
 const Example = () => {
   const [state, setState] = useState<ToolUIPart["state"]>("output-available");
+
+  const handleStateChange = useCallback((s: ToolUIPart["state"]) => {
+    setState(s);
+  }, []);
 
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap gap-2">
         {states.map((s) => (
-          <Button
+          <StateButton
+            currentState={state}
             key={s}
-            onClick={() => setState(s)}
-            size="sm"
-            variant={state === s ? "default" : "outline"}
-          >
-            {s}
-          </Button>
+            onStateChange={handleStateChange}
+            s={s}
+          />
         ))}
       </div>
 

@@ -11,16 +11,16 @@ export const github = {
 
 export const nav = [
   {
-    label: "Docs",
     href: "/docs",
+    label: "Docs",
   },
   {
-    label: "Components",
     href: "/components",
+    label: "Components",
   },
   {
-    label: "Examples",
     href: "/examples",
+    label: "Examples",
   },
 ];
 
@@ -43,3 +43,5 @@ export const translations = {
 };
 
 export const basePath: string | undefined = undefined;
+
+export const siteId: string | undefined = "ai-elements";

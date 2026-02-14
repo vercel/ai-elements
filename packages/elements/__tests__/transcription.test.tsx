@@ -1,57 +1,59 @@
-import { render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
 import type { Experimental_TranscriptionResult as TranscriptionResult } from "ai";
+
+import { render, screen } from "@testing-library/react";
+import { userEvent } from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
+
 import { Transcription, TranscriptionSegment } from "../src/transcription";
 
 const mockSegments: TranscriptionResult["segments"] = [
   {
-    text: "Hello",
-    startSecond: 0,
     endSecond: 1,
+    startSecond: 0,
+    text: "Hello",
   },
   {
-    text: "world",
-    startSecond: 1,
     endSecond: 2,
+    startSecond: 1,
+    text: "world",
   },
   {
-    text: "from",
-    startSecond: 2,
     endSecond: 3,
+    startSecond: 2,
+    text: "from",
   },
   {
-    text: "AI",
-    startSecond: 3,
     endSecond: 4,
+    startSecond: 3,
+    text: "AI",
   },
 ];
 
 const mockSegmentsWithEmpty: TranscriptionResult["segments"] = [
   {
-    text: "Hello",
-    startSecond: 0,
     endSecond: 1,
+    startSecond: 0,
+    text: "Hello",
   },
   {
-    text: "   ",
-    startSecond: 1,
     endSecond: 1.5,
+    startSecond: 1,
+    text: "   ",
   },
   {
-    text: "",
-    startSecond: 1.5,
     endSecond: 2,
+    startSecond: 1.5,
+    text: "",
   },
   {
-    text: "world",
-    startSecond: 2,
     endSecond: 3,
+    startSecond: 2,
+    text: "world",
   },
 ];
 
-describe("Transcription", () => {
-  describe("Transcription", () => {
+describe("transcription", () => {
+  describe("transcriptionComponent", () => {
     it("renders with render props children", () => {
       render(
         <Transcription segments={mockSegments}>
@@ -278,7 +280,7 @@ describe("Transcription", () => {
     });
   });
 
-  describe("TranscriptionSegment", () => {
+  describe("transcriptionSegment", () => {
     it("renders segment text", () => {
       render(
         <Transcription segments={mockSegments}>
@@ -367,7 +369,8 @@ describe("Transcription", () => {
 
       const activeSegment = container.querySelector('[data-active="true"]');
       expect(activeSegment).toHaveClass("text-primary");
-      expect(activeSegment).toHaveTextContent("from"); // 2-3s
+      // 2-3s
+      expect(activeSegment).toHaveTextContent("from");
     });
 
     it("applies past styling when segment is past", () => {
@@ -400,7 +403,8 @@ describe("Transcription", () => {
         </Transcription>
       );
 
-      const futureSegment = screen.getByText("world"); // 1-2s
+      // 1-2s
+      const futureSegment = screen.getByText("world");
       expect(futureSegment).toHaveClass("text-muted-foreground/60");
     });
 
@@ -457,7 +461,8 @@ describe("Transcription", () => {
       const thirdSegment = screen.getByText("from");
       await user.click(thirdSegment);
 
-      expect(onSeek).toHaveBeenCalledWith(2); // startSecond of "from"
+      // startSecond of "from"
+      expect(onSeek).toHaveBeenCalledWith(2);
     });
 
     it("does not call onSeek when not provided", async () => {
@@ -545,9 +550,7 @@ describe("Transcription", () => {
     });
 
     it("throws error when used outside Transcription context", () => {
-      const consoleSpy = vi
-        .spyOn(console, "error")
-        .mockImplementation(() => undefined);
+      const consoleSpy = vi.spyOn(console, "error").mockImplementation(vi.fn());
 
       expect(() => {
         render(<TranscriptionSegment index={0} segment={mockSegments[0]} />);
@@ -557,7 +560,7 @@ describe("Transcription", () => {
     });
   });
 
-  describe("Integration", () => {
+  describe("integration", () => {
     it("renders complete transcription with all segments", () => {
       render(
         <Transcription segments={mockSegments}>
@@ -768,7 +771,8 @@ describe("Transcription", () => {
       );
 
       const activeSegment = container.querySelector('[data-active="true"]');
-      expect(activeSegment).toHaveTextContent("Hello"); // Default 0
+      // Default 0
+      expect(activeSegment).toHaveTextContent("Hello");
     });
 
     it("works in controlled mode", () => {
@@ -785,7 +789,8 @@ describe("Transcription", () => {
       );
 
       const activeSegment = container.querySelector('[data-active="true"]');
-      expect(activeSegment).toHaveTextContent("from"); // Controlled 2.5s
+      // Controlled 2.5s
+      expect(activeSegment).toHaveTextContent("from");
     });
   });
 });

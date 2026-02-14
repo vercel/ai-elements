@@ -14,77 +14,113 @@ The `Reasoning` component displays AI reasoning content, automatically opening d
 
 ## Usage with AI SDK
 
-Build a chatbot with reasoning using Deepseek R1.
+Build a chatbot with reasoning using Deepseek R1 or other reasoning models.
+
+Some models (like GPT with high reasoning effort) return multiple reasoning parts instead of a single streaming block. The example below consolidates all reasoning parts into a single component to avoid displaying multiple "Thinking..." indicators.
 
 Add the following component to your frontend:
 
 ```tsx title="app/page.tsx"
-'use client';
+"use client";
 
 import {
   Reasoning,
   ReasoningContent,
   ReasoningTrigger,
-} from '@/components/ai-elements/reasoning';
+} from "@/components/ai-elements/reasoning";
 import {
   Conversation,
   ConversationContent,
   ConversationScrollButton,
-} from '@/components/ai-elements/conversation';
+} from "@/components/ai-elements/conversation";
 import {
   PromptInput,
   PromptInputTextarea,
   PromptInputSubmit,
-} from '@/components/ai-elements/prompt-input';
-import { Spinner } from '@/components/ui/spinner';
-import { Message, MessageContent, MessageResponse } from '@/components/ai-elements/message';
-import { useState } from 'react';
-import { useChat } from '@ai-sdk/react';
+} from "@/components/ai-elements/prompt-input";
+import { Spinner } from "@/components/ui/spinner";
+import {
+  Message,
+  MessageContent,
+  MessageResponse,
+} from "@/components/ai-elements/message";
+import { useState } from "react";
+import { useChat } from "@ai-sdk/react";
+import type { UIMessage } from "ai";
+
+const MessageParts = ({
+  message,
+  isLastMessage,
+  isStreaming,
+}: {
+  message: UIMessage;
+  isLastMessage: boolean;
+  isStreaming: boolean;
+}) => {
+  // Consolidate all reasoning parts into one block
+  const reasoningParts = message.parts.filter(
+    (part) => part.type === "reasoning"
+  );
+  const reasoningText = reasoningParts.map((part) => part.text).join("\n\n");
+  const hasReasoning = reasoningParts.length > 0;
+
+  // Check if reasoning is still streaming (last part is reasoning on last message)
+  const lastPart = message.parts.at(-1);
+  const isReasoningStreaming =
+    isLastMessage && isStreaming && lastPart?.type === "reasoning";
+
+  return (
+    <>
+      {hasReasoning && (
+        <Reasoning className="w-full" isStreaming={isReasoningStreaming}>
+          <ReasoningTrigger />
+          <ReasoningContent>{reasoningText}</ReasoningContent>
+        </Reasoning>
+      )}
+      {message.parts.map((part, i) => {
+        if (part.type === "text") {
+          return (
+            <MessageResponse key={`${message.id}-${i}`}>
+              {part.text}
+            </MessageResponse>
+          );
+        }
+        return null;
+      })}
+    </>
+  );
+};
 
 const ReasoningDemo = () => {
-  const [input, setInput] = useState('');
+  const [input, setInput] = useState("");
 
   const { messages, sendMessage, status } = useChat();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     sendMessage({ text: input });
-    setInput('');
+    setInput("");
   };
+
+  const isStreaming = status === "streaming";
 
   return (
     <div className="max-w-4xl mx-auto p-6 relative size-full rounded-lg border h-[600px]">
       <div className="flex flex-col h-full">
         <Conversation>
           <ConversationContent>
-            {messages.map((message) => (
+            {messages.map((message, index) => (
               <Message from={message.role} key={message.id}>
                 <MessageContent>
-                  {message.parts.map((part, i) => {
-                    switch (part.type) {
-                      case 'text':
-                        return (
-                          <MessageResponse key={`${message.id}-${i}`}>
-                            {part.text}
-                          </MessageResponse>
-                        );
-                      case 'reasoning':
-                        return (
-                          <Reasoning
-                            key={`${message.id}-${i}`}
-                            className="w-full"
-                            isStreaming={status === 'streaming' && i === message.parts.length - 1 && message.id === messages.at(-1)?.id}
-                          >
-                            <ReasoningTrigger />
-                            <ReasoningContent>{part.text}</ReasoningContent>
-                          </Reasoning>
-                        );
-                    }
-                  })}
+                  <MessageParts
+                    message={message}
+                    isLastMessage={index === messages.length - 1}
+                    isStreaming={isStreaming}
+                  />
                 </MessageContent>
               </Message>
             ))}
-            {status === 'submitted' && <Spinner />}
+            {status === "submitted" && <Spinner />}
           </ConversationContent>
           <ConversationScrollButton />
         </Conversation>
@@ -100,7 +136,7 @@ const ReasoningDemo = () => {
             className="pr-12"
           />
           <PromptInputSubmit
-            status={status === 'streaming' ? 'streaming' : 'ready'}
+            status={isStreaming ? "streaming" : "ready"}
             disabled={!input.trim()}
             className="absolute bottom-1 right-1"
           />
@@ -116,7 +152,7 @@ export default ReasoningDemo;
 Add the following route to your backend:
 
 ```ts title="app/api/chat/route.ts"
-import { streamText, UIMessage, convertToModelMessages } from 'ai';
+import { streamText, UIMessage, convertToModelMessages } from "ai";
 
 // Allow streaming responses up to 30 seconds
 export const maxDuration = 30;
@@ -126,7 +162,7 @@ export async function POST(req: Request) {
     await req.json();
 
   const result = streamText({
-    model: 'deepseek/deepseek-r1',
+    model: "deepseek/deepseek-r1",
     messages: await convertToModelMessages(messages),
   });
 
@@ -135,6 +171,12 @@ export async function POST(req: Request) {
   });
 }
 ```
+
+## Reasoning vs Chain of Thought
+
+Use the `Reasoning` component when your model outputs thinking content as a single block or continuous stream (Deepseek R1, Claude with extended thinking, etc.).
+
+If your model outputs discrete, labeled steps (search queries, tool calls, distinct thought stages), consider using the [Chain of Thought](/components/chain-of-thought) component instead for a more structured visual representation.
 
 ## Features
 
@@ -156,30 +198,33 @@ export async function POST(req: Request) {
 <TypeTable
   type={{
     isStreaming: {
-      description: 'Whether the reasoning is currently streaming (auto-opens and closes the panel).',
-      type: 'boolean',
-      default: 'false',
+      description:
+        "Whether the reasoning is currently streaming (auto-opens and closes the panel).",
+      type: "boolean",
+      default: "false",
     },
     open: {
-      description: 'Controlled open state.',
-      type: 'boolean',
+      description: "Controlled open state.",
+      type: "boolean",
     },
     defaultOpen: {
-      description: 'Default open state when uncontrolled.',
-      type: 'boolean',
-      default: 'true',
+      description: "Default open state when uncontrolled.",
+      type: "boolean",
+      default: "true",
     },
     onOpenChange: {
-      description: 'Callback when open state changes.',
-      type: '(open: boolean) => void',
+      description: "Callback when open state changes.",
+      type: "(open: boolean) => void",
     },
     duration: {
-      description: 'Duration in seconds to display (can be controlled externally).',
-      type: 'number',
+      description:
+        "Duration in seconds to display (can be controlled externally).",
+      type: "number",
     },
-    '...props': {
-      description: 'Any other props are spread to the underlying Collapsible component.',
-      type: 'React.ComponentProps<typeof Collapsible>',
+    "...props": {
+      description:
+        "Any other props are spread to the underlying Collapsible component.",
+      type: "React.ComponentProps<typeof Collapsible>",
     },
   }}
 />
@@ -189,12 +234,14 @@ export async function POST(req: Request) {
 <TypeTable
   type={{
     getThinkingMessage: {
-      description: 'Optional function to customize the thinking message. Receives isStreaming and duration parameters.',
-      type: '(isStreaming: boolean, duration?: number) => ReactNode',
+      description:
+        "Optional function to customize the thinking message. Receives isStreaming and duration parameters.",
+      type: "(isStreaming: boolean, duration?: number) => ReactNode",
     },
-    '...props': {
-      description: 'Any other props are spread to the underlying CollapsibleTrigger component.',
-      type: 'React.ComponentProps<typeof CollapsibleTrigger>',
+    "...props": {
+      description:
+        "Any other props are spread to the underlying CollapsibleTrigger component.",
+      type: "React.ComponentProps<typeof CollapsibleTrigger>",
     },
   }}
 />
@@ -204,13 +251,14 @@ export async function POST(req: Request) {
 <TypeTable
   type={{
     children: {
-      description: 'The reasoning text to display (rendered via Streamdown).',
-      type: 'string',
+      description: "The reasoning text to display (rendered via Streamdown).",
+      type: "string",
       required: true,
     },
-    '...props': {
-      description: 'Any other props are spread to the underlying CollapsibleContent component.',
-      type: 'React.ComponentProps<typeof CollapsibleContent>',
+    "...props": {
+      description:
+        "Any other props are spread to the underlying CollapsibleContent component.",
+      type: "React.ComponentProps<typeof CollapsibleContent>",
     },
   }}
 />
@@ -230,20 +278,20 @@ Returns:
 <TypeTable
   type={{
     isStreaming: {
-      description: 'Whether reasoning is currently streaming.',
-      type: 'boolean',
+      description: "Whether reasoning is currently streaming.",
+      type: "boolean",
     },
     isOpen: {
-      description: 'Whether the reasoning panel is open.',
-      type: 'boolean',
+      description: "Whether the reasoning panel is open.",
+      type: "boolean",
     },
     setIsOpen: {
-      description: 'Function to set the open state.',
-      type: '(open: boolean) => void',
+      description: "Function to set the open state.",
+      type: "(open: boolean) => void",
     },
     duration: {
-      description: 'Duration in seconds (undefined while streaming).',
-      type: 'number | undefined',
+      description: "Duration in seconds (undefined while streaming).",
+      type: "number | undefined",
     },
   }}
 />

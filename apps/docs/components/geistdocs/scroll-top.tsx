@@ -5,7 +5,7 @@ import { useCallback } from "react";
 
 export const ScrollTop = () => {
   const handleScrollToTop = useCallback(() => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo({ behavior: "smooth", top: 0 });
   }, []);
 
   return (

@@ -1,18 +1,21 @@
 "use client";
 
+import type { ComponentProps, HTMLAttributes } from "react";
+
 import { Button } from "@repo/shadcn-ui/components/ui/button";
 import { cn } from "@repo/shadcn-ui/lib/utils";
 import Ansi from "ansi-to-react";
 import { CheckIcon, CopyIcon, TerminalIcon, Trash2Icon } from "lucide-react";
 import {
-  type ComponentProps,
   createContext,
-  type HTMLAttributes,
+  useCallback,
   useContext,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from "react";
+
 import { Shimmer } from "./shimmer";
 
 interface TerminalContextType {
@@ -23,9 +26,9 @@ interface TerminalContextType {
 }
 
 const TerminalContext = createContext<TerminalContextType>({
-  output: "",
-  isStreaming: false,
   autoScroll: true,
+  isStreaming: false,
+  output: "",
 });
 
 export type TerminalProps = HTMLAttributes<HTMLDivElement> & {
@@ -43,35 +46,40 @@ export const Terminal = ({
   className,
   children,
   ...props
-}: TerminalProps) => (
-  <TerminalContext.Provider
-    value={{ output, isStreaming, autoScroll, onClear }}
-  >
-    <div
-      className={cn(
-        "flex flex-col overflow-hidden rounded-lg border bg-zinc-950 text-zinc-100",
-        className
-      )}
-      {...props}
-    >
-      {children ?? (
-        <>
-          <TerminalHeader>
-            <TerminalTitle />
-            <div className="flex items-center gap-1">
-              <TerminalStatus />
-              <TerminalActions>
-                <TerminalCopyButton />
-                {onClear && <TerminalClearButton />}
-              </TerminalActions>
-            </div>
-          </TerminalHeader>
-          <TerminalContent />
-        </>
-      )}
-    </div>
-  </TerminalContext.Provider>
-);
+}: TerminalProps) => {
+  const contextValue = useMemo(
+    () => ({ autoScroll, isStreaming, onClear, output }),
+    [autoScroll, isStreaming, onClear, output]
+  );
+
+  return (
+    <TerminalContext.Provider value={contextValue}>
+      <div
+        className={cn(
+          "flex flex-col overflow-hidden rounded-lg border bg-zinc-950 text-zinc-100",
+          className
+        )}
+        {...props}
+      >
+        {children ?? (
+          <>
+            <TerminalHeader>
+              <TerminalTitle />
+              <div className="flex items-center gap-1">
+                <TerminalStatus />
+                <TerminalActions>
+                  <TerminalCopyButton />
+                  {onClear && <TerminalClearButton />}
+                </TerminalActions>
+              </div>
+            </TerminalHeader>
+            <TerminalContent />
+          </>
+        )}
+      </div>
+    </TerminalContext.Provider>
+  );
+};
 
 export type TerminalHeaderProps = HTMLAttributes<HTMLDivElement>;
 
@@ -157,9 +165,10 @@ export const TerminalCopyButton = ({
   ...props
 }: TerminalCopyButtonProps) => {
   const [isCopied, setIsCopied] = useState(false);
+  const timeoutRef = useRef<number>(0);
   const { output } = useContext(TerminalContext);
 
-  const copyToClipboard = async () => {
+  const copyToClipboard = useCallback(async () => {
     if (typeof window === "undefined" || !navigator?.clipboard?.writeText) {
       onError?.(new Error("Clipboard API not available"));
       return;
@@ -169,11 +178,18 @@ export const TerminalCopyButton = ({
       await navigator.clipboard.writeText(output);
       setIsCopied(true);
       onCopy?.();
-      setTimeout(() => setIsCopied(false), timeout);
+      timeoutRef.current = window.setTimeout(() => setIsCopied(false), timeout);
     } catch (error) {
       onError?.(error as Error);
     }
-  };
+  }, [output, onCopy, onError, timeout]);
+
+  useEffect(
+    () => () => {
+      window.clearTimeout(timeoutRef.current);
+    },
+    []
+  );
 
   const Icon = isCopied ? CheckIcon : CopyIcon;
 

@@ -1,5 +1,7 @@
 "use client";
 
+import type { ToolUIPart } from "ai";
+
 import { CodeBlock } from "@repo/elements/code-block";
 import {
   Tool,
@@ -8,51 +10,50 @@ import {
   ToolInput,
   ToolOutput,
 } from "@repo/elements/tool";
-import type { ToolUIPart } from "ai";
 import { nanoid } from "nanoid";
 
 const toolCall: ToolUIPart = {
-  type: "tool-database_query" as const,
-  toolCallId: nanoid(),
-  state: "output-available" as const,
+  errorText: undefined,
   input: {
-    query: "SELECT COUNT(*) FROM users WHERE created_at >= ?",
-    params: ["2024-01-01"],
     database: "analytics",
+    params: ["2024-01-01"],
+    query: "SELECT COUNT(*) FROM users WHERE created_at >= ?",
   },
   output: [
     {
-      "User ID": 1,
-      Name: "John Doe",
-      Email: "john@example.com",
       "Created At": "2024-01-15",
+      Email: "john@example.com",
+      Name: "John Doe",
+      "User ID": 1,
     },
     {
-      "User ID": 2,
-      Name: "Jane Smith",
-      Email: "jane@example.com",
       "Created At": "2024-01-20",
+      Email: "jane@example.com",
+      Name: "Jane Smith",
+      "User ID": 2,
     },
     {
-      "User ID": 3,
-      Name: "Bob Wilson",
-      Email: "bob@example.com",
       "Created At": "2024-02-01",
+      Email: "bob@example.com",
+      Name: "Bob Wilson",
+      "User ID": 3,
     },
     {
-      "User ID": 4,
-      Name: "Alice Brown",
-      Email: "alice@example.com",
       "Created At": "2024-02-10",
+      Email: "alice@example.com",
+      Name: "Alice Brown",
+      "User ID": 4,
     },
     {
-      "User ID": 5,
-      Name: "Charlie Davis",
-      Email: "charlie@example.com",
       "Created At": "2024-02-15",
+      Email: "charlie@example.com",
+      Name: "Charlie Davis",
+      "User ID": 5,
     },
   ],
-  errorText: undefined,
+  state: "output-available" as const,
+  toolCallId: nanoid(),
+  type: "tool-database_query" as const,
 };
 
 const Example = () => (

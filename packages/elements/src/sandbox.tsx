@@ -1,5 +1,8 @@
 "use client";
 
+import type { ToolUIPart } from "ai";
+import type { ComponentProps } from "react";
+
 import {
   Collapsible,
   CollapsibleContent,
@@ -12,9 +15,8 @@ import {
   TabsTrigger,
 } from "@repo/shadcn-ui/components/ui/tabs";
 import { cn } from "@repo/shadcn-ui/lib/utils";
-import type { ToolUIPart } from "ai";
 import { ChevronDownIcon, Code } from "lucide-react";
-import type { ComponentProps } from "react";
+
 import { getStatusBadge } from "./tool";
 
 export type SandboxRootProps = ComponentProps<typeof Collapsible>;

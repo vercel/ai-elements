@@ -1,10 +1,11 @@
 "use client";
 
+import type { PromptInputMessage } from "@repo/elements/prompt-input";
+
 import {
   PromptInput,
   PromptInputButton,
   PromptInputFooter,
-  type PromptInputMessage,
   PromptInputSelect,
   PromptInputSelectContent,
   PromptInputSelectItem,
@@ -17,7 +18,7 @@ import {
 import { Suggestion, Suggestions } from "@repo/elements/suggestion";
 import { GlobeIcon, MicIcon, PlusIcon, SendIcon } from "lucide-react";
 import { nanoid } from "nanoid";
-import { useState } from "react";
+import { memo, useCallback, useState } from "react";
 
 const suggestions: { key: string; value: string }[] = [
   { key: nanoid(), value: "What are the latest trends in AI?" },
@@ -42,40 +43,68 @@ const models = [
   { id: "mistral-7b", name: "Mistral 7B" },
 ];
 
+const handleSubmit = (message: PromptInputMessage) => {
+  const hasText = Boolean(message.text);
+  const hasAttachments = Boolean(message.files?.length);
+
+  if (!(hasText || hasAttachments)) {
+    return;
+  }
+
+  console.log("Submitted message:", message.text || "Sent with attachments");
+  console.log("Attached files:", message.files);
+};
+
+interface SuggestionItemProps {
+  suggestion: { key: string; value: string };
+  onSuggestionClick: (value: string) => void;
+}
+
+const SuggestionItem = memo(
+  ({ suggestion, onSuggestionClick }: SuggestionItemProps) => {
+    const handleClick = useCallback(
+      () => onSuggestionClick(suggestion.value),
+      [onSuggestionClick, suggestion.value]
+    );
+    return (
+      <Suggestion
+        key={suggestion.key}
+        onClick={handleClick}
+        suggestion={suggestion.value}
+      />
+    );
+  }
+);
+
+SuggestionItem.displayName = "SuggestionItem";
+
 const Example = () => {
   const [model, setModel] = useState<string>(models[0].id);
   const [text, setText] = useState<string>("");
 
-  const handleSubmit = (message: PromptInputMessage) => {
-    const hasText = Boolean(message.text);
-    const hasAttachments = Boolean(message.files?.length);
-
-    if (!(hasText || hasAttachments)) {
-      return;
-    }
-
-    console.log("Submitted message:", message.text || "Sent with attachments");
-    console.log("Attached files:", message.files);
-  };
-
-  const handleSuggestionClick = (suggestion: string) => {
+  const handleSuggestionClick = useCallback((suggestion: string) => {
     setText(suggestion);
-  };
+  }, []);
+
+  const handleTextChange = useCallback(
+    (e: React.ChangeEvent<HTMLTextAreaElement>) => setText(e.target.value),
+    []
+  );
 
   return (
     <div className="grid gap-4">
       <Suggestions>
         {suggestions.map((suggestion) => (
-          <Suggestion
+          <SuggestionItem
             key={suggestion.key}
-            onClick={handleSuggestionClick}
-            suggestion={suggestion.value}
+            onSuggestionClick={handleSuggestionClick}
+            suggestion={suggestion}
           />
         ))}
       </Suggestions>
       <PromptInput onSubmit={handleSubmit}>
         <PromptInputTextarea
-          onChange={(e) => setText(e.target.value)}
+          onChange={handleTextChange}
           placeholder="Ask me about anything..."
           value={text}
         />

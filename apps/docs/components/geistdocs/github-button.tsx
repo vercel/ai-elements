@@ -1,5 +1,6 @@
 import { SiGithub } from "@icons-pack/react-simple-icons";
 import { Button } from "@repo/shadcn-ui/components/ui/button";
+
 import { github } from "@/geistdocs";
 
 export const GitHubButton = () => {

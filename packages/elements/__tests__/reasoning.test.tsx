@@ -1,13 +1,14 @@
 import { act, render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
+import { userEvent } from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
+
 import {
   Reasoning,
   ReasoningContent,
   ReasoningTrigger,
 } from "../src/reasoning";
 
-describe("Reasoning", () => {
+describe("reasoning", () => {
   it("renders children", () => {
     render(<Reasoning>Content</Reasoning>);
     expect(screen.getByText("Content")).toBeInTheDocument();
@@ -15,7 +16,7 @@ describe("Reasoning", () => {
 
   it("throws error when components used outside Reasoning provider", () => {
     // Suppress console.error for this test
-    const spy = vi.spyOn(console, "error").mockImplementation(() => undefined);
+    const spy = vi.spyOn(console, "error").mockImplementation(vi.fn());
 
     expect(() => render(<ReasoningTrigger />)).toThrow(
       "Reasoning components must be used within Reasoning"
@@ -24,9 +25,19 @@ describe("Reasoning", () => {
     spy.mockRestore();
   });
 
-  it("starts open by default", () => {
+  it("starts closed by default when not streaming (old messages)", () => {
     render(
       <Reasoning>
+        <ReasoningTrigger />
+        <ReasoningContent>Reasoning content</ReasoningContent>
+      </Reasoning>
+    );
+    expect(screen.queryByText("Reasoning content")).not.toBeInTheDocument();
+  });
+
+  it("starts open when streaming", () => {
+    render(
+      <Reasoning isStreaming>
         <ReasoningTrigger />
         <ReasoningContent>Reasoning content</ReasoningContent>
       </Reasoning>
@@ -34,9 +45,19 @@ describe("Reasoning", () => {
     expect(screen.getByText("Reasoning content")).toBeVisible();
   });
 
-  it("can start closed", () => {
+  it("can be forced open with defaultOpen", () => {
     render(
-      <Reasoning defaultOpen={false}>
+      <Reasoning defaultOpen>
+        <ReasoningTrigger />
+        <ReasoningContent>Visible content</ReasoningContent>
+      </Reasoning>
+    );
+    expect(screen.getByText("Visible content")).toBeVisible();
+  });
+
+  it("can be forced closed with defaultOpen={false}", () => {
+    render(
+      <Reasoning defaultOpen={false} isStreaming>
         <ReasoningTrigger />
         <ReasoningContent>Hidden content</ReasoningContent>
       </Reasoning>
@@ -58,13 +79,13 @@ describe("Reasoning", () => {
     const trigger = screen.getByRole("button");
     await user.click(trigger);
 
-    expect(onOpenChange).toHaveBeenCalled();
+    expect(onOpenChange).toHaveBeenCalledWith(true);
   });
 
   it("auto-closes after delay when streaming stops", async () => {
     vi.useFakeTimers();
     const { rerender } = render(
-      <Reasoning defaultOpen isStreaming>
+      <Reasoning isStreaming>
         <ReasoningTrigger />
         <ReasoningContent>Reasoning content</ReasoningContent>
       </Reasoning>
@@ -75,7 +96,7 @@ describe("Reasoning", () => {
 
     // Stop streaming
     rerender(
-      <Reasoning defaultOpen isStreaming={false}>
+      <Reasoning isStreaming={false}>
         <ReasoningTrigger />
         <ReasoningContent>Reasoning content</ReasoningContent>
       </Reasoning>
@@ -84,9 +105,9 @@ describe("Reasoning", () => {
     // Should still be open immediately
     expect(screen.getByText("Reasoning content")).toBeVisible();
 
-    // Advance time past AUTO_CLOSE_DELAY (3000ms)
+    // Advance time past AUTO_CLOSE_DELAY (1000ms)
     act(() => {
-      vi.advanceTimersByTime(3100);
+      vi.advanceTimersByTime(1100);
     });
 
     // Should auto-close
@@ -96,9 +117,37 @@ describe("Reasoning", () => {
 
     vi.useRealTimers();
   });
+
+  it("does not auto-close old messages when manually opened - #86", async () => {
+    // For old messages (never streamed), manually opening should not trigger auto-close
+    // Use controlled open state to simulate user interaction
+    const onOpenChange = vi.fn();
+
+    render(
+      <Reasoning defaultOpen isStreaming={false} onOpenChange={onOpenChange}>
+        <ReasoningTrigger />
+        <ReasoningContent>Old reasoning content</ReasoningContent>
+      </Reasoning>
+    );
+
+    // Content should be visible with defaultOpen
+    expect(screen.getByText("Old reasoning content")).toBeVisible();
+
+    // Wait past AUTO_CLOSE_DELAY (1000ms) - use real timer
+    // oxlint-disable-next-line eslint-plugin-promise(avoid-new)
+    await new Promise((resolve) => {
+      setTimeout(resolve, 1200);
+    });
+
+    // Should still be open (no auto-close for messages that never streamed)
+    expect(screen.getByText("Old reasoning content")).toBeVisible();
+
+    // onOpenChange should NOT have been called with false (no auto-close)
+    expect(onOpenChange).not.toHaveBeenCalledWith(false);
+  });
 });
 
-describe("ReasoningTrigger", () => {
+describe("reasoningTrigger", () => {
   it("renders default thinking message when streaming", () => {
     render(
       <Reasoning isStreaming>
@@ -182,10 +231,10 @@ describe("ReasoningTrigger", () => {
   });
 });
 
-describe("ReasoningContent", () => {
+describe("reasoningContent", () => {
   it("renders reasoning text", () => {
     render(
-      <Reasoning>
+      <Reasoning defaultOpen>
         <ReasoningContent>The reasoning process</ReasoningContent>
       </Reasoning>
     );
@@ -194,7 +243,7 @@ describe("ReasoningContent", () => {
 
   it("applies custom className", () => {
     const { container } = render(
-      <Reasoning>
+      <Reasoning defaultOpen>
         <ReasoningContent className="custom">Content</ReasoningContent>
       </Reasoning>
     );

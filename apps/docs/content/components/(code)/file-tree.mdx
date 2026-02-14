@@ -42,29 +42,29 @@ The `FileTree` component displays a hierarchical file system structure with expa
 <TypeTable
   type={{
     expanded: {
-      description: 'Controlled expanded paths.',
-      type: 'Set<string>',
+      description: "Controlled expanded paths.",
+      type: "Set<string>",
     },
     defaultExpanded: {
-      description: 'Default expanded paths.',
-      type: 'Set<string>',
-      default: 'new Set()',
+      description: "Default expanded paths.",
+      type: "Set<string>",
+      default: "new Set()",
     },
     selectedPath: {
-      description: 'Currently selected file/folder path.',
-      type: 'string',
+      description: "Currently selected file/folder path.",
+      type: "string",
     },
     onSelect: {
-      description: 'Callback when a file/folder is selected.',
-      type: '(path: string) => void',
+      description: "Callback when a file/folder is selected.",
+      type: "(path: string) => void",
     },
     onExpandedChange: {
-      description: 'Callback when expanded paths change.',
-      type: '(expanded: Set<string>) => void',
+      description: "Callback when expanded paths change.",
+      type: "(expanded: Set<string>) => void",
     },
     className: {
-      description: 'Additional CSS classes.',
-      type: 'string',
+      description: "Additional CSS classes.",
+      type: "string",
     },
   }}
 />
@@ -74,16 +74,16 @@ The `FileTree` component displays a hierarchical file system structure with expa
 <TypeTable
   type={{
     path: {
-      description: 'Unique folder path.',
-      type: 'string',
+      description: "Unique folder path.",
+      type: "string",
     },
     name: {
-      description: 'Display name.',
-      type: 'string',
+      description: "Display name.",
+      type: "string",
     },
     className: {
-      description: 'Additional CSS classes.',
-      type: 'string',
+      description: "Additional CSS classes.",
+      type: "string",
     },
   }}
 />
@@ -93,20 +93,20 @@ The `FileTree` component displays a hierarchical file system structure with expa
 <TypeTable
   type={{
     path: {
-      description: 'Unique file path.',
-      type: 'string',
+      description: "Unique file path.",
+      type: "string",
     },
     name: {
-      description: 'Display name.',
-      type: 'string',
+      description: "Display name.",
+      type: "string",
     },
     icon: {
-      description: 'Custom file icon.',
-      type: 'ReactNode',
+      description: "Custom file icon.",
+      type: "ReactNode",
     },
     className: {
-      description: 'Additional CSS classes.',
-      type: 'string',
+      description: "Additional CSS classes.",
+      type: "string",
     },
   }}
 />

@@ -31,17 +31,18 @@ The `Plan` component provides a flexible system for displaying AI-generated exec
 <TypeTable
   type={{
     isStreaming: {
-      description: 'Whether content is currently streaming. Enables shimmer animations on title and description.',
-      type: 'boolean',
-      default: 'false',
+      description:
+        "Whether content is currently streaming. Enables shimmer animations on title and description.",
+      type: "boolean",
+      default: "false",
     },
     defaultOpen: {
-      description: 'Whether the plan is expanded by default.',
-      type: 'boolean',
+      description: "Whether the plan is expanded by default.",
+      type: "boolean",
     },
-    '...props': {
-      description: 'Any other props are spread to the Collapsible component.',
-      type: 'React.ComponentProps<typeof Collapsible>',
+    "...props": {
+      description: "Any other props are spread to the Collapsible component.",
+      type: "React.ComponentProps<typeof Collapsible>",
     },
   }}
 />
@@ -50,9 +51,9 @@ The `Plan` component provides a flexible system for displaying AI-generated exec
 
 <TypeTable
   type={{
-    '...props': {
-      description: 'Any other props are spread to the CardHeader component.',
-      type: 'React.ComponentProps<typeof CardHeader>',
+    "...props": {
+      description: "Any other props are spread to the CardHeader component.",
+      type: "React.ComponentProps<typeof CardHeader>",
     },
   }}
 />
@@ -62,11 +63,13 @@ The `Plan` component provides a flexible system for displaying AI-generated exec
 <TypeTable
   type={{
     children: {
-      description: 'The title text. Displays with shimmer animation when isStreaming is true.',
-      type: 'string',
+      description:
+        "The title text. Displays with shimmer animation when isStreaming is true.",
+      type: "string",
     },
-    '...props': {
-      description: 'Any other props (except children) are spread to the CardTitle component.',
+    "...props": {
+      description:
+        "Any other props (except children) are spread to the CardTitle component.",
       type: 'Omit<React.ComponentProps<typeof CardTitle>, "children">',
     },
   }}
@@ -77,11 +80,13 @@ The `Plan` component provides a flexible system for displaying AI-generated exec
 <TypeTable
   type={{
     children: {
-      description: 'The description text. Displays with shimmer animation when isStreaming is true.',
-      type: 'string',
+      description:
+        "The description text. Displays with shimmer animation when isStreaming is true.",
+      type: "string",
     },
-    '...props': {
-      description: 'Any other props (except children) are spread to the CardDescription component.',
+    "...props": {
+      description:
+        "Any other props (except children) are spread to the CardDescription component.",
       type: 'Omit<React.ComponentProps<typeof CardDescription>, "children">',
     },
   }}
@@ -91,9 +96,10 @@ The `Plan` component provides a flexible system for displaying AI-generated exec
 
 <TypeTable
   type={{
-    '...props': {
-      description: 'Any other props are spread to the CollapsibleTrigger component. Renders as a Button with chevron icon.',
-      type: 'React.ComponentProps<typeof CollapsibleTrigger>',
+    "...props": {
+      description:
+        "Any other props are spread to the CollapsibleTrigger component. Renders as a Button with chevron icon.",
+      type: "React.ComponentProps<typeof CollapsibleTrigger>",
     },
   }}
 />
@@ -102,9 +108,9 @@ The `Plan` component provides a flexible system for displaying AI-generated exec
 
 <TypeTable
   type={{
-    '...props': {
-      description: 'Any other props are spread to the CardContent component.',
-      type: 'React.ComponentProps<typeof CardContent>',
+    "...props": {
+      description: "Any other props are spread to the CardContent component.",
+      type: "React.ComponentProps<typeof CardContent>",
     },
   }}
 />
@@ -113,8 +119,8 @@ The `Plan` component provides a flexible system for displaying AI-generated exec
 
 <TypeTable
   type={{
-    '...props': {
-      description: 'Any other props are spread to the div element.',
+    "...props": {
+      description: "Any other props are spread to the div element.",
       type: 'React.ComponentProps<"div">',
     },
   }}
@@ -124,9 +130,9 @@ The `Plan` component provides a flexible system for displaying AI-generated exec
 
 <TypeTable
   type={{
-    '...props': {
-      description: 'Any other props are spread to the CardAction component.',
-      type: 'React.ComponentProps<typeof CardAction>',
+    "...props": {
+      description: "Any other props are spread to the CardAction component.",
+      type: "React.ComponentProps<typeof CardAction>",
     },
   }}
 />

@@ -1,6 +1,7 @@
 import { render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
+import { userEvent } from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
+
 import {
   Source,
   Sources,
@@ -8,7 +9,7 @@ import {
   SourcesTrigger,
 } from "../src/sources";
 
-describe("Sources", () => {
+describe("sources", () => {
   it("renders children", () => {
     render(<Sources>Content</Sources>);
     expect(screen.getByText("Content")).toBeInTheDocument();
@@ -20,7 +21,7 @@ describe("Sources", () => {
   });
 });
 
-describe("SourcesTrigger", () => {
+describe("sourcesTrigger", () => {
   it("renders default trigger with count", () => {
     render(
       <Sources>
@@ -64,7 +65,7 @@ describe("SourcesTrigger", () => {
   });
 });
 
-describe("SourcesContent", () => {
+describe("sourcesContent", () => {
   it("renders content when open", async () => {
     const user = userEvent.setup();
     render(
@@ -83,7 +84,7 @@ describe("SourcesContent", () => {
   });
 });
 
-describe("Source", () => {
+describe("source", () => {
   it("renders source link", () => {
     render(<Source href="https://example.com" title="Example" />);
     const link = screen.getByRole("link");

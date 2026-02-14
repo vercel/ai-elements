@@ -1,6 +1,8 @@
+// oxlint-disable eslint-plugin-jest(max-expects), eslint-plugin-react-perf(jsx-no-new-function-as-prop)
 import { render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
+import { userEvent } from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
+
 import {
   Plan,
   PlanAction,
@@ -12,8 +14,8 @@ import {
   PlanTrigger,
 } from "../src/plan";
 
-describe("Plan", () => {
-  describe("Plan", () => {
+describe("plan", () => {
+  describe("plan", () => {
     it("renders with children", () => {
       render(
         <Plan>
@@ -77,7 +79,7 @@ describe("Plan", () => {
     });
   });
 
-  describe("PlanHeader", () => {
+  describe("planHeader", () => {
     it("renders with children", () => {
       render(
         <Plan>
@@ -123,7 +125,7 @@ describe("Plan", () => {
     });
   });
 
-  describe("PlanTitle", () => {
+  describe("planTitle", () => {
     it("renders text content", () => {
       render(
         <Plan>
@@ -176,9 +178,7 @@ describe("Plan", () => {
 
     it("throws error when used outside Plan context", () => {
       // Suppress console.error for this test
-      const consoleSpy = vi
-        .spyOn(console, "error")
-        .mockImplementation(() => undefined);
+      const consoleSpy = vi.spyOn(console, "error").mockImplementation(vi.fn());
 
       expect(() => {
         render(<PlanTitle>Title</PlanTitle>);
@@ -188,7 +188,7 @@ describe("Plan", () => {
     });
   });
 
-  describe("PlanDescription", () => {
+  describe("planDescription", () => {
     it("renders text content", () => {
       render(
         <Plan>
@@ -266,9 +266,7 @@ describe("Plan", () => {
     });
 
     it("throws error when used outside Plan context", () => {
-      const consoleSpy = vi
-        .spyOn(console, "error")
-        .mockImplementation(() => undefined);
+      const consoleSpy = vi.spyOn(console, "error").mockImplementation(vi.fn());
 
       expect(() => {
         render(<PlanDescription>Description</PlanDescription>);
@@ -278,7 +276,7 @@ describe("Plan", () => {
     });
   });
 
-  describe("PlanAction", () => {
+  describe("planAction", () => {
     it("renders with children", () => {
       render(
         <Plan>
@@ -308,7 +306,7 @@ describe("Plan", () => {
     });
   });
 
-  describe("PlanContent", () => {
+  describe("planContent", () => {
     it("renders with children", () => {
       render(
         <Plan defaultOpen>
@@ -355,7 +353,7 @@ describe("Plan", () => {
     });
   });
 
-  describe("PlanFooter", () => {
+  describe("planFooter", () => {
     it("renders with children", () => {
       render(
         <Plan>
@@ -379,7 +377,7 @@ describe("Plan", () => {
     });
   });
 
-  describe("PlanTrigger", () => {
+  describe("planTrigger", () => {
     it("renders toggle button", () => {
       render(
         <Plan>
@@ -469,7 +467,8 @@ describe("Plan", () => {
     });
   });
 
-  describe("Integration", () => {
+  describe("integration", () => {
+    // oxlint-disable-next-line eslint-plugin-jest(max-expects)
     it("renders complete plan structure", () => {
       render(
         <Plan defaultOpen>

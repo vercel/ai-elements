@@ -1,5 +1,7 @@
 "use client";
 
+import type { FormEventHandler } from "react";
+
 import { SiMarkdown } from "@icons-pack/react-simple-icons";
 import { Button } from "@repo/shadcn-ui/components/ui/button";
 import {
@@ -11,12 +13,8 @@ import { Textarea } from "@repo/shadcn-ui/components/ui/textarea";
 import { cn } from "@repo/shadcn-ui/lib/utils";
 import { ThumbsUpIcon } from "lucide-react";
 import { usePathname } from "next/navigation";
-import {
-  type FormEventHandler,
-  useEffect,
-  useState,
-  useTransition,
-} from "react";
+import { useEffect, useState, useTransition } from "react";
+
 import { sendFeedback } from "@/app/actions/feedback";
 import { emotions } from "@/app/actions/feedback/emotions";
 

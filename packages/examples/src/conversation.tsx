@@ -3,6 +3,7 @@
 import {
   Conversation,
   ConversationContent,
+  ConversationDownload,
   ConversationEmptyState,
   ConversationScrollButton,
 } from "@repo/elements/conversation";
@@ -11,107 +12,111 @@ import { MessageSquareIcon } from "lucide-react";
 import { nanoid } from "nanoid";
 import { useEffect, useState } from "react";
 
-const messages: { key: string; value: string; from: "user" | "assistant" }[] = [
+const messages: {
+  key: string;
+  content: string;
+  role: "user" | "assistant";
+}[] = [
   {
+    content: "Hello, how are you?",
     key: nanoid(),
-    value: "Hello, how are you?",
-    from: "user",
+    role: "user",
   },
   {
+    content: "I'm good, thank you! How can I assist you today?",
     key: nanoid(),
-    value: "I'm good, thank you! How can I assist you today?",
-    from: "assistant",
+    role: "assistant",
   },
   {
+    content: "I'm looking for information about your services.",
     key: nanoid(),
-    value: "I'm looking for information about your services.",
-    from: "user",
+    role: "user",
   },
   {
-    key: nanoid(),
-    value:
+    content:
       "Sure! We offer a variety of AI solutions. What are you interested in?",
-    from: "assistant",
+    key: nanoid(),
+    role: "assistant",
   },
   {
+    content: "I'm interested in natural language processing tools.",
     key: nanoid(),
-    value: "I'm interested in natural language processing tools.",
-    from: "user",
+    role: "user",
   },
   {
+    content: "Great choice! We have several NLP APIs. Would you like a demo?",
     key: nanoid(),
-    value: "Great choice! We have several NLP APIs. Would you like a demo?",
-    from: "assistant",
+    role: "assistant",
   },
   {
+    content: "Yes, a demo would be helpful.",
     key: nanoid(),
-    value: "Yes, a demo would be helpful.",
-    from: "user",
+    role: "user",
   },
   {
+    content: "Alright, I can show you a sentiment analysis example. Ready?",
     key: nanoid(),
-    value: "Alright, I can show you a sentiment analysis example. Ready?",
-    from: "assistant",
+    role: "assistant",
   },
   {
+    content: "Yes, please proceed.",
     key: nanoid(),
-    value: "Yes, please proceed.",
-    from: "user",
+    role: "user",
   },
   {
+    content: "Here is a sample: 'I love this product!' → Positive sentiment.",
     key: nanoid(),
-    value: "Here is a sample: 'I love this product!' → Positive sentiment.",
-    from: "assistant",
+    role: "assistant",
   },
   {
+    content: "Impressive! Can it handle multiple languages?",
     key: nanoid(),
-    value: "Impressive! Can it handle multiple languages?",
-    from: "user",
+    role: "user",
   },
   {
+    content: "Absolutely, our models support over 20 languages.",
     key: nanoid(),
-    value: "Absolutely, our models support over 20 languages.",
-    from: "assistant",
+    role: "assistant",
   },
   {
+    content: "How do I get started with the API?",
     key: nanoid(),
-    value: "How do I get started with the API?",
-    from: "user",
+    role: "user",
   },
   {
+    content: "You can sign up on our website and get an API key instantly.",
     key: nanoid(),
-    value: "You can sign up on our website and get an API key instantly.",
-    from: "assistant",
+    role: "assistant",
   },
   {
+    content: "Is there a free trial available?",
     key: nanoid(),
-    value: "Is there a free trial available?",
-    from: "user",
+    role: "user",
   },
   {
+    content: "Yes, we offer a 14-day free trial with full access.",
     key: nanoid(),
-    value: "Yes, we offer a 14-day free trial with full access.",
-    from: "assistant",
+    role: "assistant",
   },
   {
+    content: "What kind of support do you provide?",
     key: nanoid(),
-    value: "What kind of support do you provide?",
-    from: "user",
+    role: "user",
   },
   {
+    content: "We provide 24/7 chat and email support for all users.",
     key: nanoid(),
-    value: "We provide 24/7 chat and email support for all users.",
-    from: "assistant",
+    role: "assistant",
   },
   {
+    content: "Thank you for the information!",
     key: nanoid(),
-    value: "Thank you for the information!",
-    from: "user",
+    role: "user",
   },
   {
+    content: "You're welcome! Let me know if you have any more questions.",
     key: nanoid(),
-    value: "You're welcome! Let me know if you have any more questions.",
-    from: "assistant",
+    role: "assistant",
   },
 ];
 
@@ -119,8 +124,8 @@ const Example = () => {
   const [visibleMessages, setVisibleMessages] = useState<
     {
       key: string;
-      value: string;
-      from: "user" | "assistant";
+      content: string;
+      role: "user" | "assistant";
     }[]
   >([]);
 
@@ -132,9 +137,9 @@ const Example = () => {
         setVisibleMessages((prev) => [
           ...prev,
           {
+            content: currentMessage.content,
             key: currentMessage.key,
-            value: currentMessage.value,
-            from: currentMessage.from,
+            role: currentMessage.role,
           },
         ]);
         currentIndex += 1;
@@ -156,13 +161,14 @@ const Example = () => {
             title="Start a conversation"
           />
         ) : (
-          visibleMessages.map(({ key, value, from }) => (
-            <Message from={from} key={key}>
-              <MessageContent>{value}</MessageContent>
+          visibleMessages.map(({ key, content, role }) => (
+            <Message from={role} key={key}>
+              <MessageContent>{content}</MessageContent>
             </Message>
           ))
         )}
       </ConversationContent>
+      <ConversationDownload messages={visibleMessages} />
       <ConversationScrollButton />
     </Conversation>
   );

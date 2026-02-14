@@ -2,6 +2,7 @@
 
 import { Button } from "@repo/shadcn-ui/components/ui/button";
 import { MenuIcon } from "lucide-react";
+
 import { useSidebarContext } from "@/hooks/geistdocs/use-sidebar";
 
 export const MobileMenu = () => {

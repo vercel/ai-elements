@@ -1,10 +1,11 @@
 "use client";
 
+import type { PromptInputMessage } from "@repo/elements/prompt-input";
+
 import { Conversation, ConversationContent } from "@repo/elements/conversation";
 import { Message, MessageContent } from "@repo/elements/message";
 import {
   PromptInput,
-  type PromptInputMessage,
   PromptInputSubmit,
   PromptInputTextarea,
 } from "@repo/elements/prompt-input";
@@ -17,7 +18,7 @@ import {
 } from "@repo/elements/web-preview";
 import { Spinner } from "@repo/shadcn-ui/components/ui/spinner";
 import { nanoid } from "nanoid";
-import { useState } from "react";
+import { memo, useCallback, useState } from "react";
 
 interface Chat {
   id: string;
@@ -26,45 +27,62 @@ interface Chat {
 
 const mockChatHistory = [
   {
+    content: "Build me an agent skills website with a modern dark theme",
     id: "1",
     type: "user" as const,
-    content: "Build me an agent skills website with a modern dark theme",
   },
   {
-    id: "2",
-    type: "assistant" as const,
     content:
       "I'll create a sleek agent skills website with a dark theme. The design will feature a clean layout showcasing various AI agent capabilities with smooth animations.",
+    id: "2",
+    type: "assistant" as const,
   },
   {
+    content: "Add a hero section with a catchy tagline about AI skills",
     id: "3",
     type: "user" as const,
-    content: "Add a hero section with a catchy tagline about AI skills",
   },
   {
-    id: "4",
-    type: "assistant" as const,
     content:
       "Done! I've added a hero section with the tagline 'Supercharge your AI agents with powerful skills'. The section includes a gradient background and animated elements.",
+    id: "4",
+    type: "assistant" as const,
   },
   {
-    id: "5",
-    type: "user" as const,
     content:
       "Can you add a grid of skill cards showing different capabilities?",
+    id: "5",
+    type: "user" as const,
   },
   {
-    id: "6",
-    type: "assistant" as const,
     content:
       "I've added a skills grid featuring cards for Web Search, Code Execution, File Management, API Integration, and more. Each card has an icon and description. Check the preview!",
+    id: "6",
+    type: "assistant" as const,
   },
 ];
 
 const mockChat: Chat = {
-  id: "mock-chat-1",
   demo: "https://skills.sh/",
+  id: "mock-chat-1",
 };
+
+interface SuggestionItemProps {
+  text: string;
+  onSuggestionClick: (text: string) => void;
+}
+
+const SuggestionItem = memo(
+  ({ text, onSuggestionClick }: SuggestionItemProps) => {
+    const handleClick = useCallback(
+      () => onSuggestionClick(text),
+      [onSuggestionClick, text]
+    );
+    return <Suggestion onClick={handleClick} suggestion={text} />;
+  }
+);
+
+SuggestionItem.displayName = "SuggestionItem";
 
 export default function Home() {
   const [message, setMessage] = useState("");
@@ -72,72 +90,84 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
   const [chatHistory, setChatHistory] =
     useState<
-      Array<{
+      {
         id: string;
         type: "user" | "assistant";
         content: string;
-      }>
+      }[]
     >(mockChatHistory);
 
-  const handleSendMessage = async (promptMessage: PromptInputMessage) => {
-    const hasText = Boolean(promptMessage.text);
-    const hasAttachments = Boolean(promptMessage.files?.length);
+  const handleSendMessage = useCallback(
+    async (promptMessage: PromptInputMessage) => {
+      const hasText = Boolean(promptMessage.text);
+      const hasAttachments = Boolean(promptMessage.files?.length);
 
-    if (!(hasText || hasAttachments) || isLoading) {
-      return;
-    }
-
-    const userMessage = promptMessage.text?.trim() || "Sent with attachments";
-    setMessage("");
-    setIsLoading(true);
-
-    setChatHistory((prev) => [
-      ...prev,
-      { id: nanoid(), type: "user", content: userMessage },
-    ]);
-
-    try {
-      const response = await fetch("/api/v0", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          message: userMessage,
-          chatId: currentChat?.id,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to create chat");
+      if (!(hasText || hasAttachments) || isLoading) {
+        return;
       }
 
-      const chat: Chat = await response.json();
-      setCurrentChat(chat);
+      const userMessage = promptMessage.text?.trim() || "Sent with attachments";
+      setMessage("");
+      setIsLoading(true);
 
       setChatHistory((prev) => [
         ...prev,
-        {
-          id: nanoid(),
-          type: "assistant",
-          content: "Generated new app preview. Check the preview panel!",
-        },
+        { content: userMessage, id: nanoid(), type: "user" },
       ]);
-    } catch (error) {
-      console.error("Error:", error);
-      setChatHistory((prev) => [
-        ...prev,
-        {
-          id: nanoid(),
-          type: "assistant",
-          content:
-            "Sorry, there was an error creating your app. Please try again.",
-        },
-      ]);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+
+      try {
+        const response = await fetch("/api/v0", {
+          body: JSON.stringify({
+            chatId: currentChat?.id,
+            message: userMessage,
+          }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+          method: "POST",
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to create chat");
+        }
+
+        const chat: Chat = await response.json();
+        setCurrentChat(chat);
+
+        setChatHistory((prev) => [
+          ...prev,
+          {
+            content: "Generated new app preview. Check the preview panel!",
+            id: nanoid(),
+            type: "assistant",
+          },
+        ]);
+      } catch (error) {
+        console.error("Error:", error);
+        setChatHistory((prev) => [
+          ...prev,
+          {
+            content:
+              "Sorry, there was an error creating your app. Please try again.",
+            id: nanoid(),
+            type: "assistant",
+          },
+        ]);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [currentChat?.id, isLoading]
+  );
+
+  const handleSuggestionClick = useCallback((suggestion: string) => {
+    setMessage(suggestion);
+  }, []);
+
+  const handleTextChange = useCallback(
+    (e: React.ChangeEvent<HTMLTextAreaElement>) => setMessage(e.target.value),
+    []
+  );
 
   return (
     <div className="flex size-full divide-x">
@@ -177,21 +207,17 @@ export default function Home() {
         <div className="border-t p-4">
           {!currentChat && (
             <Suggestions>
-              <Suggestion
-                onClick={() =>
-                  setMessage("Create a responsive navbar with Tailwind CSS")
-                }
-                suggestion="Create a responsive navbar with Tailwind CSS"
+              <SuggestionItem
+                onSuggestionClick={handleSuggestionClick}
+                text="Create a responsive navbar with Tailwind CSS"
               />
-              <Suggestion
-                onClick={() => setMessage("Build a todo app with React")}
-                suggestion="Build a todo app with React"
+              <SuggestionItem
+                onSuggestionClick={handleSuggestionClick}
+                text="Build a todo app with React"
               />
-              <Suggestion
-                onClick={() =>
-                  setMessage("Make a landing page for a coffee shop")
-                }
-                suggestion="Make a landing page for a coffee shop"
+              <SuggestionItem
+                onSuggestionClick={handleSuggestionClick}
+                text="Make a landing page for a coffee shop"
               />
             </Suggestions>
           )}
@@ -202,7 +228,7 @@ export default function Home() {
             >
               <PromptInputTextarea
                 className="min-h-[60px] pr-12"
-                onChange={(e) => setMessage(e.target.value)}
+                onChange={handleTextChange}
                 value={message}
               />
               <PromptInputSubmit

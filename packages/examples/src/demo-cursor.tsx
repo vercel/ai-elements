@@ -1,5 +1,8 @@
 "use client";
 
+import type { PromptInputMessage } from "@repo/elements/prompt-input";
+import type { BundledLanguage } from "shiki";
+
 import {
   Checkpoint,
   CheckpointIcon,
@@ -29,7 +32,6 @@ import {
 import {
   PromptInput,
   PromptInputFooter,
-  type PromptInputMessage,
   PromptInputSubmit,
   PromptInputTextarea,
 } from "@repo/elements/prompt-input";
@@ -55,7 +57,6 @@ import { cn } from "@repo/shadcn-ui/lib/utils";
 import { CheckCircle2Icon, ListTodoIcon } from "lucide-react";
 import { nanoid } from "nanoid";
 import { useCallback, useEffect, useState } from "react";
-import type { BundledLanguage } from "shiki";
 
 // Types
 interface MockFile {
@@ -80,9 +81,6 @@ interface TaskItem {
 // Mock file contents
 const mockFiles: MockFile[] = [
   {
-    path: "src/app.tsx",
-    name: "app.tsx",
-    language: "tsx",
     content: `import { useState } from "react";
 import { Button } from "./components/button";
 import { Input } from "./components/input";
@@ -122,11 +120,11 @@ export function App() {
     </div>
   );
 }`,
+    language: "tsx",
+    name: "app.tsx",
+    path: "src/app.tsx",
   },
   {
-    path: "src/components/button.tsx",
-    name: "button.tsx",
-    language: "tsx",
     content: `import { forwardRef, type ButtonHTMLAttributes } from "react";
 import { cn } from "../utils/helpers";
 
@@ -158,11 +156,11 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 );
 
 Button.displayName = "Button";`,
+    language: "tsx",
+    name: "button.tsx",
+    path: "src/components/button.tsx",
   },
   {
-    path: "src/components/input.tsx",
-    name: "input.tsx",
-    language: "tsx",
     content: `import { forwardRef, type InputHTMLAttributes } from "react";
 import { cn } from "../utils/helpers";
 
@@ -188,11 +186,11 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
 );
 
 Input.displayName = "Input";`,
+    language: "tsx",
+    name: "input.tsx",
+    path: "src/components/input.tsx",
   },
   {
-    path: "src/utils/helpers.ts",
-    name: "helpers.ts",
-    language: "typescript",
     content: `export function cn(...classes: (string | boolean | undefined)[]) {
   return classes.filter(Boolean).join(" ");
 }
@@ -229,11 +227,11 @@ export function validateForm(data: FormData): ValidationResult {
 function isValidEmail(email: string): boolean {
   return /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email);
 }`,
+    language: "typescript",
+    name: "helpers.ts",
+    path: "src/utils/helpers.ts",
   },
   {
-    path: "package.json",
-    name: "package.json",
-    language: "json",
     content: `{
   "name": "my-app",
   "version": "1.0.0",
@@ -255,11 +253,11 @@ function isValidEmail(email: string): boolean {
     "vitest": "^1.0.0"
   }
 }`,
+    language: "json",
+    name: "package.json",
+    path: "package.json",
   },
   {
-    path: "README.md",
-    name: "README.md",
-    language: "markdown",
     content: `# My App
 
 A simple React application with form validation.
@@ -277,26 +275,27 @@ npm run dev
 - Reusable Button and Input components
 - TypeScript support
 `,
+    language: "markdown",
+    name: "README.md",
+    path: "README.md",
   },
 ];
 
 // Mock tasks
 const initialTasks: TaskItem[] = [
-  { id: "1", title: "Refactor Button component", status: "completed" },
-  { id: "2", title: "Add form validation", status: "in_progress" },
-  { id: "3", title: "Write unit tests", status: "pending" },
+  { id: "1", status: "completed", title: "Refactor Button component" },
+  { id: "2", status: "in_progress", title: "Add form validation" },
+  { id: "3", status: "pending", title: "Write unit tests" },
 ];
 
 // Mock chat messages
 const mockMessages: MessageType[] = [
   {
-    key: nanoid(),
-    from: "user",
     content: "Can you help me add email validation to the form?",
+    from: "user",
+    key: nanoid(),
   },
   {
-    key: nanoid(),
-    from: "assistant",
     content: `I can help you add email validation. Looking at your code in \`src/utils/helpers.ts\`, I see you already have a \`validateForm\` function.
 
 Here's what I'll do:
@@ -306,28 +305,30 @@ Here's what I'll do:
 3. Show validation errors in the UI
 
 The email validation uses a regex pattern to check for valid email format. The form will now show "Invalid email format" if the user enters an incorrectly formatted email address.`,
+    from: "assistant",
+    key: nanoid(),
   },
 ];
 
 // Mock terminal output
 const mockTerminalLines = [
-  "\x1b[32m✓\x1b[0m Building application...",
-  "\x1b[36m  src/app.tsx\x1b[0m → \x1b[33mdist/app.js\x1b[0m",
-  "\x1b[36m  src/components/button.tsx\x1b[0m → \x1b[33mdist/button.js\x1b[0m",
-  "\x1b[36m  src/components/input.tsx\x1b[0m → \x1b[33mdist/input.js\x1b[0m",
-  "\x1b[36m  src/utils/helpers.ts\x1b[0m → \x1b[33mdist/helpers.js\x1b[0m",
+  "\u001B[32m✓\u001B[0m Building application...",
+  "\u001B[36m  src/app.tsx\u001B[0m → \u001B[33mdist/app.js\u001B[0m",
+  "\u001B[36m  src/components/button.tsx\u001B[0m → \u001B[33mdist/button.js\u001B[0m",
+  "\u001B[36m  src/components/input.tsx\u001B[0m → \u001B[33mdist/input.js\u001B[0m",
+  "\u001B[36m  src/utils/helpers.ts\u001B[0m → \u001B[33mdist/helpers.js\u001B[0m",
   "",
-  "\x1b[32m✓\x1b[0m Build completed in \x1b[33m1.2s\x1b[0m",
+  "\u001B[32m✓\u001B[0m Build completed in \u001B[33m1.2s\u001B[0m",
   "",
-  "\x1b[34mRunning tests...\x1b[0m",
+  "\u001B[34mRunning tests...\u001B[0m",
   "",
-  " \x1b[32m✓\x1b[0m validateForm › returns errors for empty fields",
-  " \x1b[32m✓\x1b[0m validateForm › returns error for invalid email",
-  " \x1b[32m✓\x1b[0m validateForm › passes for valid input",
-  " \x1b[32m✓\x1b[0m Button › renders with correct variant",
-  " \x1b[32m✓\x1b[0m Input › shows error state",
+  " \u001B[32m✓\u001B[0m validateForm › returns errors for empty fields",
+  " \u001B[32m✓\u001B[0m validateForm › returns error for invalid email",
+  " \u001B[32m✓\u001B[0m validateForm › passes for valid input",
+  " \u001B[32m✓\u001B[0m Button › renders with correct variant",
+  " \u001B[32m✓\u001B[0m Input › shows error state",
   "",
-  "\x1b[32mAll tests passed!\x1b[0m (5/5)",
+  "\u001B[32mAll tests passed!\u001B[0m (5/5)",
 ];
 
 const Example = () => {
@@ -359,18 +360,17 @@ const Example = () => {
   const [showCheckpoint, setShowCheckpoint] = useState<boolean>(false);
 
   // Find file by path
-  const findFileByPath = (path: string): MockFile | undefined => {
-    return mockFiles.find((f) => f.path === path);
-  };
+  const findFileByPath = (path: string): MockFile | undefined =>
+    mockFiles.find((f) => f.path === path);
 
   // Handle file selection
-  const handleFileSelect = (path: string) => {
+  const handleFileSelect = useCallback((path: string) => {
     setSelectedPath(path);
     const file = findFileByPath(path);
     if (file) {
       setCurrentFile(file);
     }
-  };
+  }, []);
 
   // Stream message content word by word
   const streamContent = useCallback(
@@ -378,7 +378,7 @@ const Example = () => {
       const words = content.split(" ");
       let currentContent = "";
 
-      for (let i = 0; i < words.length; i++) {
+      for (let i = 0; i < words.length; i += 1) {
         currentContent += (i > 0 ? " " : "") + words[i];
         const finalContent = currentContent;
 
@@ -388,9 +388,10 @@ const Example = () => {
           )
         );
 
-        await new Promise((resolve) =>
-          setTimeout(resolve, Math.random() * 40 + 20)
-        );
+        // oxlint-disable-next-line eslint-plugin-promise(avoid-new)
+        await new Promise((resolve) => {
+          setTimeout(resolve, Math.random() * 40 + 20);
+        });
       }
     },
     []
@@ -399,14 +400,15 @@ const Example = () => {
   // Stream message
   const streamMessage = useCallback(
     async (message: MessageType) => {
-      const newKey = nanoid(); // Generate fresh key to avoid duplicates
+      // Generate fresh key to avoid duplicates
+      const newKey = nanoid();
       if (message.from === "user") {
         setMessages((prev) => [...prev, { ...message, key: newKey }]);
         return;
       }
 
       // Add empty assistant message
-      const newMessage = { ...message, key: newKey, content: "" };
+      const newMessage = { ...message, content: "", key: newKey };
       setMessages((prev) => [...prev, newMessage]);
 
       setStatus("streaming");
@@ -424,7 +426,10 @@ const Example = () => {
     for (const line of mockTerminalLines) {
       output += `${line}\n`;
       setTerminalOutput(output);
-      await new Promise((resolve) => setTimeout(resolve, 100));
+      // oxlint-disable-next-line eslint-plugin-promise(avoid-new)
+      await new Promise((resolve) => {
+        setTimeout(resolve, 100);
+      });
     }
 
     setIsTerminalStreaming(false);
@@ -434,15 +439,24 @@ const Example = () => {
   useEffect(() => {
     const runAnimation = async () => {
       // Wait a bit before starting
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      // oxlint-disable-next-line eslint-plugin-promise(avoid-new)
+      await new Promise((resolve) => {
+        setTimeout(resolve, 500);
+      });
 
       // Stream first message (user)
       await streamMessage(mockMessages[0]);
-      await new Promise((resolve) => setTimeout(resolve, 800));
+      // oxlint-disable-next-line eslint-plugin-promise(avoid-new)
+      await new Promise((resolve) => {
+        setTimeout(resolve, 800);
+      });
 
       // Stream second message (assistant)
       await streamMessage(mockMessages[1]);
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      // oxlint-disable-next-line eslint-plugin-promise(avoid-new)
+      await new Promise((resolve) => {
+        setTimeout(resolve, 500);
+      });
 
       // Update task status
       setTasks((prev) =>
@@ -455,40 +469,51 @@ const Example = () => {
       await streamTerminal();
 
       // Show checkpoint
-      await new Promise((resolve) => setTimeout(resolve, 300));
+      // oxlint-disable-next-line eslint-plugin-promise(avoid-new)
+      await new Promise((resolve) => {
+        setTimeout(resolve, 300);
+      });
       setShowCheckpoint(true);
     };
 
     runAnimation();
   }, [streamMessage, streamTerminal]);
 
+  const handleChatTextChange = useCallback(
+    (e: React.ChangeEvent<HTMLTextAreaElement>) => setChatText(e.target.value),
+    []
+  );
+
   // Handle chat submit
-  const handleSubmit = (message: PromptInputMessage) => {
-    if (!message.text.trim()) {
-      return;
-    }
+  const handleSubmit = useCallback(
+    (message: PromptInputMessage) => {
+      if (!message.text.trim()) {
+        return;
+      }
 
-    const userMessage: MessageType = {
-      key: nanoid(),
-      from: "user",
-      content: message.text,
-    };
-
-    setMessages((prev) => [...prev, userMessage]);
-    setChatText("");
-    setStatus("submitted");
-
-    // Simulate AI response
-    setTimeout(() => {
-      const assistantMessage: MessageType = {
+      const userMessage: MessageType = {
+        content: message.text,
+        from: "user",
         key: nanoid(),
-        from: "assistant",
-        content:
-          "I'll look into that for you. Let me analyze the codebase and suggest some improvements.",
       };
-      streamMessage(assistantMessage);
-    }, 500);
-  };
+
+      setMessages((prev) => [...prev, userMessage]);
+      setChatText("");
+      setStatus("submitted");
+
+      // Simulate AI response
+      setTimeout(() => {
+        const assistantMessage: MessageType = {
+          content:
+            "I'll look into that for you. Let me analyze the codebase and suggest some improvements.",
+          from: "assistant",
+          key: nanoid(),
+        };
+        streamMessage(assistantMessage);
+      }, 500);
+    },
+    [streamMessage]
+  );
 
   const completedTasks = tasks.filter((t) => t.status === "completed");
   const pendingTasks = tasks.filter((t) => t.status !== "completed");
@@ -659,7 +684,7 @@ const Example = () => {
             <PromptInput className="rounded-lg border" onSubmit={handleSubmit}>
               <PromptInputTextarea
                 className="min-h-10"
-                onChange={(e) => setChatText(e.target.value)}
+                onChange={handleChatTextChange}
                 placeholder="Ask about the code..."
                 value={chatText}
               />

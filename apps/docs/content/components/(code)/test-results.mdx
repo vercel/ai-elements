@@ -23,11 +23,11 @@ The `TestResults` component displays test suite results including summary statis
 
 ## Status Colors
 
-| Status | Color | Use Case |
-|--------|-------|----------|
-| `passed` | Green | Test succeeded |
-| `failed` | Red | Test failed |
-| `skipped` | Yellow | Test skipped |
+| Status    | Color           | Use Case         |
+| --------- | --------------- | ---------------- |
+| `passed`  | Green           | Test succeeded   |
+| `failed`  | Red             | Test failed      |
+| `skipped` | Yellow          | Test skipped     |
 | `running` | Blue (animated) | Test in progress |
 
 ## Examples
@@ -51,12 +51,12 @@ The `TestResults` component displays test suite results including summary statis
 <TypeTable
   type={{
     summary: {
-      description: 'Test results summary.',
-      type: '{ passed, failed, skipped, total, duration? }',
+      description: "Test results summary.",
+      type: "{ passed, failed, skipped, total, duration? }",
     },
     className: {
-      description: 'Additional CSS classes.',
-      type: 'string',
+      description: "Additional CSS classes.",
+      type: "string",
     },
   }}
 />
@@ -66,16 +66,16 @@ The `TestResults` component displays test suite results including summary statis
 <TypeTable
   type={{
     name: {
-      description: 'Suite name.',
-      type: 'string',
+      description: "Suite name.",
+      type: "string",
     },
     status: {
-      description: 'Overall suite status.',
+      description: "Overall suite status.",
       type: '"passed" | "failed" | "skipped" | "running"',
     },
     defaultOpen: {
-      description: 'Initially expanded.',
-      type: 'boolean',
+      description: "Initially expanded.",
+      type: "boolean",
     },
   }}
 />
@@ -85,16 +85,16 @@ The `TestResults` component displays test suite results including summary statis
 <TypeTable
   type={{
     name: {
-      description: 'Test name.',
-      type: 'string',
+      description: "Test name.",
+      type: "string",
     },
     status: {
-      description: 'Test status.',
+      description: "Test status.",
       type: '"passed" | "failed" | "skipped" | "running"',
     },
     duration: {
-      description: 'Test duration in ms.',
-      type: 'number',
+      description: "Test duration in ms.",
+      type: "number",
     },
   }}
 />
@@ -103,9 +103,9 @@ The `TestResults` component displays test suite results including summary statis
 
 <TypeTable
   type={{
-    '...props': {
-      description: 'Any other props are spread to the div element.',
-      type: 'React.HTMLAttributes<HTMLDivElement>',
+    "...props": {
+      description: "Any other props are spread to the div element.",
+      type: "React.HTMLAttributes<HTMLDivElement>",
     },
   }}
 />
@@ -114,9 +114,9 @@ The `TestResults` component displays test suite results including summary statis
 
 <TypeTable
   type={{
-    '...props': {
-      description: 'Any other props are spread to the div element.',
-      type: 'React.HTMLAttributes<HTMLDivElement>',
+    "...props": {
+      description: "Any other props are spread to the div element.",
+      type: "React.HTMLAttributes<HTMLDivElement>",
     },
   }}
 />
@@ -125,9 +125,9 @@ The `TestResults` component displays test suite results including summary statis
 
 <TypeTable
   type={{
-    '...props': {
-      description: 'Any other props are spread to the span element.',
-      type: 'React.HTMLAttributes<HTMLSpanElement>',
+    "...props": {
+      description: "Any other props are spread to the span element.",
+      type: "React.HTMLAttributes<HTMLSpanElement>",
     },
   }}
 />
@@ -136,9 +136,9 @@ The `TestResults` component displays test suite results including summary statis
 
 <TypeTable
   type={{
-    '...props': {
-      description: 'Any other props are spread to the div element.',
-      type: 'React.HTMLAttributes<HTMLDivElement>',
+    "...props": {
+      description: "Any other props are spread to the div element.",
+      type: "React.HTMLAttributes<HTMLDivElement>",
     },
   }}
 />
@@ -147,9 +147,9 @@ The `TestResults` component displays test suite results including summary statis
 
 <TypeTable
   type={{
-    '...props': {
-      description: 'Any other props are spread to the div element.',
-      type: 'React.HTMLAttributes<HTMLDivElement>',
+    "...props": {
+      description: "Any other props are spread to the div element.",
+      type: "React.HTMLAttributes<HTMLDivElement>",
     },
   }}
 />
@@ -158,9 +158,10 @@ The `TestResults` component displays test suite results including summary statis
 
 <TypeTable
   type={{
-    '...props': {
-      description: 'Any other props are spread to the CollapsibleTrigger component.',
-      type: 'React.ComponentProps<typeof CollapsibleTrigger>',
+    "...props": {
+      description:
+        "Any other props are spread to the CollapsibleTrigger component.",
+      type: "React.ComponentProps<typeof CollapsibleTrigger>",
     },
   }}
 />
@@ -170,23 +171,23 @@ The `TestResults` component displays test suite results including summary statis
 <TypeTable
   type={{
     passed: {
-      description: 'Number of passed tests.',
-      type: 'number',
-      default: '0',
+      description: "Number of passed tests.",
+      type: "number",
+      default: "0",
     },
     failed: {
-      description: 'Number of failed tests.',
-      type: 'number',
-      default: '0',
+      description: "Number of failed tests.",
+      type: "number",
+      default: "0",
     },
     skipped: {
-      description: 'Number of skipped tests.',
-      type: 'number',
-      default: '0',
+      description: "Number of skipped tests.",
+      type: "number",
+      default: "0",
     },
-    '...props': {
-      description: 'Any other props are spread to the div element.',
-      type: 'React.HTMLAttributes<HTMLDivElement>',
+    "...props": {
+      description: "Any other props are spread to the div element.",
+      type: "React.HTMLAttributes<HTMLDivElement>",
     },
   }}
 />
@@ -195,9 +196,10 @@ The `TestResults` component displays test suite results including summary statis
 
 <TypeTable
   type={{
-    '...props': {
-      description: 'Any other props are spread to the CollapsibleContent component.',
-      type: 'React.ComponentProps<typeof CollapsibleContent>',
+    "...props": {
+      description:
+        "Any other props are spread to the CollapsibleContent component.",
+      type: "React.ComponentProps<typeof CollapsibleContent>",
     },
   }}
 />
@@ -206,9 +208,9 @@ The `TestResults` component displays test suite results including summary statis
 
 <TypeTable
   type={{
-    '...props': {
-      description: 'Any other props are spread to the span element.',
-      type: 'React.HTMLAttributes<HTMLSpanElement>',
+    "...props": {
+      description: "Any other props are spread to the span element.",
+      type: "React.HTMLAttributes<HTMLSpanElement>",
     },
   }}
 />
@@ -217,9 +219,9 @@ The `TestResults` component displays test suite results including summary statis
 
 <TypeTable
   type={{
-    '...props': {
-      description: 'Any other props are spread to the span element.',
-      type: 'React.HTMLAttributes<HTMLSpanElement>',
+    "...props": {
+      description: "Any other props are spread to the span element.",
+      type: "React.HTMLAttributes<HTMLSpanElement>",
     },
   }}
 />
@@ -228,9 +230,9 @@ The `TestResults` component displays test suite results including summary statis
 
 <TypeTable
   type={{
-    '...props': {
-      description: 'Any other props are spread to the span element.',
-      type: 'React.HTMLAttributes<HTMLSpanElement>',
+    "...props": {
+      description: "Any other props are spread to the span element.",
+      type: "React.HTMLAttributes<HTMLSpanElement>",
     },
   }}
 />
@@ -239,9 +241,9 @@ The `TestResults` component displays test suite results including summary statis
 
 <TypeTable
   type={{
-    '...props': {
-      description: 'Any other props are spread to the div element.',
-      type: 'React.HTMLAttributes<HTMLDivElement>',
+    "...props": {
+      description: "Any other props are spread to the div element.",
+      type: "React.HTMLAttributes<HTMLDivElement>",
     },
   }}
 />
@@ -250,9 +252,9 @@ The `TestResults` component displays test suite results including summary statis
 
 <TypeTable
   type={{
-    '...props': {
-      description: 'Any other props are spread to the p element.',
-      type: 'React.HTMLAttributes<HTMLParagraphElement>',
+    "...props": {
+      description: "Any other props are spread to the p element.",
+      type: "React.HTMLAttributes<HTMLParagraphElement>",
     },
   }}
 />
@@ -261,9 +263,9 @@ The `TestResults` component displays test suite results including summary statis
 
 <TypeTable
   type={{
-    '...props': {
-      description: 'Any other props are spread to the pre element.',
-      type: 'React.HTMLAttributes<HTMLPreElement>',
+    "...props": {
+      description: "Any other props are spread to the pre element.",
+      type: "React.HTMLAttributes<HTMLPreElement>",
     },
   }}
 />

@@ -1,5 +1,8 @@
 "use client";
 
+import type { PromptInputMessage } from "@repo/elements/prompt-input";
+import type { QueueTodo } from "@repo/elements/queue";
+
 import {
   ModelSelector,
   ModelSelectorContent,
@@ -24,7 +27,6 @@ import {
   PromptInputButton,
   PromptInputFooter,
   PromptInputHeader,
-  type PromptInputMessage,
   PromptInputSubmit,
   PromptInputTextarea,
   PromptInputTools
@@ -39,45 +41,44 @@ import {
   QueueItemIndicator,
   QueueSection,
   QueueSectionContent,
-  type QueueTodo,
 } from "@repo/elements/queue";
 import { CheckIcon, GlobeIcon, Trash2 } from "lucide-react";
-import { useRef, useState } from "react";
+import { memo, useCallback, useRef, useState } from "react";
 
 const models = [
   {
+    chef: "OpenAI",
+    chefSlug: "openai",
     id: "gpt-4o",
     name: "GPT-4o",
-    chef: "OpenAI",
-    chefSlug: "openai",
     providers: ["openai", "azure"],
   },
   {
+    chef: "OpenAI",
+    chefSlug: "openai",
     id: "gpt-4o-mini",
     name: "GPT-4o Mini",
-    chef: "OpenAI",
-    chefSlug: "openai",
     providers: ["openai", "azure"],
   },
   {
+    chef: "Anthropic",
+    chefSlug: "anthropic",
     id: "claude-opus-4-20250514",
     name: "Claude 4 Opus",
-    chef: "Anthropic",
-    chefSlug: "anthropic",
     providers: ["anthropic", "azure", "google", "amazon-bedrock"],
   },
   {
+    chef: "Anthropic",
+    chefSlug: "anthropic",
     id: "claude-sonnet-4-20250514",
     name: "Claude 4 Sonnet",
-    chef: "Anthropic",
-    chefSlug: "anthropic",
     providers: ["anthropic", "azure", "google", "amazon-bedrock"],
   },
   {
-    id: "gemini-2.0-flash-exp",
-    name: "Gemini 2.0 Flash",
     chef: "Google",
     chefSlug: "google",
+    id: "gemini-2.0-flash-exp",
+    name: "Gemini 2.0 Flash",
     providers: ["google"],
   },
 ];
@@ -85,44 +86,108 @@ const models = [
 const SUBMITTING_TIMEOUT = 200;
 const STREAMING_TIMEOUT = 2000;
 
+interface TodoItemProps {
+  todo: QueueTodo;
+  onRemove: (id: string) => void;
+}
+
+const TodoItem = memo(({ todo, onRemove }: TodoItemProps) => {
+  const isCompleted = todo.status === "completed";
+  const handleRemove = useCallback(
+    () => onRemove(todo.id),
+    [onRemove, todo.id]
+  );
+
+  return (
+    <QueueItem key={todo.id}>
+      <div className="flex items-center gap-2">
+        <QueueItemIndicator completed={isCompleted} />
+        <QueueItemContent completed={isCompleted}>
+          {todo.title}
+        </QueueItemContent>
+        <QueueItemActions>
+          <QueueItemAction aria-label="Remove todo" onClick={handleRemove}>
+            <Trash2 size={12} />
+          </QueueItemAction>
+        </QueueItemActions>
+      </div>
+      {todo.description && (
+        <QueueItemDescription completed={isCompleted}>
+          {todo.description}
+        </QueueItemDescription>
+      )}
+    </QueueItem>
+  );
+});
+
+TodoItem.displayName = "TodoItem";
+
+interface ModelItemProps {
+  m: (typeof models)[0];
+  selectedModel: string;
+  onSelect: (id: string) => void;
+}
+
+const ModelItem = memo(({ m, selectedModel, onSelect }: ModelItemProps) => {
+  const handleSelect = useCallback(() => onSelect(m.id), [onSelect, m.id]);
+  return (
+    <ModelSelectorItem key={m.id} onSelect={handleSelect} value={m.id}>
+      <ModelSelectorLogo provider={m.chefSlug} />
+      <ModelSelectorName>{m.name}</ModelSelectorName>
+      <ModelSelectorLogoGroup>
+        {m.providers.map((provider) => (
+          <ModelSelectorLogo key={provider} provider={provider} />
+        ))}
+      </ModelSelectorLogoGroup>
+      {selectedModel === m.id ? (
+        <CheckIcon className="ml-auto size-4" />
+      ) : (
+        <div className="ml-auto size-4" />
+      )}
+    </ModelSelectorItem>
+  );
+});
+
+ModelItem.displayName = "ModelItem";
+
 const sampleTodos: QueueTodo[] = [
   {
-    id: "todo-1",
-    title: "Write project documentation",
     description: "Complete the README and API docs",
+    id: "todo-1",
     status: "completed",
+    title: "Write project documentation",
   },
   {
     id: "todo-2",
+    status: "pending",
     title: "Implement authentication",
-    status: "pending",
   },
   {
-    id: "todo-3",
-    title: "Fix bug #42",
     description: "Resolve crash on settings page",
+    id: "todo-3",
     status: "pending",
+    title: "Fix bug #42",
   },
   {
-    id: "todo-4",
-    title: "Refactor queue logic",
     description: "Unify queue and todo state management",
+    id: "todo-4",
     status: "pending",
+    title: "Refactor queue logic",
   },
   {
-    id: "todo-5",
-    title: "Add unit tests",
     description: "Increase test coverage for hooks",
+    id: "todo-5",
     status: "pending",
+    title: "Add unit tests",
   },
 ];
 
 const Example = () => {
   const [todos, setTodos] = useState(sampleTodos);
 
-  const handleRemoveTodo = (id: string) => {
+  const handleRemoveTodo = useCallback((id: string) => {
     setTodos((prev) => prev.filter((todo) => todo.id !== id));
-  };
+  }, []);
 
   const [text, setText] = useState<string>("");
   const [model, setModel] = useState<string>(models[0].id);
@@ -131,6 +196,16 @@ const Example = () => {
     "submitted" | "streaming" | "ready" | "error"
   >("ready");
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const handleTextChange = useCallback(
+    (e: React.ChangeEvent<HTMLTextAreaElement>) => setText(e.target.value),
+    []
+  );
+
+  const handleModelSelect = useCallback((id: string) => {
+    setModel(id);
+    setModelSelectorOpen(false);
+  }, []);
 
   const selectedModelData = models.find((m) => m.id === model);
 
@@ -146,33 +221,36 @@ const Example = () => {
     setStatus("ready");
   };
 
-  const handleSubmit = (message: PromptInputMessage) => {
-    // If currently streaming or submitted, stop instead of submitting
-    if (status === "streaming" || status === "submitted") {
-      stop();
-      return;
-    }
+  const handleSubmit = useCallback(
+    (message: PromptInputMessage) => {
+      // If currently streaming or submitted, stop instead of submitting
+      if (status === "streaming" || status === "submitted") {
+        stop();
+        return;
+      }
 
-    const hasText = Boolean(message.text);
-    const hasAttachments = Boolean(message.files?.length);
+      const hasText = Boolean(message.text);
+      const hasAttachments = Boolean(message.files?.length);
 
-    if (!(hasText || hasAttachments)) {
-      return;
-    }
+      if (!(hasText || hasAttachments)) {
+        return;
+      }
 
-    setStatus("submitted");
+      setStatus("submitted");
 
-    console.log("Submitting message:", message);
+      console.log("Submitting message:", message);
 
-    setTimeout(() => {
-      setStatus("streaming");
-    }, SUBMITTING_TIMEOUT);
+      setTimeout(() => {
+        setStatus("streaming");
+      }, SUBMITTING_TIMEOUT);
 
-    timeoutRef.current = setTimeout(() => {
-      setStatus("ready");
-      timeoutRef.current = null;
-    }, STREAMING_TIMEOUT);
-  };
+      timeoutRef.current = setTimeout(() => {
+        setStatus("ready");
+        timeoutRef.current = null;
+      }, STREAMING_TIMEOUT);
+    },
+    [status]
+  );
 
   return (
     <div className="flex size-full flex-col justify-end">
@@ -181,33 +259,13 @@ const Example = () => {
           <QueueSection>
             <QueueSectionContent>
               <div>
-                {todos.map((todo) => {
-                  const isCompleted = todo.status === "completed";
-
-                  return (
-                    <QueueItem key={todo.id}>
-                      <div className="flex items-center gap-2">
-                        <QueueItemIndicator completed={isCompleted} />
-                        <QueueItemContent completed={isCompleted}>
-                          {todo.title}
-                        </QueueItemContent>
-                        <QueueItemActions>
-                          <QueueItemAction
-                            aria-label="Remove todo"
-                            onClick={() => handleRemoveTodo(todo.id)}
-                          >
-                            <Trash2 size={12} />
-                          </QueueItemAction>
-                        </QueueItemActions>
-                      </div>
-                      {todo.description && (
-                        <QueueItemDescription completed={isCompleted}>
-                          {todo.description}
-                        </QueueItemDescription>
-                      )}
-                    </QueueItem>
-                  );
-                })}
+                {todos.map((todo) => (
+                  <TodoItem
+                    key={todo.id}
+                    onRemove={handleRemoveTodo}
+                    todo={todo}
+                  />
+                ))}
               </div>
             </QueueSectionContent>
           </QueueSection>
@@ -218,10 +276,7 @@ const Example = () => {
           <PromptInputAttachmentsDisplay />
         </PromptInputHeader>
         <PromptInputBody>
-          <PromptInputTextarea
-            onChange={(e) => setText(e.target.value)}
-            value={text}
-          />
+          <PromptInputTextarea onChange={handleTextChange} value={text} />
         </PromptInputBody>
         <PromptInputFooter>
           <PromptInputTools>
@@ -260,30 +315,12 @@ const Example = () => {
                       {models
                         .filter((m) => m.chef === chef)
                         .map((m) => (
-                          <ModelSelectorItem
+                          <ModelItem
                             key={m.id}
-                            onSelect={() => {
-                              setModel(m.id);
-                              setModelSelectorOpen(false);
-                            }}
-                            value={m.id}
-                          >
-                            <ModelSelectorLogo provider={m.chefSlug} />
-                            <ModelSelectorName>{m.name}</ModelSelectorName>
-                            <ModelSelectorLogoGroup>
-                              {m.providers.map((provider) => (
-                                <ModelSelectorLogo
-                                  key={provider}
-                                  provider={provider}
-                                />
-                              ))}
-                            </ModelSelectorLogoGroup>
-                            {model === m.id ? (
-                              <CheckIcon className="ml-auto size-4" />
-                            ) : (
-                              <div className="ml-auto size-4" />
-                            )}
-                          </ModelSelectorItem>
+                            m={m}
+                            onSelect={handleModelSelect}
+                            selectedModel={model}
+                          />
                         ))}
                     </ModelSelectorGroup>
                   ))}

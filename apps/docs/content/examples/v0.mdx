@@ -91,7 +91,7 @@ export async function POST(request: NextRequest) {
     if (!message) {
       return NextResponse.json(
         { error: "Message is required" },
-        { status: 400 },
+        { status: 400 }
       );
     }
 
@@ -118,7 +118,7 @@ export async function POST(request: NextRequest) {
     console.error("V0 API Error:", error);
     return NextResponse.json(
       { error: "Failed to process request" },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }

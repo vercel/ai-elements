@@ -1,5 +1,8 @@
 "use client";
 
+import type { PromptInputMessage } from "@repo/elements/prompt-input";
+import type { ToolUIPart } from "ai";
+
 import {
   Conversation,
   ConversationContent,
@@ -33,7 +36,6 @@ import {
   PromptInput,
   PromptInputButton,
   PromptInputFooter,
-  type PromptInputMessage,
   PromptInputSubmit,
   PromptInputTextarea,
   PromptInputTools,
@@ -56,7 +58,6 @@ import {
   DropdownMenuTrigger,
 } from "@repo/shadcn-ui/components/ui/dropdown-menu";
 import { cn } from "@repo/shadcn-ui/lib/utils";
-import type { ToolUIPart } from "ai";
 import {
   ArrowUpIcon,
   CameraIcon,
@@ -68,7 +69,7 @@ import {
   Settings2Icon,
 } from "lucide-react";
 import { nanoid } from "nanoid";
-import { useCallback, useEffect, useState } from "react";
+import { memo, useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 
 interface MessageType {
@@ -98,18 +99,18 @@ interface MessageType {
 
 const mockMessages: MessageType[] = [
   {
-    key: nanoid(),
     from: "user",
+    key: nanoid(),
     versions: [
       {
-        id: nanoid(),
         content: "Can you explain how to use React hooks effectively?",
+        id: nanoid(),
       },
     ],
   },
   {
-    key: nanoid(),
     from: "assistant",
+    key: nanoid(),
     sources: [
       {
         href: "https://react.dev/reference/react",
@@ -122,9 +123,9 @@ const mockMessages: MessageType[] = [
     ],
     tools: [
       {
-        name: "mcp",
         description: "Searching React documentation",
-        status: "input-available",
+        error: undefined,
+        name: "mcp",
         parameters: {
           query: "React hooks best practices",
           source: "react.dev",
@@ -149,12 +150,11 @@ const mockMessages: MessageType[] = [
     }
   ]
 }`,
-        error: undefined,
+        status: "input-available",
       },
     ],
     versions: [
       {
-        id: nanoid(),
         content: `# React Hooks Best Practices
 
 React hooks are a powerful feature that let you use state and other React features without writing classes. Here are some tips for using them effectively:
@@ -191,33 +191,34 @@ function ProfilePage({ userId }) {
 \`\`\`
 
 Would you like me to explain any specific hook in more detail?`,
+        id: nanoid(),
       },
     ],
   },
   {
-    key: nanoid(),
     from: "user",
+    key: nanoid(),
     versions: [
       {
-        id: nanoid(),
         content:
           "Yes, could you explain useCallback and useMemo in more detail? When should I use one over the other?",
+        id: nanoid(),
       },
       {
-        id: nanoid(),
         content:
           "I'm particularly interested in understanding the performance implications of useCallback and useMemo. Could you break down when each is most appropriate?",
+        id: nanoid(),
       },
       {
-        id: nanoid(),
         content:
           "Thanks for the overview! Could you dive deeper into the specific use cases where useCallback and useMemo make the biggest difference in React applications?",
+        id: nanoid(),
       },
     ],
   },
   {
-    key: nanoid(),
     from: "assistant",
+    key: nanoid(),
     reasoning: {
       content: `The user is asking for a detailed explanation of useCallback and useMemo. I should provide a clear and concise explanation of each hook's purpose and how they differ.
       
@@ -230,7 +231,6 @@ Both hooks help with performance optimization, but they serve different purposes
     },
     versions: [
       {
-        id: nanoid(),
         content: `## useCallback vs useMemo
 
 Both hooks help with _performance optimization_, but they serve different purposes:
@@ -282,6 +282,7 @@ Don't overuse these hooks! They come with their own overhead. Only use them when
 Avoid these ~~anti-patterns~~ when using hooks:
 - ~~Calling hooks conditionally~~ - Always call hooks at the top level
 - Using \`useEffect\` without proper dependency arrays`,
+        id: nanoid(),
       },
     ],
   },
@@ -289,24 +290,24 @@ Avoid these ~~anti-patterns~~ when using hooks:
 
 const models = [
   {
+    chef: "Anthropic",
+    chefSlug: "anthropic",
     id: "claude-opus-4-20250514",
     name: "Claude 4 Opus",
-    chef: "Anthropic",
-    chefSlug: "anthropic",
     providers: ["anthropic", "azure", "google", "amazon-bedrock"],
   },
   {
+    chef: "Anthropic",
+    chefSlug: "anthropic",
     id: "claude-sonnet-4-20250514",
     name: "Claude 4 Sonnet",
-    chef: "Anthropic",
-    chefSlug: "anthropic",
     providers: ["anthropic", "azure", "google", "amazon-bedrock"],
   },
   {
-    id: "claude-3-haiku",
-    name: "Claude 3 Haiku",
     chef: "Anthropic",
     chefSlug: "anthropic",
+    id: "claude-3-haiku",
+    name: "Claude 3 Haiku",
     providers: ["anthropic", "azure", "google", "amazon-bedrock"],
   },
 ];
@@ -318,6 +319,34 @@ const mockMessageResponses = [
   "Great choice of topic! This is something that many developers encounter. The approach I'd suggest is to start with the fundamentals and then build up to more complex scenarios.",
   "That's definitely worth exploring. From what I can see, the best way to handle this is to consider both the theoretical aspects and practical implementation details.",
 ];
+
+interface ModelItemProps {
+  m: (typeof models)[0];
+  selectedModel: string;
+  onSelect: (id: string) => void;
+}
+
+const ModelItem = memo(({ m, selectedModel, onSelect }: ModelItemProps) => {
+  const handleSelect = useCallback(() => onSelect(m.id), [onSelect, m.id]);
+  return (
+    <ModelSelectorItem key={m.id} onSelect={handleSelect} value={m.id}>
+      <ModelSelectorLogo provider={m.chefSlug} />
+      <ModelSelectorName>{m.name}</ModelSelectorName>
+      <ModelSelectorLogoGroup>
+        {m.providers.map((provider) => (
+          <ModelSelectorLogo key={provider} provider={provider} />
+        ))}
+      </ModelSelectorLogoGroup>
+      {selectedModel === m.id ? (
+        <CheckIcon className="ml-auto size-4" />
+      ) : (
+        <div className="ml-auto size-4" />
+      )}
+    </ModelSelectorItem>
+  );
+});
+
+ModelItem.displayName = "ModelItem";
 
 const Example = () => {
   const [model, setModel] = useState<string>(models[0].id);
@@ -343,9 +372,11 @@ const Example = () => {
     const words = reasoningContent.split(" ");
     let currentContent = "";
 
-    for (let i = 0; i < words.length; i++) {
+    for (let i = 0; i < words.length; i += 1) {
       currentContent += (i > 0 ? " " : "") + words[i];
 
+      // Intentionally capture currentContent at each iteration for streaming effect
+      // oxlint-disable-next-line eslint(no-loop-func)
       setMessages((prev) =>
         prev.map((msg) => {
           if (msg.key === messageKey) {
@@ -360,9 +391,10 @@ const Example = () => {
         })
       );
 
-      await new Promise((resolve) =>
-        setTimeout(resolve, Math.random() * 30 + 20)
-      );
+      // oxlint-disable-next-line eslint-plugin-promise(avoid-new)
+      await new Promise((resolve) => {
+        setTimeout(resolve, Math.random() * 30 + 20);
+      });
     }
 
     // Mark reasoning as complete
@@ -388,9 +420,11 @@ const Example = () => {
     const words = content.split(" ");
     let currentContent = "";
 
-    for (let i = 0; i < words.length; i++) {
+    for (let i = 0; i < words.length; i += 1) {
       currentContent += (i > 0 ? " " : "") + words[i];
 
+      // Intentionally capture currentContent at each iteration for streaming effect
+      // oxlint-disable-next-line eslint(no-loop-func)
       setMessages((prev) =>
         prev.map((msg) => {
           if (msg.key === messageKey) {
@@ -405,9 +439,10 @@ const Example = () => {
         })
       );
 
-      await new Promise((resolve) =>
-        setTimeout(resolve, Math.random() * 50 + 25)
-      );
+      // oxlint-disable-next-line eslint-plugin-promise(avoid-new)
+      await new Promise((resolve) => {
+        setTimeout(resolve, Math.random() * 50 + 25);
+      });
     }
 
     // Mark content as complete
@@ -435,7 +470,11 @@ const Example = () => {
       // First stream the reasoning if it exists
       if (reasoning) {
         await streamReasoning(messageKey, versionId, reasoning.content);
-        await new Promise((resolve) => setTimeout(resolve, 500)); // Pause between reasoning and content
+        // Pause between reasoning and content
+        // oxlint-disable-next-line eslint-plugin-promise(avoid-new)
+        await new Promise((resolve) => {
+          setTimeout(resolve, 500);
+        });
       }
 
       // Then stream the content
@@ -457,19 +496,19 @@ const Example = () => {
       // Add empty assistant message with reasoning structure
       const newMessage = {
         ...message,
-        versions: message.versions.map((v) => ({ ...v, content: "" })),
+        isContentComplete: false,
+        isReasoningComplete: false,
+        isReasoningStreaming: !!message.reasoning,
         reasoning: message.reasoning
           ? { ...message.reasoning, content: "" }
           : undefined,
-        isReasoningComplete: false,
-        isContentComplete: false,
-        isReasoningStreaming: !!message.reasoning,
+        versions: message.versions.map((v) => ({ ...v, content: "" })),
       };
 
       setMessages((prev) => [...prev, newMessage]);
 
       // Get the first version for streaming
-      const firstVersion = message.versions[0];
+      const [firstVersion] = message.versions;
       if (!firstVersion) {
         return;
       }
@@ -488,12 +527,12 @@ const Example = () => {
   const addUserMessage = useCallback(
     (content: string) => {
       const userMessage: MessageType = {
-        key: `user-${Date.now()}`,
         from: "user",
+        key: `user-${Date.now()}`,
         versions: [
           {
-            id: `user-${Date.now()}`,
             content,
+            id: `user-${Date.now()}`,
           },
         ],
       };
@@ -519,18 +558,18 @@ const Example = () => {
           : undefined;
 
         const assistantMessage: MessageType = {
-          key: assistantMessageKey,
           from: "assistant",
+          isContentComplete: false,
+          isReasoningComplete: false,
+          isReasoningStreaming: !!reasoning,
+          key: assistantMessageKey,
+          reasoning: reasoning ? { ...reasoning, content: "" } : undefined,
           versions: [
             {
-              id: assistantMessageId,
               content: "",
+              id: assistantMessageId,
             },
           ],
-          reasoning: reasoning ? { ...reasoning, content: "" } : undefined,
-          isReasoningComplete: false,
-          isContentComplete: false,
-          isReasoningStreaming: !!reasoning,
         };
 
         setMessages((prev) => [...prev, assistantMessage]);
@@ -550,11 +589,14 @@ const Example = () => {
     setMessages([]);
 
     const processMessages = async () => {
-      for (let i = 0; i < mockMessages.length; i++) {
+      for (let i = 0; i < mockMessages.length; i += 1) {
         await streamMessage(mockMessages[i]);
 
         if (i < mockMessages.length - 1) {
-          await new Promise((resolve) => setTimeout(resolve, 1000));
+          // oxlint-disable-next-line eslint-plugin-promise(avoid-new)
+          await new Promise((resolve) => {
+            setTimeout(resolve, 1000);
+          });
         }
       }
     };
@@ -571,18 +613,21 @@ const Example = () => {
     };
   }, [streamMessage]);
 
-  const handleSubmit = (message: PromptInputMessage) => {
-    const hasText = Boolean(message.text);
-    const hasAttachments = Boolean(message.files?.length);
+  const handleSubmit = useCallback(
+    (message: PromptInputMessage) => {
+      const hasText = Boolean(message.text);
+      const hasAttachments = Boolean(message.files?.length);
 
-    if (!(hasText || hasAttachments)) {
-      return;
-    }
+      if (!(hasText || hasAttachments)) {
+        return;
+      }
 
-    setStatus("submitted");
-    addUserMessage(message.text || "Sent with attachments");
-    setText("");
-  };
+      setStatus("submitted");
+      addUserMessage(message.text || "Sent with attachments");
+      setText("");
+    },
+    [addUserMessage]
+  );
 
   const handleFileAction = (action: string) => {
     toast.success("File action", {
@@ -594,6 +639,31 @@ const Example = () => {
     setStatus("submitted");
     addUserMessage(suggestion);
   };
+
+  const handleTextChange = useCallback(
+    (event: React.ChangeEvent<HTMLTextAreaElement>) =>
+      setText(event.target.value),
+    []
+  );
+
+  const handleUploadFile = useCallback(
+    () => handleFileAction("upload-file"),
+    []
+  );
+  const handleUploadPhoto = useCallback(
+    () => handleFileAction("upload-photo"),
+    []
+  );
+  const handleTakeScreenshot = useCallback(
+    () => handleFileAction("take-screenshot"),
+    []
+  );
+  const handleTakePhoto = useCallback(() => handleFileAction("take-photo"), []);
+
+  const handleModelSelect = useCallback((id: string) => {
+    setModel(id);
+    setModelSelectorOpen(false);
+  }, []);
 
   return (
     <div className="relative flex size-full flex-col divide-y overflow-hidden bg-[#faf9f5] dark:bg-background">
@@ -651,7 +721,7 @@ const Example = () => {
                 ))}
               </MessageBranchContent>
               {versions.length > 1 && (
-                <MessageBranchSelector from={message.from}>
+                <MessageBranchSelector>
                   <MessageBranchPrevious />
                   <MessageBranchPage />
                   <MessageBranchNext />
@@ -669,7 +739,7 @@ const Example = () => {
         >
           <PromptInputTextarea
             className="md:text-base"
-            onChange={(event) => setText(event.target.value)}
+            onChange={handleTextChange}
             placeholder="Reply to Claude..."
             value={text}
           />
@@ -683,27 +753,19 @@ const Example = () => {
                   </PromptInputButton>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="start">
-                  <DropdownMenuItem
-                    onClick={() => handleFileAction("upload-file")}
-                  >
+                  <DropdownMenuItem onClick={handleUploadFile}>
                     <FileIcon className="mr-2" size={16} />
                     Upload file
                   </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={() => handleFileAction("upload-photo")}
-                  >
+                  <DropdownMenuItem onClick={handleUploadPhoto}>
                     <ImageIcon className="mr-2" size={16} />
                     Upload photo
                   </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={() => handleFileAction("take-screenshot")}
-                  >
+                  <DropdownMenuItem onClick={handleTakeScreenshot}>
                     <ScreenShareIcon className="mr-2" size={16} />
                     Take screenshot
                   </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={() => handleFileAction("take-photo")}
-                  >
+                  <DropdownMenuItem onClick={handleTakePhoto}>
                     <CameraIcon className="mr-2" size={16} />
                     Take photo
                   </DropdownMenuItem>
@@ -739,30 +801,12 @@ const Example = () => {
                     <ModelSelectorEmpty>No models found.</ModelSelectorEmpty>
                     <ModelSelectorGroup heading="Anthropic">
                       {models.map((m) => (
-                        <ModelSelectorItem
+                        <ModelItem
                           key={m.id}
-                          onSelect={() => {
-                            setModel(m.id);
-                            setModelSelectorOpen(false);
-                          }}
-                          value={m.id}
-                        >
-                          <ModelSelectorLogo provider={m.chefSlug} />
-                          <ModelSelectorName>{m.name}</ModelSelectorName>
-                          <ModelSelectorLogoGroup>
-                            {m.providers.map((provider) => (
-                              <ModelSelectorLogo
-                                key={provider}
-                                provider={provider}
-                              />
-                            ))}
-                          </ModelSelectorLogoGroup>
-                          {model === m.id ? (
-                            <CheckIcon className="ml-auto size-4" />
-                          ) : (
-                            <div className="ml-auto size-4" />
-                          )}
-                        </ModelSelectorItem>
+                          m={m}
+                          onSelect={handleModelSelect}
+                          selectedModel={model}
+                        />
                       ))}
                     </ModelSelectorGroup>
                   </ModelSelectorList>

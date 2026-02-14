@@ -11,11 +11,12 @@ The `Message` component suite provides a complete set of tools for building chat
 <Callout type="warning">
   **Important:** After adding the component, you'll need to add the following to your `globals.css` file:
 
-  ```css
-  @source "../node_modules/streamdown/dist/*.js";
-  ```
+```css
+@source "../node_modules/streamdown/dist/*.js";
+```
 
-  This is **required** for the MessageResponse component to work properly. Without this import, the Streamdown styles will not be applied to your project. See [Streamdown's documentation](https://streamdown.ai/) for more details.
+This is **required** for the MessageResponse component to work properly. Without this import, the Streamdown styles will not be applied to your project. See [Streamdown's documentation](https://streamdown.ai/) for more details.
+
 </Callout>
 
 ## Installation
@@ -36,9 +37,10 @@ The `Message` component suite provides a complete set of tools for building chat
 - Seamless light/dark theme integration
 
 <Callout>
-  Branching is an advanced use case you can implement to suit your needs. While the AI SDK does not provide built-in branching support, you have full flexibility to design and manage multiple response paths.
+  Branching is an advanced use case you can implement to suit your needs. While
+  the AI SDK does not provide built-in branching support, you have full
+  flexibility to design and manage multiple response paths.
 </Callout>
-
 
 ## Usage with AI SDK
 
@@ -47,35 +49,38 @@ Build a simple chat UI where the user can copy or regenerate the most recent mes
 Add the following component to your frontend:
 
 ```tsx title="app/page.tsx"
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { MessageActions, MessageAction } from '@/components/ai-elements/message';
-import { Message, MessageContent } from '@/components/ai-elements/message';
+import { useState } from "react";
+import {
+  MessageActions,
+  MessageAction,
+} from "@/components/ai-elements/message";
+import { Message, MessageContent } from "@/components/ai-elements/message";
 import {
   Conversation,
   ConversationContent,
   ConversationScrollButton,
-} from '@/components/ai-elements/conversation';
+} from "@/components/ai-elements/conversation";
 import {
   Input,
   PromptInputTextarea,
   PromptInputSubmit,
-} from '@/components/ai-elements/prompt-input';
-import { MessageResponse } from '@/components/ai-elements/message';
-import { RefreshCcwIcon, CopyIcon } from 'lucide-react';
-import { useChat } from '@ai-sdk/react';
-import { Fragment } from 'react';
+} from "@/components/ai-elements/prompt-input";
+import { MessageResponse } from "@/components/ai-elements/message";
+import { RefreshCcwIcon, CopyIcon } from "lucide-react";
+import { useChat } from "@ai-sdk/react";
+import { Fragment } from "react";
 
 const ActionsDemo = () => {
-  const [input, setInput] = useState('');
+  const [input, setInput] = useState("");
   const { messages, sendMessage, status, regenerate } = useChat();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (input.trim()) {
       sendMessage({ text: input });
-      setInput('');
+      setInput("");
     }
   };
 
@@ -88,7 +93,7 @@ const ActionsDemo = () => {
               <Fragment key={message.id}>
                 {message.parts.map((part, i) => {
                   switch (part.type) {
-                    case 'text':
+                    case "text":
                       const isLastMessage =
                         messageIndex === messages.length - 1;
 
@@ -99,7 +104,7 @@ const ActionsDemo = () => {
                               <MessageResponse>{part.text}</MessageResponse>
                             </MessageContent>
                           </Message>
-                          {message.role === 'assistant' && isLastMessage && (
+                          {message.role === "assistant" && isLastMessage && (
                             <MessageActions>
                               <MessageAction
                                 onClick={() => regenerate()}
@@ -140,7 +145,7 @@ const ActionsDemo = () => {
             className="pr-12"
           />
           <PromptInputSubmit
-            status={status === 'streaming' ? 'streaming' : 'ready'}
+            status={status === "streaming" ? "streaming" : "ready"}
             disabled={!input.trim()}
             className="absolute bottom-1 right-1"
           />
@@ -164,9 +169,9 @@ export default ActionsDemo;
         'The role of the message sender ("user", "assistant", or "system").',
       type: 'UIMessage["role"]',
     },
-    '...props': {
-      description: 'Any other props are spread to the root div.',
-      type: 'React.HTMLAttributes<HTMLDivElement>',
+    "...props": {
+      description: "Any other props are spread to the root div.",
+      type: "React.HTMLAttributes<HTMLDivElement>",
     },
   }}
 />
@@ -175,9 +180,9 @@ export default ActionsDemo;
 
 <TypeTable
   type={{
-    '...props': {
-      description: 'Any other props are spread to the content div.',
-      type: 'React.HTMLAttributes<HTMLDivElement>',
+    "...props": {
+      description: "Any other props are spread to the content div.",
+      type: "React.HTMLAttributes<HTMLDivElement>",
     },
   }}
 />
@@ -187,49 +192,56 @@ export default ActionsDemo;
 <TypeTable
   type={{
     children: {
-      description: 'The markdown content to render.',
-      type: 'string',
+      description: "The markdown content to render.",
+      type: "string",
     },
     parseIncompleteMarkdown: {
-      description: 'Whether to parse and fix incomplete markdown syntax (e.g., unclosed code blocks or lists).',
-      type: 'boolean',
-      default: 'true',
+      description:
+        "Whether to parse and fix incomplete markdown syntax (e.g., unclosed code blocks or lists).",
+      type: "boolean",
+      default: "true",
     },
     className: {
-      description: 'CSS class names to apply to the wrapper div element.',
-      type: 'string',
+      description: "CSS class names to apply to the wrapper div element.",
+      type: "string",
     },
     components: {
-      description: 'Custom React components to use for rendering markdown elements (e.g., custom heading, paragraph, code block components).',
-      type: 'object',
+      description:
+        "Custom React components to use for rendering markdown elements (e.g., custom heading, paragraph, code block components).",
+      type: "object",
     },
     allowedImagePrefixes: {
-      description: 'Array of allowed URL prefixes for images. Use ["*"] to allow all images.',
-      type: 'string[]',
+      description:
+        'Array of allowed URL prefixes for images. Use ["*"] to allow all images.',
+      type: "string[]",
       default: '["*"]',
     },
     allowedLinkPrefixes: {
-      description: 'Array of allowed URL prefixes for links. Use ["*"] to allow all links.',
-      type: 'string[]',
+      description:
+        'Array of allowed URL prefixes for links. Use ["*"] to allow all links.',
+      type: "string[]",
       default: '["*"]',
     },
     defaultOrigin: {
-      description: 'Default origin to use for relative URLs in links and images.',
-      type: 'string',
+      description:
+        "Default origin to use for relative URLs in links and images.",
+      type: "string",
     },
     rehypePlugins: {
-      description: 'Array of rehype plugins to use for processing HTML. Includes KaTeX for math rendering by default.',
-      type: 'array',
-      default: '[rehypeKatex]',
+      description:
+        "Array of rehype plugins to use for processing HTML. Includes KaTeX for math rendering by default.",
+      type: "array",
+      default: "[rehypeKatex]",
     },
     remarkPlugins: {
-      description: 'Array of remark plugins to use for processing markdown. Includes GitHub Flavored Markdown and math support by default.',
-      type: 'array',
-      default: '[remarkGfm, remarkMath]',
+      description:
+        "Array of remark plugins to use for processing markdown. Includes GitHub Flavored Markdown and math support by default.",
+      type: "array",
+      default: "[remarkGfm, remarkMath]",
     },
-    '...props': {
-      description: 'Any other props are spread to the root div.',
-      type: 'React.HTMLAttributes<HTMLDivElement>',
+    "...props": {
+      description: "Any other props are spread to the root div.",
+      type: "React.HTMLAttributes<HTMLDivElement>",
     },
   }}
 />
@@ -238,9 +250,9 @@ export default ActionsDemo;
 
 <TypeTable
   type={{
-    '...props': {
-      description: 'HTML attributes to spread to the root div.',
-      type: 'React.HTMLAttributes<HTMLDivElement>',
+    "...props": {
+      description: "HTML attributes to spread to the root div.",
+      type: "React.HTMLAttributes<HTMLDivElement>",
     },
   }}
 />
@@ -250,18 +262,18 @@ export default ActionsDemo;
 <TypeTable
   type={{
     tooltip: {
-      description: 'Optional tooltip text shown on hover.',
-      type: 'string',
+      description: "Optional tooltip text shown on hover.",
+      type: "string",
     },
     label: {
       description:
-        'Accessible label for screen readers. Also used as fallback if tooltip is not provided.',
-      type: 'string',
+        "Accessible label for screen readers. Also used as fallback if tooltip is not provided.",
+      type: "string",
     },
-    '...props': {
+    "...props": {
       description:
-        'Any other props are spread to the underlying shadcn/ui Button component.',
-      type: 'React.ComponentProps<typeof Button>',
+        "Any other props are spread to the underlying shadcn/ui Button component.",
+      type: "React.ComponentProps<typeof Button>",
     },
   }}
 />
@@ -271,17 +283,17 @@ export default ActionsDemo;
 <TypeTable
   type={{
     defaultBranch: {
-      description: 'The index of the branch to show by default.',
-      type: 'number',
-      default: '0',
+      description: "The index of the branch to show by default.",
+      type: "number",
+      default: "0",
     },
     onBranchChange: {
-      description: 'Callback fired when the branch changes.',
-      type: '(branchIndex: number) => void',
+      description: "Callback fired when the branch changes.",
+      type: "(branchIndex: number) => void",
     },
-    '...props': {
-      description: 'Any other props are spread to the root div.',
-      type: 'React.HTMLAttributes<HTMLDivElement>',
+    "...props": {
+      description: "Any other props are spread to the root div.",
+      type: "React.HTMLAttributes<HTMLDivElement>",
     },
   }}
 />
@@ -290,9 +302,9 @@ export default ActionsDemo;
 
 <TypeTable
   type={{
-    '...props': {
-      description: 'Any other props are spread to the root div.',
-      type: 'React.HTMLAttributes<HTMLDivElement>',
+    "...props": {
+      description: "Any other props are spread to the root div.",
+      type: "React.HTMLAttributes<HTMLDivElement>",
     },
   }}
 />
@@ -302,12 +314,13 @@ export default ActionsDemo;
 <TypeTable
   type={{
     from: {
-      description: 'Aligns the selector for user, assistant or system messages.',
+      description:
+        "Aligns the selector for user, assistant or system messages.",
       type: 'UIMessage["role"]',
     },
-    '...props': {
-      description: 'Any other props are spread to the selector container.',
-      type: 'React.HTMLAttributes<HTMLDivElement>',
+    "...props": {
+      description: "Any other props are spread to the selector container.",
+      type: "React.HTMLAttributes<HTMLDivElement>",
     },
   }}
 />
@@ -316,9 +329,10 @@ export default ActionsDemo;
 
 <TypeTable
   type={{
-    '...props': {
-      description: 'Any other props are spread to the underlying shadcn/ui Button component.',
-      type: 'React.ComponentProps<typeof Button>',
+    "...props": {
+      description:
+        "Any other props are spread to the underlying shadcn/ui Button component.",
+      type: "React.ComponentProps<typeof Button>",
     },
   }}
 />
@@ -327,9 +341,10 @@ export default ActionsDemo;
 
 <TypeTable
   type={{
-    '...props': {
-      description: 'Any other props are spread to the underlying shadcn/ui Button component.',
-      type: 'React.ComponentProps<typeof Button>',
+    "...props": {
+      description:
+        "Any other props are spread to the underlying shadcn/ui Button component.",
+      type: "React.ComponentProps<typeof Button>",
     },
   }}
 />
@@ -338,9 +353,9 @@ export default ActionsDemo;
 
 <TypeTable
   type={{
-    '...props': {
-      description: 'Any other props are spread to the underlying span element.',
-      type: 'React.HTMLAttributes<HTMLSpanElement>',
+    "...props": {
+      description: "Any other props are spread to the underlying span element.",
+      type: "React.HTMLAttributes<HTMLSpanElement>",
     },
   }}
 />
@@ -352,11 +367,12 @@ A container component for displaying file attachments in a message. Automaticall
 <TypeTable
   type={{
     children: {
-      description: 'MessageAttachment components to render. Returns null if no children provided.',
-      type: 'ReactNode',
+      description:
+        "MessageAttachment components to render. Returns null if no children provided.",
+      type: "ReactNode",
     },
-    '...props': {
-      description: 'Any other props are spread to the root div.',
+    "...props": {
+      description: "Any other props are spread to the root div.",
       type: 'React.ComponentProps<"div">',
     },
   }}
@@ -379,16 +395,17 @@ Displays a single file attachment. Images are shown as thumbnails (96px × 96px)
 <TypeTable
   type={{
     data: {
-      description: 'The file data to display. Must include url and mediaType.',
-      type: 'FileUIPart',
+      description: "The file data to display. Must include url and mediaType.",
+      type: "FileUIPart",
     },
     onRemove: {
-      description: 'Optional callback fired when the remove button is clicked. If provided, a remove button will appear on hover.',
-      type: '() => void',
+      description:
+        "Optional callback fired when the remove button is clicked. If provided, a remove button will appear on hover.",
+      type: "() => void",
     },
-    '...props': {
-      description: 'Any other props are spread to the root div.',
-      type: 'React.HTMLAttributes<HTMLDivElement>',
+    "...props": {
+      description: "Any other props are spread to the root div.",
+      type: "React.HTMLAttributes<HTMLDivElement>",
     },
   }}
 />
@@ -401,7 +418,7 @@ Displays a single file attachment. Images are shown as thumbnails (96px × 96px)
     type: "file",
     url: "https://example.com/image.jpg",
     mediaType: "image/jpeg",
-    filename: "image.jpg"
+    filename: "image.jpg",
   }}
   onRemove={() => console.log("Remove clicked")}
 />

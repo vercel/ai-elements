@@ -47,11 +47,13 @@ Root MediaController component. Accepts all MediaController props except `audio`
 <TypeTable
   type={{
     style: {
-      description: 'Custom CSS properties can be passed to override media-chrome theming variables.',
-      type: 'CSSProperties',
+      description:
+        "Custom CSS properties can be passed to override media-chrome theming variables.",
+      type: "CSSProperties",
     },
-    '...props': {
-      description: 'Any other props are spread to the MediaController component.',
+    "...props": {
+      description:
+        "Any other props are spread to the MediaController component.",
       type: 'Omit<React.ComponentProps<typeof MediaController>, "audio">',
     },
   }}
@@ -64,17 +66,19 @@ The audio element that contains the media source. Accepts either a remote URL or
 <TypeTable
   type={{
     src: {
-      description: 'The URL of the audio file to play (for remote audio).',
-      type: 'string',
+      description: "The URL of the audio file to play (for remote audio).",
+      type: "string",
       optional: true,
     },
     data: {
-      description: 'AI SDK Speech Result audio data with base64 encoding (for AI-generated audio).',
+      description:
+        "AI SDK Speech Result audio data with base64 encoding (for AI-generated audio).",
       type: 'SpeechResult["audio"]',
       optional: true,
     },
-    '...props': {
-      description: 'Any other props are spread to the audio element (excluding src when using data).',
+    "...props": {
+      description:
+        "Any other props are spread to the audio element (excluding src when using data).",
       type: 'Omit<React.ComponentProps<"audio">, "src">',
     },
   }}
@@ -86,9 +90,10 @@ Container for control buttons, wraps children in a ButtonGroup.
 
 <TypeTable
   type={{
-    '...props': {
-      description: 'Any other props are spread to the MediaControlBar component.',
-      type: 'React.ComponentProps<typeof MediaControlBar>',
+    "...props": {
+      description:
+        "Any other props are spread to the MediaControlBar component.",
+      type: "React.ComponentProps<typeof MediaControlBar>",
     },
   }}
 />
@@ -99,9 +104,10 @@ Play/pause button wrapped in a shadcn Button component.
 
 <TypeTable
   type={{
-    '...props': {
-      description: 'Any other props are spread to the MediaPlayButton component.',
-      type: 'React.ComponentProps<typeof MediaPlayButton>',
+    "...props": {
+      description:
+        "Any other props are spread to the MediaPlayButton component.",
+      type: "React.ComponentProps<typeof MediaPlayButton>",
     },
   }}
 />
@@ -113,13 +119,14 @@ Seek backward button wrapped in a shadcn Button component.
 <TypeTable
   type={{
     seekOffset: {
-      description: 'The number of seconds to seek backward.',
-      type: 'number',
-      default: '10',
+      description: "The number of seconds to seek backward.",
+      type: "number",
+      default: "10",
     },
-    '...props': {
-      description: 'Any other props are spread to the MediaSeekBackwardButton component.',
-      type: 'React.ComponentProps<typeof MediaSeekBackwardButton>',
+    "...props": {
+      description:
+        "Any other props are spread to the MediaSeekBackwardButton component.",
+      type: "React.ComponentProps<typeof MediaSeekBackwardButton>",
     },
   }}
 />
@@ -131,13 +138,14 @@ Seek forward button wrapped in a shadcn Button component.
 <TypeTable
   type={{
     seekOffset: {
-      description: 'The number of seconds to seek forward.',
-      type: 'number',
-      default: '10',
+      description: "The number of seconds to seek forward.",
+      type: "number",
+      default: "10",
     },
-    '...props': {
-      description: 'Any other props are spread to the MediaSeekForwardButton component.',
-      type: 'React.ComponentProps<typeof MediaSeekForwardButton>',
+    "...props": {
+      description:
+        "Any other props are spread to the MediaSeekForwardButton component.",
+      type: "React.ComponentProps<typeof MediaSeekForwardButton>",
     },
   }}
 />
@@ -148,9 +156,10 @@ Displays the current playback time, wrapped in ButtonGroupText.
 
 <TypeTable
   type={{
-    '...props': {
-      description: 'Any other props are spread to the MediaTimeDisplay component.',
-      type: 'React.ComponentProps<typeof MediaTimeDisplay>',
+    "...props": {
+      description:
+        "Any other props are spread to the MediaTimeDisplay component.",
+      type: "React.ComponentProps<typeof MediaTimeDisplay>",
     },
   }}
 />
@@ -161,9 +170,10 @@ Seek slider for controlling playback position, wrapped in ButtonGroupText.
 
 <TypeTable
   type={{
-    '...props': {
-      description: 'Any other props are spread to the MediaTimeRange component.',
-      type: 'React.ComponentProps<typeof MediaTimeRange>',
+    "...props": {
+      description:
+        "Any other props are spread to the MediaTimeRange component.",
+      type: "React.ComponentProps<typeof MediaTimeRange>",
     },
   }}
 />
@@ -174,9 +184,10 @@ Displays the total duration of the audio, wrapped in ButtonGroupText.
 
 <TypeTable
   type={{
-    '...props': {
-      description: 'Any other props are spread to the MediaDurationDisplay component.',
-      type: 'React.ComponentProps<typeof MediaDurationDisplay>',
+    "...props": {
+      description:
+        "Any other props are spread to the MediaDurationDisplay component.",
+      type: "React.ComponentProps<typeof MediaDurationDisplay>",
     },
   }}
 />
@@ -187,9 +198,10 @@ Mute/unmute button, wrapped in ButtonGroupText.
 
 <TypeTable
   type={{
-    '...props': {
-      description: 'Any other props are spread to the MediaMuteButton component.',
-      type: 'React.ComponentProps<typeof MediaMuteButton>',
+    "...props": {
+      description:
+        "Any other props are spread to the MediaMuteButton component.",
+      type: "React.ComponentProps<typeof MediaMuteButton>",
     },
   }}
 />
@@ -200,9 +212,10 @@ Volume slider control, wrapped in ButtonGroupText.
 
 <TypeTable
   type={{
-    '...props': {
-      description: 'Any other props are spread to the MediaVolumeRange component.',
-      type: 'React.ComponentProps<typeof MediaVolumeRange>',
+    "...props": {
+      description:
+        "Any other props are spread to the MediaVolumeRange component.",
+      type: "React.ComponentProps<typeof MediaVolumeRange>",
     },
   }}
 />

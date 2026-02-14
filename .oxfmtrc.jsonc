@@ -1,0 +1,34 @@
+// Ultracite oxfmt Configuration
+// https://oxc.rs/docs/guide/usage/formatter/config-file-reference.html
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "printWidth": 80,
+  "tabWidth": 2,
+  "useTabs": false,
+  "semi": true,
+  "singleQuote": false,
+  "quoteProps": "as-needed",
+  "jsxSingleQuote": false,
+  "trailingComma": "es5",
+  "bracketSpacing": true,
+  "bracketSameLine": false,
+  "arrowParens": "always",
+  "endOfLine": "lf",
+  "experimentalSortPackageJson": true,
+  "experimentalSortImports": {
+    "ignoreCase": true,
+    "newlinesBetween": true,
+    "order": "asc",
+  },
+  "ignorePatterns": [
+    "packages/shadcn-ui",
+    "apps/docs/components/geistdocs",
+    "apps/docs/lib/geistdocs",
+    "apps/docs/hooks/geistdocs",
+    "apps/docs/app",
+    "apps/docs/geistdocs.tsx",
+    "apps/docs/proxy.ts",
+    "apps/docs/source.config.ts",
+    "skills",
+  ],
+}
