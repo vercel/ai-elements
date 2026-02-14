@@ -44,6 +44,14 @@ The whole chat lives in a `Conversation`. We switch on `message.parts` and rende
 
 <SourceCode path="chatbot" />
 
+Install Sonner for the toast notification used in `app/page.tsx`:
+
+```package-install
+npm i sonner
+```
+
+Add `<Toaster />` from `sonner` to your `app/layout.tsx` so toast notifications are visible.
+
 ### Server
 
 Create a new route handler `app/api/chat/route.ts` and paste in the following code. We're using `perplexity/sonar` for web search because by default the model returns search results. We also pass `sendSources` and `sendReasoning` to `toUIMessageStreamResponse` in order to receive as parts on the frontend. The handler now also accepts file attachments from the client.
