@@ -163,7 +163,7 @@ export const Attachments = ({
     <AttachmentsContext.Provider value={contextValue}>
       <div
         className={cn(
-          "flex items-start",
+          "flex items-start w-full",
           variant === "list" ? "flex-col gap-2" : "flex-wrap gap-2",
           variant === "grid" && "ml-auto w-fit",
           className

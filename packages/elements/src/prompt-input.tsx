@@ -16,6 +16,13 @@ import type {
 } from "react";
 
 import {
+  Attachment,
+  AttachmentPreview,
+  AttachmentRemove,
+  Attachments,
+} from "@repo/elements/attachments";
+import { Button } from "@repo/shadcn-ui/components/ui/button";
+import {
   Command,
   CommandEmpty,
   CommandGroup,
@@ -24,6 +31,13 @@ import {
   CommandList,
   CommandSeparator,
 } from "@repo/shadcn-ui/components/ui/command";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@repo/shadcn-ui/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -56,7 +70,10 @@ import {
 } from "@repo/shadcn-ui/components/ui/tooltip";
 import { cn } from "@repo/shadcn-ui/lib/utils";
 import {
+  CopyIcon,
   CornerDownLeftIcon,
+  DownloadIcon,
+  FileTextIcon,
   ImageIcon,
   PlusIcon,
   SquareIcon,
@@ -114,6 +131,18 @@ export interface TextInputContext {
   value: string;
   setInput: (v: string) => void;
   clear: () => void;
+}
+
+/** Minimum pasted text length to show as attachment card instead of inline */
+const PASTE_CARD_THRESHOLD = 2000;
+const PASTED_TEXT_FILENAME = "pasted-text.txt";
+
+function isPastedTextAttachment(file: FileUIPart & { id: string }): boolean {
+  return (
+    file.type === "file" &&
+    file.mediaType === "text/plain" &&
+    file.filename === PASTED_TEXT_FILENAME
+  );
 }
 
 export interface PromptInputControllerProps {
@@ -911,6 +940,17 @@ export const PromptInputTextarea = ({
       if (files.length > 0) {
         event.preventDefault();
         attachments.add(files);
+        return;
+      }
+
+      // Handle long text paste as file attachment
+      const text = event.clipboardData.getData("text/plain");
+      if (text.length > PASTE_CARD_THRESHOLD) {
+        event.preventDefault();
+        const textFile = new File([text], PASTED_TEXT_FILENAME, {
+          type: "text/plain",
+        });
+        attachments.add([textFile]);
       }
     },
     [attachments]
@@ -946,6 +986,403 @@ export const PromptInputTextarea = ({
   );
 };
 
+// ============================================================================
+// Pasted content – composable (context, hook, trigger, remove, modal + slots)
+// ============================================================================
+
+export type PastedContentAttachment = FileUIPart & { id: string };
+
+export interface PastedContentContextValue {
+  attachment: PastedContentAttachment;
+  content: string | null;
+  loading: boolean;
+  modalOpen: boolean;
+  openModal: () => void;
+  setModalOpen: (open: boolean) => void;
+  copy: () => void;
+  download: () => void;
+  onRemove: () => void;
+}
+
+const PastedContentContext = createContext<PastedContentContextValue | null>(
+  null
+);
+
+export const usePastedContent = () => {
+  const ctx = useContext(PastedContentContext);
+  if (!ctx) {
+    throw new Error(
+      "PastedContent components must be used within <PastedContent>"
+    );
+  }
+  return ctx;
+};
+
+export interface PastedContentProps extends PropsWithChildren {
+  attachment: PastedContentAttachment;
+  onRemove: () => void;
+}
+
+export const PastedContent = ({
+  attachment,
+  onRemove,
+  children,
+}: PastedContentProps) => {
+  const [content, setContent] = useState<string | null>(null);
+  const [modalOpen, setModalOpen] = useState(false);
+
+  useEffect(() => {
+    if (!attachment.url) {
+      return;
+    }
+    let cancelled = false;
+    const load = async () => {
+      try {
+        const res = await fetch(attachment.url ?? "");
+        const text = await res.text();
+        if (!cancelled) {
+          setContent(text);
+        }
+      } catch {
+        if (!cancelled) {
+          setContent("");
+        }
+      }
+    };
+    load();
+    return () => {
+      cancelled = true;
+    };
+  }, [attachment.url]);
+
+  const copy = useCallback(() => {
+    if (content !== null) {
+      navigator.clipboard.writeText(content).catch(() => undefined);
+    }
+  }, [content]);
+
+  const download = useCallback(() => {
+    if (content === null) {
+      return;
+    }
+    const blob = new Blob([content], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = PASTED_TEXT_FILENAME;
+    a.click();
+    URL.revokeObjectURL(url);
+  }, [content]);
+
+  const openModal = useCallback(() => {
+    setModalOpen(true);
+  }, []);
+
+  const contextValue = useMemo<PastedContentContextValue>(
+    () => ({
+      attachment,
+      content,
+      loading: content === null && Boolean(attachment.url),
+      modalOpen,
+      openModal,
+      setModalOpen,
+      copy,
+      download,
+      onRemove,
+    }),
+    [attachment, content, modalOpen, openModal, copy, download, onRemove]
+  );
+
+  return (
+    <PastedContentContext.Provider value={contextValue}>
+      {children}
+    </PastedContentContext.Provider>
+  );
+};
+
+// ----------------------------------------------------------------------------
+// PastedContentTrigger – clickable card/chip that opens the modal
+// ----------------------------------------------------------------------------
+
+export type PastedContentTriggerProps = HTMLAttributes<HTMLButtonElement> & {
+  label?: string;
+};
+
+export const PastedContentTrigger = ({
+  label = PASTED_TEXT_FILENAME,
+  className,
+  children,
+  ...props
+}: PastedContentTriggerProps) => {
+  const { openModal } = usePastedContent();
+
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        openModal();
+      }
+    },
+    [openModal]
+  );
+
+  return (
+    <button
+      aria-label="View pasted content"
+      className={cn("flex items-center gap-1 min-w-0 flex-1", className)}
+      onClick={openModal}
+      onKeyDown={handleKeyDown}
+      type="button"
+      {...props}
+    >
+      {children ?? (
+        <>
+          <FileTextIcon className="size-3 text-muted-foreground" />
+          <span className="min-w-0 flex-1 truncate text-xs">{label}</span>
+        </>
+      )}
+    </button>
+  );
+};
+
+// ----------------------------------------------------------------------------
+// PastedContentRemove – remove button
+// ----------------------------------------------------------------------------
+
+export type PastedContentRemoveProps = ComponentProps<typeof Button>;
+
+export const PastedContentRemove = ({
+  className,
+  ...props
+}: PastedContentRemoveProps) => {
+  const { onRemove } = usePastedContent();
+
+  return (
+    <Button
+      aria-label="Remove pasted content"
+      className={cn("size-6 shrink-0 rounded p-0 opacity-70 hover:opacity-100", className)}
+      onClick={onRemove}
+      size="icon-sm"
+      type="button"
+      variant="ghost"
+      {...props}
+    >
+      <XIcon className="size-3" />
+    </Button>
+  );
+};
+
+// ----------------------------------------------------------------------------
+// PastedContentModal – dialog shell (open state from context)
+// ----------------------------------------------------------------------------
+
+export type PastedContentModalProps = Omit<
+  ComponentProps<typeof Dialog>,
+  "open" | "onOpenChange"
+> & {
+  contentClassName?: string;
+};
+
+export const PastedContentModal = ({
+  contentClassName,
+  children,
+  ...props
+}: PastedContentModalProps) => {
+  const { modalOpen, setModalOpen } = usePastedContent();
+
+  return (
+    <Dialog onOpenChange={setModalOpen} open={modalOpen} {...props}>
+      <DialogContent
+        className={cn(
+          "flex max-h-[85vh] flex-col gap-4 sm:max-w-[90vw]",
+          contentClassName
+        )}
+        showCloseButton
+      >
+        {children}
+      </DialogContent>
+    </Dialog>
+  );
+};
+
+// ----------------------------------------------------------------------------
+// PastedContentModalHeader – optional slot for title
+// ----------------------------------------------------------------------------
+
+export type PastedContentModalHeaderProps = HTMLAttributes<HTMLDivElement> & {
+  title?: string;
+};
+
+export const PastedContentModalHeader = ({
+  title = PASTED_TEXT_FILENAME,
+  children,
+  ...props
+}: PastedContentModalHeaderProps) => (
+  <DialogHeader {...props}>
+    {children ?? <DialogTitle>{title}</DialogTitle>}
+  </DialogHeader>
+);
+
+// ----------------------------------------------------------------------------
+// PastedContentModalBody – content area (default: numbered lines view)
+// ----------------------------------------------------------------------------
+
+export type PastedContentModalBodyProps = HTMLAttributes<HTMLDivElement>;
+
+export const PastedContentModalBody = ({
+  className,
+  children,
+  ...props
+}: PastedContentModalBodyProps) => {
+  const { content, loading } = usePastedContent();
+
+  return (
+    <div
+      className={cn(
+        "min-h-0 flex-1 overflow-auto rounded-md border bg-muted/30 p-3",
+        className
+      )}
+      {...props}
+    >
+      {children ??
+        (loading ? (
+          <pre className="font-mono text-sm">Loading…</pre>
+        ) : (
+          <div className="flex flex-col font-mono text-sm">
+            {(content ?? "")
+              .split("\n")
+              .map((line, i) => (
+                <div className="flex" key={i}>
+                  <span
+                    aria-hidden
+                    className="shrink-0 select-none pr-3 text-right text-muted-foreground"
+                  >
+                    {i + 1}
+                  </span>
+                  <pre className="min-w-max flex-1 whitespace-pre">
+                    {line}
+                  </pre>
+                </div>
+              ))}
+          </div>
+        ))}
+    </div>
+  );
+};
+
+// ----------------------------------------------------------------------------
+// PastedContentModalFooter – actions slot (default: Copy + Download)
+// ----------------------------------------------------------------------------
+
+export type PastedContentModalFooterProps = HTMLAttributes<HTMLDivElement>;
+
+export const PastedContentModalFooter = ({
+  children,
+  ...props
+}: PastedContentModalFooterProps) => {
+  const { content, copy, download } = usePastedContent();
+  const disabled = content === null;
+
+  return (
+    <DialogFooter {...props}>
+      {children ?? (
+        <>
+          <Button
+            disabled={disabled}
+            onClick={copy}
+            type="button"
+            variant="outline"
+          >
+            <CopyIcon className="size-4" />
+          </Button>
+          <Button
+            disabled={disabled}
+            onClick={download}
+            type="button"
+            variant="outline"
+          >
+            <DownloadIcon className="size-4" />
+          </Button>
+        </>
+      )}
+    </DialogFooter>
+  );
+};
+
+// ============================================================================
+// PromptInputPastedContentCard – default composition
+// ============================================================================
+
+export interface PromptInputPastedContentCardProps {
+  attachment: FileUIPart & { id: string };
+  onRemove: () => void;
+}
+
+export const PromptInputPastedContentCard = ({
+  attachment,
+  onRemove,
+}: PromptInputPastedContentCardProps) => (
+  <PastedContent attachment={attachment} onRemove={onRemove}>
+    <div
+      className={cn(
+        "group relative flex cursor-pointer select-none items-center gap-1 rounded-md font-medium text-sm transition-all",
+        "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
+        "h-8 border border-border px-1.5"
+      )}
+    >
+      <PastedContentTrigger />
+      <PastedContentRemove />
+    </div>
+    <PastedContentModal>
+      <PastedContentModalHeader />
+      <PastedContentModalBody />
+      <PastedContentModalFooter />
+    </PastedContentModal>
+  </PastedContent>
+);
+
+// ============================================================================
+// Attachments display (files + pasted content cards)
+// ============================================================================
+
+export const PromptInputAttachmentsDisplay = ({
+  className,
+  ...props
+}: HTMLAttributes<HTMLDivElement>) => {
+  const attachments = usePromptInputAttachments();
+
+  if (attachments.files.length === 0) {
+    return null;
+  }
+
+  const pastedFiles = attachments.files.filter(isPastedTextAttachment);
+  const otherFiles = attachments.files.filter(
+    (f) => !isPastedTextAttachment(f)
+  );
+
+  return (
+    <Attachments className={cn(className)} variant="inline" {...props}>
+    {pastedFiles.map((attachment) => (
+      <PromptInputPastedContentCard
+        attachment={attachment}
+        key={attachment.id}
+        onRemove={() => attachments.remove(attachment.id)}
+      />
+    ))}
+    {otherFiles.map((attachment) => (
+      <Attachment
+        data={attachment}
+        key={attachment.id}
+        onRemove={() => attachments.remove(attachment.id)}
+      >
+        <AttachmentPreview />
+        <AttachmentRemove />
+      </Attachment>
+    ))}
+    </Attachments>
+  );
+};
+
 export type PromptInputHeaderProps = Omit<
   ComponentProps<typeof InputGroupAddon>,
   "align"
@@ -954,13 +1391,19 @@ export type PromptInputHeaderProps = Omit<
 export const PromptInputHeader = ({
   className,
   ...props
-}: PromptInputHeaderProps) => (
-  <InputGroupAddon
-    align="block-end"
-    className={cn("order-first flex-wrap gap-1", className)}
-    {...props}
-  />
-);
+}: PromptInputHeaderProps) => {
+  if (!props.children) {
+    return null;
+  }
+
+  return (
+    <InputGroupAddon
+      align="block-end"
+      className={cn("order-first flex-wrap gap-1", className)}
+      {...props}
+    />
+  );
+};
 
 export type PromptInputFooterProps = Omit<
   ComponentProps<typeof InputGroupAddon>,

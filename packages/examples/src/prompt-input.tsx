@@ -3,12 +3,6 @@
 import type { PromptInputMessage } from "@repo/elements/prompt-input";
 
 import {
-  Attachment,
-  AttachmentPreview,
-  AttachmentRemove,
-  Attachments,
-} from "@repo/elements/attachments";
-import {
   ModelSelector,
   ModelSelectorContent,
   ModelSelectorEmpty,
@@ -27,9 +21,11 @@ import {
   PromptInputActionMenu,
   PromptInputActionMenuContent,
   PromptInputActionMenuTrigger,
+  PromptInputAttachmentsDisplay,
   PromptInputBody,
   PromptInputButton,
   PromptInputFooter,
+  PromptInputHeader,
   PromptInputProvider,
   PromptInputSubmit,
   PromptInputTextarea,
@@ -80,31 +76,15 @@ const models = [
 const SUBMITTING_TIMEOUT = 200;
 const STREAMING_TIMEOUT = 2000;
 
-interface AttachmentItemProps {
-  attachment: {
-    id: string;
-    type: "file";
-    filename?: string;
-    mediaType?: string;
-    url: string;
-  };
-  onRemove: (id: string) => void;
-}
-
-const AttachmentItem = memo(({ attachment, onRemove }: AttachmentItemProps) => {
-  const handleRemove = useCallback(
-    () => onRemove(attachment.id),
-    [onRemove, attachment.id]
-  );
+const AttachmentsHeader = () => {
+  const attachments = usePromptInputAttachments();
+  if (attachments.files.length === 0) return null;
   return (
-    <Attachment data={attachment} key={attachment.id} onRemove={handleRemove}>
-      <AttachmentPreview />
-      <AttachmentRemove />
-    </Attachment>
+    <PromptInputHeader>
+      <PromptInputAttachmentsDisplay />
+    </PromptInputHeader>
   );
-});
-
-AttachmentItem.displayName = "AttachmentItem";
+};
 
 interface ModelItemProps {
   m: (typeof models)[0];
@@ -134,38 +114,12 @@ const ModelItem = memo(({ m, selectedModel, onSelect }: ModelItemProps) => {
 
 ModelItem.displayName = "ModelItem";
 
-const PromptInputAttachmentsDisplay = () => {
-  const attachments = usePromptInputAttachments();
-
-  const handleRemove = useCallback(
-    (id: string) => attachments.remove(id),
-    [attachments]
-  );
-
-  if (attachments.files.length === 0) {
-    return null;
-  }
-
-  return (
-    <Attachments variant="inline">
-      {attachments.files.map((attachment) => (
-        <AttachmentItem
-          attachment={attachment}
-          key={attachment.id}
-          onRemove={handleRemove}
-        />
-      ))}
-    </Attachments>
-  );
-};
-
 const Example = () => {
   const [model, setModel] = useState<string>(models[0].id);
   const [modelSelectorOpen, setModelSelectorOpen] = useState(false);
   const [status, setStatus] = useState<
     "submitted" | "streaming" | "ready" | "error"
   >("ready");
-
   const selectedModelData = models.find((m) => m.id === model);
 
   const handleModelSelect = useCallback((id: string) => {
@@ -199,7 +153,7 @@ const Example = () => {
     <div className="size-full">
       <PromptInputProvider>
         <PromptInput globalDrop multiple onSubmit={handleSubmit}>
-          <PromptInputAttachmentsDisplay />
+          <AttachmentsHeader />
           <PromptInputBody>
             <PromptInputTextarea />
           </PromptInputBody>
