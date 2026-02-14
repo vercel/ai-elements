@@ -60,7 +60,7 @@ export const Preview = async ({ path, className }: ComponentPreviewProps) => {
       <CodeBlockTab className="not-prose p-0" value="preview">
         <ResizablePanelGroup direction="horizontal" id={`preview-${path}`}>
           <ResizablePanel defaultSize={100}>
-            <div className={cn("h-[600px] overflow-auto p-4", className)}>
+            <div className={cn("max-h-[600px] overflow-auto p-4", className)}>
               <Component />
             </div>
           </ResizablePanel>
