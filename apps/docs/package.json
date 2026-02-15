@@ -27,7 +27,7 @@
     "dexie-react-hooks": "^4.2.0",
     "feed": "^5.1.0",
     "fumadocs-core": "16.2.2",
-    "fumadocs-mdx": "14.0.4",
+    "fumadocs-mdx": "14.2.6",
     "fumadocs-ui": "16.2.2",
     "jotai": "^2.17.0",
     "katex": "^0.16.28",
