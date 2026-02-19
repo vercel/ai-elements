@@ -30,6 +30,7 @@ import {
 import {
   PromptInput,
   PromptInputActionAddAttachments,
+  PromptInputActionAddScreenShoot,
   PromptInputActionMenu,
   PromptInputActionMenuContent,
   PromptInputActionMenuTrigger,
@@ -168,6 +169,7 @@ const InputDemo = () => {
                 <PromptInputActionMenuTrigger />
                 <PromptInputActionMenuContent>
                   <PromptInputActionAddAttachments />
+                  <PromptInputActionAddScreenShoot />
                 </PromptInputActionMenuContent>
               </PromptInputActionMenu>
               <PromptInputButton
@@ -239,6 +241,7 @@ export async function POST(req: Request) {
 
 - Auto-resizing textarea that adjusts height based on content
 - File attachment support with drag-and-drop
+- Built-in screenshot capture action
 - Image preview for image attachments
 - Configurable file constraints (max files, max size, accepted types)
 - Automatic submit button icons based on status

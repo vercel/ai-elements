@@ -24,6 +24,7 @@ import {
 import {
   PromptInput,
   PromptInputActionAddAttachments,
+  PromptInputActionAddScreenShoot,
   PromptInputActionMenu,
   PromptInputActionMenuContent,
   PromptInputActionMenuTrigger,
@@ -209,6 +210,7 @@ const Example = () => {
                 <PromptInputActionMenuTrigger />
                 <PromptInputActionMenuContent>
                   <PromptInputActionAddAttachments />
+                  <PromptInputActionAddScreenShoot />
                 </PromptInputActionMenuContent>
               </PromptInputActionMenu>
               <PromptInputButton>
