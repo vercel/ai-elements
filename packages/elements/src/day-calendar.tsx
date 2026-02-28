@@ -2,7 +2,7 @@
 
 import { cn } from "@repo/shadcn-ui/lib/utils";
 import { CalendarIcon } from "lucide-react";
-import { createContext, useContext, useEffect, useMemo, useRef } from "react";
+import { createContext, useContext, useMemo } from "react";
 import type { HTMLAttributes } from "react";
 
 export interface CalendarEvent {
@@ -205,15 +205,6 @@ export const DayCalendarContent = ({
   const showCurrentTime =
     isToday && currentHour >= startHour && currentHour <= endHour;
 
-  const currentTimeRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    currentTimeRef.current?.scrollIntoView({
-      behavior: "smooth",
-      block: "center",
-    });
-  }, []);
-
   return (
     <div
       className={cn("relative overflow-auto", className)}
@@ -254,7 +245,6 @@ export const DayCalendarContent = ({
         {showCurrentTime && (
           <div
             className="absolute left-0 right-0 flex items-center"
-            ref={currentTimeRef}
             style={{ top: `${currentTimePercent}%` }}
           >
             <span className="w-14 shrink-0" />
