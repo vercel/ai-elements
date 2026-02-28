@@ -2,14 +2,7 @@
 
 import { cn } from "@repo/shadcn-ui/lib/utils";
 import { CalendarIcon } from "lucide-react";
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { createContext, useContext, useEffect, useMemo, useRef } from "react";
 import type { HTMLAttributes } from "react";
 
 export interface CalendarEvent {
@@ -213,15 +206,6 @@ export const DayCalendarContent = ({
     isToday && currentHour >= startHour && currentHour <= endHour;
 
   const currentTimeRef = useRef<HTMLDivElement>(null);
-  const [, forceUpdate] = useState(0);
-
-  useEffect(() => {
-    if (!isToday) {
-      return;
-    }
-    const interval = setInterval(() => forceUpdate((n) => n + 1), 60_000);
-    return () => clearInterval(interval);
-  }, [isToday]);
 
   useEffect(() => {
     currentTimeRef.current?.scrollIntoView({
