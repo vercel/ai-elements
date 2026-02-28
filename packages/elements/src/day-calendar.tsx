@@ -49,7 +49,10 @@ const computeTimeWindow = (
     ...events.map((e) => e.start.getHours() + e.start.getMinutes() / 60)
   );
   const maxEnd = Math.max(
-    ...events.map((e) => e.end.getHours() + e.end.getMinutes() / 60)
+    ...events.map((e) => {
+      const h = e.end.getHours() + e.end.getMinutes() / 60;
+      return h === 0 && e.end > e.start ? 24 : h;
+    })
   );
 
   const startHour = startHourOverride ?? Math.max(0, Math.floor(minStart - 2));
@@ -143,7 +146,11 @@ export const DayCalendarEvent = ({
   ...props
 }: DayCalendarEventProps) => {
   const eventStartHour = event.start.getHours() + event.start.getMinutes() / 60;
-  const eventEndHour = event.end.getHours() + event.end.getMinutes() / 60;
+  const rawEndHour = event.end.getHours() + event.end.getMinutes() / 60;
+  const eventEndHour = Math.min(
+    rawEndHour === 0 && event.end > event.start ? 24 : rawEndHour,
+    startHour + totalHours
+  );
 
   const topPercent = ((eventStartHour - startHour) / totalHours) * 100;
   const heightPercent = ((eventEndHour - eventStartHour) / totalHours) * 100;
