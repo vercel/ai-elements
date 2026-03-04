@@ -5,8 +5,9 @@ import type { ComponentProps } from "react";
 import { Button } from "@repo/shadcn-ui/components/ui/button";
 import { cn } from "@repo/shadcn-ui/lib/utils";
 import { ArrowDownIcon, DownloadIcon } from "lucide-react";
-import { useCallback } from "react";
+import { useCallback, useRef, useEffect } from "react";
 import { StickToBottom, useStickToBottomContext } from "use-stick-to-bottom";
+import { ScrollArea } from "@repo/shadcn-ui/components/ui/scroll-area";
 
 export type ConversationProps = ComponentProps<typeof StickToBottom>;
 
@@ -20,19 +21,44 @@ export const Conversation = ({ className, ...props }: ConversationProps) => (
   />
 );
 
-export type ConversationContentProps = ComponentProps<
-  typeof StickToBottom.Content
->;
+export type ConversationContentProps = ComponentProps<typeof ScrollArea> & {
+  scrollClassName?: string;
+};
 
 export const ConversationContent = ({
+  children,
   className,
+  scrollClassName,
   ...props
-}: ConversationContentProps) => (
-  <StickToBottom.Content
-    className={cn("flex flex-col gap-8 p-4", className)}
-    {...props}
-  />
-);
+}: ConversationContentProps) => {
+  const context = useStickToBottomContext();
+  const scrollAreaRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (scrollAreaRef.current && context.scrollRef) {
+      const viewportElement = scrollAreaRef.current.querySelector(
+        '[data-slot="scroll-area-viewport"]'
+      );
+      if (viewportElement) {
+        const ContentElement = viewportElement as HTMLElement;
+        ContentElement.className = cn("size-full overflow-y-auto", scrollClassName);
+        ContentElement.style.scrollbarGutter = "stable both-edges";
+        context.scrollRef.current = ContentElement;
+      }
+    }
+  }, [context.scrollRef, scrollClassName]);
+
+  return (
+    <ScrollArea ref={scrollAreaRef} className="size-full" {...props}>
+      <div
+        ref={context.contentRef}
+        className={cn("flex flex-col gap-8 p-4", className)}
+      >
+        {children}
+      </div>
+    </ScrollArea>
+  );
+}
 
 export type ConversationEmptyStateProps = ComponentProps<"div"> & {
   title?: string;
