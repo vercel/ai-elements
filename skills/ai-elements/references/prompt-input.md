@@ -408,6 +408,13 @@ Attachment components have been moved to a separate module. See the [Attachment]
 | `label` | `string` | - | Label for the menu item. |
 | `...props` | `React.ComponentProps<typeof DropdownMenuItem>` | - | Any other props are spread to the underlying DropdownMenuItem component. |
 
+### `<PromptInputActionAddScreenshot />`
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `label` | `string` | - | Label for the menu item. |
+| `...props` | `React.ComponentProps<typeof DropdownMenuItem>` | - | Any other props are spread to the underlying DropdownMenuItem component. |
+
 ### `<PromptInputProvider />`
 
 | Prop | Type | Default | Description |
