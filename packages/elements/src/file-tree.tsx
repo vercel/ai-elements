@@ -38,7 +38,7 @@ const FileTreeContext = createContext<FileTreeContextType>({
   togglePath: noop,
 });
 
-export type FileTreeProps = HTMLAttributes<HTMLDivElement> & {
+export type FileTreeProps = Omit<HTMLAttributes<HTMLDivElement>, "onSelect"> & {
   expanded?: Set<string>;
   defaultExpanded?: Set<string>;
   selectedPath?: string;
@@ -169,21 +169,30 @@ export const FileTreeFolder = ({
           tabIndex={0}
           {...props}
         >
-          <CollapsibleTrigger asChild>
+          <div
+            className={cn(
+              "flex w-full items-center gap-1 rounded px-2 py-1 text-left transition-colors hover:bg-muted/50",
+              isSelected && "bg-muted"
+            )}
+          >
+            <CollapsibleTrigger asChild>
+              <button
+                className="flex shrink-0 cursor-pointer items-center border-none bg-transparent p-0"
+                type="button"
+              >
+                <ChevronRightIcon
+                  className={cn(
+                    "size-4 shrink-0 text-muted-foreground transition-transform",
+                    isExpanded && "rotate-90"
+                  )}
+                />
+              </button>
+            </CollapsibleTrigger>
             <button
-              className={cn(
-                "flex w-full items-center gap-1 rounded px-2 py-1 text-left transition-colors hover:bg-muted/50",
-                isSelected && "bg-muted"
-              )}
+              className="flex min-w-0 flex-1 cursor-pointer items-center gap-1 border-none bg-transparent p-0 text-left"
               onClick={handleSelect}
               type="button"
             >
-              <ChevronRightIcon
-                className={cn(
-                  "size-4 shrink-0 text-muted-foreground transition-transform",
-                  isExpanded && "rotate-90"
-                )}
-              />
               <FileTreeIcon>
                 {isExpanded ? (
                   <FolderOpenIcon className="size-4 text-blue-500" />
@@ -193,7 +202,7 @@ export const FileTreeFolder = ({
               </FileTreeIcon>
               <FileTreeName>{name}</FileTreeName>
             </button>
-          </CollapsibleTrigger>
+          </div>
           <CollapsibleContent>
             <div className="ml-4 border-l pl-2">{children}</div>
           </CollapsibleContent>

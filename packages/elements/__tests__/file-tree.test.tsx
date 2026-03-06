@@ -55,7 +55,7 @@ describe("fileTreeFolder", () => {
     expect(screen.getByText("index.ts")).toBeInTheDocument();
   });
 
-  it("toggles expansion on click", async () => {
+  it("toggles expansion on chevron click", async () => {
     const user = userEvent.setup();
     render(
       <FileTree>
@@ -68,11 +68,30 @@ describe("fileTreeFolder", () => {
     // Initially collapsed
     expect(screen.queryByText("index.ts")).not.toBeInTheDocument();
 
-    // Click to expand
-    const folderButton = screen.getByRole("button");
-    await user.click(folderButton);
+    // Click chevron to expand
+    const [chevronButton] = screen.getAllByRole("button");
+    await user.click(chevronButton);
 
     expect(screen.getByText("index.ts")).toBeInTheDocument();
+  });
+
+  it("selects folder without toggling expansion", async () => {
+    const onSelect = vi.fn();
+    const user = userEvent.setup();
+    render(
+      <FileTree onSelect={onSelect}>
+        <FileTreeFolder name="src" path="src">
+          <FileTreeFile name="index.ts" path="src/index.ts" />
+        </FileTreeFolder>
+      </FileTree>
+    );
+
+    // Click folder name to select (not chevron)
+    await user.click(screen.getByText("src"));
+
+    expect(onSelect).toHaveBeenCalledWith("src");
+    // Should NOT expand
+    expect(screen.queryByText("index.ts")).not.toBeInTheDocument();
   });
 
   it("calls onExpandedChange when toggling", async () => {
@@ -87,8 +106,8 @@ describe("fileTreeFolder", () => {
       </FileTree>
     );
 
-    const folderButton = screen.getByRole("button");
-    await user.click(folderButton);
+    const [chevronButton] = screen.getAllByRole("button");
+    await user.click(chevronButton);
 
     expect(onExpandedChange).toHaveBeenCalledWith(new Set(["src"]));
   });
@@ -158,13 +177,13 @@ describe("composability", () => {
 
     expect(screen.getByText("components")).toBeInTheDocument();
 
-    // Expand nested folder
-    const componentsFolderButton = screen
-      .getByText("components")
-      .closest("button");
+    // Click folder name to find its sibling chevron, then expand
+    const componentsText = screen.getByText("components");
+    const componentsRow = componentsText.closest("div");
+    const chevronButton = componentsRow?.querySelector("button:first-child");
     // oxlint-disable-next-line eslint-plugin-jest(no-conditional-in-test)
-    if (componentsFolderButton) {
-      await user.click(componentsFolderButton);
+    if (chevronButton) {
+      await user.click(chevronButton);
     }
 
     expect(screen.getByText("Button.tsx")).toBeInTheDocument();
