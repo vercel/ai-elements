@@ -66,8 +66,16 @@ vi.mock<typeof import("use-stick-to-bottom")>(
 );
 
 // Custom format function for messagesToMarkdown test
-const customFormatMessage = (msg: { role: string; content: string }) =>
-  `[${msg.role}]: ${msg.content}`;
+const customFormatMessage = (msg: {
+  role: string;
+  parts: { type: string; text?: string }[];
+}) => {
+  const text = msg.parts
+    .filter((p) => p.type === "text")
+    .map((p) => p.text)
+    .join("");
+  return `[${msg.role}]: ${text}`;
+};
 
 describe("conversation", () => {
   it("renders children", () => {
@@ -219,13 +227,19 @@ describe("conversationScrollButton", () => {
   });
 });
 
+const makeMessage = (role: "user" | "assistant" | "system", text: string) => ({
+  id: `${role}-${text}`,
+  parts: [{ text, type: "text" as const }],
+  role,
+});
+
 // Function name as describe title is a valid testing pattern
 // oxlint-disable-next-line eslint-plugin-jest(valid-title)
 describe(messagesToMarkdown, () => {
   it("converts messages to markdown format", () => {
     const messages = [
-      { content: "Hello", role: "user" as const },
-      { content: "Hi there!", role: "assistant" as const },
+      makeMessage("user", "Hello"),
+      makeMessage("assistant", "Hi there!"),
     ];
 
     const result = messagesToMarkdown(messages);
@@ -240,8 +254,8 @@ describe(messagesToMarkdown, () => {
 
   it("uses custom formatMessage function", () => {
     const messages = [
-      { content: "Hello", role: "user" as const },
-      { content: "Hi", role: "assistant" as const },
+      makeMessage("user", "Hello"),
+      makeMessage("assistant", "Hi"),
     ];
 
     const result = messagesToMarkdown(messages, customFormatMessage);
@@ -251,11 +265,9 @@ describe(messagesToMarkdown, () => {
 
   it("handles all role types", () => {
     const messages = [
-      { content: "User msg", role: "user" as const },
-      { content: "Assistant msg", role: "assistant" as const },
-      { content: "System msg", role: "system" as const },
-      { content: "Tool msg", role: "tool" as const },
-      { content: "Data msg", role: "data" as const },
+      makeMessage("user", "User msg"),
+      makeMessage("assistant", "Assistant msg"),
+      makeMessage("system", "System msg"),
     ];
 
     const result = messagesToMarkdown(messages);
@@ -263,8 +275,29 @@ describe(messagesToMarkdown, () => {
     expect(result).toContain("**User:** User msg");
     expect(result).toContain("**Assistant:** Assistant msg");
     expect(result).toContain("**System:** System msg");
-    expect(result).toContain("**Tool:** Tool msg");
-    expect(result).toContain("**Data:** Data msg");
+  });
+
+  it("extracts text from multiple parts", () => {
+    const message = {
+      id: "multi",
+      parts: [
+        { text: "Hello ", type: "text" as const },
+        {
+          args: {},
+          result: {},
+          state: "result" as const,
+          toolInvocationId: "1",
+          toolName: "test",
+          type: "tool-invocation" as const,
+        },
+        { text: "world", type: "text" as const },
+      ],
+      role: "assistant" as const,
+    };
+
+    const result = messagesToMarkdown([message]);
+
+    expect(result).toBe("**Assistant:** Hello world");
   });
 });
 
@@ -310,8 +343,8 @@ const setupDomClickTracker = () => {
 
 describe("conversationDownload", () => {
   const mockMessages = [
-    { content: "Hello", role: "user" as const },
-    { content: "Hi there!", role: "assistant" as const },
+    makeMessage("user", "Hello"),
+    makeMessage("assistant", "Hi there!"),
   ];
 
   it("renders download button", () => {

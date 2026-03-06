@@ -198,9 +198,9 @@ import { ConversationDownload } from "@/components/ai-elements/conversation";
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `messages` | `ConversationMessage[]` | Required | Array of messages to include in the download. |
+| `messages` | `UIMessage[]` | Required | Array of messages to include in the download. |
 | `filename` | `string` | - | The filename for the downloaded file. |
-| `formatMessage` | `(message: ConversationMessage, index: number) => string` | - | Custom function to format each message in the output. |
+| `formatMessage` | `(message: UIMessage, index: number) => string` | - | Custom function to format each message in the output. |
 | `...props` | `Omit<ComponentProps<typeof Button>, ` | - | Any other props are spread to the underlying shadcn/ui Button component. |
 
 ### `messagesToMarkdown`

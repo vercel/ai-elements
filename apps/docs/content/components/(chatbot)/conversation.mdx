@@ -250,7 +250,7 @@ import { ConversationDownload } from "@/components/ai-elements/conversation";
   type={{
     messages: {
       description: "Array of messages to include in the download.",
-      type: "ConversationMessage[]",
+      type: "UIMessage[]",
       required: true,
     },
     filename: {
@@ -260,7 +260,7 @@ import { ConversationDownload } from "@/components/ai-elements/conversation";
     },
     formatMessage: {
       description: "Custom function to format each message in the output.",
-      type: "(message: ConversationMessage, index: number) => string",
+      type: "(message: UIMessage, index: number) => string",
     },
     "...props": {
       description:
@@ -282,6 +282,6 @@ const markdown = messagesToMarkdown(messages);
 // With custom formatter
 const customMarkdown = messagesToMarkdown(
   messages,
-  (msg, i) => `[${msg.role}]: ${msg.content}`
+  (msg, i) => `[${msg.role}]: ${msg.parts.filter(p => p.type === "text").map(p => p.text).join("")}`
 );
 ```
