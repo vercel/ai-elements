@@ -49,4 +49,5 @@ failOnConsole({
 // oxlint-disable-next-line eslint-plugin-jest(no-hooks), eslint-plugin-jest(require-top-level-describe)
 afterEach(() => {
   cleanup();
+  vi.restoreAllMocks();
 });
