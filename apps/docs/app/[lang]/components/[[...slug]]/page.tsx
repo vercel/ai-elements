@@ -47,7 +47,7 @@ const Page = async ({
         footer: (
           <div className="my-3 space-y-3">
             <Separator />
-            <EditSource path={page.path} />
+            <EditSource path={page.path} contentDir="components" />
             <ScrollTop />
             <Feedback />
             <CopyPage text={markdown} />
