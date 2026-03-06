@@ -4,13 +4,14 @@ import { github } from "@/geistdocs";
 
 interface EditSourceProps {
   path: string | undefined;
+  contentDir?: string;
 }
 
-export const EditSource = ({ path }: EditSourceProps) => {
+export const EditSource = ({ path, contentDir = "docs" }: EditSourceProps) => {
   let url: string | undefined;
 
   if (github.owner && github.repo && path) {
-    url = `https://github.com/${github.owner}/${github.repo}/edit/main/apps/docs/content/docs/${path}`;
+    url = `https://github.com/${github.owner}/${github.repo}/edit/main/apps/docs/content/${contentDir}/${path}`;
   }
 
   if (!url) {
