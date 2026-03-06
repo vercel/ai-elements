@@ -28,6 +28,7 @@ import { CheckIcon, XIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Confirmation,
+  ConfirmationTitle,
   ConfirmationRequest,
   ConfirmationAccepted,
   ConfirmationRejected,
@@ -233,6 +234,19 @@ Shows the rejected status when user rejects and state is `output-denied`.
     "...props": {
       description: "Any other props are spread to the Alert component.",
       type: "React.ComponentProps<typeof Alert>",
+    },
+  }}
+/>
+
+### `<ConfirmationTitle />`
+
+A styled description element for displaying a title or label within the confirmation alert.
+
+<TypeTable
+  type={{
+    "...props": {
+      description: "Any other props are spread to the underlying AlertDescription component.",
+      type: "React.ComponentProps<typeof AlertDescription>",
     },
   }}
 />
