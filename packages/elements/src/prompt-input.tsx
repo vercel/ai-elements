@@ -61,7 +61,7 @@ import {
   Monitor,
   PlusIcon,
   SquareIcon,
-  XIcon
+  XIcon,
 } from "lucide-react";
 import { nanoid } from "nanoid";
 import {
@@ -100,28 +100,28 @@ const convertBlobUrlToDataUrl = async (url: string): Promise<string | null> => {
 
 const captureScreenshot = async (): Promise<File | null> => {
   if (
-    typeof navigator === 'undefined' ||
+    typeof navigator === "undefined" ||
     !navigator.mediaDevices?.getDisplayMedia
   ) {
     return null;
   }
 
   let stream: MediaStream | null = null;
-  const video = document.createElement('video');
+  const video = document.createElement("video");
   video.muted = true;
   video.playsInline = true;
 
   try {
     stream = await navigator.mediaDevices.getDisplayMedia({
-      video: true,
       audio: false,
+      video: true,
     });
 
     video.srcObject = stream;
 
     await new Promise<void>((resolve, reject) => {
       video.onloadedmetadata = () => resolve();
-      video.onerror = () => reject(new Error('Failed to load screen stream'));
+      video.onerror = () => reject(new Error("Failed to load screen stream"));
     });
 
     await video.play();
@@ -132,17 +132,17 @@ const captureScreenshot = async (): Promise<File | null> => {
       return null;
     }
 
-    const canvas = document.createElement('canvas');
+    const canvas = document.createElement("canvas");
     canvas.width = width;
     canvas.height = height;
-    const context = canvas.getContext('2d');
+    const context = canvas.getContext("2d");
     if (!context) {
       return null;
     }
 
     context.drawImage(video, 0, 0, width, height);
     const blob = await new Promise<Blob | null>((resolve) =>
-      canvas.toBlob(resolve, 'image/png')
+      canvas.toBlob(resolve, "image/png")
     );
     if (!blob) {
       return null;
@@ -150,13 +150,13 @@ const captureScreenshot = async (): Promise<File | null> => {
 
     const timestamp = new Date()
       .toISOString()
-      .replace(/[:.]/g, '-')
-      .replace('T', '_')
-      .replace('Z', '');
+      .replaceAll(/[:.]/g, "-")
+      .replace("T", "_")
+      .replace("Z", "");
 
     return new File([blob], `screenshot-${timestamp}.png`, {
-      type: 'image/png',
       lastModified: Date.now(),
+      type: "image/png",
     });
   } finally {
     stream?.getTracks().forEach((track) => track.stop());
@@ -164,6 +164,7 @@ const captureScreenshot = async (): Promise<File | null> => {
     video.srcObject = null;
   }
 };
+
 // ============================================================================
 // Provider Context & Types
 // ============================================================================
@@ -425,11 +426,17 @@ export const PromptInputActionAddAttachments = ({
   );
 };
 
-export const PromptInputActionAddScreenShoot = ({
-  label = 'Take screenshot',
+export type PromptInputActionAddScreenshotProps = ComponentProps<
+  typeof DropdownMenuItem
+> & {
+  label?: string;
+};
+
+export const PromptInputActionAddScreenshot = ({
+  label = "Take screenshot",
   onSelect,
   ...props
-}: PromptInputActionAddAttachmentsProps) => {
+}: PromptInputActionAddScreenshotProps) => {
   const attachments = usePromptInputAttachments();
 
   return (
@@ -449,15 +456,15 @@ export const PromptInputActionAddScreenShoot = ({
         } catch (error) {
           if (
             error instanceof DOMException &&
-            (error.name === 'NotAllowedError' || error.name === 'AbortError')
+            (error.name === "NotAllowedError" || error.name === "AbortError")
           ) {
             return;
           }
-          console.error('Failed to capture screenshot', error);
+          throw error;
         }
       }}
     >
-      <Monitor className="mr-2 size-4"/>
+      <Monitor className="mr-2 size-4" />
       {label}
     </DropdownMenuItem>
   );

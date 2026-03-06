@@ -16,7 +16,7 @@ import {
 import {
   PromptInput,
   PromptInputActionAddAttachments,
-  PromptInputActionAddScreenShoot,
+  PromptInputActionAddScreenshot,
   PromptInputActionMenu,
   PromptInputActionMenuContent,
   PromptInputActionMenuItem,
@@ -2791,7 +2791,7 @@ describe("promptInputActionAddAttachments", () => {
   });
 });
 
-describe("promptInputActionAddScreenShoot", () => {
+describe("promptInputActionAddScreenshot", () => {
   it("captures a screenshot and adds it as attachment", async () => {
     setupPromptInputTests();
     const onSubmit = vi.fn();
@@ -2810,7 +2810,7 @@ describe("promptInputActionAddScreenShoot", () => {
           <PromptInputActionMenu>
             <PromptInputActionMenuTrigger />
             <PromptInputActionMenuContent>
-              <PromptInputActionAddScreenShoot />
+              <PromptInputActionAddScreenshot />
             </PromptInputActionMenuContent>
           </PromptInputActionMenu>
           <PromptInputTextarea />
@@ -2852,7 +2852,7 @@ describe("promptInputActionAddScreenShoot", () => {
           <PromptInputActionMenu>
             <PromptInputActionMenuTrigger />
             <PromptInputActionMenuContent>
-              <PromptInputActionAddScreenShoot />
+              <PromptInputActionAddScreenshot />
             </PromptInputActionMenuContent>
           </PromptInputActionMenu>
           <PromptInputTextarea />

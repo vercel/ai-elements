@@ -30,7 +30,7 @@ import {
 import {
   PromptInput,
   PromptInputActionAddAttachments,
-  PromptInputActionAddScreenShoot,
+  PromptInputActionAddScreenshot,
   PromptInputActionMenu,
   PromptInputActionMenuContent,
   PromptInputActionMenuTrigger,
@@ -169,7 +169,7 @@ const InputDemo = () => {
                 <PromptInputActionMenuTrigger />
                 <PromptInputActionMenuContent>
                   <PromptInputActionAddAttachments />
-                  <PromptInputActionAddScreenShoot />
+                  <PromptInputActionAddScreenshot />
                 </PromptInputActionMenuContent>
               </PromptInputActionMenu>
               <PromptInputButton
