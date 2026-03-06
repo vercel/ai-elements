@@ -1,9 +1,6 @@
 "use client";
 
 import type { AttachmentData } from "@/components/ai-elements/attachments";
-import type { PromptInputMessage } from "@/components/ai-elements/prompt-input";
-import type { SourceDocumentUIPart } from "ai";
-
 import {
   Attachment,
   AttachmentInfo,
@@ -24,6 +21,7 @@ import {
   ModelSelectorName,
   ModelSelectorTrigger,
 } from "@/components/ai-elements/model-selector";
+import type { PromptInputMessage } from "@/components/ai-elements/prompt-input";
 import {
   PromptInput,
   PromptInputBody,
@@ -52,6 +50,7 @@ import {
   usePromptInputReferencedSources,
 } from "@/components/ai-elements/prompt-input";
 import { Button } from "@/components/ui/button";
+import type { SourceDocumentUIPart } from "ai";
 import {
   AtSignIcon,
   CheckIcon,
@@ -174,29 +173,24 @@ ModelItem.displayName = "ModelItem";
 
 interface SourceCommandItemProps {
   source: SourceDocumentUIPart;
-  index: number;
   onAdd: (source: SourceDocumentUIPart) => void;
 }
 
-const SourceCommandItem = memo(
-  ({ source, index, onAdd }: SourceCommandItemProps) => {
-    const handleSelect = useCallback(() => onAdd(source), [onAdd, source]);
-    return (
-      <PromptInputCommandItem
-        key={`${source.title}-${index}`}
-        onSelect={handleSelect}
-      >
-        <GlobeIcon className="text-primary" />
-        <div className="flex flex-col">
-          <span className="font-medium text-sm">{source.title}</span>
-          <span className="text-muted-foreground text-xs">
-            {source.filename}
-          </span>
-        </div>
-      </PromptInputCommandItem>
-    );
-  }
-);
+const SourceCommandItem = memo(({ source, onAdd }: SourceCommandItemProps) => {
+  const handleSelect = useCallback(() => onAdd(source), [onAdd, source]);
+  return (
+    <PromptInputCommandItem
+      key={`${source.filename}-${source.title}`}
+      onSelect={handleSelect}
+    >
+      <GlobeIcon className="text-primary" />
+      <div className="flex flex-col">
+        <span className="font-medium text-sm">{source.title}</span>
+        <span className="text-muted-foreground text-xs">{source.filename}</span>
+      </div>
+    </PromptInputCommandItem>
+  );
+});
 
 SourceCommandItem.displayName = "SourceCommandItem";
 
@@ -318,10 +312,9 @@ const SampleFilesMenu = () => {
                     s.title === source.title && s.filename === source.filename
                 )
             )
-            .map((source, index) => (
+            .map((source) => (
               <SourceCommandItem
-                index={index}
-                key={`${source.title}-${index}`}
+                key={`${source.filename}-${source.title}`}
                 onAdd={handleAdd}
                 source={source}
               />

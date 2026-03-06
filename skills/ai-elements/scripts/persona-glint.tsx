@@ -1,8 +1,6 @@
 "use client";
 
 import type { PersonaState } from "@/components/ai-elements/persona";
-import type { LucideIcon } from "lucide-react";
-
 import { Persona } from "@/components/ai-elements/persona";
 import { Button } from "@/components/ui/button";
 import { ButtonGroup } from "@/components/ui/button-group";
@@ -11,6 +9,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import type { LucideIcon } from "lucide-react";
 import {
   BrainIcon,
   CircleIcon,

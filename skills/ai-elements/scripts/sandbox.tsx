@@ -1,7 +1,5 @@
 "use client";
 
-import type { ToolUIPart } from "ai";
-
 import { CodeBlock, CodeBlockCopyButton } from "@/components/ai-elements/code-block";
 import {
   Sandbox,
@@ -26,6 +24,7 @@ import {
   StackTraceHeader,
 } from "@/components/ai-elements/stack-trace";
 import { Button } from "@/components/ui/button";
+import type { ToolUIPart } from "ai";
 import { memo, useCallback, useState } from "react";
 
 const code = `import math
