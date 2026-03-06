@@ -1,6 +1,5 @@
 import { render, screen } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
-import { describe, expect, it, vi } from "vitest";
 
 import {
   Conversation,
@@ -18,8 +17,8 @@ const {
   StickToBottomMock,
   StickToBottomContent,
 } = vi.hoisted(() => {
-  const mockState = { isAtBottom: true };
-  const mockScrollToBottom = vi.fn();
+  const state = { isAtBottom: true };
+  const scrollToBottom = vi.fn();
 
   interface MockProps {
     children?: React.ReactNode;
@@ -28,40 +27,43 @@ const {
 
   // These components must be defined inside vi.hoisted() for mock setup
   // oxlint-disable-next-line eslint-plugin-unicorn(consistent-function-scoping)
-  const StickToBottomMock = ({ children, ...props }: MockProps) => (
+  const StickyMock = ({ children, ...props }: MockProps) => (
     <div role="log" {...props}>
       {children}
     </div>
   );
 
   // oxlint-disable-next-line eslint-plugin-unicorn(consistent-function-scoping)
-  const StickToBottomContent = ({ children, ...props }: MockProps) => (
+  const StickyContent = ({ children, ...props }: MockProps) => (
     <div {...props}>{children}</div>
   );
 
   return {
-    StickToBottomContent,
-    StickToBottomMock,
-    mockScrollToBottom,
-    mockState,
+    StickToBottomContent: StickyContent,
+    StickToBottomMock: StickyMock,
+    mockScrollToBottom: scrollToBottom,
+    mockState: state,
   };
 });
 
 // oxlint-disable-next-line typescript-eslint(consistent-type-imports)
-vi.mock<typeof import("use-stick-to-bottom")>("use-stick-to-bottom", () => {
-  const MockComponent = StickToBottomMock as typeof StickToBottomMock & {
-    Content: typeof StickToBottomContent;
-  };
-  MockComponent.Content = StickToBottomContent;
+vi.mock<typeof import("use-stick-to-bottom")>(
+  import("use-stick-to-bottom"),
+  () => {
+    const MockComponent = StickToBottomMock as typeof StickToBottomMock & {
+      Content: typeof StickToBottomContent;
+    };
+    MockComponent.Content = StickToBottomContent;
 
-  return {
-    StickToBottom: MockComponent,
-    useStickToBottomContext: () => ({
-      isAtBottom: mockState.isAtBottom,
-      scrollToBottom: mockScrollToBottom,
-    }),
-  };
-});
+    return {
+      StickToBottom: MockComponent,
+      useStickToBottomContext: () => ({
+        isAtBottom: mockState.isAtBottom,
+        scrollToBottom: mockScrollToBottom,
+      }),
+    };
+  }
+);
 
 // Custom format function for messagesToMarkdown test
 const customFormatMessage = (msg: { role: string; content: string }) =>

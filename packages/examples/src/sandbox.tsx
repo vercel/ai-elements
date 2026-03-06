@@ -1,7 +1,5 @@
 "use client";
 
-import type { ToolUIPart } from "ai";
-
 import { CodeBlock, CodeBlockCopyButton } from "@repo/elements/code-block";
 import {
   Sandbox,
@@ -26,6 +24,7 @@ import {
   StackTraceHeader,
 } from "@repo/elements/stack-trace";
 import { Button } from "@repo/shadcn-ui/components/ui/button";
+import type { ToolUIPart } from "ai";
 import { memo, useCallback, useState } from "react";
 
 const code = `import math

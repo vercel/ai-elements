@@ -1,7 +1,5 @@
 "use client";
 
-import type { ComponentProps } from "react";
-
 import {
   InputGroup,
   InputGroupAddon,
@@ -11,11 +9,13 @@ import {
 } from "@repo/shadcn-ui/components/ui/input-group";
 import { cn } from "@repo/shadcn-ui/lib/utils";
 import { CheckIcon, CopyIcon } from "lucide-react";
+import type { ComponentProps } from "react";
 import {
   createContext,
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from "react";
@@ -37,13 +37,17 @@ export const Snippet = ({
   className,
   children,
   ...props
-}: SnippetProps) => (
-  <SnippetContext.Provider value={{ code }}>
-    <InputGroup className={cn("font-mono", className)} {...props}>
-      {children}
-    </InputGroup>
-  </SnippetContext.Provider>
-);
+}: SnippetProps) => {
+  const contextValue = useMemo(() => ({ code }), [code]);
+
+  return (
+    <SnippetContext.Provider value={contextValue}>
+      <InputGroup className={cn("font-mono", className)} {...props}>
+        {children}
+      </InputGroup>
+    </SnippetContext.Provider>
+  );
+};
 
 export type SnippetAddonProps = ComponentProps<typeof InputGroupAddon>;
 

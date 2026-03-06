@@ -1,5 +1,4 @@
 import { render } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
 
 import { Canvas } from "../src/canvas";
 import { Toolbar } from "../src/toolbar";

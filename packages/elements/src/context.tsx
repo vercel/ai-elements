@@ -1,8 +1,5 @@
 "use client";
 
-import type { LanguageModelUsage } from "ai";
-import type { ComponentProps } from "react";
-
 import { Button } from "@repo/shadcn-ui/components/ui/button";
 import {
   HoverCard,
@@ -11,6 +8,8 @@ import {
 } from "@repo/shadcn-ui/components/ui/hover-card";
 import { Progress } from "@repo/shadcn-ui/components/ui/progress";
 import { cn } from "@repo/shadcn-ui/lib/utils";
+import type { LanguageModelUsage } from "ai";
+import type { ComponentProps } from "react";
 import { createContext, useContext, useMemo } from "react";
 import { getUsage } from "tokenlens";
 
@@ -230,6 +229,25 @@ export const ContextContentFooter = ({
   );
 };
 
+const TokensWithCost = ({
+  tokens,
+  costText,
+}: {
+  tokens?: number;
+  costText?: string;
+}) => (
+  <span>
+    {tokens === undefined
+      ? "—"
+      : new Intl.NumberFormat("en-US", {
+          notation: "compact",
+        }).format(tokens)}
+    {costText ? (
+      <span className="ml-2 text-muted-foreground">• {costText}</span>
+    ) : null}
+  </span>
+);
+
 export type ContextInputUsageProps = ComponentProps<"div">;
 
 export const ContextInputUsage = ({
@@ -389,22 +407,3 @@ export const ContextCacheUsage = ({
     </div>
   );
 };
-
-const TokensWithCost = ({
-  tokens,
-  costText,
-}: {
-  tokens?: number;
-  costText?: string;
-}) => (
-  <span>
-    {tokens === undefined
-      ? "—"
-      : new Intl.NumberFormat("en-US", {
-          notation: "compact",
-        }).format(tokens)}
-    {costText ? (
-      <span className="ml-2 text-muted-foreground">• {costText}</span>
-    ) : null}
-  </span>
-);

@@ -181,7 +181,7 @@ export default function ChatPage() {
                 {message.parts.map((part, i) =>
                   part.type === "text" ? (
                     <MessageResponse key={i}>{part.text}</MessageResponse>
-                  ) : null,
+                  ) : null
                 )}
               </MessageContent>
             </Message>

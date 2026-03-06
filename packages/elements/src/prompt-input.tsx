@@ -1,20 +1,5 @@
 "use client";
 
-import type { ChatStatus, FileUIPart, SourceDocumentUIPart } from "ai";
-import type {
-  ChangeEvent,
-  ChangeEventHandler,
-  ClipboardEventHandler,
-  ComponentProps,
-  FormEvent,
-  FormEventHandler,
-  HTMLAttributes,
-  KeyboardEventHandler,
-  PropsWithChildren,
-  ReactNode,
-  RefObject,
-} from "react";
-
 import {
   Command,
   CommandEmpty,
@@ -55,6 +40,7 @@ import {
   TooltipTrigger,
 } from "@repo/shadcn-ui/components/ui/tooltip";
 import { cn } from "@repo/shadcn-ui/lib/utils";
+import type { ChatStatus, FileUIPart, SourceDocumentUIPart } from "ai";
 import {
   CornerDownLeftIcon,
   ImageIcon,
@@ -64,6 +50,19 @@ import {
   XIcon,
 } from "lucide-react";
 import { nanoid } from "nanoid";
+import type {
+  ChangeEvent,
+  ChangeEventHandler,
+  ClipboardEventHandler,
+  ComponentProps,
+  FormEvent,
+  FormEventHandler,
+  HTMLAttributes,
+  KeyboardEventHandler,
+  PropsWithChildren,
+  ReactNode,
+  RefObject,
+} from "react";
 import {
   Children,
   createContext,
@@ -119,8 +118,12 @@ const captureScreenshot = async (): Promise<File | null> => {
 
     video.srcObject = stream;
 
+    // Video element uses callback-based API, wrapping in Promise is necessary
+    // oxlint-disable-next-line eslint-plugin-promise(avoid-new)
     await new Promise<void>((resolve, reject) => {
+      // oxlint-disable-next-line eslint-plugin-unicorn(prefer-add-event-listener)
       video.onloadedmetadata = () => resolve();
+      // oxlint-disable-next-line eslint-plugin-unicorn(prefer-add-event-listener)
       video.onerror = () => reject(new Error("Failed to load screen stream"));
     });
 
@@ -141,9 +144,11 @@ const captureScreenshot = async (): Promise<File | null> => {
     }
 
     context.drawImage(video, 0, 0, width, height);
-    const blob = await new Promise<Blob | null>((resolve) =>
-      canvas.toBlob(resolve, "image/png")
-    );
+    // canvas.toBlob uses callback-based API, wrapping in Promise is necessary
+    // oxlint-disable-next-line eslint-plugin-promise(avoid-new)
+    const blob = await new Promise<Blob | null>((resolve) => {
+      canvas.toBlob(resolve, "image/png");
+    });
     if (!blob) {
       return null;
     }
@@ -159,7 +164,11 @@ const captureScreenshot = async (): Promise<File | null> => {
       type: "image/png",
     });
   } finally {
-    stream?.getTracks().forEach((track) => track.stop());
+    if (stream) {
+      for (const track of stream.getTracks()) {
+        track.stop();
+      }
+    }
     video.pause();
     video.srcObject = null;
   }
@@ -439,31 +448,33 @@ export const PromptInputActionAddScreenshot = ({
 }: PromptInputActionAddScreenshotProps) => {
   const attachments = usePromptInputAttachments();
 
-  return (
-    <DropdownMenuItem
-      {...props}
-      onSelect={async (event) => {
-        onSelect?.(event);
-        if (event.defaultPrevented) {
+  const handleSelect = useCallback(
+    async (event: Event) => {
+      onSelect?.(event);
+      if (event.defaultPrevented) {
+        return;
+      }
+
+      try {
+        const screenshot = await captureScreenshot();
+        if (screenshot) {
+          attachments.add([screenshot]);
+        }
+      } catch (error) {
+        if (
+          error instanceof DOMException &&
+          (error.name === "NotAllowedError" || error.name === "AbortError")
+        ) {
           return;
         }
+        throw error;
+      }
+    },
+    [onSelect, attachments]
+  );
 
-        try {
-          const screenshot = await captureScreenshot();
-          if (screenshot) {
-            attachments.add([screenshot]);
-          }
-        } catch (error) {
-          if (
-            error instanceof DOMException &&
-            (error.name === "NotAllowedError" || error.name === "AbortError")
-          ) {
-            return;
-          }
-          throw error;
-        }
-      }}
-    >
+  return (
+    <DropdownMenuItem {...props} onSelect={handleSelect}>
       <Monitor className="mr-2 size-4" />
       {label}
     </DropdownMenuItem>

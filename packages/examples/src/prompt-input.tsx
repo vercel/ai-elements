@@ -1,7 +1,5 @@
 "use client";
 
-import type { PromptInputMessage } from "@repo/elements/prompt-input";
-
 import {
   Attachment,
   AttachmentPreview,
@@ -21,6 +19,7 @@ import {
   ModelSelectorName,
   ModelSelectorTrigger,
 } from "@repo/elements/model-selector";
+import type { PromptInputMessage } from "@repo/elements/prompt-input";
 import {
   PromptInput,
   PromptInputActionAddAttachments,

@@ -1,11 +1,10 @@
 "use client";
 
-import type { Experimental_TranscriptionResult as TranscriptionResult } from "ai";
-
 import {
   Transcription,
   TranscriptionSegment,
 } from "@repo/elements/transcription";
+import type { Experimental_TranscriptionResult as TranscriptionResult } from "ai";
 import { useCallback, useRef, useState } from "react";
 
 const segments: TranscriptionResult["segments"] = [

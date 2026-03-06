@@ -1,8 +1,9 @@
-import react from "@vitejs/plugin-react";
-import { playwright } from "@vitest/browser-playwright";
 // Vitest config - Node.js modules are valid here
 // oxlint-disable-next-line eslint-plugin-import(no-nodejs-modules)
 import path from "node:path";
+
+import react from "@vitejs/plugin-react";
+import { playwright } from "@vitest/browser-playwright";
 import { defineConfig } from "vitest/config";
 
 export default defineConfig({

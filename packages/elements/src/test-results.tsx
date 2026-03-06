@@ -1,7 +1,5 @@
 "use client";
 
-import type { ComponentProps, HTMLAttributes } from "react";
-
 import { Badge } from "@repo/shadcn-ui/components/ui/badge";
 import {
   Collapsible,
@@ -16,6 +14,7 @@ import {
   CircleIcon,
   XCircleIcon,
 } from "lucide-react";
+import type { ComponentProps, HTMLAttributes } from "react";
 import { createContext, useContext, useMemo } from "react";
 
 type TestStatus = "passed" | "failed" | "skipped" | "running";
@@ -41,36 +40,6 @@ const formatDuration = (ms: number) => {
   return `${(ms / 1000).toFixed(2)}s`;
 };
 
-export type TestResultsProps = HTMLAttributes<HTMLDivElement> & {
-  summary?: TestResultsSummary;
-};
-
-export const TestResults = ({
-  summary,
-  className,
-  children,
-  ...props
-}: TestResultsProps) => {
-  const contextValue = useMemo(() => ({ summary }), [summary]);
-
-  return (
-    <TestResultsContext.Provider value={contextValue}>
-      <div
-        className={cn("rounded-lg border bg-background", className)}
-        {...props}
-      >
-        {children ??
-          (summary && (
-            <TestResultsHeader>
-              <TestResultsSummary />
-              <TestResultsDuration />
-            </TestResultsHeader>
-          ))}
-      </div>
-    </TestResultsContext.Provider>
-  );
-};
-
 export type TestResultsHeaderProps = HTMLAttributes<HTMLDivElement>;
 
 export const TestResultsHeader = ({
@@ -88,6 +57,26 @@ export const TestResultsHeader = ({
     {children}
   </div>
 );
+
+export type TestResultsDurationProps = HTMLAttributes<HTMLSpanElement>;
+
+export const TestResultsDuration = ({
+  className,
+  children,
+  ...props
+}: TestResultsDurationProps) => {
+  const { summary } = useContext(TestResultsContext);
+
+  if (!summary?.duration) {
+    return null;
+  }
+
+  return (
+    <span className={cn("text-muted-foreground text-sm", className)} {...props}>
+      {children ?? formatDuration(summary.duration)}
+    </span>
+  );
+};
 
 export type TestResultsSummaryProps = HTMLAttributes<HTMLDivElement>;
 
@@ -137,23 +126,33 @@ export const TestResultsSummary = ({
   );
 };
 
-export type TestResultsDurationProps = HTMLAttributes<HTMLSpanElement>;
+export type TestResultsProps = HTMLAttributes<HTMLDivElement> & {
+  summary?: TestResultsSummary;
+};
 
-export const TestResultsDuration = ({
+export const TestResults = ({
+  summary,
   className,
   children,
   ...props
-}: TestResultsDurationProps) => {
-  const { summary } = useContext(TestResultsContext);
-
-  if (!summary?.duration) {
-    return null;
-  }
+}: TestResultsProps) => {
+  const contextValue = useMemo(() => ({ summary }), [summary]);
 
   return (
-    <span className={cn("text-muted-foreground text-sm", className)} {...props}>
-      {children ?? formatDuration(summary.duration)}
-    </span>
+    <TestResultsContext.Provider value={contextValue}>
+      <div
+        className={cn("rounded-lg border bg-background", className)}
+        {...props}
+      >
+        {children ??
+          (summary && (
+            <TestResultsHeader>
+              <TestResultsSummary />
+              <TestResultsDuration />
+            </TestResultsHeader>
+          ))}
+      </div>
+    </TestResultsContext.Provider>
   );
 };
 
@@ -220,6 +219,26 @@ const TestSuiteContext = createContext<TestSuiteContextType>({
   name: "",
   status: "passed",
 });
+
+const statusStyles: Record<TestStatus, string> = {
+  failed: "text-red-600 dark:text-red-400",
+  passed: "text-green-600 dark:text-green-400",
+  running: "text-blue-600 dark:text-blue-400",
+  skipped: "text-yellow-600 dark:text-yellow-400",
+};
+
+const statusIcons: Record<TestStatus, React.ReactNode> = {
+  failed: <XCircleIcon className="size-4" />,
+  passed: <CheckCircle2Icon className="size-4" />,
+  running: <CircleDotIcon className="size-4 animate-pulse" />,
+  skipped: <CircleIcon className="size-4" />,
+};
+
+const TestStatusIcon = ({ status }: { status: TestStatus }) => (
+  <span className={cn("shrink-0", statusStyles[status])}>
+    {statusIcons[status]}
+  </span>
+);
 
 export type TestSuiteProps = ComponentProps<typeof Collapsible> & {
   name: string;
@@ -331,6 +350,60 @@ const TestContext = createContext<TestContextType>({
   status: "passed",
 });
 
+export type TestNameProps = HTMLAttributes<HTMLSpanElement>;
+
+export const TestName = ({ className, children, ...props }: TestNameProps) => {
+  const { name } = useContext(TestContext);
+
+  return (
+    <span className={cn("flex-1", className)} {...props}>
+      {children ?? name}
+    </span>
+  );
+};
+
+export type TestDurationProps = HTMLAttributes<HTMLSpanElement>;
+
+export const TestDuration = ({
+  className,
+  children,
+  ...props
+}: TestDurationProps) => {
+  const { duration } = useContext(TestContext);
+
+  if (duration === undefined) {
+    return null;
+  }
+
+  return (
+    <span
+      className={cn("ml-auto text-muted-foreground text-xs", className)}
+      {...props}
+    >
+      {children ?? `${duration}ms`}
+    </span>
+  );
+};
+
+export type TestStatusProps = HTMLAttributes<HTMLSpanElement>;
+
+export const TestStatus = ({
+  className,
+  children,
+  ...props
+}: TestStatusProps) => {
+  const { status } = useContext(TestContext);
+
+  return (
+    <span
+      className={cn("shrink-0", statusStyles[status], className)}
+      {...props}
+    >
+      {children ?? statusIcons[status]}
+    </span>
+  );
+};
+
 export type TestProps = HTMLAttributes<HTMLDivElement> & {
   name: string;
   status: TestStatus;
@@ -365,80 +438,6 @@ export const Test = ({
         )}
       </div>
     </TestContext.Provider>
-  );
-};
-
-const statusStyles: Record<TestStatus, string> = {
-  failed: "text-red-600 dark:text-red-400",
-  passed: "text-green-600 dark:text-green-400",
-  running: "text-blue-600 dark:text-blue-400",
-  skipped: "text-yellow-600 dark:text-yellow-400",
-};
-
-const statusIcons: Record<TestStatus, React.ReactNode> = {
-  failed: <XCircleIcon className="size-4" />,
-  passed: <CheckCircle2Icon className="size-4" />,
-  running: <CircleDotIcon className="size-4 animate-pulse" />,
-  skipped: <CircleIcon className="size-4" />,
-};
-
-const TestStatusIcon = ({ status }: { status: TestStatus }) => (
-  <span className={cn("shrink-0", statusStyles[status])}>
-    {statusIcons[status]}
-  </span>
-);
-
-export type TestStatusProps = HTMLAttributes<HTMLSpanElement>;
-
-export const TestStatus = ({
-  className,
-  children,
-  ...props
-}: TestStatusProps) => {
-  const { status } = useContext(TestContext);
-
-  return (
-    <span
-      className={cn("shrink-0", statusStyles[status], className)}
-      {...props}
-    >
-      {children ?? statusIcons[status]}
-    </span>
-  );
-};
-
-export type TestNameProps = HTMLAttributes<HTMLSpanElement>;
-
-export const TestName = ({ className, children, ...props }: TestNameProps) => {
-  const { name } = useContext(TestContext);
-
-  return (
-    <span className={cn("flex-1", className)} {...props}>
-      {children ?? name}
-    </span>
-  );
-};
-
-export type TestDurationProps = HTMLAttributes<HTMLSpanElement>;
-
-export const TestDuration = ({
-  className,
-  children,
-  ...props
-}: TestDurationProps) => {
-  const { duration } = useContext(TestContext);
-
-  if (duration === undefined) {
-    return null;
-  }
-
-  return (
-    <span
-      className={cn("ml-auto text-muted-foreground text-xs", className)}
-      {...props}
-    >
-      {children ?? `${duration}ms`}
-    </span>
   );
 };
 

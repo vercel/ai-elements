@@ -1,10 +1,8 @@
 "use client";
 
-import type { ComponentProps, ReactNode } from "react";
-import type { TProps as JsxParserProps } from "react-jsx-parser";
-
 import { cn } from "@repo/shadcn-ui/lib/utils";
 import { AlertCircle } from "lucide-react";
+import type { ComponentProps, ReactNode } from "react";
 import {
   createContext,
   memo,
@@ -15,6 +13,7 @@ import {
   useRef,
   useState,
 } from "react";
+import type { TProps as JsxParserProps } from "react-jsx-parser";
 import JsxParser from "react-jsx-parser";
 
 interface JSXPreviewContextValue {
@@ -139,18 +138,21 @@ export const JSXPreview = memo(
       [jsx, isStreaming]
     );
 
+    const contextValue = useMemo(
+      () => ({
+        bindings,
+        components,
+        error,
+        jsx,
+        onErrorProp: onError,
+        processedJsx,
+        setError,
+      }),
+      [bindings, components, error, jsx, onError, processedJsx, setError]
+    );
+
     return (
-      <JSXPreviewContext.Provider
-        value={{
-          bindings,
-          components,
-          error,
-          jsx,
-          onErrorProp: onError,
-          processedJsx,
-          setError,
-        }}
-      >
+      <JSXPreviewContext.Provider value={contextValue}>
         <div className={cn("relative", className)} {...props}>
           {children}
         </div>

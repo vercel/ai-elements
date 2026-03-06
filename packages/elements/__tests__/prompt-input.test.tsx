@@ -2,10 +2,8 @@
 import { act, render, screen } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import React from "react";
-import { describe, expect, it, vi } from "vitest";
 
 import type { AttachmentData } from "../src/attachments";
-
 import {
   Attachment,
   AttachmentInfo,
@@ -1001,13 +999,8 @@ describe("promptInputProvider", () => {
 
   it("provides initial input value", async () => {
     setupPromptInputTests();
-    const {
-      PromptInputProvider,
-      PromptInput,
-      PromptInputBody,
-      PromptInputTextarea,
-      usePromptInputController,
-    } = await import("../src/prompt-input");
+    const { PromptInputProvider, usePromptInputController } =
+      await import("../src/prompt-input");
     const onSubmit = vi.fn();
 
     const TestComponent = () => {
@@ -1889,13 +1882,7 @@ describe("file validation", () => {
 
   it("enforces maxFiles limit when using PromptInputProvider", async () => {
     setupPromptInputTests();
-    const {
-      PromptInputProvider,
-      PromptInput,
-      PromptInputBody,
-      PromptInputTextarea,
-      usePromptInputAttachments,
-    } = await import("../src/prompt-input");
+    const { PromptInputProvider } = await import("../src/prompt-input");
 
     const onSubmit = vi.fn();
     const onError = vi.fn();

@@ -1,9 +1,7 @@
 "use client";
 
-import type { RiveParameters } from "@rive-app/react-webgl2";
-import type { FC, ReactNode } from "react";
-
 import { cn } from "@repo/shadcn-ui/lib/utils";
+import type { RiveParameters } from "@rive-app/react-webgl2";
 import {
   useRive,
   useStateMachineInput,
@@ -11,6 +9,7 @@ import {
   useViewModelInstance,
   useViewModelInstanceColor,
 } from "@rive-app/react-webgl2";
+import type { FC, ReactNode } from "react";
 import { memo, useEffect, useMemo, useRef, useState } from "react";
 
 export type PersonaState =

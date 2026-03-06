@@ -1,11 +1,10 @@
 "use client";
 
-import type { ComponentProps } from "react";
-
 import { Button } from "@repo/shadcn-ui/components/ui/button";
 import { Spinner } from "@repo/shadcn-ui/components/ui/spinner";
 import { cn } from "@repo/shadcn-ui/lib/utils";
 import { MicIcon, SquareIcon } from "lucide-react";
+import type { ComponentProps } from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 interface SpeechRecognition extends EventTarget {

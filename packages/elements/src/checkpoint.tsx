@@ -1,8 +1,5 @@
 "use client";
 
-import type { LucideProps } from "lucide-react";
-import type { ComponentProps, HTMLAttributes } from "react";
-
 import { Button } from "@repo/shadcn-ui/components/ui/button";
 import { Separator } from "@repo/shadcn-ui/components/ui/separator";
 import {
@@ -11,7 +8,9 @@ import {
   TooltipTrigger,
 } from "@repo/shadcn-ui/components/ui/tooltip";
 import { cn } from "@repo/shadcn-ui/lib/utils";
+import type { LucideProps } from "lucide-react";
 import { BookmarkIcon } from "lucide-react";
+import type { ComponentProps, HTMLAttributes } from "react";
 
 export type CheckpointProps = HTMLAttributes<HTMLDivElement>;
 

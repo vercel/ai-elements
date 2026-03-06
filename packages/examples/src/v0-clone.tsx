@@ -1,9 +1,8 @@
 "use client";
 
-import type { PromptInputMessage } from "@repo/elements/prompt-input";
-
 import { Conversation, ConversationContent } from "@repo/elements/conversation";
 import { Message, MessageContent } from "@repo/elements/message";
+import type { PromptInputMessage } from "@repo/elements/prompt-input";
 import {
   PromptInput,
   PromptInputSubmit,
@@ -88,14 +87,13 @@ export default function Home() {
   const [message, setMessage] = useState("");
   const [currentChat, setCurrentChat] = useState<Chat | null>(mockChat);
   const [isLoading, setIsLoading] = useState(false);
-  const [chatHistory, setChatHistory] =
-    useState<
-      {
-        id: string;
-        type: "user" | "assistant";
-        content: string;
-      }[]
-    >(mockChatHistory);
+  const [chatHistory, setChatHistory] = useState<
+    {
+      id: string;
+      type: "user" | "assistant";
+      content: string;
+    }[]
+  >(mockChatHistory);
 
   const handleSendMessage = useCallback(
     async (promptMessage: PromptInputMessage) => {

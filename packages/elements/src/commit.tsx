@@ -1,7 +1,5 @@
 "use client";
 
-import type { ComponentProps, HTMLAttributes } from "react";
-
 import { Avatar, AvatarFallback } from "@repo/shadcn-ui/components/ui/avatar";
 import { Button } from "@repo/shadcn-ui/components/ui/button";
 import {
@@ -18,6 +16,7 @@ import {
   MinusIcon,
   PlusIcon,
 } from "lucide-react";
+import type { ComponentProps, HTMLAttributes } from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 export type CommitProps = ComponentProps<typeof Collapsible>;

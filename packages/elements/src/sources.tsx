@@ -1,7 +1,5 @@
 "use client";
 
-import type { ComponentProps } from "react";
-
 import {
   Collapsible,
   CollapsibleContent,
@@ -9,6 +7,7 @@ import {
 } from "@repo/shadcn-ui/components/ui/collapsible";
 import { cn } from "@repo/shadcn-ui/lib/utils";
 import { BookIcon, ChevronDownIcon } from "lucide-react";
+import type { ComponentProps } from "react";
 
 export type SourcesProps = ComponentProps<"div">;
 

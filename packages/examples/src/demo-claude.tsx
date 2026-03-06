@@ -1,8 +1,5 @@
 "use client";
 
-import type { PromptInputMessage } from "@repo/elements/prompt-input";
-import type { ToolUIPart } from "ai";
-
 import {
   Conversation,
   ConversationContent,
@@ -32,6 +29,7 @@ import {
   ModelSelectorName,
   ModelSelectorTrigger,
 } from "@repo/elements/model-selector";
+import type { PromptInputMessage } from "@repo/elements/prompt-input";
 import {
   PromptInput,
   PromptInputButton,
@@ -58,6 +56,7 @@ import {
   DropdownMenuTrigger,
 } from "@repo/shadcn-ui/components/ui/dropdown-menu";
 import { cn } from "@repo/shadcn-ui/lib/utils";
+import type { ToolUIPart } from "ai";
 import {
   ArrowUpIcon,
   CameraIcon,

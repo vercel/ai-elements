@@ -1,9 +1,7 @@
 "use client";
 
-import type { CarouselApi } from "@repo/shadcn-ui/components/ui/carousel";
-import type { ComponentProps } from "react";
-
 import { Badge } from "@repo/shadcn-ui/components/ui/badge";
+import type { CarouselApi } from "@repo/shadcn-ui/components/ui/carousel";
 import {
   Carousel,
   CarouselContent,
@@ -16,6 +14,7 @@ import {
 } from "@repo/shadcn-ui/components/ui/hover-card";
 import { cn } from "@repo/shadcn-ui/lib/utils";
 import { ArrowLeftIcon, ArrowRightIcon } from "lucide-react";
+import type { ComponentProps } from "react";
 import {
   createContext,
   useCallback,

@@ -1,8 +1,5 @@
 "use client";
 
-import type { PromptInputMessage } from "@repo/elements/prompt-input";
-import type { ToolUIPart } from "ai";
-
 import {
   Conversation,
   ConversationContent,
@@ -19,6 +16,7 @@ import {
   MessageContent,
   MessageResponse,
 } from "@repo/elements/message";
+import type { PromptInputMessage } from "@repo/elements/prompt-input";
 import {
   PromptInput,
   PromptInputButton,
@@ -45,6 +43,7 @@ import {
   DropdownMenuTrigger,
 } from "@repo/shadcn-ui/components/ui/dropdown-menu";
 import { cn } from "@repo/shadcn-ui/lib/utils";
+import type { ToolUIPart } from "ai";
 import {
   AudioWaveformIcon,
   BarChartIcon,
@@ -606,6 +605,12 @@ const Example = () => {
     []
   );
 
+  const handleFileAction = (action: string) => {
+    toast.success("File action", {
+      description: action,
+    });
+  };
+
   const handleUploadFile = useCallback(
     () => handleFileAction("upload-file"),
     []
@@ -627,12 +632,6 @@ const Example = () => {
     () => setUseMicrophone((prev) => !prev),
     []
   );
-
-  const handleFileAction = (action: string) => {
-    toast.success("File action", {
-      description: action,
-    });
-  };
 
   const handleSuggestionClick = useCallback(
     (suggestion: string) => {
@@ -770,13 +769,13 @@ const Example = () => {
           </PromptInputFooter>
         </PromptInput>
         <Suggestions className="px-4">
-          {suggestions.map(({ icon, text, color }) => (
+          {suggestions.map(({ icon, text: label, color }) => (
             <SuggestionItem
               color={color}
               icon={icon}
-              key={text}
+              key={label}
               onSuggestionClick={handleSuggestionClick}
-              text={text}
+              text={label}
             />
           ))}
         </Suggestions>

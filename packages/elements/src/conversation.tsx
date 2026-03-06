@@ -1,10 +1,9 @@
 "use client";
 
-import type { ComponentProps } from "react";
-
 import { Button } from "@repo/shadcn-ui/components/ui/button";
 import { cn } from "@repo/shadcn-ui/lib/utils";
 import { ArrowDownIcon, DownloadIcon } from "lucide-react";
+import type { ComponentProps } from "react";
 import { useCallback } from "react";
 import { StickToBottom, useStickToBottomContext } from "use-stick-to-bottom";
 

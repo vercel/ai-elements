@@ -1,9 +1,6 @@
 "use client";
 
 import type { AttachmentData } from "@repo/elements/attachments";
-import type { PromptInputMessage } from "@repo/elements/prompt-input";
-import type { SourceDocumentUIPart } from "ai";
-
 import {
   Attachment,
   AttachmentInfo,
@@ -24,6 +21,7 @@ import {
   ModelSelectorName,
   ModelSelectorTrigger,
 } from "@repo/elements/model-selector";
+import type { PromptInputMessage } from "@repo/elements/prompt-input";
 import {
   PromptInput,
   PromptInputBody,
@@ -52,6 +50,7 @@ import {
   usePromptInputReferencedSources,
 } from "@repo/elements/prompt-input";
 import { Button } from "@repo/shadcn-ui/components/ui/button";
+import type { SourceDocumentUIPart } from "ai";
 import {
   AtSignIcon,
   CheckIcon,
@@ -174,29 +173,24 @@ ModelItem.displayName = "ModelItem";
 
 interface SourceCommandItemProps {
   source: SourceDocumentUIPart;
-  index: number;
   onAdd: (source: SourceDocumentUIPart) => void;
 }
 
-const SourceCommandItem = memo(
-  ({ source, index, onAdd }: SourceCommandItemProps) => {
-    const handleSelect = useCallback(() => onAdd(source), [onAdd, source]);
-    return (
-      <PromptInputCommandItem
-        key={`${source.title}-${index}`}
-        onSelect={handleSelect}
-      >
-        <GlobeIcon className="text-primary" />
-        <div className="flex flex-col">
-          <span className="font-medium text-sm">{source.title}</span>
-          <span className="text-muted-foreground text-xs">
-            {source.filename}
-          </span>
-        </div>
-      </PromptInputCommandItem>
-    );
-  }
-);
+const SourceCommandItem = memo(({ source, onAdd }: SourceCommandItemProps) => {
+  const handleSelect = useCallback(() => onAdd(source), [onAdd, source]);
+  return (
+    <PromptInputCommandItem
+      key={`${source.filename}-${source.title}`}
+      onSelect={handleSelect}
+    >
+      <GlobeIcon className="text-primary" />
+      <div className="flex flex-col">
+        <span className="font-medium text-sm">{source.title}</span>
+        <span className="text-muted-foreground text-xs">{source.filename}</span>
+      </div>
+    </PromptInputCommandItem>
+  );
+});
 
 SourceCommandItem.displayName = "SourceCommandItem";
 
@@ -280,6 +274,54 @@ const PromptInputReferencedSourcesDisplay = () => {
         />
       ))}
     </Attachments>
+  );
+};
+
+const SampleFilesMenu = () => {
+  const refs = usePromptInputReferencedSources();
+
+  const handleAdd = useCallback(
+    (source: SourceDocumentUIPart) => refs.add(source),
+    [refs]
+  );
+
+  return (
+    <PromptInputCommand>
+      <PromptInputCommandInput
+        className="border-none focus-visible:ring-0"
+        placeholder="Add files, folders, docs..."
+      />
+      <PromptInputCommandList>
+        <PromptInputCommandEmpty className="p-3 text-muted-foreground text-sm">
+          No results found.
+        </PromptInputCommandEmpty>
+        <PromptInputCommandGroup heading="Added">
+          <PromptInputCommandItem>
+            <GlobeIcon />
+            <span>Active Tabs</span>
+            <span className="ml-auto text-muted-foreground">✓</span>
+          </PromptInputCommandItem>
+        </PromptInputCommandGroup>
+        <PromptInputCommandSeparator />
+        <PromptInputCommandGroup heading="Other Files">
+          {sampleSources
+            .filter(
+              (source) =>
+                !refs.sources.some(
+                  (s) =>
+                    s.title === source.title && s.filename === source.filename
+                )
+            )
+            .map((source) => (
+              <SourceCommandItem
+                key={`${source.filename}-${source.title}`}
+                onAdd={handleAdd}
+                source={source}
+              />
+            ))}
+        </PromptInputCommandGroup>
+      </PromptInputCommandList>
+    </PromptInputCommand>
   );
 };
 
@@ -458,52 +500,3 @@ const Example = () => {
 };
 
 export default Example;
-
-const SampleFilesMenu = () => {
-  const refs = usePromptInputReferencedSources();
-
-  const handleAdd = useCallback(
-    (source: SourceDocumentUIPart) => refs.add(source),
-    [refs]
-  );
-
-  return (
-    <PromptInputCommand>
-      <PromptInputCommandInput
-        className="border-none focus-visible:ring-0"
-        placeholder="Add files, folders, docs..."
-      />
-      <PromptInputCommandList>
-        <PromptInputCommandEmpty className="p-3 text-muted-foreground text-sm">
-          No results found.
-        </PromptInputCommandEmpty>
-        <PromptInputCommandGroup heading="Added">
-          <PromptInputCommandItem>
-            <GlobeIcon />
-            <span>Active Tabs</span>
-            <span className="ml-auto text-muted-foreground">✓</span>
-          </PromptInputCommandItem>
-        </PromptInputCommandGroup>
-        <PromptInputCommandSeparator />
-        <PromptInputCommandGroup heading="Other Files">
-          {sampleSources
-            .filter(
-              (source) =>
-                !refs.sources.some(
-                  (s) =>
-                    s.title === source.title && s.filename === source.filename
-                )
-            )
-            .map((source, index) => (
-              <SourceCommandItem
-                index={index}
-                key={`${source.title}-${index}`}
-                onAdd={handleAdd}
-                source={source}
-              />
-            ))}
-        </PromptInputCommandGroup>
-      </PromptInputCommandList>
-    </PromptInputCommand>
-  );
-};

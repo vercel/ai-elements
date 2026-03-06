@@ -1,10 +1,9 @@
 "use client";
 
-import type { MotionProps } from "motion/react";
-import type { CSSProperties, ElementType, JSX } from "react";
-
 import { cn } from "@repo/shadcn-ui/lib/utils";
+import type { MotionProps } from "motion/react";
 import { motion } from "motion/react";
+import type { CSSProperties, ElementType, JSX } from "react";
 import { memo, useMemo } from "react";
 
 type MotionHTMLProps = MotionProps & Record<string, unknown>;

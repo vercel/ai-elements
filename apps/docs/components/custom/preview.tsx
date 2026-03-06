@@ -1,3 +1,9 @@
+// Server component - Node.js modules are valid here
+// oxlint-disable-next-line eslint-plugin-import(no-nodejs-modules)
+import { readFile } from "node:fs/promises";
+// oxlint-disable-next-line eslint-plugin-import(no-nodejs-modules)
+import { join } from "node:path";
+
 import { CodeBlock } from "@repo/elements/src/code-block";
 import {
   ResizableHandle,
@@ -5,11 +11,6 @@ import {
   ResizablePanelGroup,
 } from "@repo/shadcn-ui/components/ui/resizable";
 import { cn } from "@repo/shadcn-ui/lib/utils";
-// Server component - Node.js modules are valid here
-// oxlint-disable-next-line eslint-plugin-import(no-nodejs-modules)
-import { readFile } from "node:fs/promises";
-// oxlint-disable-next-line eslint-plugin-import(no-nodejs-modules)
-import { join } from "node:path";
 
 import {
   CodeBlockTab,

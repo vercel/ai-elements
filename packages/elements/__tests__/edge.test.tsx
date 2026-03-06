@@ -1,12 +1,11 @@
 import { render } from "@testing-library/react";
 import { Position, ReactFlowProvider } from "@xyflow/react";
-import { describe, expect, it, vi } from "vitest";
 
 import { Canvas } from "../src/canvas";
 import { Edge } from "../src/edge";
 
 // oxlint-disable-next-line typescript-eslint(consistent-type-imports)
-vi.mock<typeof import("@xyflow/react")>("@xyflow/react", async () => {
+vi.mock<typeof import("@xyflow/react")>(import("@xyflow/react"), async () => {
   const actual = await vi.importActual("@xyflow/react");
   return {
     ...actual,

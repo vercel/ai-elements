@@ -1,6 +1,5 @@
 import { render, screen } from "@testing-library/react";
 import { XIcon } from "lucide-react";
-import { describe, expect, it } from "vitest";
 
 import {
   Artifact,

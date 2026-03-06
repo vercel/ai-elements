@@ -283,6 +283,55 @@ const PromptInputReferencedSourcesDisplay = () => {
   );
 };
 
+const SampleFilesMenu = () => {
+  const refs = usePromptInputReferencedSources();
+
+  const handleAdd = useCallback(
+    (source: SourceDocumentUIPart) => refs.add(source),
+    [refs]
+  );
+
+  return (
+    <PromptInputCommand>
+      <PromptInputCommandInput
+        className="border-none focus-visible:ring-0"
+        placeholder="Add files, folders, docs..."
+      />
+      <PromptInputCommandList>
+        <PromptInputCommandEmpty className="p-3 text-muted-foreground text-sm">
+          No results found.
+        </PromptInputCommandEmpty>
+        <PromptInputCommandGroup heading="Added">
+          <PromptInputCommandItem>
+            <GlobeIcon />
+            <span>Active Tabs</span>
+            <span className="ml-auto text-muted-foreground">✓</span>
+          </PromptInputCommandItem>
+        </PromptInputCommandGroup>
+        <PromptInputCommandSeparator />
+        <PromptInputCommandGroup heading="Other Files">
+          {sampleSources
+            .filter(
+              (source) =>
+                !refs.sources.some(
+                  (s) =>
+                    s.title === source.title && s.filename === source.filename
+                )
+            )
+            .map((source, index) => (
+              <SourceCommandItem
+                index={index}
+                key={`${source.title}-${index}`}
+                onAdd={handleAdd}
+                source={source}
+              />
+            ))}
+        </PromptInputCommandGroup>
+      </PromptInputCommandList>
+    </PromptInputCommand>
+  );
+};
+
 const Example = () => {
   const [model, setModel] = useState<string>(models[0].id);
   const [modelSelectorOpen, setModelSelectorOpen] = useState(false);
@@ -458,52 +507,3 @@ const Example = () => {
 };
 
 export default Example;
-
-const SampleFilesMenu = () => {
-  const refs = usePromptInputReferencedSources();
-
-  const handleAdd = useCallback(
-    (source: SourceDocumentUIPart) => refs.add(source),
-    [refs]
-  );
-
-  return (
-    <PromptInputCommand>
-      <PromptInputCommandInput
-        className="border-none focus-visible:ring-0"
-        placeholder="Add files, folders, docs..."
-      />
-      <PromptInputCommandList>
-        <PromptInputCommandEmpty className="p-3 text-muted-foreground text-sm">
-          No results found.
-        </PromptInputCommandEmpty>
-        <PromptInputCommandGroup heading="Added">
-          <PromptInputCommandItem>
-            <GlobeIcon />
-            <span>Active Tabs</span>
-            <span className="ml-auto text-muted-foreground">✓</span>
-          </PromptInputCommandItem>
-        </PromptInputCommandGroup>
-        <PromptInputCommandSeparator />
-        <PromptInputCommandGroup heading="Other Files">
-          {sampleSources
-            .filter(
-              (source) =>
-                !refs.sources.some(
-                  (s) =>
-                    s.title === source.title && s.filename === source.filename
-                )
-            )
-            .map((source, index) => (
-              <SourceCommandItem
-                index={index}
-                key={`${source.title}-${index}`}
-                onAdd={handleAdd}
-                source={source}
-              />
-            ))}
-        </PromptInputCommandGroup>
-      </PromptInputCommandList>
-    </PromptInputCommand>
-  );
-};

@@ -1,6 +1,5 @@
 // oxlint-disable eslint-plugin-react(jsx-handler-names)
 import { render, waitFor } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
 
 import { Persona } from "../src/persona";
 
@@ -23,7 +22,7 @@ const {
 
 // oxlint-disable-next-line typescript-eslint(consistent-type-imports)
 vi.mock<typeof import("@rive-app/react-webgl2")>(
-  "@rive-app/react-webgl2",
+  import("@rive-app/react-webgl2"),
   () => ({
     useRive: (params: unknown) => mockUseRive(params),
     useStateMachineInput: (

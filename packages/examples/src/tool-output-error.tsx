@@ -1,7 +1,5 @@
 "use client";
 
-import type { ToolUIPart } from "ai";
-
 import {
   Tool,
   ToolContent,
@@ -9,6 +7,7 @@ import {
   ToolInput,
   ToolOutput,
 } from "@repo/elements/tool";
+import type { ToolUIPart } from "ai";
 
 const toolCall: ToolUIPart = {
   errorText:

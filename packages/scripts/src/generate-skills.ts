@@ -1,4 +1,3 @@
-import matter from "gray-matter";
 // Node.js script - Node.js modules are valid here
 // oxlint-disable-next-line eslint-plugin-import(no-nodejs-modules)
 import { existsSync, mkdirSync, rmSync } from "node:fs";
@@ -6,6 +5,8 @@ import { existsSync, mkdirSync, rmSync } from "node:fs";
 import { readdir, readFile, writeFile } from "node:fs/promises";
 // oxlint-disable-next-line eslint-plugin-import(no-nodejs-modules)
 import { basename, join } from "node:path";
+
+import matter from "gray-matter";
 
 const ROOT_DIR = join(import.meta.dirname, "../../..");
 const CONTENT_DIR = join(ROOT_DIR, "apps/docs/content");

@@ -1,7 +1,5 @@
 "use client";
 
-import type { HTMLAttributes, ReactNode } from "react";
-
 import {
   Collapsible,
   CollapsibleContent,
@@ -14,6 +12,7 @@ import {
   FolderIcon,
   FolderOpenIcon,
 } from "lucide-react";
+import type { HTMLAttributes, ReactNode } from "react";
 import {
   createContext,
   useCallback,
@@ -94,6 +93,30 @@ export const FileTree = ({
     </FileTreeContext.Provider>
   );
 };
+
+export type FileTreeIconProps = HTMLAttributes<HTMLSpanElement>;
+
+export const FileTreeIcon = ({
+  className,
+  children,
+  ...props
+}: FileTreeIconProps) => (
+  <span className={cn("shrink-0", className)} {...props}>
+    {children}
+  </span>
+);
+
+export type FileTreeNameProps = HTMLAttributes<HTMLSpanElement>;
+
+export const FileTreeName = ({
+  className,
+  children,
+  ...props
+}: FileTreeNameProps) => (
+  <span className={cn("truncate", className)} {...props}>
+    {children}
+  </span>
+);
 
 interface FileTreeFolderContextType {
   path: string;
@@ -250,30 +273,6 @@ export const FileTreeFile = ({
     </FileTreeFileContext.Provider>
   );
 };
-
-export type FileTreeIconProps = HTMLAttributes<HTMLSpanElement>;
-
-export const FileTreeIcon = ({
-  className,
-  children,
-  ...props
-}: FileTreeIconProps) => (
-  <span className={cn("shrink-0", className)} {...props}>
-    {children}
-  </span>
-);
-
-export type FileTreeNameProps = HTMLAttributes<HTMLSpanElement>;
-
-export const FileTreeName = ({
-  className,
-  children,
-  ...props
-}: FileTreeNameProps) => (
-  <span className={cn("truncate", className)} {...props}>
-    {children}
-  </span>
-);
 
 export type FileTreeActionsProps = HTMLAttributes<HTMLDivElement>;
 
