@@ -150,16 +150,28 @@ const relativeTimeFormat = new Intl.RelativeTimeFormat("en", {
   numeric: "auto",
 });
 
+const formatRelativeDate = (date: Date) => {
+  const days = Math.round(
+    (date.getTime() - Date.now()) / (1000 * 60 * 60 * 24)
+  );
+  return relativeTimeFormat.format(days, "day");
+};
+
 export const CommitTimestamp = ({
   date,
   className,
   children,
   ...props
 }: CommitTimestampProps) => {
-  const formatted = relativeTimeFormat.format(
-    Math.round((date.getTime() - Date.now()) / (1000 * 60 * 60 * 24)),
-    "day"
-  );
+  const [formatted, setFormatted] = useState("");
+
+  const updateFormatted = useCallback(() => {
+    setFormatted(formatRelativeDate(date));
+  }, [date]);
+
+  useEffect(() => {
+    updateFormatted();
+  }, [updateFormatted]);
 
   return (
     <time
