@@ -252,10 +252,7 @@ describe("jSXPreview streaming mode", () => {
 
   it("strips incomplete opening tag with partial attribute", () => {
     render(
-      <JSXPreview
-        isStreaming
-        jsx='<div><p>Done</p><span className="incomp'
-      >
+      <JSXPreview isStreaming jsx='<div><p>Done</p><span className="incomp'>
         <JSXPreviewContent />
       </JSXPreview>
     );
