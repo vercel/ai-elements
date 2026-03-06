@@ -39,6 +39,15 @@ vi.mock<typeof import("@rive-app/react-webgl2")>(
   })
 );
 
+// Mock requestAnimationFrame to fire synchronously so that
+// useStrictModeSafeInit's deferred init completes within the render cycle.
+// oxlint-disable-next-line eslint-plugin-promise(prefer-await-to-callbacks)
+vi.stubGlobal("requestAnimationFrame", (cb: FrameRequestCallback) => {
+  cb(0); // oxlint-disable-line eslint-plugin-promise(prefer-await-to-callbacks)
+  return 0;
+});
+vi.stubGlobal("cancelAnimationFrame", vi.fn());
+
 // Setup function for persona tests
 const setupPersonaTests = () => {
   vi.spyOn(console, "warn").mockImplementation(vi.fn());
@@ -506,8 +515,8 @@ describe("persona - Callback Execution", () => {
     const onLoad = vi.fn();
 
     mockUseRive.mockImplementation((params) => {
-      // Simulate calling onLoad
-      params.onLoad?.({ artboard: "test" });
+      // Simulate calling onLoad (params is null before deferred init)
+      params?.onLoad?.({ artboard: "test" });
       return {
         RiveComponent: MockRiveComponent,
         rive: {},
@@ -525,8 +534,8 @@ describe("persona - Callback Execution", () => {
     const testError = new Error("Test error");
 
     mockUseRive.mockImplementation((params) => {
-      // Simulate calling onLoadError
-      params.onLoadError?.(testError);
+      // Simulate calling onLoadError (params is null before deferred init)
+      params?.onLoadError?.(testError);
       return {
         RiveComponent: MockRiveComponent,
         rive: {},
@@ -543,8 +552,8 @@ describe("persona - Callback Execution", () => {
     const onReady = vi.fn();
 
     mockUseRive.mockImplementation((params) => {
-      // Simulate calling onRiveReady
-      params.onRiveReady?.();
+      // Simulate calling onRiveReady (params is null before deferred init)
+      params?.onRiveReady?.();
       return {
         RiveComponent: MockRiveComponent,
         rive: {},
@@ -562,7 +571,7 @@ describe("persona - Callback Execution", () => {
     const pauseEvent = { type: "pause" };
 
     mockUseRive.mockImplementation((params) => {
-      params.onPause?.(pauseEvent);
+      params?.onPause?.(pauseEvent);
       return {
         RiveComponent: MockRiveComponent,
         rive: {},
@@ -580,7 +589,7 @@ describe("persona - Callback Execution", () => {
     const playEvent = { type: "play" };
 
     mockUseRive.mockImplementation((params) => {
-      params.onPlay?.(playEvent);
+      params?.onPlay?.(playEvent);
       return {
         RiveComponent: MockRiveComponent,
         rive: {},
@@ -598,7 +607,7 @@ describe("persona - Callback Execution", () => {
     const stopEvent = { type: "stop" };
 
     mockUseRive.mockImplementation((params) => {
-      params.onStop?.(stopEvent);
+      params?.onStop?.(stopEvent);
       return {
         RiveComponent: MockRiveComponent,
         rive: {},
