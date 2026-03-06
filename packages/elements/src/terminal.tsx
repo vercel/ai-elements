@@ -16,7 +16,6 @@ import {
   useState,
 } from "react";
 
-import { Shimmer } from "./shimmer";
 
 interface TerminalContextType {
   output: string;
