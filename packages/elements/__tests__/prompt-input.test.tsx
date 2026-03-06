@@ -16,6 +16,7 @@ import {
 import {
   PromptInput,
   PromptInputActionAddAttachments,
+  PromptInputActionAddScreenshot,
   PromptInputActionMenu,
   PromptInputActionMenuContent,
   PromptInputActionMenuItem,
@@ -157,6 +158,84 @@ const setupPromptInputTests = () => {
     // oxlint-disable-next-line eslint-plugin-react(no-this-in-sfc)
     return this;
   }) as unknown as typeof FileReader;
+};
+
+const setupScreenshotCaptureMock = () => {
+  if (!navigator.mediaDevices) {
+    Object.defineProperty(navigator, "mediaDevices", {
+      configurable: true,
+      value: {},
+      writable: true,
+    });
+  }
+
+  if (!("getDisplayMedia" in navigator.mediaDevices)) {
+    Object.defineProperty(navigator.mediaDevices, "getDisplayMedia", {
+      configurable: true,
+      value: vi.fn(),
+      writable: true,
+    });
+  }
+
+  const stopTrack = vi.fn();
+  const stream = {
+    getTracks: () => [{ stop: stopTrack }],
+  } as unknown as MediaStream;
+
+  const getDisplayMedia = vi
+    .spyOn(navigator.mediaDevices, "getDisplayMedia")
+    .mockResolvedValue(stream);
+
+  const originalCreateElement = document.createElement.bind(document);
+  const video = originalCreateElement("video");
+  const canvas = originalCreateElement("canvas");
+  const drawImage = vi.fn();
+  const play = vi.spyOn(video, "play").mockResolvedValue();
+  const pause = vi.spyOn(video, "pause").mockImplementation(vi.fn());
+
+  Object.defineProperty(video, "videoWidth", {
+    configurable: true,
+    value: 1280,
+  });
+  Object.defineProperty(video, "videoHeight", {
+    configurable: true,
+    value: 720,
+  });
+
+  let srcObject: unknown = null;
+  Object.defineProperty(video, "srcObject", {
+    configurable: true,
+    get: () => srcObject,
+    set: (value) => {
+      srcObject = value;
+      if (value) {
+        setTimeout(() => {
+          video.onloadedmetadata?.(new Event("loadedmetadata"));
+        }, 0);
+      }
+    },
+  });
+
+  vi.spyOn(canvas, "getContext").mockReturnValue({
+    drawImage,
+  } as unknown as CanvasRenderingContext2D);
+  // oxlint-disable-next-line eslint-plugin-promise(prefer-await-to-callbacks)
+  const toBlob = vi.spyOn(canvas, "toBlob").mockImplementation((callback) => {
+    // oxlint-disable-next-line eslint-plugin-promise(prefer-await-to-callbacks)
+    callback?.(new Blob(["mock-screenshot"], { type: "image/png" }));
+  });
+
+  vi.spyOn(document, "createElement").mockImplementation(((tagName: string) => {
+    if (tagName === "video") {
+      return video;
+    }
+    if (tagName === "canvas") {
+      return canvas;
+    }
+    return originalCreateElement(tagName as keyof HTMLElementTagNameMap);
+  }) as typeof document.createElement);
+
+  return { getDisplayMedia, pause, play, stopTrack, toBlob };
 };
 
 describe("promptInput", () => {
@@ -2709,6 +2788,86 @@ describe("promptInputActionAddAttachments", () => {
     await user.click(trigger);
 
     expect(screen.getByText("Upload files")).toBeInTheDocument();
+  });
+});
+
+describe("promptInputActionAddScreenshot", () => {
+  it("captures a screenshot and adds it as attachment", async () => {
+    setupPromptInputTests();
+    const onSubmit = vi.fn();
+    const user = userEvent.setup();
+    const { getDisplayMedia, pause, play, stopTrack, toBlob } =
+      setupScreenshotCaptureMock();
+
+    render(
+      <PromptInput onSubmit={onSubmit}>
+        <PromptInputBody>
+          <PromptInputAttachments>
+            {(attachment) => (
+              <div key={attachment.id}>{attachment.filename}</div>
+            )}
+          </PromptInputAttachments>
+          <PromptInputActionMenu>
+            <PromptInputActionMenuTrigger />
+            <PromptInputActionMenuContent>
+              <PromptInputActionAddScreenshot />
+            </PromptInputActionMenuContent>
+          </PromptInputActionMenu>
+          <PromptInputTextarea />
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    await user.click(screen.getByRole("button"));
+    await user.click(screen.getByText("Take screenshot"));
+
+    await vi.waitFor(() => {
+      expect(screen.getByText(/^screenshot-.*\.png$/)).toBeInTheDocument();
+    });
+    expect(getDisplayMedia).toHaveBeenCalledOnce();
+    expect(play).toHaveBeenCalledOnce();
+    expect(toBlob).toHaveBeenCalledOnce();
+    expect(stopTrack).toHaveBeenCalledOnce();
+    expect(pause).toHaveBeenCalledOnce();
+  });
+
+  it("ignores denied capture permission", async () => {
+    setupPromptInputTests();
+    const onSubmit = vi.fn();
+    const user = userEvent.setup();
+    const consoleError = vi.spyOn(console, "error").mockImplementation(vi.fn());
+    const { getDisplayMedia } = setupScreenshotCaptureMock();
+    getDisplayMedia.mockRejectedValue(
+      new DOMException("Permission denied", "NotAllowedError")
+    );
+
+    render(
+      <PromptInput onSubmit={onSubmit}>
+        <PromptInputBody>
+          <PromptInputAttachments>
+            {(attachment) => (
+              <div key={attachment.id}>{attachment.filename}</div>
+            )}
+          </PromptInputAttachments>
+          <PromptInputActionMenu>
+            <PromptInputActionMenuTrigger />
+            <PromptInputActionMenuContent>
+              <PromptInputActionAddScreenshot />
+            </PromptInputActionMenuContent>
+          </PromptInputActionMenu>
+          <PromptInputTextarea />
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    await user.click(screen.getByRole("button"));
+    await user.click(screen.getByText("Take screenshot"));
+
+    await vi.waitFor(() => {
+      expect(getDisplayMedia).toHaveBeenCalledOnce();
+    });
+    expect(screen.queryByText(/^screenshot-.*\.png$/)).not.toBeInTheDocument();
+    expect(consoleError).not.toHaveBeenCalled();
   });
 });
 
