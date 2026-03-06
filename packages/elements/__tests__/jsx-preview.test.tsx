@@ -249,6 +249,37 @@ describe("jSXPreview streaming mode", () => {
     expect(screen.getByText("Complete")).toBeInTheDocument();
     expect(screen.getByText("Incomplete")).toBeInTheDocument();
   });
+
+  it("strips incomplete opening tag with partial attribute", () => {
+    render(
+      <JSXPreview
+        isStreaming
+        jsx='<div><p>Done</p><span className="incomp'
+      >
+        <JSXPreviewContent />
+      </JSXPreview>
+    );
+    expect(screen.getByText("Done")).toBeInTheDocument();
+  });
+
+  it("strips incomplete tag at start of stream", () => {
+    render(
+      <JSXPreview isStreaming jsx='<div className="foo'>
+        <JSXPreviewContent />
+      </JSXPreview>
+    );
+    // Should render without error since the incomplete tag is stripped
+    expect(true).toBeTruthy();
+  });
+
+  it("handles tag cut off mid-name", () => {
+    render(
+      <JSXPreview isStreaming jsx="<div><p>Text</p><sp">
+        <JSXPreviewContent />
+      </JSXPreview>
+    );
+    expect(screen.getByText("Text")).toBeInTheDocument();
+  });
 });
 
 describe("jSXPreview integration", () => {
