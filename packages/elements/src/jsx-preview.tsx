@@ -211,7 +211,6 @@ export const JSXPreviewContent = memo(
     const [hadError, setHadError] = useState(false);
 
     // Reset error tracking when jsx changes
-    // biome-ignore lint/correctness/useExhaustiveDependencies: processedJsx change should reset tracking
     useEffect(() => {
       errorReportedRef.current = null;
       setHadError(false);
@@ -238,7 +237,6 @@ export const JSXPreviewContent = memo(
     );
 
     // Track the last JSX that rendered without error
-    // biome-ignore lint/correctness/useExhaustiveDependencies: update when processedJsx changes without error
     useEffect(() => {
       if (!errorReportedRef.current) {
         lastGoodJsxRef.current = processedJsx;
