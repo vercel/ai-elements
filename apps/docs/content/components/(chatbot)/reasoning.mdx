@@ -35,6 +35,7 @@ import {
 } from "@/components/ai-elements/conversation";
 import {
   PromptInput,
+  type PromptInputMessage,
   PromptInputTextarea,
   PromptInputSubmit,
 } from "@/components/ai-elements/prompt-input";
@@ -96,9 +97,8 @@ const ReasoningDemo = () => {
 
   const { messages, sendMessage, status } = useChat();
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    sendMessage({ text: input });
+  const handleSubmit = (message: PromptInputMessage) => {
+    sendMessage({ text: message.text });
     setInput("");
   };
 

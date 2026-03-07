@@ -50,7 +50,8 @@ import {
   ConversationScrollButton,
 } from "@/components/ai-elements/conversation";
 import {
-  Input,
+  PromptInput,
+  type PromptInputMessage,
   PromptInputTextarea,
   PromptInputSubmit,
 } from "@/components/ai-elements/prompt-input";
@@ -63,10 +64,9 @@ const ActionsDemo = () => {
   const [input, setInput] = useState("");
   const { messages, sendMessage, status, regenerate } = useChat();
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (input.trim()) {
-      sendMessage({ text: input });
+  const handleSubmit = (message: PromptInputMessage) => {
+    if (message.text.trim()) {
+      sendMessage({ text: message.text });
       setInput("");
     }
   };
@@ -121,7 +121,7 @@ const ActionsDemo = () => {
           <ConversationScrollButton />
         </Conversation>
 
-        <Input
+        <PromptInput
           onSubmit={handleSubmit}
           className="mt-4 w-full max-w-2xl mx-auto relative"
         >
@@ -136,7 +136,7 @@ const ActionsDemo = () => {
             disabled={!input.trim()}
             className="absolute bottom-1 right-1"
           />
-        </Input>
+        </PromptInput>
       </div>
     </div>
   );

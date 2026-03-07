@@ -10,7 +10,6 @@ import matter from "gray-matter";
 
 const ROOT_DIR = join(import.meta.dirname, "../../..");
 const CONTENT_DIR = join(ROOT_DIR, "apps/docs/content");
-const DOCS_DIR = join(CONTENT_DIR, "docs");
 const COMPONENTS_DIR = join(CONTENT_DIR, "components");
 const EXAMPLES_DIR = join(ROOT_DIR, "packages/examples/src");
 const SKILLS_DIR = join(ROOT_DIR, "skills");
@@ -37,12 +36,6 @@ const replacePreviews = (content: string): string =>
     /<Preview\s+path=["']([^"']+)["']\s*\/>/g,
     (_, path) => `See \`scripts/${path}.tsx\` for this example.`
   );
-
-const removeCustomComponents = (content: string): string =>
-  content
-    .replaceAll(/<ElementsInstaller\s*\/>/g, "")
-    .replaceAll(/<ElementsDemo\s*\/>/g, "")
-    .replaceAll(/<Callout>\s*[\s\S]*?<\/Callout>/g, "");
 
 const replaceInstaller = (content: string): string =>
   content.replaceAll(
@@ -140,15 +133,6 @@ const transformComponentMdx = (fileContent: string): string => {
   return processedContent.trim();
 };
 
-const transformOverviewMdx = (fileContent: string): string => {
-  const { content } = matter(fileContent);
-
-  let processedContent = removeCustomComponents(content);
-  processedContent = processedContent.trim();
-
-  return processedContent;
-};
-
 const findMatchingExamples = async (
   componentName: string
 ): Promise<string[]> => {
@@ -164,46 +148,18 @@ const findMatchingExamples = async (
   });
 };
 
-const cleanSkillsDir = (): void => {
-  if (existsSync(SKILLS_DIR)) {
-    rmSync(SKILLS_DIR, { recursive: true });
+const cleanGeneratedDirs = (): void => {
+  const referencesDir = join(SKILL_DIR, "references");
+  const scriptsDir = join(SKILL_DIR, "scripts");
+
+  if (existsSync(referencesDir)) {
+    rmSync(referencesDir, { recursive: true });
   }
-  mkdirSync(SKILLS_DIR, { recursive: true });
-};
-
-const generateOverviewSkill = async (): Promise<void> => {
-  const indexContent = await readFile(join(DOCS_DIR, "index.mdx"), "utf8");
-  const usageContent = await readFile(join(DOCS_DIR, "usage.mdx"), "utf8");
-  const troubleshootingContent = await readFile(
-    join(DOCS_DIR, "troubleshooting.mdx"),
-    "utf8"
-  );
-
-  const skillContent = `---
-name: ai-elements
-description: Create new AI chat interface components for the ai-elements library following established composable patterns, shadcn/ui integration, and Vercel AI SDK conventions. Use when creating new components in packages/elements/src or when the user asks to add a new component to ai-elements.
----
-
-# AI Elements
-
-${transformOverviewMdx(indexContent)}
-
-## Usage
-
-${transformOverviewMdx(usageContent)}
-
-## Troubleshooting
-
-${transformOverviewMdx(troubleshootingContent)}
-
-## Available Components
-
-See the \`references/\` folder for detailed documentation on each component.
-`;
+  if (existsSync(scriptsDir)) {
+    rmSync(scriptsDir, { recursive: true });
+  }
 
   mkdirSync(SKILL_DIR, { recursive: true });
-  await writeFile(join(SKILL_DIR, "SKILL.md"), skillContent);
-  console.log("Generated: SKILL.md (overview)");
 };
 
 const processComponent = async (mdxPath: string): Promise<number> => {
@@ -249,9 +205,7 @@ ${transformComponentMdx(fileContent)}
 const main = async (): Promise<void> => {
   console.log("Generating ai-elements skill from docs and examples...\n");
 
-  cleanSkillsDir();
-
-  await generateOverviewSkill();
+  cleanGeneratedDirs();
 
   const mdxFiles = await discoverMdxFiles(COMPONENTS_DIR);
   console.log(`\nFound ${mdxFiles.length} component MDX files\n`);
