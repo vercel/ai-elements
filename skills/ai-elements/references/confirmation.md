@@ -28,6 +28,7 @@ import { CheckIcon, XIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Confirmation,
+  ConfirmationTitle,
   ConfirmationRequest,
   ConfirmationAccepted,
   ConfirmationRejected,
@@ -220,6 +221,14 @@ See `scripts/confirmation-rejected.tsx` for this example.
 | `state` | `ToolUIPart[` | - | The current state of the tool (input-streaming, input-available, approval-requested, approval-responded, output-denied, or output-available). Will not render for input-streaming or input-available states. |
 | `className` | `string` | - | Additional CSS classes to apply to the Alert component. |
 | `...props` | `React.ComponentProps<typeof Alert>` | - | Any other props are spread to the Alert component. |
+
+### `<ConfirmationTitle />`
+
+A styled description element for displaying a title or label within the confirmation alert.
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `...props` | `React.ComponentProps<typeof AlertDescription>` | - | Any other props are spread to the underlying AlertDescription component. |
 
 ### `<ConfirmationRequest />`
 

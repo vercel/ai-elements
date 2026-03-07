@@ -215,6 +215,10 @@ const markdown = messagesToMarkdown(messages);
 // With custom formatter
 const customMarkdown = messagesToMarkdown(
   messages,
-  (msg, i) => `[${msg.role}]: ${msg.content}`
+  (msg, i) =>
+    `[${msg.role}]: ${msg.parts
+      .filter((p) => p.type === "text")
+      .map((p) => p.text)
+      .join("")}`
 );
 ```

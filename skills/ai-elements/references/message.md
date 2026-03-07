@@ -207,8 +207,7 @@ export default ActionsDemo;
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `from` | `UIMessage[` | - | Aligns the selector for user, assistant or system messages. |
-| `...props` | `React.HTMLAttributes<HTMLDivElement>` | - | Any other props are spread to the selector container. |
+| `...props` | `React.ComponentProps<typeof ButtonGroup>` | - | Any other props are spread to the underlying ButtonGroup component. |
 
 ### `<MessageBranchPrevious />`
 
@@ -228,45 +227,11 @@ export default ActionsDemo;
 |------|------|---------|-------------|
 | `...props` | `React.HTMLAttributes<HTMLSpanElement>` | - | Any other props are spread to the underlying span element. |
 
-### `<MessageAttachments />`
+### `<MessageToolbar />`
 
-A container component for displaying file attachments in a message. Automatically positions attachments at the end of the message with proper spacing and alignment.
+A container for placing actions and branch selectors below a message. Lays out children in a horizontal row with space-between alignment.
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `children` | `ReactNode` | - | MessageAttachment components to render. Returns null if no children provided. |
 | `...props` | `React.ComponentProps<` | - | Any other props are spread to the root div. |
-
-**Example:**
-
-```tsx
-<MessageAttachments className="mb-2">
-  {files.map((attachment) => (
-    <MessageAttachment data={attachment} key={attachment.url} />
-  ))}
-</MessageAttachments>
-```
-
-### `<MessageAttachment />`
-
-Displays a single file attachment. Images are shown as thumbnails (96px × 96px) with rounded corners. Non-image files show a paperclip icon with the filename.
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `data` | `FileUIPart` | - | The file data to display. Must include url and mediaType. |
-| `onRemove` | `() => void` | - | Optional callback fired when the remove button is clicked. If provided, a remove button will appear on hover. |
-| `...props` | `React.HTMLAttributes<HTMLDivElement>` | - | Any other props are spread to the root div. |
-
-**Example:**
-
-```tsx
-<MessageAttachment
-  data={{
-    type: "file",
-    url: "https://example.com/image.jpg",
-    mediaType: "image/jpeg",
-    filename: "image.jpg",
-  }}
-  onRemove={() => console.log("Remove clicked")}
-/>
 ```
