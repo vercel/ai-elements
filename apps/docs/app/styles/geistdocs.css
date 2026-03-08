@@ -180,6 +180,16 @@
   --fd-page-width: 100%;
 }
 
+/* Shiki dual theme support - switch to dark theme colors in dark mode */
+.dark .shiki,
+.dark .shiki span {
+  color: var(--shiki-dark) !important;
+  background-color: var(--shiki-dark-bg) !important;
+  font-style: var(--shiki-dark-font-style) !important;
+  font-weight: var(--shiki-dark-font-weight) !important;
+  text-decoration: var(--shiki-dark-text-decoration) !important;
+}
+
 /* Overlay should sit below the navbar */
 #nd-docs-layout > div[data-state] {
   @apply top-16;
