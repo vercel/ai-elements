@@ -1,5 +1,25 @@
 # ai-elements
 
+## 1.9.0
+
+### Minor Changes
+
+- 2551702: Update docs
+
+### Patch Changes
+
+- 58801e5: Add PromptInputActionAddScreenshot component for capturing screenshots via getDisplayMedia
+- 80f91b5: update chatbot example guide to include sonner missing steps
+- 2ebd564: Fix Persona crashing in Vite dev mode by deferring WebGL2 context creation to avoid exhausting browser context limits during React Strict Mode's double-mount cycle.
+- 91d3515: Fix JSXPreview flashing between rendered content and parse errors during streaming. Strip incomplete tags cut off mid-attribute, and fall back to last successfully rendered JSX when parse errors occur during streaming.
+- c3e0b0c: Misc improvements
+- ed31a58: Update ConversationMessage to UIMessage
+- 4c6d2c6: Fix FileTree icons for long file names
+- 899f089: Separate select and toggle actions in FileTreeFolder so clicking the chevron only expands/collapses and clicking the name only selects
+- d1bd5f8: Remove invalid Shimmer fallback from TerminalStatus now that Shimmer requires children text
+- 17b5b39: Update Streamdown
+- 4f643f7: fix: update message response when is animating changes
+
 ## 1.8.4
 
 ### Patch Changes
