@@ -7,6 +7,8 @@ import { ArrowDownIcon, DownloadIcon } from "lucide-react";
 import type { ComponentProps } from "react";
 import { useCallback } from "react";
 import { StickToBottom, useStickToBottomContext } from "use-stick-to-bottom";
+import { ScrollArea as ScrollAreaPrimitive } from "radix-ui";
+import { ScrollBar } from "@repo/shadcn-ui/components/ui/scroll-area";
 
 export type ConversationProps = ComponentProps<typeof StickToBottom>;
 
@@ -20,19 +22,38 @@ export const Conversation = ({ className, ...props }: ConversationProps) => (
   />
 );
 
-export type ConversationContentProps = ComponentProps<
-  typeof StickToBottom.Content
->;
+export type ConversationContentProps = ComponentProps<typeof ScrollAreaPrimitive.Root> & {
+  scrollClassName?: string;
+  scrollBarClassName?: string;
+};
 
 export const ConversationContent = ({
+  children,
   className,
+  scrollClassName,
+  scrollBarClassName,
   ...props
-}: ConversationContentProps) => (
-  <StickToBottom.Content
-    className={cn("flex flex-col gap-8 p-4", className)}
-    {...props}
-  />
-);
+}: ConversationContentProps) => {
+  const context = useStickToBottomContext();
+
+  return (
+    <ScrollAreaPrimitive.Root className="size-full" {...props}>
+      <ScrollAreaPrimitive.Viewport
+        ref={context.scrollRef}
+        className={cn("size-full overflow-y-auto", scrollClassName)}
+        style={{ scrollbarGutter: "stable both-edges" }}
+      >
+        <div
+          ref={context.contentRef}
+          className={cn("flex flex-col gap-8 p-4", className)}
+        >
+          {children}
+        </div>
+      </ScrollAreaPrimitive.Viewport>
+      <ScrollBar className={cn("w-2", scrollBarClassName)} />
+    </ScrollAreaPrimitive.Root>
+  );
+};
 
 export type ConversationEmptyStateProps = ComponentProps<"div"> & {
   title?: string;

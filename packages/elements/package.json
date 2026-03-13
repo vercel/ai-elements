@@ -28,6 +28,7 @@
     "media-chrome": "^4.17.2",
     "motion": "^12.26.2",
     "nanoid": "^5.1.6",
+    "radix-ui": "latest",
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "react-jsx-parser": "^2.2.0",
