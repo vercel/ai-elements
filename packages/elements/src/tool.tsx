@@ -33,10 +33,6 @@ export const Tool = ({ className, ...props }: ToolProps) => (
 
 export type ToolPart = ToolUIPart | DynamicToolUIPart;
 
-type ToolPartProps =
-  | (Pick<ToolUIPart, "type" | "state"> & { toolName?: never })
-  | Pick<DynamicToolUIPart, "type" | "state" | "toolName">;
-
 export type ToolIconProps = {
   type: ToolPart["type"];
   state: ToolPart["state"];
@@ -44,11 +40,18 @@ export type ToolIconProps = {
   className: string;
 };
 
-export type ToolHeaderProps = ToolPartProps & {
+export type ToolHeaderProps = {
   icon?: ReactNode | ((props: ToolIconProps) => ReactNode);
   title?: string;
   className?: string;
-};
+} & (
+  | { type: ToolUIPart["type"]; state: ToolUIPart["state"]; toolName?: never }
+  | {
+      type: DynamicToolUIPart["type"];
+      state: DynamicToolUIPart["state"];
+      toolName: string;
+    }
+);
 
 const statusLabels: Record<ToolPart["state"], string> = {
   "approval-requested": "Awaiting Approval",
