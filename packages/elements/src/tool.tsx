@@ -1,5 +1,8 @@
 "use client";
 
+import type { DynamicToolUIPart, ToolUIPart } from "ai";
+import type { ComponentProps, ReactNode } from "react";
+
 import { Badge } from "@repo/shadcn-ui/components/ui/badge";
 import {
   Collapsible,
@@ -7,7 +10,6 @@ import {
   CollapsibleTrigger,
 } from "@repo/shadcn-ui/components/ui/collapsible";
 import { cn } from "@repo/shadcn-ui/lib/utils";
-import type { DynamicToolUIPart, ToolUIPart } from "ai";
 import {
   CheckCircleIcon,
   ChevronDownIcon,
@@ -16,7 +18,6 @@ import {
   WrenchIcon,
   XCircleIcon,
 } from "lucide-react";
-import type { ComponentProps, ReactNode } from "react";
 import { isValidElement } from "react";
 
 import { CodeBlock } from "./code-block";
@@ -32,17 +33,22 @@ export const Tool = ({ className, ...props }: ToolProps) => (
 
 export type ToolPart = ToolUIPart | DynamicToolUIPart;
 
-export type ToolHeaderProps = {
+type ToolPartProps =
+  | (Pick<ToolUIPart, "type" | "state"> & { toolName?: never })
+  | Pick<DynamicToolUIPart, "type" | "state" | "toolName">;
+
+export type ToolIconProps = {
+  type: ToolPart["type"];
+  state: ToolPart["state"];
+  toolName: string;
+  className: string;
+};
+
+export type ToolHeaderProps = ToolPartProps & {
+  icon?: ReactNode | ((props: ToolIconProps) => ReactNode);
   title?: string;
   className?: string;
-} & (
-  | { type: ToolUIPart["type"]; state: ToolUIPart["state"]; toolName?: never }
-  | {
-      type: DynamicToolUIPart["type"];
-      state: DynamicToolUIPart["state"];
-      toolName: string;
-    }
-);
+};
 
 const statusLabels: Record<ToolPart["state"], string> = {
   "approval-requested": "Awaiting Approval",
@@ -73,6 +79,7 @@ export const getStatusBadge = (status: ToolPart["state"]) => (
 
 export const ToolHeader = ({
   className,
+  icon,
   title,
   type,
   state,
@@ -81,6 +88,12 @@ export const ToolHeader = ({
 }: ToolHeaderProps) => {
   const derivedName =
     type === "dynamic-tool" ? toolName : type.split("-").slice(1).join("-");
+
+  const iconClassName = "size-4 shrink-0 text-muted-foreground";
+  const resolvedIcon =
+    typeof icon === "function"
+      ? icon({ type, state, toolName: derivedName, className: iconClassName })
+      : icon;
 
   return (
     <CollapsibleTrigger
@@ -91,7 +104,7 @@ export const ToolHeader = ({
       {...props}
     >
       <div className="flex items-center gap-2">
-        <WrenchIcon className="size-4 text-muted-foreground" />
+        {resolvedIcon ?? <WrenchIcon className={iconClassName} />}
         <span className="font-medium text-sm">{title ?? derivedName}</span>
         {getStatusBadge(state)}
       </div>
