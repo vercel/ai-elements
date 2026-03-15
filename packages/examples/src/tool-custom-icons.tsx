@@ -2,13 +2,13 @@
 
 import type { ReactNode } from "react";
 import { Tool, ToolContent, ToolHeader, ToolInput } from "@repo/elements/tool";
-import { DatabaseIcon, GlobeIcon, SearchIcon } from "lucide-react";
+import { cn } from "@repo/shadcn-ui/lib/utils";
+import { DatabaseIcon, SearchIcon, WrenchIcon } from "lucide-react";
 import type { LucideProps } from "lucide-react";
 
 const toolIcons: Record<string, (props: LucideProps) => ReactNode> = {
   database_query: DatabaseIcon,
   web_search: SearchIcon,
-  browse_url: GlobeIcon,
 };
 
 const renderIcon = ({ toolName, className }: { toolName: string; className: string }) => {
@@ -20,7 +20,7 @@ const Example = () => (
   <div className="space-y-4">
     <Tool>
       <ToolHeader
-        icon={({ className }) => <DatabaseIcon className={className} />}
+        icon={renderIcon}
         state="output-available"
         title="database_query"
         type="tool-database_query"
@@ -47,15 +47,17 @@ const Example = () => (
     </Tool>
     <Tool>
       <ToolHeader
-        icon={({ className }) => (
-          <SearchIcon className={`${className} text-blue-500`} />
-        )}
-        state="output-available"
-        title="custom_search"
-        type="tool-custom_search"
+        icon={<WrenchIcon className="size-4 shrink-0 text-foreground" />}
+        state="input-available"
+        title="custom_style"
+        type="tool-custom_style"
       />
       <ToolContent>
-        <ToolInput input={{ query: "custom styled icon" }} />
+        <ToolInput
+          input={{
+            query: "SELECT COUNT(*) FROM large_table",
+          }}
+        />
       </ToolContent>
     </Tool>
     <Tool>
