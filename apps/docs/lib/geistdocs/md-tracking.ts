@@ -3,39 +3,39 @@ import { siteId } from "@/geistdocs";
 const PLATFORM_URL = "https://geistdocs.com/md-tracking";
 
 interface TrackMdRequestParams {
-  path: string;
-  userAgent: string | null;
-  referer: string | null;
   acceptHeader: string | null;
+  path: string;
+  referer: string | null;
   /** How the markdown was requested: 'md-url' for direct .md URLs, 'header-negotiated' for Accept header */
   requestType?: "md-url" | "header-negotiated";
+  userAgent: string | null;
 }
 
 /**
  * Track a markdown page request via the geistdocs platform.
  * Fire-and-forget: errors are logged but don't affect the response.
  */
-export const trackMdRequest = async ({
+export async function trackMdRequest({
   path,
   userAgent,
   referer,
   acceptHeader,
   requestType,
-}: TrackMdRequestParams): Promise<void> => {
+}: TrackMdRequestParams): Promise<void> {
   try {
     const response = await fetch(PLATFORM_URL, {
-      body: JSON.stringify({
-        acceptHeader,
-        path,
-        referer,
-        requestType,
-        siteId: siteId ?? "geistdocs-unknown",
-        userAgent,
-      }),
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      method: "POST",
+      body: JSON.stringify({
+        path,
+        siteId: siteId ?? "geistdocs-unknown",
+        userAgent,
+        referer,
+        acceptHeader,
+        requestType,
+      }),
     });
 
     if (!response.ok) {
@@ -48,4 +48,4 @@ export const trackMdRequest = async ({
   } catch (error) {
     console.error("MD tracking error:", error);
   }
-};
+}
