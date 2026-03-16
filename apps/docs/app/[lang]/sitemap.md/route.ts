@@ -1,5 +1,9 @@
 import type { NextRequest } from "next/server";
-import { source } from "@/lib/geistdocs/source";
+import {
+  componentsSource,
+  docsSource,
+  examplesSource,
+} from "@/lib/geistdocs/source";
 
 export const revalidate = false;
 
@@ -167,7 +171,11 @@ export const GET = async (
   { params }: RouteContext<"/[lang]/sitemap.md">
 ) => {
   const { lang } = await params;
-  const pages = source.getPages(lang);
+  const pages = [
+    ...docsSource.getPages(lang),
+    ...componentsSource.getPages(lang),
+    ...examplesSource.getPages(lang),
+  ];
 
   const tree = buildTree(pages);
 
