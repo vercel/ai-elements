@@ -7,6 +7,23 @@ import { playwright } from "@vitest/browser-playwright";
 import { defineConfig } from "vitest/config";
 
 export default defineConfig({
+  optimizeDeps: {
+    include: [
+      "lexical",
+      "@lexical/link",
+      "@lexical/markdown",
+      "@lexical/react/LexicalAutoLinkPlugin",
+      "@lexical/react/LexicalComposer",
+      "@lexical/react/LexicalContentEditable",
+      "@lexical/react/LexicalEditorRefPlugin",
+      "@lexical/react/LexicalErrorBoundary",
+      "@lexical/react/LexicalHistoryPlugin",
+      "@lexical/react/LexicalLinkPlugin",
+      "@lexical/react/LexicalMarkdownShortcutPlugin",
+      "@lexical/react/LexicalOnChangePlugin",
+      "@lexical/react/LexicalRichTextPlugin",
+    ],
+  },
   plugins: [react()],
   resolve: {
     alias: {

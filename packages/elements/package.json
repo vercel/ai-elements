@@ -12,6 +12,9 @@
     "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
+    "@lexical/link": "^0.42.0",
+    "@lexical/markdown": "^0.42.0",
+    "@lexical/react": "^0.42.0",
     "@radix-ui/react-use-controllable-state": "^1.2.2",
     "@repo/shadcn-ui": "workspace:*",
     "@rive-app/react-webgl2": "^4.26.1",
@@ -24,6 +27,7 @@
     "ansi-to-react": "^6.2.6",
     "class-variance-authority": "^0.7.1",
     "katex": "^0.16.28",
+    "lexical": "^0.42.0",
     "lucide-react": "^0.577.0",
     "media-chrome": "^4.17.2",
     "motion": "^12.26.2",
