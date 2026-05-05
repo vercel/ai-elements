@@ -110,24 +110,17 @@ For full cross-browser support, provide the `onAudioRecorded` callback that send
 
 ## Usage with MediaRecorder Fallback
 
-To support Firefox and Safari, provide an `onAudioRecorded` callback that sends audio to a transcription service:
+To support Firefox and Safari, provide an `onAudioRecorded` callback that sends audio to an application-owned route. Keep provider API keys on the server, not in client components or `NEXT_PUBLIC_*` environment variables.
 
 ```tsx
 const handleAudioRecorded = async (audioBlob: Blob): Promise<string> => {
   const formData = new FormData();
   formData.append("file", audioBlob, "audio.webm");
-  formData.append("model", "whisper-1");
 
-  const response = await fetch(
-    "https://api.openai.com/v1/audio/transcriptions",
-    {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
-      },
-      body: formData,
-    }
-  );
+  const response = await fetch("/api/transcribe", {
+    body: formData,
+    method: "POST",
+  });
 
   const data = await response.json();
   return data.text;
@@ -137,6 +130,36 @@ const handleAudioRecorded = async (audioBlob: Blob): Promise<string> => {
   onTranscriptionChange={(text) => console.log(text)}
   onAudioRecorded={handleAudioRecorded}
 />;
+```
+
+Then proxy the request from your server route to your transcription provider:
+
+```ts title="app/api/transcribe/route.ts"
+export async function POST(req: Request) {
+  const formData = await req.formData();
+  formData.set("model", "whisper-1");
+
+  const response = await fetch(
+    "https://api.openai.com/v1/audio/transcriptions",
+    {
+      body: formData,
+      headers: {
+        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+      },
+      method: "POST",
+    }
+  );
+
+  if (!response.ok) {
+    return Response.json(
+      { error: "Transcription failed" },
+      { status: response.status }
+    );
+  }
+
+  const data = await response.json();
+  return Response.json({ text: data.text });
+}
 ```
 
 ## Notes
