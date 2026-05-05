@@ -12,6 +12,92 @@ See `scripts/context.tsx` for this example.
 npx ai-elements@latest add context
 ```
 
+## Usage with AI SDK
+
+Use `Context` with the `usage` object returned by AI SDK generation calls. The
+API route can return both the model answer and token usage:
+
+```ts title="app/api/chat/route.ts"
+import { streamText } from "ai";
+
+export async function POST(req: Request) {
+  const { prompt } = await req.json();
+
+  const result = await streamText({
+    model: "openai/gpt-4.1-mini",
+    prompt,
+  });
+
+  return Response.json({
+    text: await result.text,
+    usage: await result.usage,
+  });
+}
+```
+
+Then render the returned usage data with the compound Context components:
+
+```tsx title="app/page.tsx"
+"use client";
+
+import { useState } from "react";
+import {
+  Context,
+  ContextCacheUsage,
+  ContextContent,
+  ContextContentBody,
+  ContextContentFooter,
+  ContextContentHeader,
+  ContextInputUsage,
+  ContextOutputUsage,
+  ContextReasoningUsage,
+  ContextTrigger,
+} from "@/components/ai-elements/context";
+import type { LanguageModelUsage } from "ai";
+
+export default function Page() {
+  const [usage, setUsage] = useState<LanguageModelUsage>();
+
+  async function sendMessage() {
+    const response = await fetch("/api/chat", {
+      body: JSON.stringify({ prompt: "Summarize this repository" }),
+      method: "POST",
+    });
+    const data = await response.json();
+    setUsage(data.usage);
+  }
+
+  return (
+    <div>
+      <button onClick={sendMessage} type="button">
+        Send
+      </button>
+
+      {usage ? (
+        <Context
+          maxTokens={128_000}
+          modelId="openai:gpt-4.1-mini"
+          usage={usage}
+          usedTokens={usage.totalTokens}
+        >
+          <ContextTrigger />
+          <ContextContent>
+            <ContextContentHeader />
+            <ContextContentBody>
+              <ContextInputUsage />
+              <ContextOutputUsage />
+              <ContextReasoningUsage />
+              <ContextCacheUsage />
+            </ContextContentBody>
+            <ContextContentFooter />
+          </ContextContent>
+        </Context>
+      ) : null}
+    </div>
+  );
+}
+```
+
 ## Features
 
 - **Compound Component Architecture**: Flexible composition of context display elements
