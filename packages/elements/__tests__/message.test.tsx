@@ -71,6 +71,13 @@ describe("messageContent", () => {
     );
     expect(container.firstChild).toHaveClass("custom");
   });
+
+  it("clips horizontal overflow without hiding sticky descendants", () => {
+    const { container } = render(<MessageContent>Text</MessageContent>);
+
+    expect(container.firstChild).toHaveClass("overflow-x-clip");
+    expect(container.firstChild).not.toHaveClass("overflow-hidden");
+  });
 });
 
 describe("messageActions", () => {
