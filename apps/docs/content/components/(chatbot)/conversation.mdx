@@ -27,6 +27,7 @@ import {
   ConversationDownload,
   ConversationEmptyState,
   ConversationScrollButton,
+  ConversationVirtualizedContent,
 } from "@/components/ai-elements/conversation";
 import {
   Message,
@@ -134,10 +135,40 @@ export async function POST(req: Request) {
 }
 ```
 
+## Virtualized Messages
+
+Use `ConversationVirtualizedContent` for long conversations. It keeps the regular `Conversation` auto-scroll behavior while only mounting the visible message rows.
+
+```tsx
+<Conversation>
+  <ConversationVirtualizedContent
+    items={messages}
+    estimateSize={() => 160}
+    getItemKey={(message) => message.id}
+  >
+    {(message) => (
+      <Message from={message.role}>
+        <MessageContent>
+          {message.parts.map((part, index) =>
+            part.type === "text" ? (
+              <MessageResponse key={`${message.id}-${index}`}>
+                {part.text}
+              </MessageResponse>
+            ) : null
+          )}
+        </MessageContent>
+      </Message>
+    )}
+  </ConversationVirtualizedContent>
+  <ConversationScrollButton />
+</Conversation>
+```
+
 ## Features
 
 - Automatic scrolling to the bottom when new messages are added
 - Smooth scrolling behavior with configurable animation
+- Virtualized message rendering for large conversations
 - Scroll button that appears when not at the bottom
 - Download conversation as Markdown
 - Responsive design with customizable padding and spacing
@@ -185,6 +216,50 @@ export async function POST(req: Request) {
     "...props": {
       description: "Any other props are spread to the root div.",
       type: 'Omit<React.HTMLAttributes<HTMLDivElement>, "children">',
+    },
+  }}
+/>
+
+### `<ConversationVirtualizedContent />`
+
+<TypeTable
+  type={{
+    items: {
+      description: "Array of items to virtualize.",
+      type: "TItem[]",
+      required: true,
+    },
+    children: {
+      description: "Render function for each virtualized item.",
+      type: "(item: TItem, index: number) => ReactNode",
+      required: true,
+    },
+    estimateSize: {
+      description: "Estimated pixel height for each item.",
+      type: "(item: TItem, index: number) => number",
+      default: "120",
+    },
+    getItemKey: {
+      description: "Optional stable key for each item.",
+      type: "(item: TItem, index: number) => Key",
+    },
+    gap: {
+      description: "Pixel gap between virtualized items.",
+      type: "number",
+      default: "32",
+    },
+    overscan: {
+      description: "Number of extra items to render outside the viewport.",
+      type: "number",
+      default: "8",
+    },
+    itemClassName: {
+      description: "Class name applied to each virtualized item wrapper.",
+      type: "string",
+    },
+    "...props": {
+      description: "Any other props are spread to the content div.",
+      type: 'Omit<ConversationContentProps, "children">',
     },
   }}
 />
