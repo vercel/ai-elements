@@ -4,19 +4,6 @@ const withMDX = createMDX();
 
 /** @type {import('next').NextConfig} */
 const config = {
-  images: {
-    remotePatterns: [
-      {
-        hostname: "github.com",
-        protocol: "https",
-      },
-      {
-        hostname: "placehold.co",
-        protocol: "https",
-      },
-    ],
-  },
-
   redirects() {
     return [
       {
