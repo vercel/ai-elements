@@ -169,6 +169,100 @@ The Context component uses a compound component pattern with React Context for d
 6. **`<ContextContentFooter>`** - Footer section for total cost
 7. **Usage Components** - Individual token usage displays (Input, Output, Reasoning, Cache)
 
+## AI SDK Usage
+
+Use the AI SDK response usage to render context consumption next to a generated answer. The API route can return both the text and `usage` from `streamText`, while the page passes those values into `Context`.
+
+```ts title="app/api/chat/route.ts"
+import { streamText } from "ai";
+import { gateway } from "@ai-sdk/gateway";
+
+export async function POST(request: Request) {
+  const { prompt } = await request.json();
+
+  const result = streamText({
+    model: gateway("openai/gpt-5-mini"),
+    prompt,
+  });
+
+  const response = await result.response;
+
+  return Response.json({
+    text: await result.text,
+    usage: response.usage,
+  });
+}
+```
+
+```tsx title="app/page.tsx"
+"use client";
+
+import {
+  Context,
+  ContextContent,
+  ContextContentBody,
+  ContextContentFooter,
+  ContextContentHeader,
+  ContextInputUsage,
+  ContextOutputUsage,
+  ContextReasoningUsage,
+  ContextTrigger,
+} from "@/components/ai-elements/context";
+import type { LanguageModelUsage } from "ai";
+import { useState } from "react";
+
+const MAX_TOKENS = 128_000;
+const MODEL_ID = "openai:gpt-5-mini";
+
+export default function Page() {
+  const [text, setText] = useState("");
+  const [usage, setUsage] = useState<LanguageModelUsage>();
+
+  const usedTokens = usage?.totalTokens ?? 0;
+
+  return (
+    <main className="space-y-4 p-6">
+      <button
+        onClick={async () => {
+          const response = await fetch("/api/chat", {
+            method: "POST",
+            body: JSON.stringify({ prompt: "Summarize this page." }),
+          });
+          const data = await response.json();
+          setText(data.text);
+          setUsage(data.usage);
+        }}
+        type="button"
+      >
+        Generate
+      </button>
+
+      {usage ? (
+        <Context
+          maxTokens={MAX_TOKENS}
+          modelId={MODEL_ID}
+          usage={usage}
+          usedTokens={usedTokens}
+        >
+          <ContextTrigger />
+          <ContextContent>
+            <ContextContentHeader />
+            <ContextContentBody>
+              <ContextInputUsage />
+              <ContextOutputUsage />
+              <ContextReasoningUsage />
+            </ContextContentBody>
+            <ContextContentFooter />
+          </ContextContent>
+        </Context>
+      ) : null}
+
+      <p>{text}</p>
+    </main>
+  );
+}
+```
+
 ## Token Formatting
 
 The component uses `Intl.NumberFormat` with compact notation for automatic formatting:
