@@ -1,0 +1,128 @@
+---
+title: Day Calendar
+description: A read-only day view calendar for visualizing scheduled events on a time grid. Designed for AI agents that need to confirm event scheduling to users.
+path: elements/components/day-calendar
+---
+
+The `DayCalendar` component renders a single-day time grid with positioned event blocks. It auto-focuses the visible window around events and shows the current time indicator when viewing today.
+
+<Preview path="day-calendar" />
+
+## Installation
+
+<ElementsInstaller path="day-calendar" />
+
+## Features
+
+- Auto-computes visible time window based on event times (padded by 2 hours)
+- Current time indicator line when viewing today's date
+- Percentage-based event block positioning for accurate layout
+- Dark mode support via Tailwind CSS variables
+- Compound component pattern for flexible composition
+- Fully typed with TypeScript
+- No external date library — uses `Intl.DateTimeFormat`
+
+## Props
+
+### `<DayCalendar />`
+
+<TypeTable
+  type={{
+    date: {
+      description: "The date to display.",
+      type: "Date",
+    },
+    events: {
+      description: "List of events to render on the time grid.",
+      type: "CalendarEvent[]",
+    },
+    startHour: {
+      description:
+        "Override the start hour of the visible window (0–24). When omitted, auto-computed from events.",
+      type: "number",
+    },
+    endHour: {
+      description:
+        "Override the end hour of the visible window (0–24). When omitted, auto-computed from events.",
+      type: "number",
+    },
+    "...props": {
+      description: "Any other props are spread to the root div element.",
+      type: "React.HTMLAttributes<HTMLDivElement>",
+    },
+  }}
+/>
+
+### `<DayCalendarHeader />`
+
+<TypeTable
+  type={{
+    children: {
+      description:
+        'Custom header content. Defaults to formatted date string (e.g. "Thursday, February 27, 2025").',
+      type: "React.ReactNode",
+    },
+    "...props": {
+      description: "Any other props are spread to the root div element.",
+      type: "React.HTMLAttributes<HTMLDivElement>",
+    },
+  }}
+/>
+
+### `<DayCalendarContent />`
+
+<TypeTable
+  type={{
+    "...props": {
+      description: "Any other props are spread to the root div element.",
+      type: "React.HTMLAttributes<HTMLDivElement>",
+    },
+  }}
+/>
+
+### `<DayCalendarEvent />`
+
+<TypeTable
+  type={{
+    event: {
+      description: "The calendar event data to display.",
+      type: "CalendarEvent",
+    },
+    startHour: {
+      description:
+        "The start hour of the visible window, used for positioning.",
+      type: "number",
+    },
+    totalHours: {
+      description: "Total visible hours, used for sizing.",
+      type: "number",
+    },
+    "...props": {
+      description: "Any other props are spread to the root div element.",
+      type: "React.HTMLAttributes<HTMLDivElement>",
+    },
+  }}
+/>
+
+### `CalendarEvent`
+
+<TypeTable
+  type={{
+    start: {
+      description: "Event start time.",
+      type: "Date",
+    },
+    end: {
+      description: "Event end time.",
+      type: "Date",
+    },
+    title: {
+      description: "Event title displayed in the event block.",
+      type: "string",
+    },
+    description: {
+      description: "Optional description shown below the time range.",
+      type: "string",
+    },
+  }}
+/>
