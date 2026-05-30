@@ -241,6 +241,15 @@ describe("toolOutput", () => {
     expect(container.textContent).toBe("");
   });
 
+  it("renders an empty string output", () => {
+    render(
+      <Tool>
+        <ToolOutput errorText={undefined} output="" />
+      </Tool>
+    );
+    expect(screen.getByText("Result")).toBeInTheDocument();
+  });
+
   it("renders object output as JSON", () => {
     const output = { data: [1, 2, 3], result: "success" };
     render(
