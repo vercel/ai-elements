@@ -17,7 +17,7 @@
     "@repo/shadcn-ui": "workspace:*",
     "@streamdown/cjk": "^1.0.1",
     "@streamdown/code": "^1.0.1",
-    "@streamdown/math": "^1.0.1",
+    "@streamdown/math": "^1.0.2",
     "@streamdown/mermaid": "^1.0.1",
     "@vercel/agent-readability": "^0.2.1",
     "@vercel/analytics": "^1.6.1",
