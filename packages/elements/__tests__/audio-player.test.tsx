@@ -7,6 +7,7 @@ import {
   AudioPlayerElement,
   AudioPlayerMuteButton,
   AudioPlayerPlayButton,
+  AudioPlayerPlaybackRateButton,
   AudioPlayerSeekBackwardButton,
   AudioPlayerSeekForwardButton,
   AudioPlayerTimeDisplay,
@@ -317,6 +318,60 @@ describe("audioPlayerMuteButton", () => {
   });
 });
 
+describe("audioPlayerPlaybackRateButton", () => {
+  it("renders playback rate button", () => {
+    const { container } = render(<AudioPlayerPlaybackRateButton />);
+    const button = container.querySelector(
+      '[data-slot="audio-player-playback-rate-button"]'
+    );
+    expect(button).toBeInTheDocument();
+  });
+
+  it("uses default playback rates", () => {
+    const { container } = render(<AudioPlayerPlaybackRateButton />);
+    const button = container.querySelector(
+      '[data-slot="audio-player-playback-rate-button"]'
+    );
+    expect(button).toHaveAttribute("rates", "0.5 1 1.2 1.5 1.7 2");
+  });
+
+  it("accepts custom playback rates", () => {
+    const { container } = render(
+      <AudioPlayerPlaybackRateButton rates={[0.75, 1, 1.25]} />
+    );
+    const button = container.querySelector(
+      '[data-slot="audio-player-playback-rate-button"]'
+    );
+    expect(button).toHaveAttribute("rates", "0.75 1 1.25");
+  });
+
+  it("applies custom className", () => {
+    const { container } = render(
+      <AudioPlayerPlaybackRateButton className="custom-rate" />
+    );
+    const button = container.querySelector(
+      '[data-slot="audio-player-playback-rate-button"]'
+    );
+    expect(button).toHaveClass("custom-rate");
+  });
+
+  it("uses a wider text-friendly button size", () => {
+    const { container } = render(<AudioPlayerPlaybackRateButton />);
+    const button = container.querySelector(
+      '[data-slot="audio-player-playback-rate-button"]'
+    );
+    expect(button).toHaveClass("w-14");
+  });
+
+  it("prevents selecting playback rate text", () => {
+    const { container } = render(<AudioPlayerPlaybackRateButton />);
+    const button = container.querySelector(
+      '[data-slot="audio-player-playback-rate-button"]'
+    );
+    expect(button).toHaveClass("select-none");
+  });
+});
+
 describe("audioPlayerVolumeRange", () => {
   it("renders volume range slider", () => {
     const { container } = render(<AudioPlayerVolumeRange />);
@@ -348,6 +403,7 @@ const renderCompleteAudioPlayer = () =>
         <AudioPlayerTimeDisplay />
         <AudioPlayerTimeRange />
         <AudioPlayerDurationDisplay />
+        <AudioPlayerPlaybackRateButton />
         <AudioPlayerMuteButton />
         <AudioPlayerVolumeRange />
       </AudioPlayerControlBar>
@@ -405,6 +461,13 @@ describe("integration tests", () => {
     ).toBeInTheDocument();
     expect(
       container.querySelector('[data-slot="audio-player-volume-range"]')
+    ).toBeInTheDocument();
+  });
+
+  it("renders playback rate button", () => {
+    const { container } = renderCompleteAudioPlayer();
+    expect(
+      container.querySelector('[data-slot="audio-player-playback-rate-button"]')
     ).toBeInTheDocument();
   });
 

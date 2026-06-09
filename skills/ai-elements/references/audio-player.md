@@ -18,6 +18,7 @@ npx ai-elements@latest add audio-player
 - Fully composable architecture with granular control components
 - ButtonGroup integration for cohesive control layout
 - Individual control components (play, seek, volume, etc.)
+- Playback speed control with configurable rates
 - Flexible layout with customizable control bars
 - CSS custom properties for deep theming
 - Shadcn/ui Button component styling
@@ -92,6 +93,15 @@ Seek forward button wrapped in a shadcn Button component.
 |------|------|---------|-------------|
 | `seekOffset` | `number` | `10` | The number of seconds to seek forward. |
 | `...props` | `React.ComponentProps<typeof MediaSeekForwardButton>` | - | Any other props are spread to the MediaSeekForwardButton component. |
+
+### `<AudioPlayerPlaybackRateButton />`
+
+Playback speed button, wrapped in a shadcn Button component.
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `rates` | `ArrayLike<number>` | `[0.5, 1, 1.2, 1.5, 1.7, 2]` | Playback rates to cycle through. |
+| `...props` | `Omit<React.ComponentProps<typeof MediaPlaybackRateButton>, "rates">` | - | Any other props are spread to the MediaPlaybackRateButton component. |
 
 ### `<AudioPlayerTimeDisplay />`
 
