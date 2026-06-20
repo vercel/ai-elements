@@ -103,11 +103,19 @@ export const SchemaDisplayPath = ({
     '<span class="text-blue-600 dark:text-blue-400">{$1}</span>'
   );
 
+  if (children) {
+    return (
+      <span className={cn("font-mono text-sm", className)} {...props}>
+        {children}
+      </span>
+    );
+  }
+
   return (
     <span
       className={cn("font-mono text-sm", className)}
       // oxlint-disable-next-line eslint-plugin-react(no-danger)
-      dangerouslySetInnerHTML={{ __html: children ?? highlightedPath }}
+      dangerouslySetInnerHTML={{ __html: highlightedPath }}
       {...props}
     />
   );
