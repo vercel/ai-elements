@@ -4,8 +4,8 @@
     "baseUrl": ".",
     "paths": {
       "@repo/*": ["../*"],
-      "@/components/*": ["../shadcn-ui/components/*"],
-      "@/lib/*": ["../shadcn-ui/lib/*"]
+      "@/components/*": ["../base-ui/components/*"],
+      "@/lib/*": ["../base-ui/lib/*"]
     },
     "strictNullChecks": true
   },

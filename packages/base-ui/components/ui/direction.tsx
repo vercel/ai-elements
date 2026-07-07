@@ -1,6 +1,6 @@
-"use client";
+"use client"
 
 export {
   DirectionProvider,
   useDirection,
-} from "@base-ui/react/direction-provider";
+} from "@base-ui/react/direction-provider"

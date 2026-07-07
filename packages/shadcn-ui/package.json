@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "dependencies": {
-    "@base-ui/react": "^1.4.0",
+    "@base-ui/react": "^1.6.0",
     "@hookform/resolvers": "^5.2.2",
     "@shadcn/react": "^0.2.0",
     "class-variance-authority": "^0.7.1",

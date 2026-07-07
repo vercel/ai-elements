@@ -9,7 +9,7 @@
     "check": "ultracite check",
     "fix": "ultracite fix",
     "bump-deps": "npx npm-check-updates --deep -u && pnpm install",
-    "bump-ui": "npx shadcn@latest add --all --overwrite -c packages/shadcn-ui",
+    "bump-ui": "npx shadcn@latest add --all --overwrite -c packages/shadcn-ui && npx shadcn@latest add --all --overwrite -c packages/base-ui",
     "changeset": "changeset",
     "generate-skills": "pnpm --filter @repo/scripts generate-skills"
   },
