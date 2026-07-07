@@ -97,7 +97,11 @@ export const ModelSelectorItem = ({
   checked,
   ...props
 }: ModelSelectorItemProps) => (
-  <CommandItem data-checked={checked ? "true" : undefined} {...props} />
+  <CommandItem
+    aria-checked={checked ? "true" : undefined}
+    data-checked={checked ? "true" : undefined}
+    {...props}
+  />
 );
 
 export type ModelSelectorShortcutProps = ComponentProps<typeof CommandShortcut>;
