@@ -1,6 +1,9 @@
 "use client";
 
 import type { AttachmentData } from "@repo/elements/attachments";
+import type { PromptInputMessage } from "@repo/elements/prompt-input";
+import type { SourceDocumentUIPart } from "ai";
+
 import {
   Attachment,
   AttachmentInfo,
@@ -21,7 +24,6 @@ import {
   ModelSelectorName,
   ModelSelectorTrigger,
 } from "@repo/elements/model-selector";
-import type { PromptInputMessage } from "@repo/elements/prompt-input";
 import {
   PromptInput,
   PromptInputBody,
@@ -50,7 +52,6 @@ import {
   usePromptInputReferencedSources,
 } from "@repo/elements/prompt-input";
 import { Button } from "@repo/shadcn-ui/components/ui/button";
-import type { SourceDocumentUIPart } from "ai";
 import {
   AtSignIcon,
   FilesIcon,

@@ -1,5 +1,8 @@
 "use client";
 
+import type { PromptInputMessage } from "@repo/elements/prompt-input";
+import type { ToolUIPart } from "ai";
+
 import {
   Attachment,
   AttachmentPreview,
@@ -35,7 +38,6 @@ import {
   ModelSelectorName,
   ModelSelectorTrigger,
 } from "@repo/elements/model-selector";
-import type { PromptInputMessage } from "@repo/elements/prompt-input";
 import {
   PromptInput,
   PromptInputActionAddAttachments,
@@ -64,7 +66,6 @@ import {
 } from "@repo/elements/sources";
 import { SpeechInput } from "@repo/elements/speech-input";
 import { Suggestion, Suggestions } from "@repo/elements/suggestion";
-import type { ToolUIPart } from "ai";
 import { GlobeIcon } from "lucide-react";
 import { nanoid } from "nanoid";
 import { useCallback, useMemo, useState } from "react";
@@ -416,7 +417,11 @@ const ModelItem = ({
   }, [onSelect, m.id]);
 
   return (
-    <ModelSelectorItem checked={isSelected} onSelect={handleSelect} value={m.id}>
+    <ModelSelectorItem
+      checked={isSelected}
+      onSelect={handleSelect}
+      value={m.id}
+    >
       <ModelSelectorLogo provider={m.chefSlug} />
       <ModelSelectorName>{m.name}</ModelSelectorName>
       <ModelSelectorLogoGroup>
