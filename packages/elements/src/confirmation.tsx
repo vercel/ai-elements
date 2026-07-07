@@ -1,10 +1,11 @@
 "use client";
 
+import type { ToolUIPart } from "ai";
+import type { ComponentProps, ReactNode } from "react";
+
 import { Alert, AlertDescription } from "@repo/shadcn-ui/components/ui/alert";
 import { Button } from "@repo/shadcn-ui/components/ui/button";
 import { cn } from "@repo/shadcn-ui/lib/utils";
-import type { ToolUIPart } from "ai";
-import type { ComponentProps, ReactNode } from "react";
 import { createContext, useContext, useMemo } from "react";
 
 type ToolUIPartApproval =
@@ -16,11 +17,6 @@ type ToolUIPartApproval =
   | {
       id: string;
       approved: boolean;
-      reason?: string;
-    }
-  | {
-      id: string;
-      approved: true;
       reason?: string;
     }
   | {

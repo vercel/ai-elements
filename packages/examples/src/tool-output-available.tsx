@@ -1,5 +1,7 @@
 "use client";
 
+import type { ToolUIPart } from "ai";
+
 import { CodeBlock } from "@repo/elements/code-block";
 import {
   Tool,
@@ -8,7 +10,6 @@ import {
   ToolInput,
   ToolOutput,
 } from "@repo/elements/tool";
-import type { ToolUIPart } from "ai";
 import { nanoid } from "nanoid";
 
 const toolCall: ToolUIPart = {

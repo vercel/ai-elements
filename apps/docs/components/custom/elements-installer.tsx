@@ -3,7 +3,6 @@
 import { readFile } from "node:fs/promises";
 // oxlint-disable-next-line eslint-plugin-import(no-nodejs-modules)
 import { join } from "node:path";
-
 import { codeToHtml } from "shiki";
 
 import { ElementsInstallerTabs } from "./elements-installer-tabs";
@@ -27,7 +26,7 @@ const loadSourceCode = async (
         "src",
         `${componentPath}.tsx`
       ),
-      "utf8"
+      "utf-8"
     );
     return code
       .replaceAll("@ai-studio/shadcn-ui/", "@/")

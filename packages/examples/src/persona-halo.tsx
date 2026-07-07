@@ -1,6 +1,8 @@
 "use client";
 
 import type { PersonaState } from "@repo/elements/persona";
+import type { LucideIcon } from "lucide-react";
+
 import { Persona } from "@repo/elements/persona";
 import { Button } from "@repo/shadcn-ui/components/ui/button";
 import { ButtonGroup } from "@repo/shadcn-ui/components/ui/button-group";
@@ -9,7 +11,6 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@repo/shadcn-ui/components/ui/tooltip";
-import type { LucideIcon } from "lucide-react";
 import {
   BrainIcon,
   CircleIcon,
