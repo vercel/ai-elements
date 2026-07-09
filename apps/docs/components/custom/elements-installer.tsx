@@ -3,7 +3,6 @@
 import { readFile } from "node:fs/promises";
 // oxlint-disable-next-line eslint-plugin-import(no-nodejs-modules)
 import { join } from "node:path";
-
 import { codeToHtml } from "shiki";
 
 import { CodeBlock } from "@/components/geistdocs/code-block";
@@ -30,7 +29,7 @@ const loadSourceCode = async (componentPath: string): Promise<string> => {
         "src",
         `${componentPath}.tsx`
       ),
-      "utf8"
+      "utf-8"
     );
     return code
       .replaceAll("@ai-studio/shadcn-ui/", "@/")

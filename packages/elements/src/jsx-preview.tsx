@@ -1,8 +1,10 @@
 "use client";
 
+import type { ComponentProps, ReactNode } from "react";
+import type { TProps as JsxParserProps } from "react-jsx-parser";
+
 import { cn } from "@repo/shadcn-ui/lib/utils";
 import { AlertCircle } from "lucide-react";
-import type { ComponentProps, ReactNode } from "react";
 import {
   createContext,
   memo,
@@ -13,7 +15,6 @@ import {
   useRef,
   useState,
 } from "react";
-import type { TProps as JsxParserProps } from "react-jsx-parser";
 import JsxParser from "react-jsx-parser";
 
 interface JSXPreviewContextValue {
