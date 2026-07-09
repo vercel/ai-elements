@@ -176,6 +176,7 @@ export async function POST(req: Request) {
 ## Features
 
 - Collapsible interface for showing/hiding tool details
+- Customizable tool icons, with support for mapping icons by tool name
 - Visual status indicators with icons and badges
 - Support for multiple tool execution states (pending, running, completed, error)
 - Formatted parameter display with JSON syntax highlighting
@@ -211,6 +212,19 @@ Shows a tool that encountered an error during execution. Opens by default to dis
 
 <Preview path="tool-output-error" />
 
+### Custom Icons
+
+Pass a function to the `icon` prop to render a custom icon. The function receives an object with:
+
+- `type`: the tool part type
+- `state`: the current execution state
+- `toolName`: the derived tool name
+- `className`: default sizing and color styles
+
+Use `toolName` to map different icons by tool type. When the function returns `null`, the default wrench icon is used.
+
+<Preview path="tool-custom-icons" />
+
 ## Props
 
 ### `<Tool />`
@@ -229,6 +243,10 @@ Shows a tool that encountered an error during execution. Opens by default to dis
 
 <TypeTable
   type={{
+    icon: {
+      description: "Custom icon for the tool header. Pass a ReactNode for a static icon, or a function that receives a ToolIconProps object and returns a ReactNode.",
+      type: "ReactNode | ((props: ToolIconProps) => ReactNode)",
+    },
     title: {
       description: "Custom title to display instead of the derived tool name.",
       type: "string",
