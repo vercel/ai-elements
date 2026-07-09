@@ -7,6 +7,7 @@ import {
   AudioPlayerElement,
   AudioPlayerMuteButton,
   AudioPlayerPlayButton,
+  AudioPlayerPlaybackRateButton,
   AudioPlayerSeekBackwardButton,
   AudioPlayerSeekForwardButton,
   AudioPlayerTimeDisplay,
@@ -57,6 +58,7 @@ const Example = () => {
           <AudioPlayerTimeDisplay />
           <AudioPlayerTimeRange />
           <AudioPlayerDurationDisplay />
+          <AudioPlayerPlaybackRateButton />
           <AudioPlayerMuteButton />
           <AudioPlayerVolumeRange />
         </AudioPlayerControlBar>
