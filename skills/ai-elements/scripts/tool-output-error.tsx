@@ -14,7 +14,7 @@ const toolCall: ToolUIPart = {
     "Connection timeout: The request took longer than 5000ms to complete. Please check your network connection and try again.",
   input: {
     headers: {
-      Authorization: "Bearer token123",
+      Authorization: "Bearer <YOUR_TOKEN_HERE>",
       "Content-Type": "application/json",
     },
     method: "GET",
