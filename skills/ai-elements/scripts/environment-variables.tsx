@@ -20,7 +20,7 @@ const variables = [
     required: true,
     value: "postgresql://localhost:5432/mydb",
   },
-  { name: "API_KEY", required: true, value: "sk-1234567890abcdef" },
+  { name: "API_KEY", required: true, value: "<YOUR_API_KEY_HERE>" },
   { name: "NODE_ENV", required: false, value: "production" },
   { name: "PORT", required: false, value: "3000" },
 ];
