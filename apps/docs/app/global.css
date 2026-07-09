@@ -3,3 +3,4 @@
 
 @source "../**/*.{ts,tsx,mdx}";
 @source "../node_modules/@repo/*/**/*.{ts,tsx}";
+@source "../../../packages/elements/src/**/*.{ts,tsx}";
