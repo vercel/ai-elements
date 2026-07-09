@@ -8,9 +8,8 @@ import {
   TooltipTrigger,
 } from "@repo/shadcn-ui/components/ui/tooltip";
 import { cn } from "@repo/shadcn-ui/lib/utils";
-import type { LucideProps } from "lucide-react";
 import { BookmarkIcon } from "lucide-react";
-import type { ComponentProps, HTMLAttributes } from "react";
+import type { ComponentProps, HTMLAttributes, SVGProps } from "react";
 
 export type CheckpointProps = HTMLAttributes<HTMLDivElement>;
 
@@ -31,7 +30,7 @@ export const Checkpoint = ({
   </div>
 );
 
-export type CheckpointIconProps = LucideProps;
+export type CheckpointIconProps = SVGProps<SVGSVGElement>;
 
 export const CheckpointIcon = ({
   className,
