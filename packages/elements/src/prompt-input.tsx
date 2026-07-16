@@ -983,12 +983,15 @@ export const PromptInputTextarea = ({
         }
         e.preventDefault();
 
-        // Check if the submit button is disabled before submitting
+        // Check if the submit button is disabled before submitting.
+        // No submit button in the form means the input is not submittable
+        // right now (e.g. PromptInputSubmit renders as a stop button while
+        // streaming), so block Enter in that case too.
         const { form } = e.currentTarget;
         const submitButton = form?.querySelector(
           'button[type="submit"]'
         ) as HTMLButtonElement | null;
-        if (submitButton?.disabled) {
+        if (!submitButton || submitButton.disabled) {
           return;
         }
 
