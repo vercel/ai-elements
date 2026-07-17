@@ -5,7 +5,7 @@ export type UILibrary = "radix" | "base";
 
 export const uiLibraryAtom = atomWithStorage<UILibrary>(
   "geistdocs:ui-library",
-  "radix"
+  "base"
 );
 
 export const useUILibrary = () => {
