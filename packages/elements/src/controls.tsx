@@ -1,8 +1,9 @@
 "use client";
 
+import type { ComponentProps } from "react";
+
 import { cn } from "@repo/shadcn-ui/lib/utils";
 import { Controls as ControlsPrimitive } from "@xyflow/react";
-import type { ComponentProps } from "react";
 
 export type ControlsProps = ComponentProps<typeof ControlsPrimitive>;
 

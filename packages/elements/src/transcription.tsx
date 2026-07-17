@@ -1,9 +1,10 @@
 "use client";
 
-import { useControllableState } from "@radix-ui/react-use-controllable-state";
-import { cn } from "@repo/shadcn-ui/lib/utils";
 import type { Experimental_TranscriptionResult as TranscriptionResult } from "ai";
 import type { ComponentProps, ReactNode } from "react";
+
+import { useControllableState } from "@radix-ui/react-use-controllable-state";
+import { cn } from "@repo/shadcn-ui/lib/utils";
 import { createContext, useCallback, useContext, useMemo } from "react";
 
 type TranscriptionSegment = TranscriptionResult["segments"][number];

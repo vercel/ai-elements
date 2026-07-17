@@ -1,10 +1,9 @@
+import { cn } from "@repo/shadcn-ui/lib/utils";
 // Server component - Node.js modules are valid here
 // oxlint-disable-next-line eslint-plugin-import(no-nodejs-modules)
 import { readFile } from "node:fs/promises";
 // oxlint-disable-next-line eslint-plugin-import(no-nodejs-modules)
 import { join } from "node:path";
-
-import { cn } from "@repo/shadcn-ui/lib/utils";
 import { codeToHtml } from "shiki";
 
 import { CodeBlock } from "../geistdocs/code-block";
@@ -25,7 +24,7 @@ export const SourceCode = async ({ path, className }: SourceCodeProps) => {
       "src",
       `${path}.tsx`
     ),
-    "utf8"
+    "utf-8"
   );
 
   const parsedCode = code

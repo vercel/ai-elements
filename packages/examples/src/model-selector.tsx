@@ -14,7 +14,6 @@ import {
   ModelSelectorTrigger,
 } from "@repo/elements/model-selector";
 import { Button } from "@repo/shadcn-ui/components/ui/button";
-import { CheckIcon } from "lucide-react";
 import { memo, useCallback, useState } from "react";
 
 const models = [
@@ -291,7 +290,12 @@ const ModelItem = memo(({ model, selectedModel, onSelect }: ModelItemProps) => {
     [onSelect, model.id]
   );
   return (
-    <ModelSelectorItem key={model.id} onSelect={handleSelect} value={model.id}>
+    <ModelSelectorItem
+      checked={selectedModel === model.id}
+      key={model.id}
+      onSelect={handleSelect}
+      value={model.id}
+    >
       <ModelSelectorLogo provider={model.chefSlug} />
       <ModelSelectorName>{model.name}</ModelSelectorName>
       <ModelSelectorLogoGroup>
@@ -299,11 +303,6 @@ const ModelItem = memo(({ model, selectedModel, onSelect }: ModelItemProps) => {
           <ModelSelectorLogo key={provider} provider={provider} />
         ))}
       </ModelSelectorLogoGroup>
-      {selectedModel === model.id ? (
-        <CheckIcon className="ml-auto size-4" />
-      ) : (
-        <div className="ml-auto size-4" />
-      )}
     </ModelSelectorItem>
   );
 });

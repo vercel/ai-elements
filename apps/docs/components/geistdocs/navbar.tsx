@@ -8,6 +8,7 @@ import { DesktopMenu } from "./desktop-menu";
 import { SlashIcon } from "./icons";
 import { MobileMenu } from "./mobile-menu";
 import { SearchButton } from "./search";
+import { UILibrarySwitcher } from "./ui-library-switcher";
 
 export const Navbar = () => (
   <header className="sticky top-0 z-40 w-full gap-6 border-b bg-sidebar">
@@ -23,6 +24,7 @@ export const Navbar = () => (
       </div>
       <DesktopMenu className="hidden xl:flex" items={nav} />
       <div className="ml-auto flex flex-1 items-center justify-end gap-2">
+        <UILibrarySwitcher className="hidden xl:flex" />
         <SearchButton className="hidden xl:flex" />
         <Chat basePath={basePath} suggestions={suggestions} />
         <MobileMenu />
