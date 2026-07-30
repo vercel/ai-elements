@@ -1,5 +1,8 @@
 "use client";
 
+import type { LanguageModelUsage } from "ai";
+import type { ComponentProps } from "react";
+
 import { Button } from "@repo/shadcn-ui/components/ui/button";
 import {
   HoverCard,
@@ -8,8 +11,6 @@ import {
 } from "@repo/shadcn-ui/components/ui/hover-card";
 import { Progress } from "@repo/shadcn-ui/components/ui/progress";
 import { cn } from "@repo/shadcn-ui/lib/utils";
-import type { LanguageModelUsage } from "ai";
-import type { ComponentProps } from "react";
 import { createContext, useContext, useMemo } from "react";
 import { getUsage } from "tokenlens";
 
@@ -19,6 +20,15 @@ const ICON_VIEWBOX = 24;
 const ICON_CENTER = 12;
 const ICON_STROKE_WIDTH = 2;
 
+const clampUsedPercent = (usedTokens: number, maxTokens: number) => {
+  if (
+    !(Number.isFinite(usedTokens) && Number.isFinite(maxTokens)) ||
+    maxTokens <= 0
+  ) {
+    return 0;
+  }
+  return Math.min(Math.max(usedTokens / maxTokens, 0), 1);
+};
 type ModelId = string;
 
 interface ContextSchema {
@@ -64,7 +74,7 @@ export const Context = ({
 const ContextIcon = () => {
   const { usedTokens, maxTokens } = useContextValue();
   const circumference = 2 * Math.PI * ICON_RADIUS;
-  const usedPercent = usedTokens / maxTokens;
+  const usedPercent = clampUsedPercent(usedTokens, maxTokens);
   const dashOffset = circumference * (1 - usedPercent);
 
   return (
@@ -106,7 +116,7 @@ export type ContextTriggerProps = ComponentProps<typeof Button>;
 
 export const ContextTrigger = ({ children, ...props }: ContextTriggerProps) => {
   const { usedTokens, maxTokens } = useContextValue();
-  const usedPercent = usedTokens / maxTokens;
+  const usedPercent = clampUsedPercent(usedTokens, maxTokens);
   const renderedPercent = new Intl.NumberFormat("en-US", {
     maximumFractionDigits: 1,
     style: "percent",
@@ -146,7 +156,7 @@ export const ContextContentHeader = ({
   ...props
 }: ContextContentHeaderProps) => {
   const { usedTokens, maxTokens } = useContextValue();
-  const usedPercent = usedTokens / maxTokens;
+  const usedPercent = clampUsedPercent(usedTokens, maxTokens);
   const displayPct = new Intl.NumberFormat("en-US", {
     maximumFractionDigits: 1,
     style: "percent",
