@@ -1,5 +1,13 @@
 "use client";
 
+import type { ComponentProps, CSSProperties, HTMLAttributes } from "react";
+import type {
+  BundledLanguage,
+  BundledTheme,
+  HighlighterGeneric,
+  ThemedToken,
+} from "shiki";
+
 import { Button } from "@repo/shadcn-ui/components/ui/button";
 import {
   Select,
@@ -10,7 +18,6 @@ import {
 } from "@repo/shadcn-ui/components/ui/select";
 import { cn } from "@repo/shadcn-ui/lib/utils";
 import { CheckIcon, CopyIcon } from "lucide-react";
-import type { ComponentProps, CSSProperties, HTMLAttributes } from "react";
 import {
   createContext,
   memo,
@@ -21,12 +28,6 @@ import {
   useRef,
   useState,
 } from "react";
-import type {
-  BundledLanguage,
-  BundledTheme,
-  HighlighterGeneric,
-  ThemedToken,
-} from "shiki";
 import { createHighlighter } from "shiki";
 
 // Shiki uses bitflags for font styles: 1=italic, 2=bold, 4=underline
@@ -135,7 +136,9 @@ const highlighterCache = new Map<
   Promise<HighlighterGeneric<BundledLanguage, BundledTheme>>
 >();
 
-// Token cache
+// Token cache — bounded LRU so streamed intermediate versions of a code
+// string (each producing a unique key) don't accumulate for the page lifetime
+const MAX_TOKENS_CACHE_SIZE = 100;
 const tokensCache = new Map<string, TokenizedCode>();
 
 // Subscribers for async token updates
@@ -189,9 +192,11 @@ export const highlightCode = (
 ): TokenizedCode | null => {
   const tokensCacheKey = getTokensCacheKey(code, language);
 
-  // Return cached result if available
+  // Return cached result if available, refreshing its LRU recency
   const cached = tokensCache.get(tokensCacheKey);
   if (cached) {
+    tokensCache.delete(tokensCacheKey);
+    tokensCache.set(tokensCacheKey, cached);
     return cached;
   }
 
@@ -224,7 +229,16 @@ export const highlightCode = (
         tokens: result.tokens,
       };
 
-      // Cache the result
+      // Cache the result, evicting the least recently used entry when full
+      if (
+        !tokensCache.has(tokensCacheKey) &&
+        tokensCache.size >= MAX_TOKENS_CACHE_SIZE
+      ) {
+        const oldestKey = tokensCache.keys().next().value;
+        if (oldestKey !== undefined) {
+          tokensCache.delete(oldestKey);
+        }
+      }
       tokensCache.set(tokensCacheKey, tokenized);
 
       // Notify all subscribers

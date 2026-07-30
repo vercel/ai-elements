@@ -1,7 +1,11 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 
-import { CodeBlock, CodeBlockCopyButton } from "../src/code-block";
+import {
+  CodeBlock,
+  CodeBlockCopyButton,
+  highlightCode,
+} from "../src/code-block";
 
 describe("codeBlock", () => {
   it("renders code content", async () => {
@@ -146,5 +150,40 @@ describe("codeBlockCopyButton", () => {
       value: originalClipboard,
       writable: true,
     });
+  });
+});
+
+// Must match MAX_TOKENS_CACHE_SIZE in src/code-block.tsx
+const TOKENS_CACHE_BOUND = 100;
+
+const awaitHighlight = (code: string) =>
+  new Promise<void>((resolve) => {
+    const result = highlightCode(code, "javascript", () => resolve());
+    if (result) {
+      resolve();
+    }
+  });
+
+describe("token cache eviction", () => {
+  it("bounds the cache and keeps recently used entries", async () => {
+    const batchA = Array.from(
+      { length: TOKENS_CACHE_BOUND },
+      (_, i) => `const a${i} = ${i};`
+    );
+    await Promise.all(batchA.map((code) => awaitHighlight(code)));
+
+    // Every entry of the fill batch is retained; refresh recency of the first
+    expect(highlightCode(batchA[0], "javascript")).not.toBeNull();
+
+    // Overflow the cache with new unique entries
+    const batchB = Array.from(
+      { length: TOKENS_CACHE_BOUND - 1 },
+      (_, i) => `const b${i} = ${i};`
+    );
+    await Promise.all(batchB.map((code) => awaitHighlight(code)));
+
+    // The refreshed entry survived eviction; unrefreshed entries did not
+    expect(highlightCode(batchA[0], "javascript")).not.toBeNull();
+    expect(highlightCode(batchA[1], "javascript")).toBeNull();
   });
 });
