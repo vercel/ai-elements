@@ -637,6 +637,95 @@ describe("micSelector", () => {
       expect(onValueChange).toHaveBeenCalledWith("device-2");
     });
   });
+
+  it("does not change value when hovering or arrowing through items", async () => {
+    setupMocks();
+    const user = userEvent.setup();
+    const onValueChange = vi.fn();
+
+    // Mock scrollIntoView for command
+    vi.spyOn(Element.prototype, "scrollIntoView").mockImplementation(vi.fn());
+
+    render(
+      <MicSelector defaultValue="device-1" onValueChange={onValueChange}>
+        <MicSelectorTrigger>
+          <MicSelectorValue />
+        </MicSelectorTrigger>
+        <MicSelectorContent>
+          <MicSelectorInput />
+          <MicSelectorList>
+            {(devices) =>
+              devices.map((device) => (
+                <MicSelectorItem key={device.deviceId} value={device.deviceId}>
+                  {device.label}
+                </MicSelectorItem>
+              ))
+            }
+          </MicSelectorList>
+        </MicSelectorContent>
+      </MicSelector>
+    );
+
+    await user.click(screen.getByRole("button"));
+
+    await waitFor(() => {
+      expect(screen.getByText("External Microphone")).toBeInTheDocument();
+    });
+
+    await user.hover(screen.getByText("External Microphone"));
+    await user.keyboard("{ArrowDown}{ArrowUp}");
+
+    expect(onValueChange).not.toHaveBeenCalled();
+    expect(
+      screen.getByRole("button", { name: MACBOOK_PRO_MIC_REGEX })
+    ).toBeInTheDocument();
+  });
+
+  it("commits value exactly once on keyboard activation and closes popover", async () => {
+    setupMocks();
+    const user = userEvent.setup();
+    const onValueChange = vi.fn();
+
+    // Mock scrollIntoView for command
+    vi.spyOn(Element.prototype, "scrollIntoView").mockImplementation(vi.fn());
+
+    render(
+      <MicSelector defaultValue="device-1" onValueChange={onValueChange}>
+        <MicSelectorTrigger>
+          <MicSelectorValue />
+        </MicSelectorTrigger>
+        <MicSelectorContent>
+          <MicSelectorInput />
+          <MicSelectorList>
+            {(devices) =>
+              devices.map((device) => (
+                <MicSelectorItem key={device.deviceId} value={device.deviceId}>
+                  {device.label}
+                </MicSelectorItem>
+              ))
+            }
+          </MicSelectorList>
+        </MicSelectorContent>
+      </MicSelector>
+    );
+
+    await user.click(screen.getByRole("button"));
+
+    await waitFor(() => {
+      expect(screen.getByText("External Microphone")).toBeInTheDocument();
+    });
+
+    await user.keyboard("{ArrowDown}{Enter}");
+
+    expect(onValueChange).toHaveBeenCalledOnce();
+    expect(onValueChange).toHaveBeenCalledWith("device-2");
+
+    await waitFor(() => {
+      expect(
+        screen.queryByPlaceholderText("Search microphones...")
+      ).not.toBeInTheDocument();
+    });
+  });
 });
 
 describe("micSelectorTrigger", () => {
