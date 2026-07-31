@@ -1,8 +1,10 @@
 "use client";
 
+import type { ComponentProps, ReactNode } from "react";
+import type { TProps as JsxParserProps } from "react-jsx-parser";
+
 import { cn } from "@repo/shadcn-ui/lib/utils";
 import { AlertCircle } from "lucide-react";
-import type { ComponentProps, ReactNode } from "react";
 import {
   createContext,
   memo,
@@ -13,7 +15,6 @@ import {
   useRef,
   useState,
 } from "react";
-import type { TProps as JsxParserProps } from "react-jsx-parser";
 import JsxParser from "react-jsx-parser";
 
 interface JSXPreviewContextValue {
@@ -209,12 +210,17 @@ export const JSXPreviewContent = memo(
     const errorReportedRef = useRef<string | null>(null);
     const lastGoodJsxRef = useRef("");
     const [hadError, setHadError] = useState(false);
+    const [prevProcessedJsx, setPrevProcessedJsx] = useState(processedJsx);
 
-    // Reset error tracking when jsx changes
-    useEffect(() => {
+    // Reset error tracking before the parser renders the new string
+    // (react-jsx-parser reports parse errors synchronously during render,
+    // so a post-render effect would reset them too late and the tracking
+    // effect below would record the broken string as "last good")
+    if (processedJsx !== prevProcessedJsx) {
+      setPrevProcessedJsx(processedJsx);
       errorReportedRef.current = null;
       setHadError(false);
-    }, [processedJsx]);
+    }
 
     const handleError = useCallback(
       (err: Error) => {
