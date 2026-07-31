@@ -92,8 +92,12 @@ const sources = {
 
 const getCurrentTheme = (): "light" | "dark" => {
   if (typeof window !== "undefined") {
-    if (document.documentElement.classList.contains("dark")) {
+    const { classList } = document.documentElement;
+    if (classList.contains("dark")) {
       return "dark";
+    }
+    if (classList.contains("light")) {
+      return "light";
     }
     if (window.matchMedia?.("(prefers-color-scheme: dark)").matches) {
       return "dark";
