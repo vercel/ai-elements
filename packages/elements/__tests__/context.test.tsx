@@ -1,4 +1,5 @@
 import { render, screen } from "@testing-library/react";
+import { getUsage } from "tokenlens";
 
 import {
   Context,
@@ -116,6 +117,11 @@ describe("contextContentBody", () => {
   });
 });
 
+const totalCostUSD = (
+  modelId: string,
+  usage: Parameters<typeof getUsage>[0]["usage"]
+) => getUsage({ modelId, usage }).costUSD?.totalUSD ?? 0;
+
 describe("contextContentFooter", () => {
   it("renders default footer with cost", () => {
     render(
@@ -137,6 +143,54 @@ describe("contextContentFooter", () => {
       </Context>
     );
     expect(screen.getByText("Custom Footer")).toBeInTheDocument();
+  });
+
+  it("includes reasoning and cache costs in the total", () => {
+    // Token counts chosen so omitting any single category changes the
+    // rendered (cent-rounded) total for this model's pricing.
+    const modelId = "vercel:xai/grok-3-mini-fast";
+    const usage = {
+      cachedInputTokens: 40_000_000,
+      inputTokens: 1_000_000,
+      outputTokens: 500_000,
+      reasoningTokens: 2_000_000,
+    };
+    const expectedTotal = totalCostUSD(modelId, {
+      cacheReads: usage.cachedInputTokens,
+      input: usage.inputTokens,
+      output: usage.outputTokens,
+      reasoningTokens: usage.reasoningTokens,
+    });
+    const rowTotals =
+      totalCostUSD(modelId, { input: usage.inputTokens, output: 0 }) +
+      totalCostUSD(modelId, { input: 0, output: usage.outputTokens }) +
+      totalCostUSD(modelId, { reasoningTokens: usage.reasoningTokens }) +
+      totalCostUSD(modelId, {
+        cacheReads: usage.cachedInputTokens,
+        input: 0,
+        output: 0,
+      });
+    expect(expectedTotal).toBeGreaterThan(0);
+    expect(expectedTotal).toBeCloseTo(rowTotals, 10);
+
+    render(
+      <Context
+        defaultOpen
+        maxTokens={100_000_000}
+        modelId={modelId}
+        usage={usage}
+        usedTokens={43_500_000}
+      >
+        <ContextContent>
+          <ContextContentFooter />
+        </ContextContent>
+      </Context>
+    );
+    const formattedTotal = new Intl.NumberFormat("en-US", {
+      currency: "USD",
+      style: "currency",
+    }).format(expectedTotal);
+    expect(screen.getByText(formattedTotal)).toBeInTheDocument();
   });
 });
 
