@@ -1,5 +1,20 @@
 "use client";
 
+import type { ChatStatus, FileUIPart, SourceDocumentUIPart } from "ai";
+import type {
+  ChangeEvent,
+  ChangeEventHandler,
+  ClipboardEventHandler,
+  ComponentProps,
+  FormEvent,
+  FormEventHandler,
+  HTMLAttributes,
+  KeyboardEventHandler,
+  PropsWithChildren,
+  ReactNode,
+  RefObject,
+} from "react";
+
 import {
   Command,
   CommandEmpty,
@@ -40,7 +55,6 @@ import {
   TooltipTrigger,
 } from "@repo/shadcn-ui/components/ui/tooltip";
 import { cn } from "@repo/shadcn-ui/lib/utils";
-import type { ChatStatus, FileUIPart, SourceDocumentUIPart } from "ai";
 import {
   CornerDownLeftIcon,
   ImageIcon,
@@ -50,22 +64,10 @@ import {
   XIcon,
 } from "lucide-react";
 import { nanoid } from "nanoid";
-import type {
-  ChangeEvent,
-  ChangeEventHandler,
-  ClipboardEventHandler,
-  ComponentProps,
-  FormEvent,
-  FormEventHandler,
-  HTMLAttributes,
-  KeyboardEventHandler,
-  PropsWithChildren,
-  ReactNode,
-  RefObject,
-} from "react";
 import {
   Children,
   createContext,
+  isValidElement,
   useCallback,
   useContext,
   useEffect,
@@ -77,6 +79,20 @@ import {
 // ============================================================================
 // Helpers
 // ============================================================================
+
+const hasTextContent = (node: ReactNode): boolean => {
+  if (typeof node === "string" || typeof node === "number") {
+    return node !== "";
+  }
+  if (Array.isArray(node)) {
+    return node.some(hasTextContent);
+  }
+  if (isValidElement<{ children?: ReactNode }>(node)) {
+    // Text inside <svg> (e.g. <title>) is accessibility metadata, not a label.
+    return node.type === "svg" ? false : hasTextContent(node.props.children);
+  }
+  return false;
+};
 
 const convertBlobUrlToDataUrl = async (url: string): Promise<string | null> => {
   try {
@@ -1132,7 +1148,10 @@ export const PromptInputButton = ({
   ...props
 }: PromptInputButtonProps) => {
   const newSize =
-    size ?? (Children.count(props.children) > 1 ? "sm" : "icon-sm");
+    size ??
+    (Children.count(props.children) > 1 || hasTextContent(props.children)
+      ? "sm"
+      : "icon-sm");
 
   const button = (
     <InputGroupButton
