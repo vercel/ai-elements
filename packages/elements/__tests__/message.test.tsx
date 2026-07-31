@@ -201,6 +201,35 @@ describe("messageBranchContent", () => {
 
     expect(screen.getByText("Branch 1")).toBeInTheDocument();
   });
+
+  it("keeps exactly one branch visible when a consumer className is passed", async () => {
+    const user = userEvent.setup();
+
+    render(
+      <MessageBranch>
+        <MessageBranchContent className="rounded-md">
+          <div key="1">Branch 1</div>
+          <div key="2">Branch 2</div>
+        </MessageBranchContent>
+        <MessageBranchNext />
+      </MessageBranch>
+    );
+
+    const firstWrapper = screen.getByText("Branch 1").parentElement;
+    const secondWrapper = screen.getByText("Branch 2").parentElement;
+
+    expect(firstWrapper).toHaveClass("rounded-md", "grid");
+    expect(firstWrapper).not.toHaveClass("hidden");
+    expect(secondWrapper).toHaveClass("rounded-md", "hidden");
+    expect(secondWrapper).not.toHaveClass("grid");
+
+    await user.click(screen.getByRole("button", { name: NEXT_REGEX }));
+
+    expect(firstWrapper).toHaveClass("hidden");
+    expect(firstWrapper).not.toHaveClass("grid");
+    expect(secondWrapper).toHaveClass("rounded-md", "grid");
+    expect(secondWrapper).not.toHaveClass("hidden");
+  });
 });
 
 describe("messageBranchSelector", () => {
