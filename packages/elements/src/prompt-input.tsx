@@ -1,5 +1,20 @@
 "use client";
 
+import type { ChatStatus, FileUIPart, SourceDocumentUIPart } from "ai";
+import type {
+  ChangeEvent,
+  ChangeEventHandler,
+  ClipboardEventHandler,
+  ComponentProps,
+  FormEvent,
+  FormEventHandler,
+  HTMLAttributes,
+  KeyboardEventHandler,
+  PropsWithChildren,
+  ReactNode,
+  RefObject,
+} from "react";
+
 import {
   Command,
   CommandEmpty,
@@ -40,7 +55,6 @@ import {
   TooltipTrigger,
 } from "@repo/shadcn-ui/components/ui/tooltip";
 import { cn } from "@repo/shadcn-ui/lib/utils";
-import type { ChatStatus, FileUIPart, SourceDocumentUIPart } from "ai";
 import {
   CornerDownLeftIcon,
   ImageIcon,
@@ -50,25 +64,13 @@ import {
   XIcon,
 } from "lucide-react";
 import { nanoid } from "nanoid";
-import type {
-  ChangeEvent,
-  ChangeEventHandler,
-  ClipboardEventHandler,
-  ComponentProps,
-  FormEvent,
-  FormEventHandler,
-  HTMLAttributes,
-  KeyboardEventHandler,
-  PropsWithChildren,
-  ReactNode,
-  RefObject,
-} from "react";
 import {
   Children,
   createContext,
   useCallback,
   useContext,
   useEffect,
+  useEffectEvent,
   useMemo,
   useRef,
   useState,
@@ -703,6 +705,12 @@ export const PromptInput = ({
   );
 
   const add = usingProvider ? addWithProviderValidation : addLocal;
+
+  // Effect event so drop listeners stay stable while always calling the
+  // latest add (the provider controller changes identity with the text value)
+  const dropFiles = useEffectEvent((fileList: FileList) => {
+    add(fileList);
+  });
   const remove = usingProvider ? controller.attachments.remove : removeLocal;
   const openFileDialog = usingProvider
     ? controller.attachments.openFileDialog
@@ -714,12 +722,14 @@ export const PromptInput = ({
   }, [clearAttachments, clearReferencedSources]);
 
   // Let provider know about our hidden file input so external menus can call openFileDialog()
+  const registerFileInput = controller?.__registerFileInput;
+
   useEffect(() => {
-    if (!usingProvider) {
+    if (!registerFileInput) {
       return;
     }
-    controller.__registerFileInput(inputRef, () => inputRef.current?.click());
-  }, [usingProvider, controller]);
+    registerFileInput(inputRef, () => inputRef.current?.click());
+  }, [registerFileInput]);
 
   // Note: File input cannot be programmatically set for security reasons
   // The syncHiddenInput prop is no longer functional
@@ -750,7 +760,7 @@ export const PromptInput = ({
         e.preventDefault();
       }
       if (e.dataTransfer?.files && e.dataTransfer.files.length > 0) {
-        add(e.dataTransfer.files);
+        dropFiles(e.dataTransfer.files);
       }
     };
     form.addEventListener("dragover", onDragOver);
@@ -759,7 +769,7 @@ export const PromptInput = ({
       form.removeEventListener("dragover", onDragOver);
       form.removeEventListener("drop", onDrop);
     };
-  }, [add, globalDrop]);
+  }, [globalDrop]);
 
   useEffect(() => {
     if (!globalDrop) {
@@ -776,7 +786,7 @@ export const PromptInput = ({
         e.preventDefault();
       }
       if (e.dataTransfer?.files && e.dataTransfer.files.length > 0) {
-        add(e.dataTransfer.files);
+        dropFiles(e.dataTransfer.files);
       }
     };
     document.addEventListener("dragover", onDragOver);
@@ -785,7 +795,7 @@ export const PromptInput = ({
       document.removeEventListener("dragover", onDragOver);
       document.removeEventListener("drop", onDrop);
     };
-  }, [add, globalDrop]);
+  }, [globalDrop]);
 
   useEffect(
     () => () => {
