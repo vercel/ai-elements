@@ -59,7 +59,10 @@ export type QuestionProps = Omit<
 > & {
   defaultValue?: QuestionValue;
   disabled?: boolean;
-  onSubmit?: (response: QuestionResponse) => void;
+  onSubmit?: (
+    response: QuestionResponse,
+    event: FormEvent<HTMLFormElement>
+  ) => void | Promise<void>;
   onValueChange?: (value: QuestionValue) => void;
   selectionMode?: SelectionMode;
   value?: QuestionValue;
@@ -141,7 +144,7 @@ export const Question = ({
   );
 
   const handleSubmit = useCallback(
-    (event: FormEvent<HTMLFormElement>) => {
+    async (event: FormEvent<HTMLFormElement>) => {
       event.preventDefault();
       if (disabled) {
         return;
@@ -152,10 +155,13 @@ export const Question = ({
         return;
       }
 
-      onSubmit?.({
-        selectedValues: value.selectedValues,
-        text: text.length > 0 ? text : undefined,
-      });
+      await onSubmit?.(
+        {
+          selectedValues: value.selectedValues,
+          text: text.length > 0 ? text : undefined,
+        },
+        event
+      );
     },
     [disabled, onSubmit, value]
   );

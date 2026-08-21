@@ -1,3 +1,5 @@
+import type { FormEvent } from "react";
+
 import { render, screen } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 
@@ -29,10 +31,13 @@ describe("question", () => {
     await user.click(screen.getByRole("radio", { name: "San Francisco" }));
     await user.click(screen.getByRole("button", { name: "Submit" }));
 
-    expect(handleSubmit).toHaveBeenCalledWith({
-      selectedValues: ["sfo1"],
-      text: undefined,
-    });
+    expect(handleSubmit).toHaveBeenCalledWith(
+      {
+        selectedValues: ["sfo1"],
+        text: undefined,
+      },
+      expect.anything()
+    );
   });
 
   it("replaces the selected option in single selection mode", async () => {
@@ -74,10 +79,13 @@ describe("question", () => {
     await user.click(screen.getByRole("checkbox", { name: "Export" }));
     await user.click(screen.getByRole("button", { name: "Continue" }));
 
-    expect(handleSubmit).toHaveBeenCalledWith({
-      selectedValues: ["search", "export"],
-      text: undefined,
-    });
+    expect(handleSubmit).toHaveBeenCalledWith(
+      {
+        selectedValues: ["search", "export"],
+        text: undefined,
+      },
+      expect.anything()
+    );
   });
 
   it("submits a trimmed freeform response", async () => {
@@ -97,10 +105,13 @@ describe("question", () => {
     );
     await user.click(screen.getByRole("button", { name: "Submit" }));
 
-    expect(handleSubmit).toHaveBeenCalledWith({
-      selectedValues: [],
-      text: "My project",
-    });
+    expect(handleSubmit).toHaveBeenCalledWith(
+      {
+        selectedValues: [],
+        text: "My project",
+      },
+      expect.anything()
+    );
   });
 
   it("submits selected options and freeform text together", async () => {
@@ -124,10 +135,13 @@ describe("question", () => {
     );
     await user.click(screen.getByRole("button", { name: "Submit" }));
 
-    expect(handleSubmit).toHaveBeenCalledWith({
-      selectedValues: ["typescript"],
-      text: "Include tests",
-    });
+    expect(handleSubmit).toHaveBeenCalledWith(
+      {
+        selectedValues: ["typescript"],
+        text: "Include tests",
+      },
+      expect.anything()
+    );
   });
 
   it("disables submission until a response is present", async () => {
@@ -145,6 +159,28 @@ describe("question", () => {
 
     await user.type(screen.getByRole("textbox", { name: "Answer" }), "Answer");
     expect(submit).toBeEnabled();
+  });
+
+  it("passes the form event through and supports async submission", async () => {
+    const user = userEvent.setup();
+    const handleSubmit = vi.fn(
+      async (_response, event: FormEvent<HTMLFormElement>) => {
+        expect(event.currentTarget).toHaveAttribute("data-question", "example");
+        await Promise.resolve();
+      }
+    );
+
+    render(
+      <Question data-question="example" onSubmit={handleSubmit}>
+        <QuestionInput aria-label="Answer" />
+        <QuestionSubmit />
+      </Question>
+    );
+
+    await user.type(screen.getByRole("textbox", { name: "Answer" }), "Answer");
+    await user.click(screen.getByRole("button", { name: "Submit" }));
+
+    expect(handleSubmit).toHaveBeenCalledOnce();
   });
 
   it("reports value changes", async () => {

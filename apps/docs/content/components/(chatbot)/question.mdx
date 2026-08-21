@@ -27,8 +27,8 @@ import {
 } from "@/components/ai-elements/question";
 
 <Question
-  onSubmit={({ selectedValues, text }) => {
-    respondToQuestion({ selectedValues, text });
+  onSubmit={async ({ selectedValues, text }) => {
+    await respondToQuestion({ selectedValues, text });
   }}
   selectionMode="multiple"
 >
@@ -51,14 +51,33 @@ import {
 </Question>;
 ```
 
-Render only the parts the question supports:
+Render only the parts the question supports. `QuestionSubmit` remains disabled until the user selects an option or enters non-whitespace text. The component trims freeform text before calling `onSubmit`.
 
-- **One choice:** use `QuestionOptions` and leave `selectionMode` as `"single"`.
-- **Multiple choices:** use `QuestionOptions` with `selectionMode="multiple"`.
-- **Freeform:** use `QuestionInput` without any options.
-- **Combined:** render options and an input together. The response can contain both selected values and text.
+## Examples
 
-`QuestionSubmit` remains disabled until the user selects an option or enters non-whitespace text. The component trims freeform text before calling `onSubmit`.
+### Single select
+
+Leave `selectionMode` as `"single"` when the user should choose exactly one option. Options use radio semantics, and selecting a new option replaces the previous selection.
+
+<Preview path="question-single-select" />
+
+### Multi-select
+
+Set `selectionMode="multiple"` when the user may choose several options. Options use checkbox semantics, and `selectedValues` contains every selected value.
+
+<Preview path="question-multi-select" />
+
+### Freeform
+
+Render `QuestionInput` without `QuestionOptions` to collect a text-only answer.
+
+<Preview path="question-freeform" />
+
+### Options and freeform
+
+Render options and an input together when users may choose suggested answers and add context. The response can contain both `selectedValues` and `text`.
+
+<Preview path="question" />
 
 ## Controlled state
 
@@ -105,8 +124,8 @@ const [value, setValue] = useState({ selectedValues: [], text: "" });
     },
     onSubmit: {
       description:
-        "Called with selected values and optional trimmed text when the form is submitted.",
-      type: "(response: QuestionResponse) => void",
+        "Called with the selected values, optional trimmed text, and original form event. May return a promise for asynchronous responses.",
+      type: "(response: QuestionResponse, event: React.FormEvent<HTMLFormElement>) => void | Promise<void>",
     },
     "...props": {
       description: "Any other props are spread to the form element.",
