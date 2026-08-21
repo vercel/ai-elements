@@ -42,6 +42,16 @@ const useContextValue = () => {
 
 export type ContextProps = ComponentProps<typeof HoverCard> & ContextSchema;
 
+// Open/close with no delay. Radix's HoverCard takes these props; Base UI's
+// PreviewCard — what `shadcn add` swaps in on a Base UI project — has neither,
+// so naming them in a typed position fails to compile there. Spreading keeps the
+// behaviour on Radix and is inert on Base UI. A caller's own props still win,
+// since they spread last.
+const NO_DELAY = {
+  closeDelay: 0,
+  openDelay: 0,
+} as unknown as ComponentProps<typeof HoverCard>;
+
 export const Context = ({
   usedTokens,
   maxTokens,
@@ -56,7 +66,7 @@ export const Context = ({
 
   return (
     <ContextContext.Provider value={contextValue}>
-      <HoverCard closeDelay={0} openDelay={0} {...props} />
+      <HoverCard {...NO_DELAY} {...props} />
     </ContextContext.Provider>
   );
 };
