@@ -1,5 +1,7 @@
 "use client";
 
+import type { HTMLAttributes, ReactNode } from "react";
+
 import {
   Collapsible,
   CollapsibleContent,
@@ -12,7 +14,6 @@ import {
   FolderIcon,
   FolderOpenIcon,
 } from "lucide-react";
-import type { HTMLAttributes, ReactNode } from "react";
 import {
   createContext,
   useCallback,

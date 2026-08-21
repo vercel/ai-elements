@@ -1,9 +1,10 @@
 "use client";
 
+import type { HTMLAttributes } from "react";
+
 import { Badge } from "@repo/shadcn-ui/components/ui/badge";
 import { cn } from "@repo/shadcn-ui/lib/utils";
 import { ArrowRightIcon, MinusIcon, PackageIcon, PlusIcon } from "lucide-react";
-import type { HTMLAttributes } from "react";
 import { createContext, useContext, useMemo } from "react";
 
 type ChangeType = "major" | "minor" | "patch" | "added" | "removed";

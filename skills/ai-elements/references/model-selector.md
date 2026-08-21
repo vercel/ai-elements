@@ -78,6 +78,7 @@ npx ai-elements@latest add model-selector
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
+| `checked` | `boolean` | - | Whether this item is the currently selected model. Shows the built-in check indicator. |
 | `...props` | `React.ComponentProps<typeof CommandItem>` | - | Any other props are spread to the underlying CommandItem component. |
 
 ### `<ModelSelectorShortcut />`

@@ -1,5 +1,13 @@
 "use client";
 
+import type { ComponentProps, CSSProperties, HTMLAttributes } from "react";
+import type {
+  BundledLanguage,
+  BundledTheme,
+  HighlighterGeneric,
+  ThemedToken,
+} from "shiki";
+
 import { Button } from "@repo/shadcn-ui/components/ui/button";
 import {
   Select,
@@ -10,7 +18,6 @@ import {
 } from "@repo/shadcn-ui/components/ui/select";
 import { cn } from "@repo/shadcn-ui/lib/utils";
 import { CheckIcon, CopyIcon } from "lucide-react";
-import type { ComponentProps, CSSProperties, HTMLAttributes } from "react";
 import {
   createContext,
   memo,
@@ -21,12 +28,6 @@ import {
   useRef,
   useState,
 } from "react";
-import type {
-  BundledLanguage,
-  BundledTheme,
-  HighlighterGeneric,
-  ThemedToken,
-} from "shiki";
 import { createHighlighter } from "shiki";
 
 // Shiki uses bitflags for font styles: 1=italic, 2=bold, 4=underline

@@ -1,3 +1,5 @@
+import type { ComponentProps, ReactNode } from "react";
+
 import {
   Command,
   CommandDialog,
@@ -16,7 +18,6 @@ import {
   DialogTrigger,
 } from "@repo/shadcn-ui/components/ui/dialog";
 import { cn } from "@repo/shadcn-ui/lib/utils";
-import type { ComponentProps, ReactNode } from "react";
 
 export type ModelSelectorProps = ComponentProps<typeof Dialog>;
 
@@ -42,6 +43,7 @@ export const ModelSelectorContent = ({
 }: ModelSelectorContentProps) => (
   <DialogContent
     aria-describedby={undefined}
+    showCloseButton={false}
     className={cn(
       "outline! border-none! p-0 outline-border! outline-solid!",
       className
@@ -88,10 +90,19 @@ export const ModelSelectorGroup = (props: ModelSelectorGroupProps) => (
   <CommandGroup {...props} />
 );
 
-export type ModelSelectorItemProps = ComponentProps<typeof CommandItem>;
+export type ModelSelectorItemProps = ComponentProps<typeof CommandItem> & {
+  checked?: boolean;
+};
 
-export const ModelSelectorItem = (props: ModelSelectorItemProps) => (
-  <CommandItem {...props} />
+export const ModelSelectorItem = ({
+  checked,
+  ...props
+}: ModelSelectorItemProps) => (
+  <CommandItem
+    aria-checked={checked ? "true" : undefined}
+    data-checked={checked ? "true" : undefined}
+    {...props}
+  />
 );
 
 export type ModelSelectorShortcutProps = ComponentProps<typeof CommandShortcut>;
