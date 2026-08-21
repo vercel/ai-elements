@@ -1,5 +1,8 @@
 "use client";
 
+import type { PromptInputMessage } from "@repo/elements/prompt-input";
+import type { BundledLanguage } from "shiki";
+
 import {
   Checkpoint,
   CheckpointIcon,
@@ -26,7 +29,6 @@ import {
   PlanTitle,
   PlanTrigger,
 } from "@repo/elements/plan";
-import type { PromptInputMessage } from "@repo/elements/prompt-input";
 import {
   PromptInput,
   PromptInputFooter,
@@ -55,7 +57,6 @@ import { cn } from "@repo/shadcn-ui/lib/utils";
 import { CheckCircle2Icon, ListTodoIcon } from "lucide-react";
 import { nanoid } from "nanoid";
 import { useCallback, useEffect, useState } from "react";
-import type { BundledLanguage } from "shiki";
 
 // Types
 interface MockFile {

@@ -1,0 +1,27 @@
+{
+  "name": "@repo/examples-base",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Examples using Base UI primitives.",
+  "exports": {
+    "./*": "./src/*.tsx"
+  },
+  "dependencies": {
+    "@icons-pack/react-simple-icons": "^13.8.0",
+    "@repo/elements-base": "workspace:*",
+    "@xyflow/react": "^12.10.0",
+    "ai": "^6.0.105",
+    "lucide-react": "^0.577.0",
+    "nanoid": "^5.1.6",
+    "react": "19.2.3",
+    "sonner": "^2.0.7",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@repo/typescript-config": "workspace:*",
+    "@types/node": "^25.3.5",
+    "@types/react": "19.2.8",
+    "shiki": "3.22.0",
+    "typescript": "^5.9.3"
+  }
+}

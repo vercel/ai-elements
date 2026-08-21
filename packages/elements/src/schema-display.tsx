@@ -1,5 +1,7 @@
 "use client";
 
+import type { ComponentProps, HTMLAttributes } from "react";
+
 import { Badge } from "@repo/shadcn-ui/components/ui/badge";
 import {
   Collapsible,
@@ -8,7 +10,6 @@ import {
 } from "@repo/shadcn-ui/components/ui/collapsible";
 import { cn } from "@repo/shadcn-ui/lib/utils";
 import { ChevronRightIcon } from "lucide-react";
-import type { ComponentProps, HTMLAttributes } from "react";
 import { createContext, useContext, useMemo } from "react";
 
 type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";

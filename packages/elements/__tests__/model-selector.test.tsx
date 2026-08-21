@@ -332,6 +332,29 @@ describe("modelSelectorItem", () => {
       "true"
     );
   });
+
+  it("marks the selected model as checked", () => {
+    render(
+      <ModelSelector open={true}>
+        <ModelSelectorContent aria-describedby="test-description">
+          <ModelSelectorList>
+            <ModelSelectorItem checked value="gpt-4">
+              GPT-4
+            </ModelSelectorItem>
+            <ModelSelectorItem value="gpt-3.5">GPT-3.5</ModelSelectorItem>
+          </ModelSelectorList>
+        </ModelSelectorContent>
+      </ModelSelector>
+    );
+    const checkedItem = screen.getByText("GPT-4").closest('[role="option"]');
+    expect(checkedItem).toHaveAttribute("aria-checked", "true");
+    expect(checkedItem).toHaveAttribute("data-checked", "true");
+    const uncheckedItem = screen
+      .getByText("GPT-3.5")
+      .closest('[role="option"]');
+    expect(uncheckedItem).not.toHaveAttribute("aria-checked");
+    expect(uncheckedItem).not.toHaveAttribute("data-checked");
+  });
 });
 
 describe("modelSelectorShortcut", () => {

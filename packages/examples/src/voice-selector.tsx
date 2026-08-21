@@ -1,5 +1,7 @@
 "use client";
 
+import type { ComponentProps } from "react";
+
 import {
   VoiceSelector,
   VoiceSelectorAccent,
@@ -17,7 +19,6 @@ import {
   VoiceSelectorTrigger,
 } from "@repo/elements/voice-selector";
 import { Button } from "@repo/shadcn-ui/components/ui/button";
-import type { ComponentProps } from "react";
 import { memo, useCallback, useRef, useState } from "react";
 
 const voices: {

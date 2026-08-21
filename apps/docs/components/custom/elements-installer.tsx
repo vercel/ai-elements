@@ -3,22 +3,18 @@
 import { readFile } from "node:fs/promises";
 // oxlint-disable-next-line eslint-plugin-import(no-nodejs-modules)
 import { join } from "node:path";
-
 import { codeToHtml } from "shiki";
 
-import { CodeBlock } from "@/components/geistdocs/code-block";
-import {
-  CodeBlockTab,
-  CodeBlockTabs,
-  CodeBlockTabsList,
-  CodeBlockTabsTrigger,
-} from "@/components/geistdocs/code-block-tabs";
+import { ElementsInstallerTabs } from "./elements-installer-tabs";
 
 interface ElementsInstallerProps {
   path?: string;
 }
 
-const loadSourceCode = async (componentPath: string): Promise<string> => {
+const loadSourceCode = async (
+  packageName: string,
+  componentPath: string
+): Promise<string> => {
   try {
     const code = await readFile(
       join(
@@ -26,11 +22,11 @@ const loadSourceCode = async (componentPath: string): Promise<string> => {
         "..",
         "..",
         "packages",
-        "elements",
+        packageName,
         "src",
         `${componentPath}.tsx`
       ),
-      "utf8"
+      "utf-8"
     );
     return code
       .replaceAll("@ai-studio/shadcn-ui/", "@/")
@@ -44,61 +40,56 @@ const loadSourceCode = async (componentPath: string): Promise<string> => {
   }
 };
 
-const getCommands = (path?: string) => {
+const getCommands = (path?: string, variant?: "radix" | "base") => {
+  const registryPrefix =
+    variant === "base" ? "@ai-elements/base/" : "@ai-elements/";
   const elementsCommand = path
     ? `npx ai-elements@latest add ${path}`
     : "npx ai-elements@latest";
   const shadcnCommand = path
-    ? `npx shadcn@latest add @ai-elements/${path}`
-    : "npx shadcn@latest add @ai-elements/all";
+    ? `npx shadcn@latest add ${registryPrefix}${path}`
+    : `npx shadcn@latest add ${registryPrefix}all`;
   return { elementsCommand, shadcnCommand };
 };
 
-interface HighlightedCodePreviewProps {
-  highlightedCode: string;
-}
-
-const HighlightedCodePreview = ({
-  highlightedCode,
-}: HighlightedCodePreviewProps) => (
-  // oxlint-disable-next-line eslint-plugin-react(no-danger)
-  <pre dangerouslySetInnerHTML={{ __html: highlightedCode }} />
-);
-
 export const ElementsInstaller = async ({ path }: ElementsInstallerProps) => {
-  const sourceCode = path ? await loadSourceCode(path) : "";
-  const { elementsCommand, shadcnCommand } = getCommands(path);
-  const highlightedCode = await codeToHtml(sourceCode, {
-    lang: "tsx",
-    themes: { dark: "github-dark", light: "github-light" },
-  });
+  const [radixSource, baseSource] = await Promise.all([
+    path ? loadSourceCode("elements", path) : Promise.resolve(""),
+    path ? loadSourceCode("elements-base", path) : Promise.resolve(""),
+  ]);
+
+  const radixCommands = getCommands(path, "radix");
+  const baseCommands = getCommands(path, "base");
+
+  const [radixHighlighted, baseHighlighted] = await Promise.all([
+    radixSource
+      ? codeToHtml(radixSource, {
+          lang: "tsx",
+          themes: { dark: "github-dark", light: "github-light" },
+        })
+      : Promise.resolve(""),
+    baseSource
+      ? codeToHtml(baseSource, {
+          lang: "tsx",
+          themes: { dark: "github-dark", light: "github-light" },
+        })
+      : Promise.resolve(""),
+  ]);
 
   return (
-    <div className="not-prose">
-      <CodeBlockTabs defaultValue="ai-elements">
-        <CodeBlockTabsList>
-          <CodeBlockTabsTrigger value="ai-elements">
-            AI Elements
-          </CodeBlockTabsTrigger>
-          <CodeBlockTabsTrigger value="shadcn">shadcn CLI</CodeBlockTabsTrigger>
-          {sourceCode && (
-            <CodeBlockTabsTrigger value="manual">Manual</CodeBlockTabsTrigger>
-          )}
-        </CodeBlockTabsList>
-        <CodeBlockTab className="not-prose" value="ai-elements">
-          <CodeBlock className="px-4">{elementsCommand}</CodeBlock>
-        </CodeBlockTab>
-        <CodeBlockTab className="not-prose" value="shadcn">
-          <CodeBlock className="px-4">{shadcnCommand}</CodeBlock>
-        </CodeBlockTab>
-        {sourceCode && (
-          <CodeBlockTab className="not-prose" value="manual">
-            <CodeBlock className="max-h-[600px] overflow-y-auto">
-              <HighlightedCodePreview highlightedCode={highlightedCode} />
-            </CodeBlock>
-          </CodeBlockTab>
-        )}
-      </CodeBlockTabs>
-    </div>
+    <ElementsInstallerTabs
+      radix={{
+        elementsCommand: radixCommands.elementsCommand,
+        shadcnCommand: radixCommands.shadcnCommand,
+        highlightedCode: radixHighlighted,
+        hasSource: Boolean(radixSource),
+      }}
+      base={{
+        elementsCommand: baseCommands.elementsCommand,
+        shadcnCommand: baseCommands.shadcnCommand,
+        highlightedCode: baseHighlighted,
+        hasSource: Boolean(baseSource),
+      }}
+    />
   );
 };

@@ -1,5 +1,7 @@
 "use client";
 
+import type { ComponentProps } from "react";
+
 import {
   InputGroup,
   InputGroupAddon,
@@ -9,7 +11,6 @@ import {
 } from "@repo/shadcn-ui/components/ui/input-group";
 import { cn } from "@repo/shadcn-ui/lib/utils";
 import { CheckIcon, CopyIcon } from "lucide-react";
-import type { ComponentProps } from "react";
 import {
   createContext,
   useCallback,

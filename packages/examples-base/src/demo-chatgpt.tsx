@@ -1,0 +1,789 @@
+"use client";
+
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@repo/base-ui/components/ui/dropdown-menu";
+import { cn } from "@repo/base-ui/lib/utils";
+import {
+  Conversation,
+  ConversationContent,
+  ConversationScrollButton,
+} from "@repo/elements-base/conversation";
+import {
+  Message,
+  MessageBranch,
+  MessageBranchContent,
+  MessageBranchNext,
+  MessageBranchPage,
+  MessageBranchPrevious,
+  MessageBranchSelector,
+  MessageContent,
+  MessageResponse,
+} from "@repo/elements-base/message";
+import type { PromptInputMessage } from "@repo/elements-base/prompt-input";
+import {
+  PromptInput,
+  PromptInputButton,
+  PromptInputFooter,
+  PromptInputTextarea,
+  PromptInputTools,
+} from "@repo/elements-base/prompt-input";
+import {
+  Reasoning,
+  ReasoningContent,
+  ReasoningTrigger,
+} from "@repo/elements-base/reasoning";
+import {
+  Source,
+  Sources,
+  SourcesContent,
+  SourcesTrigger,
+} from "@repo/elements-base/sources";
+import { Suggestion, Suggestions } from "@repo/elements-base/suggestion";
+import type { ToolUIPart } from "ai";
+import {
+  AudioWaveformIcon,
+  BarChartIcon,
+  BoxIcon,
+  CameraIcon,
+  CodeSquareIcon,
+  FileIcon,
+  GlobeIcon,
+  GraduationCapIcon,
+  ImageIcon,
+  NotepadTextIcon,
+  PaperclipIcon,
+  ScreenShareIcon,
+} from "lucide-react";
+import { nanoid } from "nanoid";
+import { memo, useCallback, useEffect, useState } from "react";
+import { toast } from "sonner";
+
+interface MessageType {
+  key: string;
+  from: "user" | "assistant";
+  sources?: { href: string; title: string }[];
+  versions: {
+    id: string;
+    content: string;
+  }[];
+  reasoning?: {
+    content: string;
+    duration: number;
+  };
+  tools?: {
+    name: string;
+    description: string;
+    status: ToolUIPart["state"];
+    parameters: Record<string, unknown>;
+    result: string | undefined;
+    error: string | undefined;
+  }[];
+  isReasoningComplete?: boolean;
+  isContentComplete?: boolean;
+  isReasoningStreaming?: boolean;
+}
+
+const mockMessages: MessageType[] = [
+  {
+    from: "user",
+    key: nanoid(),
+    versions: [
+      {
+        content: "Can you explain how to use React hooks effectively?",
+        id: nanoid(),
+      },
+    ],
+  },
+  {
+    from: "assistant",
+    key: nanoid(),
+    sources: [
+      {
+        href: "https://react.dev/reference/react",
+        title: "React Documentation",
+      },
+      {
+        href: "https://react.dev/reference/react-dom",
+        title: "React DOM Documentation",
+      },
+    ],
+    tools: [
+      {
+        description: "Searching React documentation",
+        error: undefined,
+        name: "mcp",
+        parameters: {
+          query: "React hooks best practices",
+          source: "react.dev",
+        },
+        result: `{
+  "query": "React hooks best practices",
+  "results": [
+    {
+      "title": "Rules of Hooks",
+      "url": "https://react.dev/warnings/invalid-hook-call-warning",
+      "snippet": "Hooks must be called at the top level of your React function components or custom hooks. Don't call hooks inside loops, conditions, or nested functions."
+    },
+    {
+      "title": "useState Hook",
+      "url": "https://react.dev/reference/react/useState",
+      "snippet": "useState is a React Hook that lets you add state to your function components. It returns an array with two values: the current state and a function to update it."
+    },
+    {
+      "title": "useEffect Hook",
+      "url": "https://react.dev/reference/react/useEffect",
+      "snippet": "useEffect lets you synchronize a component with external systems. It runs after render and can be used to perform side effects like data fetching."
+    }
+  ]
+}`,
+        status: "input-available",
+      },
+    ],
+    versions: [
+      {
+        content: `# React Hooks Best Practices
+
+React hooks are a powerful feature that let you use state and other React features without writing classes. Here are some tips for using them effectively:
+
+## Rules of Hooks
+
+1. **Only call hooks at the top level** of your component or custom hooks
+2. **Don't call hooks inside loops, conditions, or nested functions**
+
+## Common Hooks
+
+- **useState**: For local component state
+- **useEffect**: For side effects like data fetching
+- **useContext**: For consuming context
+- **useReducer**: For complex state logic
+- **useCallback**: For memoizing functions
+- **useMemo**: For memoizing values
+
+## Example of useState and useEffect
+
+\`\`\`jsx
+function ProfilePage({ userId }) {
+  const [user, setUser] = useState(null);
+  
+  useEffect(() => {
+    // This runs after render and when userId changes
+    fetchUser(userId).then(userData => {
+      setUser(userData);
+    });
+  }, [userId]);
+  
+  return user ? <Profile user={user} /> : <Loading />;
+}
+\`\`\`
+
+Would you like me to explain any specific hook in more detail?`,
+        id: nanoid(),
+      },
+    ],
+  },
+  {
+    from: "user",
+    key: nanoid(),
+    versions: [
+      {
+        content:
+          "Yes, could you explain useCallback and useMemo in more detail? When should I use one over the other?",
+        id: nanoid(),
+      },
+      {
+        content:
+          "I'm particularly interested in understanding the performance implications of useCallback and useMemo. Could you break down when each is most appropriate?",
+        id: nanoid(),
+      },
+      {
+        content:
+          "Thanks for the overview! Could you dive deeper into the specific use cases where useCallback and useMemo make the biggest difference in React applications?",
+        id: nanoid(),
+      },
+    ],
+  },
+  {
+    from: "assistant",
+    key: nanoid(),
+    reasoning: {
+      content: `The user is asking for a detailed explanation of useCallback and useMemo. I should provide a clear and concise explanation of each hook's purpose and how they differ.
+      
+The useCallback hook is used to memoize functions to prevent unnecessary re-renders of child components that receive functions as props.
+
+The useMemo hook is used to memoize values to avoid expensive recalculations on every render.
+
+Both hooks help with performance optimization, but they serve different purposes.`,
+      duration: 10,
+    },
+    versions: [
+      {
+        content: `## useCallback vs useMemo
+
+Both hooks help with *performance optimization*, but they serve different purposes:
+
+### useCallback
+
+\`useCallback\` memoizes **functions** to prevent unnecessary re-renders of child components that receive functions as props.
+
+\`\`\`jsx
+// Without useCallback - a new function is created on every render
+const handleClick = () => {
+  console.log(count);
+};
+
+// With useCallback - the function is only recreated when dependencies change
+const handleClick = useCallback(() => {
+  console.log(count);
+}, [count]);
+\`\`\`
+
+### useMemo
+
+\`useMemo\` memoizes **values** to avoid expensive recalculations on every render.
+
+\`\`\`jsx
+// Without useMemo - expensive calculation runs on every render
+const sortedList = expensiveSort(items);
+
+// With useMemo - calculation only runs when items change
+const sortedList = useMemo(() => expensiveSort(items), [items]);
+\`\`\`
+
+### When to use which?
+
+- Use **useCallback** when:
+  - Passing callbacks to optimized child components that rely on reference equality
+  - Working with event handlers that you pass to child components
+
+- Use **useMemo** when:
+  - You have computationally expensive calculations
+  - You want to avoid recreating objects that are used as dependencies for other hooks
+
+### Performance Note
+
+Don't overuse these hooks! They come with their own overhead. Only use them when you have identified a genuine performance issue.
+
+### ~~Deprecated Methods~~
+
+Note that ~~class-based lifecycle methods~~ like \`componentDidMount\` are now replaced by the \`useEffect\` hook in modern React development.`,
+        id: nanoid(),
+      },
+    ],
+  },
+];
+
+const suggestions = [
+  { color: "#76d0eb", icon: BarChartIcon, text: "Analyze data" },
+  { color: "#76d0eb", icon: BoxIcon, text: "Surprise me" },
+  { color: "#ea8444", icon: NotepadTextIcon, text: "Summarize text" },
+  { color: "#6c71ff", icon: CodeSquareIcon, text: "Code" },
+  { color: "#76d0eb", icon: GraduationCapIcon, text: "Get advice" },
+  { text: "More" },
+];
+
+const mockMessageResponses = [
+  "That's a great question! Let me help you understand this concept better. The key thing to remember is that proper implementation requires careful consideration of the underlying principles and best practices in the field.",
+  "I'd be happy to explain this topic in detail. From my understanding, there are several important factors to consider when approaching this problem. Let me break it down step by step for you.",
+  "This is an interesting topic that comes up frequently. The solution typically involves understanding the core concepts and applying them in the right context. Here's what I recommend...",
+  "Great choice of topic! This is something that many developers encounter. The approach I'd suggest is to start with the fundamentals and then build up to more complex scenarios.",
+  "That's definitely worth exploring. From what I can see, the best way to handle this is to consider both the theoretical aspects and practical implementation details.",
+];
+
+interface SuggestionItemProps {
+  icon?: React.ComponentType<{ size: number; style?: React.CSSProperties }>;
+  text: string;
+  color?: string;
+  onSuggestionClick: (text: string) => void;
+}
+
+const SuggestionItem = memo(
+  ({ icon: Icon, text, color, onSuggestionClick }: SuggestionItemProps) => {
+    const handleClick = useCallback(
+      () => onSuggestionClick(text),
+      [onSuggestionClick, text]
+    );
+
+    return (
+      <Suggestion
+        className="font-normal text-foreground"
+        onClick={handleClick}
+        suggestion={text}
+      >
+        {Icon && <Icon size={16} style={{ color }} />}
+        {text}
+      </Suggestion>
+    );
+  }
+);
+
+SuggestionItem.displayName = "SuggestionItem";
+
+const Example = () => {
+  const [text, setText] = useState<string>("");
+  const [_useWebSearch, setUseWebSearch] = useState<boolean>(false);
+  const [_useMicrophone, setUseMicrophone] = useState<boolean>(false);
+  const [_status, setStatus] = useState<
+    "submitted" | "streaming" | "ready" | "error"
+  >("ready");
+  const [messages, setMessages] = useState<MessageType[]>([]);
+  const [_streamingMessageId, setStreamingMessageId] = useState<string | null>(
+    null
+  );
+
+  const streamReasoning = async (
+    messageKey: string,
+    _versionId: string,
+    reasoningContent: string
+  ) => {
+    const words = reasoningContent.split(" ");
+    let currentContent = "";
+
+    for (let i = 0; i < words.length; i += 1) {
+      currentContent += (i > 0 ? " " : "") + words[i];
+
+      // Intentionally capture currentContent at each iteration for streaming effect
+      // oxlint-disable-next-line eslint(no-loop-func)
+      setMessages((prev) =>
+        prev.map((msg) => {
+          if (msg.key === messageKey) {
+            return {
+              ...msg,
+              reasoning: msg.reasoning
+                ? { ...msg.reasoning, content: currentContent }
+                : undefined,
+            };
+          }
+          return msg;
+        })
+      );
+
+      // oxlint-disable-next-line eslint-plugin-promise(avoid-new)
+      await new Promise((resolve) => {
+        setTimeout(resolve, Math.random() * 30 + 20);
+      });
+    }
+
+    // Mark reasoning as complete
+    setMessages((prev) =>
+      prev.map((msg) => {
+        if (msg.key === messageKey) {
+          return {
+            ...msg,
+            isReasoningComplete: true,
+            isReasoningStreaming: false,
+          };
+        }
+        return msg;
+      })
+    );
+  };
+
+  const streamContent = async (
+    messageKey: string,
+    versionId: string,
+    content: string
+  ) => {
+    const words = content.split(" ");
+    let currentContent = "";
+
+    for (let i = 0; i < words.length; i += 1) {
+      currentContent += (i > 0 ? " " : "") + words[i];
+
+      // Intentionally capture currentContent at each iteration for streaming effect
+      // oxlint-disable-next-line eslint(no-loop-func)
+      setMessages((prev) =>
+        prev.map((msg) => {
+          if (msg.key === messageKey) {
+            return {
+              ...msg,
+              versions: msg.versions.map((v) =>
+                v.id === versionId ? { ...v, content: currentContent } : v
+              ),
+            };
+          }
+          return msg;
+        })
+      );
+
+      // oxlint-disable-next-line eslint-plugin-promise(avoid-new)
+      await new Promise((resolve) => {
+        setTimeout(resolve, Math.random() * 50 + 25);
+      });
+    }
+
+    // Mark content as complete
+    setMessages((prev) =>
+      prev.map((msg) => {
+        if (msg.key === messageKey) {
+          return { ...msg, isContentComplete: true };
+        }
+        return msg;
+      })
+    );
+  };
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: streamContent and streamReasoning only use stable setMessages
+  const streamMessageResponse = useCallback(
+    async (
+      messageKey: string,
+      versionId: string,
+      content: string,
+      reasoning?: { content: string; duration: number }
+    ) => {
+      setStatus("streaming");
+      setStreamingMessageId(versionId);
+
+      // First stream the reasoning if it exists
+      if (reasoning) {
+        await streamReasoning(messageKey, versionId, reasoning.content);
+        // Pause between reasoning and content
+        // oxlint-disable-next-line eslint-plugin-promise(avoid-new)
+        await new Promise((resolve) => {
+          setTimeout(resolve, 500);
+        });
+      }
+
+      // Then stream the content
+      await streamContent(messageKey, versionId, content);
+
+      setStatus("ready");
+      setStreamingMessageId(null);
+    },
+    []
+  );
+
+  const streamMessage = useCallback(
+    async (message: MessageType) => {
+      if (message.from === "user") {
+        setMessages((prev) => [...prev, message]);
+        return;
+      }
+
+      // Add empty assistant message with reasoning structure
+      const newMessage = {
+        ...message,
+        isContentComplete: false,
+        isReasoningComplete: false,
+        isReasoningStreaming: !!message.reasoning,
+        reasoning: message.reasoning
+          ? { ...message.reasoning, content: "" }
+          : undefined,
+        versions: message.versions.map((v) => ({ ...v, content: "" })),
+      };
+
+      setMessages((prev) => [...prev, newMessage]);
+
+      // Get the first version for streaming
+      const [firstVersion] = message.versions;
+      if (!firstVersion) {
+        return;
+      }
+
+      // Stream the response
+      await streamMessageResponse(
+        newMessage.key,
+        firstVersion.id,
+        firstVersion.content,
+        message.reasoning
+      );
+    },
+    [streamMessageResponse]
+  );
+
+  const addUserMessage = useCallback(
+    (content: string) => {
+      const userMessage: MessageType = {
+        from: "user",
+        key: `user-${Date.now()}`,
+        versions: [
+          {
+            content,
+            id: `user-${Date.now()}`,
+          },
+        ],
+      };
+
+      setMessages((prev) => [...prev, userMessage]);
+
+      setTimeout(() => {
+        const assistantMessageKey = `assistant-${Date.now()}`;
+        const assistantMessageId = `version-${Date.now()}`;
+        const randomMessageResponse =
+          mockMessageResponses[
+            Math.floor(Math.random() * mockMessageResponses.length)
+          ];
+
+        // Create reasoning for some responses
+        const shouldHaveReasoning = Math.random() > 0.5;
+        const reasoning = shouldHaveReasoning
+          ? {
+              content:
+                "Let me think about this question carefully. I need to provide a comprehensive and helpful response that addresses the user's needs while being clear and concise.",
+              duration: 3,
+            }
+          : undefined;
+
+        const assistantMessage: MessageType = {
+          from: "assistant",
+          isContentComplete: false,
+          isReasoningComplete: false,
+          isReasoningStreaming: !!reasoning,
+          key: assistantMessageKey,
+          reasoning: reasoning ? { ...reasoning, content: "" } : undefined,
+          versions: [
+            {
+              content: "",
+              id: assistantMessageId,
+            },
+          ],
+        };
+
+        setMessages((prev) => [...prev, assistantMessage]);
+        streamMessageResponse(
+          assistantMessageKey,
+          assistantMessageId,
+          randomMessageResponse,
+          reasoning
+        );
+      }, 500);
+    },
+    [streamMessageResponse]
+  );
+
+  useEffect(() => {
+    // Reset state on mount to ensure fresh component
+    setMessages([]);
+
+    const processMessages = async () => {
+      for (let i = 0; i < mockMessages.length; i += 1) {
+        await streamMessage(mockMessages[i]);
+
+        if (i < mockMessages.length - 1) {
+          // oxlint-disable-next-line eslint-plugin-promise(avoid-new)
+          await new Promise((resolve) => {
+            setTimeout(resolve, 1000);
+          });
+        }
+      }
+    };
+
+    // Small delay to ensure state is reset before starting
+    const timer = setTimeout(() => {
+      processMessages();
+    }, 100);
+
+    // Cleanup function to cancel any ongoing operations
+    return () => {
+      clearTimeout(timer);
+      setMessages([]);
+    };
+  }, [streamMessage]);
+
+  const handleSubmit = useCallback(
+    (message: PromptInputMessage) => {
+      const hasText = Boolean(message.text);
+      const hasAttachments = Boolean(message.files?.length);
+
+      if (!(hasText || hasAttachments)) {
+        return;
+      }
+
+      setStatus("submitted");
+      addUserMessage(message.text || "Sent with attachments");
+      setText("");
+    },
+    [addUserMessage]
+  );
+
+  const handleTextChange = useCallback(
+    (event: React.ChangeEvent<HTMLTextAreaElement>) =>
+      setText(event.target.value),
+    []
+  );
+
+  const handleFileAction = (action: string) => {
+    toast.success("File action", {
+      description: action,
+    });
+  };
+
+  const handleUploadFile = useCallback(
+    () => handleFileAction("upload-file"),
+    []
+  );
+  const handleUploadPhoto = useCallback(
+    () => handleFileAction("upload-photo"),
+    []
+  );
+  const handleTakeScreenshot = useCallback(
+    () => handleFileAction("take-screenshot"),
+    []
+  );
+  const handleTakePhoto = useCallback(() => handleFileAction("take-photo"), []);
+  const handleToggleWebSearch = useCallback(
+    () => setUseWebSearch((prev) => !prev),
+    []
+  );
+  const handleToggleMicrophone = useCallback(
+    () => setUseMicrophone((prev) => !prev),
+    []
+  );
+
+  const handleSuggestionClick = useCallback(
+    (suggestion: string) => {
+      setStatus("submitted");
+      addUserMessage(suggestion);
+    },
+    [addUserMessage]
+  );
+
+  return (
+    <div className="relative flex size-full flex-col divide-y overflow-hidden">
+      <Conversation>
+        <ConversationContent>
+          {messages.map(({ versions, ...message }) => (
+            <MessageBranch defaultBranch={0} key={message.key}>
+              <MessageBranchContent>
+                {versions.map((version) => (
+                  <Message
+                    from={message.from}
+                    key={`${message.key}-${version.id}`}
+                  >
+                    <div>
+                      {message.sources?.length && (
+                        <Sources>
+                          <SourcesTrigger count={message.sources.length} />
+                          <SourcesContent>
+                            {message.sources.map((source) => (
+                              <Source
+                                href={source.href}
+                                key={source.href}
+                                title={source.title}
+                              />
+                            ))}
+                          </SourcesContent>
+                        </Sources>
+                      )}
+                      {message.reasoning && (
+                        <Reasoning
+                          duration={message.reasoning.duration}
+                          isStreaming={message.isReasoningStreaming}
+                        >
+                          <ReasoningTrigger />
+                          <ReasoningContent>
+                            {message.reasoning.content}
+                          </ReasoningContent>
+                        </Reasoning>
+                      )}
+                      {(message.from === "user" ||
+                        message.isReasoningComplete ||
+                        !message.reasoning) && (
+                        <MessageContent
+                          className={cn(
+                            "group-[.is-user]:rounded-[24px] group-[.is-user]:bg-secondary group-[.is-user]:text-foreground",
+                            "group-[.is-assistant]:bg-transparent group-[.is-assistant]:p-0 group-[.is-assistant]:text-foreground"
+                          )}
+                        >
+                          <MessageResponse>{version.content}</MessageResponse>
+                        </MessageContent>
+                      )}
+                    </div>
+                  </Message>
+                ))}
+              </MessageBranchContent>
+              {versions.length > 1 && (
+                <MessageBranchSelector className="px-0">
+                  <MessageBranchPrevious />
+                  <MessageBranchPage />
+                  <MessageBranchNext />
+                </MessageBranchSelector>
+              )}
+            </MessageBranch>
+          ))}
+        </ConversationContent>
+        <ConversationScrollButton />
+      </Conversation>
+      <div className="grid shrink-0 gap-4 p-4">
+        <PromptInput
+          className="divide-y-0 rounded-[28px]"
+          onSubmit={handleSubmit}
+        >
+          <PromptInputTextarea
+            className="px-5 md:text-base"
+            onChange={handleTextChange}
+            placeholder="Ask anything"
+            value={text}
+          />
+          <PromptInputFooter className="p-2.5">
+            <PromptInputTools>
+              <DropdownMenu>
+                <DropdownMenuTrigger
+                  render={
+                    <PromptInputButton
+                      className="!rounded-full border font-medium"
+                      variant="outline"
+                    />
+                  }
+                >
+                  <PaperclipIcon size={16} />
+                  <span>Attach</span>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start">
+                  <DropdownMenuItem onClick={handleUploadFile}>
+                    <FileIcon className="mr-2" size={16} />
+                    Upload file
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleUploadPhoto}>
+                    <ImageIcon className="mr-2" size={16} />
+                    Upload photo
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleTakeScreenshot}>
+                    <ScreenShareIcon className="mr-2" size={16} />
+                    Take screenshot
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleTakePhoto}>
+                    <CameraIcon className="mr-2" size={16} />
+                    Take photo
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+              <PromptInputButton
+                className="rounded-full border font-medium"
+                onClick={handleToggleWebSearch}
+                variant="outline"
+              >
+                <GlobeIcon size={16} />
+                <span>Search</span>
+              </PromptInputButton>
+            </PromptInputTools>
+            <PromptInputButton
+              className="rounded-full font-medium text-foreground"
+              onClick={handleToggleMicrophone}
+              variant="secondary"
+            >
+              <AudioWaveformIcon size={16} />
+              <span>Voice</span>
+            </PromptInputButton>
+          </PromptInputFooter>
+        </PromptInput>
+        <Suggestions className="px-4">
+          {suggestions.map(({ icon, text: label, color }) => (
+            <SuggestionItem
+              color={color}
+              icon={icon}
+              key={label}
+              onSuggestionClick={handleSuggestionClick}
+              text={label}
+            />
+          ))}
+        </Suggestions>
+      </div>
+    </div>
+  );
+};
+
+export default Example;

@@ -1,5 +1,7 @@
 "use client";
 
+import type { ComponentProps } from "react";
+
 import { Button } from "@repo/shadcn-ui/components/ui/button";
 import {
   DropdownMenu,
@@ -15,7 +17,6 @@ import {
   ExternalLinkIcon,
   MessageCircleIcon,
 } from "lucide-react";
-import type { ComponentProps } from "react";
 import { createContext, useContext, useMemo } from "react";
 
 const providers = {
