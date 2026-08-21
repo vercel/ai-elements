@@ -1,7 +1,8 @@
 import { cn } from "@repo/shadcn-ui/lib/utils";
 import type { Experimental_GeneratedImage } from "ai";
 
-export type ImageProps = Experimental_GeneratedImage & {
+export type ImageProps = Omit<Experimental_GeneratedImage, "uint8Array"> & {
+  uint8Array?: Experimental_GeneratedImage["uint8Array"];
   className?: string;
   alt?: string;
 };
