@@ -68,6 +68,7 @@ npx ai-elements@latest add code-block
 
 You can also install components using the standard shadcn/ui CLI:
 
+
 ```bash
 # Install all components
 npx shadcn@latest add https://elements.ai-sdk.dev/api/registry/all.json
