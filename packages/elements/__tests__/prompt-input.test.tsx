@@ -1,5 +1,5 @@
 // oxlint-disable eslint-plugin-jest(max-expects), eslint-plugin-react-perf(jsx-no-new-function-as-prop)
-import { act, render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import React from "react";
 
@@ -11,6 +11,7 @@ import {
   AttachmentRemove,
   Attachments,
 } from "../src/attachments";
+import type { PromptInputSuggestionSelectDetails } from "../src/prompt-input";
 import {
   PromptInput,
   PromptInputActionAddAttachments,
@@ -21,21 +22,129 @@ import {
   PromptInputActionMenuTrigger,
   PromptInputBody,
   PromptInputButton,
+  PromptInputProvider,
   PromptInputSelect,
   PromptInputSelectContent,
   PromptInputSelectItem,
   PromptInputSelectTrigger,
   PromptInputSelectValue,
   PromptInputSubmit,
+  PromptInputSuggestionContent,
+  PromptInputSuggestionItem,
+  PromptInputSuggestions,
   PromptInputTextarea,
   PromptInputTools,
   usePromptInputAttachments,
+  usePromptInputController,
   usePromptInputReferencedSources,
+  usePromptInputSuggestions,
 } from "../src/prompt-input";
 
 const DATA_PREFIX_REGEX = /^data:/;
 const BLOB_PREFIX_REGEX = /^blob:/;
 const SUBMIT_REGEX = /submit/i;
+const PROMPT_INPUT_SUGGESTION_TRIGGERS = [
+  { trigger: "@" },
+  { trigger: "/" },
+] as const;
+
+const MENTION_SUGGESTIONS = ["Ada", "Alan"] as const;
+const COMMAND_SUGGESTIONS = ["clear", "summarize"] as const;
+
+const preventArrowDown = (
+  event: React.KeyboardEvent<HTMLTextAreaElement>
+): void => {
+  if (event.key === "ArrowDown") {
+    event.preventDefault();
+  }
+};
+
+interface FilteredSuggestionMenuProps {
+  clearIsActionOnly?: boolean;
+  onClear?: (details: PromptInputSuggestionSelectDetails) => void;
+}
+
+const FilteredSuggestionMenu = ({
+  clearIsActionOnly = false,
+  onClear,
+}: FilteredSuggestionMenuProps) => {
+  const { match } = usePromptInputSuggestions();
+  const suggestions =
+    match?.trigger === "@" ? MENTION_SUGGESTIONS : COMMAND_SUGGESTIONS;
+  const query = match?.query.toLowerCase() ?? "";
+  const filteredSuggestions = suggestions.filter((suggestion) =>
+    suggestion.toLowerCase().includes(query)
+  );
+
+  return (
+    <PromptInputSuggestionContent aria-label="Prompt suggestions">
+      <output data-testid="suggestion-query">
+        {match ? `${match.trigger}:${match.query}` : ""}
+      </output>
+      {filteredSuggestions.map((suggestion) => (
+        <PromptInputSuggestionItem
+          key={suggestion}
+          onSelect={suggestion === "clear" ? onClear : undefined}
+          replaceWith={
+            suggestion === "clear" && clearIsActionOnly ? false : undefined
+          }
+          value={suggestion}
+        >
+          {suggestion}
+        </PromptInputSuggestionItem>
+      ))}
+    </PromptInputSuggestionContent>
+  );
+};
+
+const MidStringSuggestionMenu = () => (
+  <PromptInputSuggestionContent aria-label="Mention suggestions">
+    <PromptInputSuggestionItem replaceWith="@Ada" value="Ada">
+      Ada
+    </PromptInputSuggestionItem>
+  </PromptInputSuggestionContent>
+);
+
+const PromptInputProviderValue = () => {
+  const controller = usePromptInputController();
+  return (
+    <output data-testid="provider-value">{controller.textInput.value}</output>
+  );
+};
+
+const PromptInputSuggestionState = () => {
+  const { activeValue, match, open } = usePromptInputSuggestions();
+  const openState = open ? "open" : "closed";
+  return (
+    <output data-testid="suggestion-state">
+      {`${openState}:${match?.query ?? "none"}:${activeValue ?? "none"}`}
+    </output>
+  );
+};
+
+const ConditionalSuggestionTextarea = ({
+  onSubmit,
+}: {
+  onSubmit: () => void;
+}) => {
+  const [showTextarea, setShowTextarea] = React.useState(true);
+
+  return (
+    <>
+      <button onClick={() => setShowTextarea(false)} type="button">
+        Hide textarea
+      </button>
+      <PromptInput onSubmit={onSubmit}>
+        <PromptInputBody>
+          <PromptInputSuggestions triggers={PROMPT_INPUT_SUGGESTION_TRIGGERS}>
+            {showTextarea ? <PromptInputTextarea /> : null}
+            <PromptInputSuggestionState />
+          </PromptInputSuggestions>
+        </PromptInputBody>
+      </PromptInput>
+    </>
+  );
+};
 
 // Backwards-compatibility aliases for tests (these components were moved to attachment.tsx)
 const PromptInputAttachment = ({
@@ -756,6 +865,564 @@ describe("promptInputTextarea", () => {
     expect(
       screen.getByPlaceholderText("Custom placeholder")
     ).toBeInTheDocument();
+  });
+});
+
+describe("promptInputSuggestions", () => {
+  it("matches and filters @ mentions and / commands from the active query", async () => {
+    setupPromptInputTests();
+    const onSubmit = vi.fn();
+    const user = userEvent.setup();
+
+    render(
+      <PromptInput onSubmit={onSubmit}>
+        <PromptInputBody>
+          <PromptInputSuggestions triggers={PROMPT_INPUT_SUGGESTION_TRIGGERS}>
+            <PromptInputTextarea />
+            <FilteredSuggestionMenu />
+          </PromptInputSuggestions>
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    const textarea = screen.getByPlaceholderText(
+      "What would you like to know?"
+    );
+    await user.type(textarea, "Ask @ad");
+
+    const mentionListbox = await screen.findByRole("listbox");
+    expect(mentionListbox).toBeInTheDocument();
+    expect(screen.getByTestId("suggestion-query")).toHaveTextContent("@:ad");
+    expect(screen.getByRole("option", { name: "Ada" })).toBeInTheDocument();
+    expect(
+      screen.queryByRole("option", { name: "Alan" })
+    ).not.toBeInTheDocument();
+
+    await user.clear(textarea);
+    await user.type(textarea, "Please /sum");
+
+    const commandListbox = await screen.findByRole("listbox");
+    expect(commandListbox).toBeInTheDocument();
+    expect(screen.getByTestId("suggestion-query")).toHaveTextContent("/:sum");
+    expect(
+      screen.getByRole("option", { name: "summarize" })
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole("option", { name: "clear" })
+    ).not.toBeInTheDocument();
+  });
+
+  it("does not activate mentions inside email addresses or commands inside URLs", async () => {
+    setupPromptInputTests();
+    const onSubmit = vi.fn();
+    const user = userEvent.setup();
+
+    render(
+      <PromptInput onSubmit={onSubmit}>
+        <PromptInputBody>
+          <PromptInputSuggestions triggers={PROMPT_INPUT_SUGGESTION_TRIGGERS}>
+            <PromptInputTextarea />
+            <FilteredSuggestionMenu />
+          </PromptInputSuggestions>
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    const textarea = screen.getByPlaceholderText(
+      "What would you like to know?"
+    );
+    await user.type(textarea, "user@example.com");
+
+    expect(textarea).toHaveAttribute("aria-expanded", "false");
+    expect(screen.queryByRole("listbox")).not.toBeInTheDocument();
+
+    await user.clear(textarea);
+    await user.type(textarea, "https://example.com/docs");
+
+    expect(textarea).toHaveAttribute("aria-expanded", "false");
+    expect(screen.queryByRole("listbox")).not.toBeInTheDocument();
+  });
+
+  it("navigates options with active-descendant and selects before submitting", async () => {
+    setupPromptInputTests();
+    const onSubmit = vi.fn();
+    const user = userEvent.setup();
+
+    render(
+      <PromptInput onSubmit={onSubmit}>
+        <PromptInputBody>
+          <PromptInputSuggestions triggers={PROMPT_INPUT_SUGGESTION_TRIGGERS}>
+            <PromptInputTextarea />
+            <FilteredSuggestionMenu />
+          </PromptInputSuggestions>
+          <PromptInputSubmit />
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    const textarea = screen.getByPlaceholderText(
+      "What would you like to know?"
+    ) as HTMLTextAreaElement;
+    await user.type(textarea, "@");
+
+    const ada = await screen.findByRole("option", { name: "Ada" });
+    const alan = screen.getByRole("option", { name: "Alan" });
+    await vi.waitFor(() => {
+      expect(textarea).toHaveAttribute("aria-activedescendant", ada.id);
+    });
+
+    await user.keyboard("{ArrowUp}");
+
+    expect(textarea).toHaveAttribute("aria-activedescendant", alan.id);
+    expect(alan).toHaveAttribute("aria-selected", "true");
+
+    await user.keyboard("{Enter}");
+
+    await vi.waitFor(() => {
+      expect(textarea).toHaveValue("@Alan ");
+    });
+    expect(onSubmit).not.toHaveBeenCalled();
+    expect(screen.queryByRole("listbox")).not.toBeInTheDocument();
+  });
+
+  it("keeps an escaped match dismissed until a new trigger context starts", async () => {
+    setupPromptInputTests();
+    const onSubmit = vi.fn();
+    const user = userEvent.setup();
+
+    render(
+      <PromptInput onSubmit={onSubmit}>
+        <PromptInputBody>
+          <PromptInputSuggestions triggers={PROMPT_INPUT_SUGGESTION_TRIGGERS}>
+            <PromptInputTextarea />
+            <FilteredSuggestionMenu />
+          </PromptInputSuggestions>
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    const textarea = screen.getByPlaceholderText(
+      "What would you like to know?"
+    );
+    await user.type(textarea, "@a");
+    const initialListbox = await screen.findByRole("listbox");
+    expect(initialListbox).toBeInTheDocument();
+
+    await user.keyboard("{Escape}");
+
+    expect(textarea).toHaveAttribute("aria-expanded", "false");
+    expect(screen.queryByRole("listbox")).not.toBeInTheDocument();
+
+    await user.type(textarea, "d");
+    expect(textarea).toHaveAttribute("aria-expanded", "false");
+
+    await user.type(textarea, " @");
+    const nextListbox = await screen.findByRole("listbox");
+    expect(nextListbox).toBeInTheDocument();
+    expect(textarea).toHaveAttribute("aria-expanded", "true");
+  });
+
+  it("preserves the suffix and textarea focus when a mid-string item is clicked", async () => {
+    setupPromptInputTests();
+    const onSubmit = vi.fn();
+    const user = userEvent.setup();
+
+    render(
+      <PromptInput onSubmit={onSubmit}>
+        <PromptInputBody>
+          <PromptInputSuggestions triggers={PROMPT_INPUT_SUGGESTION_TRIGGERS}>
+            <PromptInputTextarea defaultValue="Ask @ad about this" />
+            <MidStringSuggestionMenu />
+          </PromptInputSuggestions>
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    const textarea = screen.getByPlaceholderText(
+      "What would you like to know?"
+    ) as HTMLTextAreaElement;
+    textarea.focus();
+    textarea.setSelectionRange(7, 7);
+    fireEvent.select(textarea);
+
+    const option = await screen.findByRole("option", { name: "Ada" });
+    await user.click(option);
+
+    expect(textarea).toHaveValue("Ask @Ada about this");
+    expect(document.activeElement).toBe(textarea);
+  });
+
+  it("runs action-only items without replacing the active query", async () => {
+    setupPromptInputTests();
+    const onSubmit = vi.fn();
+    const onClear = vi.fn();
+    const user = userEvent.setup();
+
+    render(
+      <PromptInput onSubmit={onSubmit}>
+        <PromptInputBody>
+          <PromptInputSuggestions triggers={PROMPT_INPUT_SUGGESTION_TRIGGERS}>
+            <PromptInputTextarea />
+            <FilteredSuggestionMenu clearIsActionOnly onClear={onClear} />
+          </PromptInputSuggestions>
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    const textarea = screen.getByPlaceholderText(
+      "What would you like to know?"
+    ) as HTMLTextAreaElement;
+    await user.type(textarea, "/cl");
+    await user.click(await screen.findByRole("option", { name: "clear" }));
+
+    expect(textarea).toHaveValue("/cl");
+    expect(onClear).toHaveBeenCalledWith(
+      expect.objectContaining({
+        match: expect.objectContaining({ query: "cl", trigger: "/" }),
+        value: "clear",
+      })
+    );
+    expect(screen.queryByRole("listbox")).not.toBeInTheDocument();
+  });
+
+  it("updates PromptInputProvider state when a suggestion replaces text", async () => {
+    setupPromptInputTests();
+    const onSubmit = vi.fn();
+    const user = userEvent.setup();
+
+    render(
+      <PromptInputProvider>
+        <PromptInputProviderValue />
+        <PromptInput onSubmit={onSubmit}>
+          <PromptInputBody>
+            <PromptInputSuggestions triggers={PROMPT_INPUT_SUGGESTION_TRIGGERS}>
+              <PromptInputTextarea />
+              <FilteredSuggestionMenu />
+            </PromptInputSuggestions>
+          </PromptInputBody>
+        </PromptInput>
+      </PromptInputProvider>
+    );
+
+    const textarea = screen.getByPlaceholderText(
+      "What would you like to know?"
+    ) as HTMLTextAreaElement;
+    await user.type(textarea, "@ad");
+    await user.keyboard("{Enter}");
+
+    await vi.waitFor(() => {
+      expect(textarea).toHaveValue("@Ada ");
+      expect(screen.getByTestId("provider-value").textContent).toBe("@Ada ");
+    });
+    expect(onSubmit).not.toHaveBeenCalled();
+  });
+
+  it("waits for IME composition to end before opening suggestions", async () => {
+    setupPromptInputTests();
+    const onSubmit = vi.fn();
+    const onChange = vi.fn();
+    const onCompositionEnd = vi.fn();
+    const onCompositionStart = vi.fn();
+
+    render(
+      <PromptInput onSubmit={onSubmit}>
+        <PromptInputBody>
+          <PromptInputSuggestions triggers={PROMPT_INPUT_SUGGESTION_TRIGGERS}>
+            <PromptInputTextarea
+              onChange={onChange}
+              onCompositionEnd={onCompositionEnd}
+              onCompositionStart={onCompositionStart}
+            />
+            <FilteredSuggestionMenu />
+          </PromptInputSuggestions>
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    const textarea = screen.getByPlaceholderText(
+      "What would you like to know?"
+    ) as HTMLTextAreaElement;
+    textarea.focus();
+    fireEvent.compositionStart(textarea);
+    fireEvent.input(textarea, { target: { value: "@a" } });
+
+    expect(onCompositionStart).toHaveBeenCalledOnce();
+    expect(onChange).toHaveBeenCalled();
+    expect(screen.queryByRole("listbox")).not.toBeInTheDocument();
+
+    fireEvent.compositionEnd(textarea);
+
+    expect(onCompositionEnd).toHaveBeenCalledOnce();
+    const listbox = await screen.findByRole("listbox");
+    expect(listbox).toBeInTheDocument();
+  });
+
+  it("runs external key handlers before internal suggestion navigation", async () => {
+    setupPromptInputTests();
+    const onSubmit = vi.fn();
+    const onSelect = vi.fn();
+    const onKeyDown = vi.fn(preventArrowDown);
+    const user = userEvent.setup();
+
+    render(
+      <PromptInput onSubmit={onSubmit}>
+        <PromptInputBody>
+          <PromptInputSuggestions triggers={PROMPT_INPUT_SUGGESTION_TRIGGERS}>
+            <PromptInputTextarea onKeyDown={onKeyDown} onSelect={onSelect} />
+            <FilteredSuggestionMenu />
+          </PromptInputSuggestions>
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    const textarea = screen.getByPlaceholderText(
+      "What would you like to know?"
+    );
+    await user.type(textarea, "@");
+    const ada = await screen.findByRole("option", { name: "Ada" });
+    await vi.waitFor(() => {
+      expect(textarea).toHaveAttribute("aria-activedescendant", ada.id);
+    });
+    onKeyDown.mockClear();
+
+    await user.keyboard("{ArrowDown}");
+
+    expect(onKeyDown).toHaveBeenCalledOnce();
+    expect(onSelect).toHaveBeenCalled();
+    expect(textarea).toHaveAttribute("aria-activedescendant", ada.id);
+  });
+
+  it("exposes the textarea as a combobox while suggestions are enabled", () => {
+    setupPromptInputTests();
+    const onSubmit = vi.fn();
+
+    render(
+      <PromptInput onSubmit={onSubmit}>
+        <PromptInputBody>
+          <PromptInputSuggestions triggers={PROMPT_INPUT_SUGGESTION_TRIGGERS}>
+            <PromptInputTextarea />
+            <FilteredSuggestionMenu />
+          </PromptInputSuggestions>
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    const textarea = screen.getByRole("combobox");
+    expect(textarea).toHaveAttribute("aria-autocomplete", "list");
+    expect(textarea).toHaveAttribute("data-slot", "input-group-control");
+  });
+
+  it("keeps the same match open when the caret moves inside the textarea", async () => {
+    setupPromptInputTests();
+    const onSubmit = vi.fn();
+    const user = userEvent.setup();
+
+    render(
+      <PromptInput onSubmit={onSubmit}>
+        <PromptInputBody>
+          <PromptInputSuggestions triggers={PROMPT_INPUT_SUGGESTION_TRIGGERS}>
+            <PromptInputTextarea />
+            <FilteredSuggestionMenu />
+          </PromptInputSuggestions>
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    const textarea = screen.getByPlaceholderText(
+      "What would you like to know?"
+    ) as HTMLTextAreaElement;
+    await user.type(textarea, "@a");
+    const listbox = await screen.findByRole("listbox");
+    expect(listbox).toBeInTheDocument();
+
+    await user.pointer({ keys: "[MouseLeft>]", target: textarea });
+    textarea.setSelectionRange(1, 1);
+    fireEvent.select(textarea);
+    await user.pointer({ keys: "[/MouseLeft]", target: textarea });
+
+    expect(textarea).toHaveAttribute("aria-expanded", "true");
+    expect(screen.getByRole("listbox")).toBeInTheDocument();
+    expect(screen.getByTestId("suggestion-query")).toHaveTextContent("@:");
+  });
+
+  it("keeps a consumer-provided option id in sync with active-descendant", async () => {
+    setupPromptInputTests();
+    const onSubmit = vi.fn();
+    const user = userEvent.setup();
+
+    render(
+      <PromptInput onSubmit={onSubmit}>
+        <PromptInputBody>
+          <PromptInputSuggestions triggers={PROMPT_INPUT_SUGGESTION_TRIGGERS}>
+            <PromptInputTextarea />
+            <PromptInputSuggestionContent aria-label="Mention suggestions">
+              <PromptInputSuggestionItem id="custom-option-id" value="Ada">
+                Ada
+              </PromptInputSuggestionItem>
+            </PromptInputSuggestionContent>
+          </PromptInputSuggestions>
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    const textarea = screen.getByPlaceholderText(
+      "What would you like to know?"
+    );
+    await user.type(textarea, "@");
+    const option = await screen.findByRole("option", { name: "Ada" });
+
+    await vi.waitFor(() => {
+      expect(textarea).toHaveAttribute("aria-activedescendant", option.id);
+    });
+    expect(option).toHaveAttribute("id", "custom-option-id");
+  });
+
+  it("scrolls the keyboard-selected option into view", async () => {
+    setupPromptInputTests();
+    const onSubmit = vi.fn();
+    const scrollIntoView = vi
+      .spyOn(Element.prototype, "scrollIntoView")
+      .mockImplementation(vi.fn());
+    const user = userEvent.setup();
+
+    render(
+      <PromptInput onSubmit={onSubmit}>
+        <PromptInputBody>
+          <PromptInputSuggestions triggers={PROMPT_INPUT_SUGGESTION_TRIGGERS}>
+            <PromptInputTextarea />
+            <FilteredSuggestionMenu />
+          </PromptInputSuggestions>
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    const textarea = screen.getByPlaceholderText(
+      "What would you like to know?"
+    );
+    await user.type(textarea, "@");
+    const alan = await screen.findByRole("option", { name: "Alan" });
+    scrollIntoView.mockClear();
+
+    await user.keyboard("{ArrowDown}");
+
+    expect(alan).toHaveAttribute("aria-selected", "true");
+    expect(scrollIntoView).toHaveBeenCalledWith({ block: "nearest" });
+  });
+
+  it("resets suggestions when a conditional textarea unmounts", async () => {
+    setupPromptInputTests();
+    const onSubmit = vi.fn();
+    const user = userEvent.setup();
+    render(<ConditionalSuggestionTextarea onSubmit={onSubmit} />);
+
+    const textarea = screen.getByRole("combobox");
+    await user.type(textarea, "@a");
+    expect(screen.getByTestId("suggestion-state")).toHaveTextContent(
+      "open:a:none"
+    );
+
+    await user.click(screen.getByRole("button", { name: "Hide textarea" }));
+
+    await vi.waitFor(() => {
+      expect(screen.getByTestId("suggestion-state")).toHaveTextContent(
+        "closed:none:none"
+      );
+    });
+  });
+
+  it("keeps a stable active item id while its value changes", async () => {
+    setupPromptInputTests();
+    const onSubmit = vi.fn();
+    const user = userEvent.setup();
+    const { rerender } = render(
+      <PromptInput onSubmit={onSubmit}>
+        <PromptInputBody>
+          <PromptInputSuggestions triggers={PROMPT_INPUT_SUGGESTION_TRIGGERS}>
+            <PromptInputTextarea />
+            <PromptInputSuggestionState />
+            <PromptInputSuggestionContent aria-label="Mention suggestions">
+              <PromptInputSuggestionItem id="stable-option" value="Ada">
+                Ada
+              </PromptInputSuggestionItem>
+            </PromptInputSuggestionContent>
+          </PromptInputSuggestions>
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    const textarea = screen.getByRole("combobox");
+    await user.type(textarea, "@");
+    const option = await screen.findByRole("option", { name: "Ada" });
+    await vi.waitFor(() => {
+      expect(textarea).toHaveAttribute("aria-activedescendant", option.id);
+      expect(screen.getByTestId("suggestion-state")).toHaveTextContent(
+        "open::Ada"
+      );
+    });
+
+    rerender(
+      <PromptInput onSubmit={onSubmit}>
+        <PromptInputBody>
+          <PromptInputSuggestions triggers={PROMPT_INPUT_SUGGESTION_TRIGGERS}>
+            <PromptInputTextarea />
+            <PromptInputSuggestionState />
+            <PromptInputSuggestionContent aria-label="Mention suggestions">
+              <PromptInputSuggestionItem id="stable-option" value="Grace">
+                Grace
+              </PromptInputSuggestionItem>
+            </PromptInputSuggestionContent>
+          </PromptInputSuggestions>
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    await vi.waitFor(() => {
+      expect(textarea).toHaveAttribute(
+        "aria-activedescendant",
+        "stable-option"
+      );
+      expect(screen.getByTestId("suggestion-state")).toHaveTextContent(
+        "open::Grace"
+      );
+    });
+    expect(screen.getByRole("option", { name: "Grace" })).toHaveAttribute(
+      "aria-selected",
+      "true"
+    );
+  });
+
+  it("lets onSelect replacement override the default insertion", async () => {
+    setupPromptInputTests();
+    const onSubmit = vi.fn();
+    const onSelect = vi.fn((details: PromptInputSuggestionSelectDetails) => {
+      details.replace("@Grace ");
+    });
+    const user = userEvent.setup();
+
+    render(
+      <PromptInput onSubmit={onSubmit}>
+        <PromptInputBody>
+          <PromptInputSuggestions triggers={PROMPT_INPUT_SUGGESTION_TRIGGERS}>
+            <PromptInputTextarea />
+            <PromptInputSuggestionContent aria-label="Mention suggestions">
+              <PromptInputSuggestionItem onSelect={onSelect} value="Ada">
+                Ada
+              </PromptInputSuggestionItem>
+            </PromptInputSuggestionContent>
+          </PromptInputSuggestions>
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    const textarea = screen.getByRole("combobox");
+    await user.type(textarea, "@a");
+    await user.keyboard("{Enter}");
+
+    await vi.waitFor(() => {
+      expect(textarea).toHaveValue("@Grace ");
+    });
+    expect(onSelect).toHaveBeenCalledOnce();
+    expect(onSubmit).not.toHaveBeenCalled();
   });
 });
 

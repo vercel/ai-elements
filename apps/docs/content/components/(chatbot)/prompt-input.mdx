@@ -237,11 +237,68 @@ export async function POST(req: Request) {
 }
 ```
 
+## Mentions and slash commands
+
+Wrap the prompt in `PromptInputSuggestions` to open a keyboard-accessible suggestion list when the user types a configured trigger. The hook exposes the active trigger and query so you can filter local or remote results.
+
+Suggestions replace text in the existing textarea, so the prompt's plain-text submission contract remains unchanged.
+
+```tsx
+const files = [
+  "packages/elements/src/prompt-input.tsx",
+  "packages/elements/src/message.tsx",
+];
+const commands = ["search", "summarize", "explain"];
+const triggers = [{ trigger: "@" }, { trigger: "/", startOfLine: true }];
+
+const SuggestionMenu = () => {
+  const { match } = usePromptInputSuggestions();
+
+  if (!match) {
+    return null;
+  }
+
+  const items = match.trigger === "@" ? files : commands;
+  const filteredItems = items.filter((item) =>
+    item.toLowerCase().includes(match.query.toLowerCase())
+  );
+
+  return (
+    <PromptInputSuggestionContent>
+      {filteredItems.length > 0 ? (
+        filteredItems.map((item) => (
+          <PromptInputSuggestionItem key={item} value={item}>
+            {match.trigger}
+            {item}
+          </PromptInputSuggestionItem>
+        ))
+      ) : (
+        <PromptInputSuggestionEmpty>
+          No results found.
+        </PromptInputSuggestionEmpty>
+      )}
+    </PromptInputSuggestionContent>
+  );
+};
+
+<PromptInputSuggestions triggers={triggers}>
+  <PromptInput onSubmit={handleSubmit}>
+    <PromptInputBody>
+      <PromptInputTextarea placeholder="Type @ for files or / for commands" />
+    </PromptInputBody>
+  </PromptInput>
+  <SuggestionMenu />
+</PromptInputSuggestions>;
+```
+
+By default, selecting an item replaces the active query with its trigger and value followed by a space. Use `replaceWith` or `onSelect` on `PromptInputSuggestionItem` when you need custom insertion or selection behavior.
+
 ## Features
 
 - Auto-resizing textarea that adjusts height based on content
 - File attachment support with drag-and-drop
 - Built-in screenshot capture action
+- Contextual `@` mentions and `/` slash-command suggestions
 - Image preview for image attachments
 - Configurable file constraints (max files, max size, accepted types)
 - Automatic submit button icons based on status
@@ -326,6 +383,142 @@ Buttons can display tooltips with optional keyboard shortcut hints. Hover over t
       description:
         "Any other props are spread to the underlying Textarea component.",
       type: "React.ComponentProps<typeof Textarea>",
+    },
+  }}
+/>
+
+### `<PromptInputSuggestions />`
+
+Provides suggestion state and connects a descendant `PromptInputTextarea` to the suggestion content.
+
+<TypeTable
+  type={{
+    triggers: {
+      description: "Trigger configurations that activate suggestions.",
+      type: "readonly PromptInputSuggestionTrigger[]",
+      required: true,
+    },
+    onMatchChange: {
+      description: "Called when the active trigger, query, or range changes.",
+      type: "PromptInputSuggestionMatch change callback",
+    },
+    onOpenChange: {
+      description: "Called when the suggestion popover opens or closes.",
+      type: "(open: boolean) => void",
+    },
+    children: {
+      description: "The prompt input and suggestion content.",
+      type: "React.ReactNode",
+    },
+  }}
+/>
+
+#### `PromptInputSuggestionTrigger`
+
+<TypeTable
+  type={{
+    trigger: {
+      description:
+        "Text that activates suggestions, for example an at sign or slash.",
+      type: "string",
+      required: true,
+    },
+    allowSpaces: {
+      description: "Whether the active query may contain spaces.",
+      type: "boolean",
+      default: "false",
+    },
+    allowedPrefixes: {
+      description:
+        "Characters allowed immediately before the trigger. Use null to allow any prefix.",
+      type: "readonly string array or null",
+      default: "space, newline, or tab",
+    },
+    minQueryLength: {
+      description: "Minimum query length required before matching.",
+      type: "number",
+      default: "0",
+    },
+    maxQueryLength: {
+      description: "Maximum query length that remains active.",
+      type: "number",
+    },
+    startOfLine: {
+      description: "Whether the trigger must appear at the start of a line.",
+      type: "boolean",
+      default: "false",
+    },
+  }}
+/>
+
+### `<PromptInputSuggestionContent />`
+
+Portal-backed listbox positioned relative to the prompt textarea.
+
+<TypeTable
+  type={{
+    "aria-label": {
+      description: "Accessible label for the suggestion listbox.",
+      type: "string",
+      default: "Suggestions",
+    },
+    align: {
+      description: "Alignment relative to the textarea.",
+      type: "start, center, or end",
+      default: "start",
+    },
+    side: {
+      description: "Preferred side of the textarea.",
+      type: "top, right, bottom, or left",
+      default: "top",
+    },
+    sideOffset: {
+      description: "Distance from the textarea in pixels.",
+      type: "number",
+      default: "8",
+    },
+    "...props": {
+      description: "Any other props are spread to PopoverContent.",
+      type: "React.ComponentProps<typeof PopoverContent>",
+    },
+  }}
+/>
+
+### `<PromptInputSuggestionItem />`
+
+Keyboard- and pointer-selectable suggestion option. The default replacement is `{trigger}{value} `.
+
+<TypeTable
+  type={{
+    value: {
+      description: "Value used for navigation state and default insertion.",
+      type: "string",
+      required: true,
+    },
+    replaceWith: {
+      description:
+        "Custom replacement text or function. Set false to handle insertion yourself.",
+      type: "string, false, or replacement function",
+    },
+    onSelect: {
+      description:
+        "Called with the selected value, match, and replacement helpers.",
+      type: "(details: PromptInputSuggestionSelectDetails) => void",
+    },
+    "...props": {
+      description: "Any other props are spread to the underlying button.",
+      type: "React button props except onSelect and value",
+    },
+  }}
+/>
+
+### `<PromptInputSuggestionEmpty />`
+
+<TypeTable
+  type={{
+    "...props": {
+      description: "Any other props are spread to the empty-state div.",
+      type: "React.HTMLAttributes<HTMLDivElement>",
     },
   }}
 />
@@ -776,6 +969,23 @@ Optional global provider that lifts PromptInput state outside of PromptInput. Wh
 />
 
 ## Hooks
+
+### `usePromptInputSuggestions`
+
+Access the active suggestion state within `PromptInputSuggestions`.
+
+```tsx
+const { activeValue, close, match, open, replace } =
+  usePromptInputSuggestions();
+
+match?.trigger; // Active trigger
+match?.query; // Text after the trigger
+match?.range; // Trigger-to-caret replacement range
+activeValue; // Value of the keyboard-highlighted item
+open; // Whether the suggestion list is open
+replace("@replacement "); // Replace the active range and restore focus
+close(); // Dismiss the current match
+```
 
 ### `usePromptInputAttachments`
 
