@@ -1,5 +1,7 @@
 "use client";
 
+import type { ComponentProps, ReactNode } from "react";
+
 import { useControllableState } from "@radix-ui/react-use-controllable-state";
 import { Button } from "@repo/shadcn-ui/components/ui/button";
 import {
@@ -16,7 +18,6 @@ import {
 } from "@repo/shadcn-ui/components/ui/popover";
 import { cn } from "@repo/shadcn-ui/lib/utils";
 import { ChevronsUpDownIcon } from "lucide-react";
-import type { ComponentProps, ReactNode } from "react";
 import {
   createContext,
   useCallback,
@@ -54,9 +55,11 @@ export const useAudioDevices = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [hasPermission, setHasPermission] = useState(false);
+  const loadingRef = useRef(true);
 
   const loadDevicesWithoutPermission = useCallback(async () => {
     try {
+      loadingRef.current = true;
       setLoading(true);
       setError(null);
 
@@ -75,16 +78,18 @@ export const useAudioDevices = () => {
       setError(message);
       console.error("Error getting audio devices:", message);
     } finally {
+      loadingRef.current = false;
       setLoading(false);
     }
   }, []);
 
   const loadDevicesWithPermission = useCallback(async () => {
-    if (loading) {
+    if (loadingRef.current) {
       return;
     }
 
     try {
+      loadingRef.current = true;
       setLoading(true);
       setError(null);
 
@@ -112,9 +117,10 @@ export const useAudioDevices = () => {
       setError(message);
       console.error("Error getting audio devices:", message);
     } finally {
+      loadingRef.current = false;
       setLoading(false);
     }
-  }, [loading]);
+  }, []);
 
   useEffect(() => {
     loadDevicesWithoutPermission();
@@ -176,13 +182,18 @@ export const MicSelector = ({
     prop: controlledOpen,
   });
   const [width, setWidth] = useState(200);
-  const { devices, loading, hasPermission, loadDevices } = useAudioDevices();
+  const { devices, hasPermission, loadDevices } = useAudioDevices();
 
-  useEffect(() => {
-    if (open && !hasPermission && !loading) {
-      loadDevices();
-    }
-  }, [open, hasPermission, loading, loadDevices]);
+  const handleOpenChange = useCallback(
+    (nextOpen: boolean) => {
+      onOpenChange(nextOpen);
+
+      if (nextOpen && !hasPermission) {
+        loadDevices();
+      }
+    },
+    [onOpenChange, hasPermission, loadDevices]
+  );
 
   const contextValue = useMemo(
     () => ({
@@ -199,7 +210,7 @@ export const MicSelector = ({
 
   return (
     <MicSelectorContext.Provider value={contextValue}>
-      <Popover {...props} onOpenChange={onOpenChange} open={open} />
+      <Popover {...props} onOpenChange={handleOpenChange} open={open} />
     </MicSelectorContext.Provider>
   );
 };

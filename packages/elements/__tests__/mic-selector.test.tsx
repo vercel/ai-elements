@@ -637,6 +637,71 @@ describe("micSelector", () => {
       expect(onValueChange).toHaveBeenCalledWith("device-2");
     });
   });
+
+  it("keeps getUserMedia bounded after permission denial", async () => {
+    setupMocks();
+    const consoleErrorSpy = vi
+      .spyOn(console, "error")
+      .mockImplementation(vi.fn());
+    mockGetUserMedia.mockClear();
+    mockGetUserMedia
+      .mockRejectedValueOnce(new Error("Permission denied"))
+      .mockRejectedValueOnce(new Error("Permission denied"));
+
+    const user = userEvent.setup();
+
+    render(
+      <MicSelector>
+        <MicSelectorTrigger>
+          <MicSelectorValue />
+        </MicSelectorTrigger>
+        <MicSelectorContent>
+          <MicSelectorInput />
+          <MicSelectorList>
+            {(devices) =>
+              devices.map((device) => (
+                <MicSelectorItem key={device.deviceId} value={device.deviceId}>
+                  {device.label}
+                </MicSelectorItem>
+              ))
+            }
+          </MicSelectorList>
+          <MicSelectorEmpty />
+        </MicSelectorContent>
+      </MicSelector>
+    );
+
+    await user.click(screen.getByRole("button"));
+
+    await waitFor(() => {
+      expect(mockGetUserMedia).toHaveBeenCalledOnce();
+    });
+
+    // Wait beyond the first rejection: further render turns must not
+    // trigger another automatic permission request.
+    const firstFlush = Promise.withResolvers<void>();
+    setTimeout(firstFlush.resolve, 100);
+    await firstFlush.promise;
+
+    expect(mockGetUserMedia).toHaveBeenCalledOnce();
+
+    // Reopening the popover is the defined retry boundary: exactly one
+    // more automatic request.
+    await user.keyboard("{Escape}");
+    await user.click(screen.getByRole("button"));
+
+    await waitFor(() => {
+      expect(mockGetUserMedia).toHaveBeenCalledTimes(2);
+    });
+
+    const secondFlush = Promise.withResolvers<void>();
+    setTimeout(secondFlush.resolve, 100);
+    await secondFlush.promise;
+
+    expect(mockGetUserMedia).toHaveBeenCalledTimes(2);
+
+    consoleErrorSpy.mockRestore();
+  });
 });
 
 describe("micSelectorTrigger", () => {

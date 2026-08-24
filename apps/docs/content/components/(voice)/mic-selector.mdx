@@ -263,6 +263,8 @@ The component implements a two-stage permission approach:
 1. **Without Permission**: Initially loads devices without requesting permission. Device labels may show as generic names (e.g., "Microphone 1").
 2. **With Permission**: When the popover is opened and permission hasn't been granted, automatically requests microphone access and displays actual device names.
 
+At most one automatic permission request is made per popover open. If the user denies permission, the error is surfaced through `useAudioDevices` and no further requests are made until the popover is reopened or `loadDevices` is called explicitly.
+
 ### Device Label Parsing
 
 The `MicSelectorLabel` component intelligently parses device names that include hardware IDs in the format `(XXXX:XXXX)`. It splits the label into the device name and ID, styling the ID with muted text for better readability.
