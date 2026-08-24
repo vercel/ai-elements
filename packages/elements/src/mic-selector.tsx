@@ -256,7 +256,7 @@ export const MicSelectorContent = ({
   popoverOptions,
   ...props
 }: MicSelectorContentProps) => {
-  const { width, onValueChange, value } = useContext(MicSelectorContext);
+  const { width, value } = useContext(MicSelectorContext);
 
   return (
     <PopoverContent
@@ -264,7 +264,7 @@ export const MicSelectorContent = ({
       style={{ width }}
       {...popoverOptions}
     >
-      <Command onValueChange={onValueChange} value={value} {...props} />
+      <Command defaultValue={value} {...props} />
     </PopoverContent>
   );
 };
