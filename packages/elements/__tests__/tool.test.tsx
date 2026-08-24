@@ -250,4 +250,40 @@ describe("toolOutput", () => {
     );
     expect(screen.getByText("Result")).toBeInTheDocument();
   });
+
+  it("renders empty-string output", () => {
+    render(
+      <Tool>
+        <ToolOutput errorText={undefined} output="" />
+      </Tool>
+    );
+    expect(screen.getByText("Result")).toBeInTheDocument();
+  });
+
+  it("renders zero output", () => {
+    render(
+      <Tool>
+        <ToolOutput errorText={undefined} output={0} />
+      </Tool>
+    );
+    expect(screen.getByText("Result")).toBeInTheDocument();
+  });
+
+  it("renders false output", () => {
+    render(
+      <Tool>
+        <ToolOutput errorText={undefined} output={false} />
+      </Tool>
+    );
+    expect(screen.getByText("Result")).toBeInTheDocument();
+  });
+
+  it("renders nothing when output is null", () => {
+    const { container } = render(
+      <Tool>
+        <ToolOutput errorText={undefined} output={null} />
+      </Tool>
+    );
+    expect(container.textContent).toBe("");
+  });
 });
