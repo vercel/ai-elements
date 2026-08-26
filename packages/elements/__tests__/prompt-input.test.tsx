@@ -21,6 +21,8 @@ import {
   PromptInputActionMenuTrigger,
   PromptInputBody,
   PromptInputButton,
+  PromptInputProvider,
+  PromptInputRichtext,
   PromptInputSelect,
   PromptInputSelectContent,
   PromptInputSelectItem,
@@ -30,6 +32,7 @@ import {
   PromptInputTextarea,
   PromptInputTools,
   usePromptInputAttachments,
+  usePromptInputController,
   usePromptInputReferencedSources,
 } from "../src/prompt-input";
 
@@ -234,6 +237,12 @@ const setupScreenshotCaptureMock = () => {
   }) as typeof document.createElement);
 
   return { getDisplayMedia, pause, play, stopTrack, toBlob };
+};
+
+const getRichtextEditor = (container: HTMLElement) => {
+  const editor = container.querySelector('[contenteditable="true"]');
+  expect(editor).toBeInstanceOf(HTMLElement);
+  return editor as HTMLElement;
 };
 
 describe("promptInput", () => {
@@ -756,6 +765,468 @@ describe("promptInputTextarea", () => {
     expect(
       screen.getByPlaceholderText("Custom placeholder")
     ).toBeInTheDocument();
+  });
+});
+
+describe("promptInputRichtext", () => {
+  it("renders a contenteditable input with placeholder", () => {
+    setupPromptInputTests();
+    const onSubmit = vi.fn();
+    const { container } = render(
+      <PromptInput onSubmit={onSubmit}>
+        <PromptInputBody>
+          <PromptInputRichtext placeholder="Ask anything" />
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    expect(screen.getByText("Ask anything")).toBeInTheDocument();
+    expect(getRichtextEditor(container)).toHaveAttribute(
+      "aria-placeholder",
+      "Ask anything"
+    );
+  });
+
+  it("submits richtext on Enter without provider and clears the editor", async () => {
+    setupPromptInputTests();
+    const onSubmit = vi.fn();
+    const user = userEvent.setup();
+
+    const { container } = render(
+      <PromptInput onSubmit={onSubmit}>
+        <PromptInputBody>
+          <PromptInputRichtext />
+          <PromptInputSubmit />
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    const editor = getRichtextEditor(container);
+    await user.click(editor);
+    await user.keyboard("Hello from Lexical");
+
+    expect(editor).toHaveTextContent("Hello from Lexical");
+
+    await user.keyboard("{Enter}");
+
+    await vi.waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledOnce();
+    });
+
+    const [[message]] = onSubmit.mock.calls;
+    expect(message).toHaveProperty("text", "Hello from Lexical");
+
+    await vi.waitFor(() => {
+      expect(editor).toHaveTextContent("");
+    });
+  });
+
+  it("submits richtext on Enter with provider and clears the editor", async () => {
+    setupPromptInputTests();
+    const onSubmit = vi.fn();
+    const user = userEvent.setup();
+
+    const { container } = render(
+      <PromptInputProvider>
+        <PromptInput onSubmit={onSubmit}>
+          <PromptInputBody>
+            <PromptInputRichtext />
+            <PromptInputSubmit />
+          </PromptInputBody>
+        </PromptInput>
+      </PromptInputProvider>
+    );
+
+    const editor = getRichtextEditor(container);
+    await user.click(editor);
+    await user.keyboard("Hello with provider");
+    await user.keyboard("{Enter}");
+
+    await vi.waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledOnce();
+    });
+
+    const [[message]] = onSubmit.mock.calls;
+    expect(message).toHaveProperty("text", "Hello with provider");
+
+    await vi.waitFor(() => {
+      expect(editor).toHaveTextContent("");
+    });
+  });
+
+  it("does not submit on Shift+Enter", async () => {
+    setupPromptInputTests();
+    const onSubmit = vi.fn();
+    const user = userEvent.setup();
+
+    const { container } = render(
+      <PromptInput onSubmit={onSubmit}>
+        <PromptInputBody>
+          <PromptInputRichtext />
+          <PromptInputSubmit />
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    const editor = getRichtextEditor(container);
+    await user.click(editor);
+    await user.keyboard("Line 1");
+    await user.keyboard("{Shift>}{Enter}{/Shift}");
+
+    expect(onSubmit).not.toHaveBeenCalled();
+  });
+
+  it("does not submit on Enter during IME composition", () => {
+    setupPromptInputTests();
+    const onSubmit = vi.fn();
+
+    const { container } = render(
+      <PromptInput onSubmit={onSubmit}>
+        <PromptInputBody>
+          <PromptInputRichtext />
+          <PromptInputSubmit />
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    const editor = getRichtextEditor(container);
+    editor.focus();
+
+    const enterKeyDuringComposition = new KeyboardEvent("keydown", {
+      bubbles: true,
+      cancelable: true,
+      key: "Enter",
+    });
+
+    Object.defineProperty(enterKeyDuringComposition, "isComposing", {
+      value: true,
+      writable: false,
+    });
+
+    editor.dispatchEvent(enterKeyDuringComposition);
+
+    expect(onSubmit).not.toHaveBeenCalled();
+  });
+
+  it("renders bold formatting after markdown shortcut resolves", async () => {
+    setupPromptInputTests();
+    const onSubmit = vi.fn();
+    const user = userEvent.setup();
+
+    const { container } = render(
+      <PromptInput onSubmit={onSubmit}>
+        <PromptInputBody>
+          <PromptInputRichtext />
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    const editor = getRichtextEditor(container);
+    await user.click(editor);
+    await user.keyboard("**bold** ");
+
+    await vi.waitFor(() => {
+      const boldNode = editor.querySelector("strong, b, span.font-semibold");
+      expect(boldNode).toHaveTextContent("bold");
+      expect(editor).toHaveTextContent("bold");
+      expect(editor.textContent).not.toContain("**");
+    });
+  });
+
+  it("renders italic formatting after underscore markdown shortcut resolves", async () => {
+    setupPromptInputTests();
+    const onSubmit = vi.fn();
+    const user = userEvent.setup();
+
+    const { container } = render(
+      <PromptInput onSubmit={onSubmit}>
+        <PromptInputBody>
+          <PromptInputRichtext />
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    const editor = getRichtextEditor(container);
+    await user.click(editor);
+    await user.keyboard("_italic_ ");
+
+    await vi.waitFor(() => {
+      const italicNode = editor.querySelector("em, i, span.italic");
+      expect(italicNode).toHaveTextContent("italic");
+      expect(editor).toHaveTextContent("italic");
+      expect(editor.textContent).not.toContain("_italic_");
+    });
+  });
+
+  it("renders italic formatting after asterisk markdown shortcut resolves", async () => {
+    setupPromptInputTests();
+    const onSubmit = vi.fn();
+    const user = userEvent.setup();
+
+    const { container } = render(
+      <PromptInput onSubmit={onSubmit}>
+        <PromptInputBody>
+          <PromptInputRichtext />
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    const editor = getRichtextEditor(container);
+    await user.click(editor);
+    await user.keyboard("*italic* ");
+
+    await vi.waitFor(() => {
+      const italicNode = editor.querySelector("em, i, span.italic");
+      expect(italicNode).toHaveTextContent("italic");
+      expect(editor).toHaveTextContent("italic");
+      expect(editor.textContent).not.toContain("*italic*");
+    });
+  });
+
+  it("syncs initialInput into the richtext editor", async () => {
+    setupPromptInputTests();
+    const onSubmit = vi.fn();
+
+    const { container } = render(
+      <PromptInputProvider initialInput="Initial provider value">
+        <PromptInput onSubmit={onSubmit}>
+          <PromptInputBody>
+            <PromptInputRichtext />
+          </PromptInputBody>
+        </PromptInput>
+      </PromptInputProvider>
+    );
+
+    const editor = getRichtextEditor(container);
+
+    await vi.waitFor(() => {
+      expect(editor).toHaveTextContent("Initial provider value");
+    });
+  });
+
+  it("renders provider markdown initialInput as styled text instead of literal markers", async () => {
+    setupPromptInputTests();
+    const onSubmit = vi.fn();
+
+    const { container } = render(
+      <PromptInputProvider initialInput="**hello**">
+        <PromptInput onSubmit={onSubmit}>
+          <PromptInputBody>
+            <PromptInputRichtext />
+          </PromptInputBody>
+        </PromptInput>
+      </PromptInputProvider>
+    );
+
+    const editor = getRichtextEditor(container);
+
+    await vi.waitFor(() => {
+      const boldNode = editor.querySelector("strong, b, span.font-semibold");
+      expect(boldNode).toHaveTextContent("hello");
+      expect(editor).toHaveTextContent("hello");
+      expect(editor.textContent).not.toContain("**hello**");
+    });
+  });
+
+  it("syncs provider state in both directions", async () => {
+    setupPromptInputTests();
+    const onSubmit = vi.fn();
+    const user = userEvent.setup();
+
+    const ProviderProbe = () => {
+      const controller = usePromptInputController();
+      return (
+        <>
+          <button
+            onClick={() => controller.textInput.setInput("Updated externally")}
+            type="button"
+          >
+            Set Input
+          </button>
+          <div data-testid="provider-value">{controller.textInput.value}</div>
+        </>
+      );
+    };
+
+    const { container } = render(
+      <PromptInputProvider initialInput="Initial provider value">
+        <ProviderProbe />
+        <PromptInput onSubmit={onSubmit}>
+          <PromptInputBody>
+            <PromptInputRichtext />
+          </PromptInputBody>
+        </PromptInput>
+      </PromptInputProvider>
+    );
+
+    const editor = getRichtextEditor(container);
+
+    await user.click(screen.getByRole("button", { name: "Set Input" }));
+
+    await vi.waitFor(() => {
+      expect(editor).toHaveTextContent("Updated externally");
+    });
+
+    await user.click(editor);
+    await user.keyboard("!");
+
+    await vi.waitFor(() => {
+      expect(screen.getByTestId("provider-value")).toHaveTextContent(
+        "Updated externally!"
+      );
+    });
+  });
+
+  it("preserves richtext content when async submit rejects", async () => {
+    setupPromptInputTests();
+    const onSubmit = vi.fn(() => Promise.reject(new Error("submit failed")));
+    const user = userEvent.setup();
+
+    const { container } = render(
+      <PromptInput onSubmit={onSubmit}>
+        <PromptInputBody>
+          <PromptInputRichtext />
+          <PromptInputSubmit />
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    const editor = getRichtextEditor(container);
+    await user.click(editor);
+    await user.keyboard("Keep this content");
+    await user.keyboard("{Enter}");
+
+    await vi.waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledOnce();
+    });
+
+    await vi.waitFor(() => {
+      expect(editor).toHaveTextContent("Keep this content");
+    });
+  });
+
+  it("submits typed URLs as markdown links", async () => {
+    setupPromptInputTests();
+    const onSubmit = vi.fn();
+    const user = userEvent.setup();
+
+    const { container } = render(
+      <PromptInput onSubmit={onSubmit}>
+        <PromptInputBody>
+          <PromptInputRichtext />
+          <PromptInputSubmit />
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    const editor = getRichtextEditor(container);
+    await user.click(editor);
+    await user.keyboard("https://example.com ");
+
+    await vi.waitFor(() => {
+      const linkNode = editor.querySelector("a");
+      expect(linkNode).toHaveTextContent("https://example.com");
+    });
+
+    await user.keyboard("{Enter}");
+
+    await vi.waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledOnce();
+    });
+
+    const [[message]] = onSubmit.mock.calls;
+    expect(message.text).toContain("[https://example.com](https://example.com)");
+  });
+
+  it("clears richtext editor when provider textInput.clear() is called", async () => {
+    setupPromptInputTests();
+    const onSubmit = vi.fn();
+    const user = userEvent.setup();
+
+    const ProviderProbe = () => {
+      const controller = usePromptInputController();
+      return (
+        <>
+          <button
+            onClick={() => controller.textInput.clear()}
+            type="button"
+          >
+            Clear Input
+          </button>
+          <div data-testid="provider-value">{controller.textInput.value}</div>
+        </>
+      );
+    };
+
+    const { container } = render(
+      <PromptInputProvider initialInput="Initial text">
+        <ProviderProbe />
+        <PromptInput onSubmit={onSubmit}>
+          <PromptInputBody>
+            <PromptInputRichtext />
+          </PromptInputBody>
+        </PromptInput>
+      </PromptInputProvider>
+    );
+
+    const editor = getRichtextEditor(container);
+
+    await vi.waitFor(() => {
+      expect(editor).toHaveTextContent("Initial text");
+    });
+
+    await user.click(screen.getByRole("button", { name: "Clear Input" }));
+
+    await vi.waitFor(() => {
+      expect(editor).toHaveTextContent("");
+    });
+
+    await vi.waitFor(() => {
+      expect(screen.getByTestId("provider-value")).toHaveTextContent("");
+    });
+  });
+
+  it("clears richtext editor via external setInput to empty string", async () => {
+    setupPromptInputTests();
+    const onSubmit = vi.fn();
+    const user = userEvent.setup();
+
+    const ProviderProbe = () => {
+      const controller = usePromptInputController();
+      return (
+        <>
+          <button
+            onClick={() => controller.textInput.setInput("")}
+            type="button"
+          >
+            Clear Input
+          </button>
+        </>
+      );
+    };
+
+    const { container } = render(
+      <PromptInputProvider initialInput="Some content">
+        <ProviderProbe />
+        <PromptInput onSubmit={onSubmit}>
+          <PromptInputBody>
+            <PromptInputRichtext />
+          </PromptInputBody>
+        </PromptInput>
+      </PromptInputProvider>
+    );
+
+    const editor = getRichtextEditor(container);
+
+    await vi.waitFor(() => {
+      expect(editor).toHaveTextContent("Some content");
+    });
+
+    await user.click(screen.getByRole("button", { name: "Clear Input" }));
+
+    await vi.waitFor(() => {
+      expect(editor).toHaveTextContent("");
+    });
   });
 });
 
@@ -1997,6 +2468,7 @@ describe("paste functionality", () => {
 
     // Mock clipboardData items
     pasteEvent.clipboardData = {
+      getData: () => "",
       items: [
         {
           getAsFile: () => file,
@@ -2007,6 +2479,53 @@ describe("paste functionality", () => {
 
     await act(() => {
       textarea.dispatchEvent(pasteEvent);
+    });
+
+    await vi.waitFor(() => {
+      expect(screen.getByTestId("count")).toHaveTextContent("1");
+    });
+  });
+
+  it("adds files from clipboard in richtext editor", async () => {
+    setupPromptInputTests();
+    const onSubmit = vi.fn();
+
+    const AttachmentConsumer = () => {
+      const attachments = usePromptInputAttachments();
+      return <div data-testid="count">{attachments.files.length}</div>;
+    };
+
+    const { container } = render(
+      <PromptInput onSubmit={onSubmit}>
+        <PromptInputBody>
+          <AttachmentConsumer />
+          <PromptInputRichtext />
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    const editor = getRichtextEditor(container);
+    editor.focus();
+
+    const file = new File(["image"], "test.png", { type: "image/png" });
+    const pasteEvent = new Event("paste", {
+      bubbles: true,
+      cancelable: true,
+      // oxlint-disable-next-line typescript-eslint(no-explicit-any)
+    }) as any;
+
+    pasteEvent.clipboardData = {
+      getData: () => "",
+      items: [
+        {
+          getAsFile: () => file,
+          kind: "file",
+        },
+      ],
+    };
+
+    await act(() => {
+      editor.dispatchEvent(pasteEvent);
     });
 
     await vi.waitFor(() => {
@@ -2036,10 +2555,35 @@ describe("paste functionality", () => {
       cancelable: true,
       // oxlint-disable-next-line typescript-eslint(no-explicit-any)
     }) as any;
-    pasteEvent.clipboardData = { items: [] };
+    pasteEvent.clipboardData = { getData: () => "", items: [] };
 
     // Should not throw
     expect(() => textarea.dispatchEvent(pasteEvent)).not.toThrow();
+  });
+
+  it("handles richtext paste with no files", () => {
+    setupPromptInputTests();
+    const onSubmit = vi.fn();
+
+    const { container } = render(
+      <PromptInput onSubmit={onSubmit}>
+        <PromptInputBody>
+          <PromptInputRichtext />
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    const editor = getRichtextEditor(container);
+    editor.focus();
+
+    const pasteEvent = new Event("paste", {
+      bubbles: true,
+      cancelable: true,
+      // oxlint-disable-next-line typescript-eslint(no-explicit-any)
+    }) as any;
+    pasteEvent.clipboardData = { getData: () => "", items: [] };
+
+    expect(() => editor.dispatchEvent(pasteEvent)).not.toThrow();
   });
 });
 
@@ -3155,7 +3699,9 @@ describe("promptInputSelect components", () => {
 
     // Mock hasPointerCapture and releasePointerCapture for select
     vi.spyOn(Element.prototype, "hasPointerCapture").mockReturnValue(false);
-    vi.spyOn(Element.prototype, "releasePointerCapture").mockImplementation();
+    vi
+      .spyOn(Element.prototype, "releasePointerCapture")
+      .mockImplementation((_pointerId: number) => {});
 
     render(
       <PromptInput onSubmit={onSubmit}>

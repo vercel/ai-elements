@@ -50,6 +50,36 @@ import {
   XIcon,
 } from "lucide-react";
 import { nanoid } from "nanoid";
+import { LexicalComposer } from "@lexical/react/LexicalComposer";
+import type { InitialConfigType } from "@lexical/react/LexicalComposer";
+import { AutoFocusPlugin } from "@lexical/react/LexicalAutoFocusPlugin";
+import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
+import { ContentEditable } from "@lexical/react/LexicalContentEditable";
+import type { ContentEditableProps } from "@lexical/react/LexicalContentEditable";
+import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
+import { OnChangePlugin } from "@lexical/react/LexicalOnChangePlugin";
+import { LinkPlugin } from "@lexical/react/LexicalLinkPlugin";
+import { AutoLinkPlugin } from "@lexical/react/LexicalAutoLinkPlugin";
+import { MarkdownShortcutPlugin } from "@lexical/react/LexicalMarkdownShortcutPlugin";
+import { EditorRefPlugin } from "@lexical/react/LexicalEditorRefPlugin";
+import { LexicalErrorBoundary } from "@lexical/react/LexicalErrorBoundary";
+import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
+import {
+  $convertFromMarkdownString,
+  $convertToMarkdownString,
+  LINK,
+  TEXT_FORMAT_TRANSFORMERS,
+  TEXT_MATCH_TRANSFORMERS,
+} from "@lexical/markdown";
+import { $isLinkNode, AutoLinkNode, LinkNode } from "@lexical/link";
+import {
+  $getRoot,
+  COMMAND_PRIORITY_LOW,
+  KEY_BACKSPACE_COMMAND,
+  KEY_ENTER_COMMAND,
+  TextNode,
+} from "lexical";
+import type { EditorState, LexicalEditor, LexicalNode } from "lexical";
 import type {
   ChangeEvent,
   ChangeEventHandler,
@@ -174,6 +204,70 @@ const captureScreenshot = async (): Promise<File | null> => {
   }
 };
 
+const syncEditorTextContent = (editor: LexicalEditor | null, value: string) => {
+  if (!editor) {
+    return;
+  }
+  editor.update(() => {
+    const root = $getRoot();
+    const currentValue = $convertToMarkdownString(PROMPT_INPUT_TRANSFORMERS);
+
+    if (value === currentValue) {
+      return;
+    }
+
+    root.clear();
+
+    if (value) {
+      $convertFromMarkdownString(value, PROMPT_INPUT_TRANSFORMERS);
+    }
+
+    root.selectEnd();
+  });
+};
+
+const URL_MATCHER =
+  /((https?:\/\/(www\.)?)|(www\.))[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)/;
+
+const AUTO_LINK_MATCHERS = [
+  (text: string) => {
+    const match = URL_MATCHER.exec(text);
+    if (match === null) {
+      return null;
+    }
+    const [fullMatch] = match;
+    return {
+      index: match.index,
+      length: fullMatch.length,
+      text: fullMatch,
+      url: fullMatch.startsWith("http") ? fullMatch : `https://${fullMatch}`,
+      // attributes: { rel: 'noreferrer', target: '_blank' }, // Optional link attributes
+    };
+  },
+];
+
+const LINK_TRANSFORMER = {
+  ...LINK,
+  export: (node: LexicalNode, exportChildren: (node: LinkNode) => string) => {
+    if (!$isLinkNode(node)) {
+      return null;
+    }
+
+    const textContent = exportChildren(node);
+    const title = node.getTitle();
+
+    return title
+      ? `[${textContent}](${node.getURL()} "${title.replaceAll(/([\\"])/g, "\\$1")}")`
+      : `[${textContent}](${node.getURL()})`;
+  },
+};
+
+const PROMPT_INPUT_TRANSFORMERS = [
+  LINK_TRANSFORMER,
+  ...TEXT_FORMAT_TRANSFORMERS,
+  ...TEXT_MATCH_TRANSFORMERS,
+];
+
 // ============================================================================
 // Provider Context & Types
 // ============================================================================
@@ -193,28 +287,41 @@ export interface TextInputContext {
   clear: () => void;
 }
 
+interface PromptInputSubmitAdapter {
+  getText: () => string;
+  clear: () => void;
+  setText?: (value: string) => void;
+}
+
 export interface PromptInputControllerProps {
   textInput: TextInputContext;
   attachments: AttachmentsContext;
   /** INTERNAL: Allows PromptInput to register its file textInput + "open" callback */
   __registerFileInput: (
     ref: RefObject<HTMLInputElement | null>,
-    open: () => void
+    open: () => void,
   ) => void;
 }
 
+interface PromptInputSubmitAdapterValue {
+  registerSubmitAdapter: (adapter: PromptInputSubmitAdapter | null) => void;
+}
+
+const PromptInputSubmitAdapterContext =
+  createContext<PromptInputSubmitAdapterValue | null>(null);
+
 const PromptInputController = createContext<PromptInputControllerProps | null>(
-  null
+  null,
 );
 const ProviderAttachmentsContext = createContext<AttachmentsContext | null>(
-  null
+  null,
 );
 
 export const usePromptInputController = () => {
   const ctx = useContext(PromptInputController);
   if (!ctx) {
     throw new Error(
-      "Wrap your component inside <PromptInputProvider> to use usePromptInputController()."
+      "Wrap your component inside <PromptInputProvider> to use usePromptInputController().",
     );
   }
   return ctx;
@@ -228,7 +335,7 @@ export const useProviderAttachments = () => {
   const ctx = useContext(ProviderAttachmentsContext);
   if (!ctx) {
     throw new Error(
-      "Wrap your component inside <PromptInputProvider> to use useProviderAttachments()."
+      "Wrap your component inside <PromptInputProvider> to use useProviderAttachments().",
     );
   }
   return ctx;
@@ -316,7 +423,7 @@ export const PromptInputProvider = ({
         }
       }
     },
-    []
+    [],
   );
 
   const openFileDialog = useCallback(() => {
@@ -332,7 +439,7 @@ export const PromptInputProvider = ({
       openFileDialog,
       remove,
     }),
-    [attachmentFiles, add, remove, clear, openFileDialog]
+    [attachmentFiles, add, remove, clear, openFileDialog],
   );
 
   const __registerFileInput = useCallback(
@@ -340,7 +447,7 @@ export const PromptInputProvider = ({
       fileInputRef.current = ref.current;
       openRef.current = open;
     },
-    []
+    [],
   );
 
   const controller = useMemo<PromptInputControllerProps>(
@@ -353,7 +460,7 @@ export const PromptInputProvider = ({
         value: textInput,
       },
     }),
-    [textInput, clearInput, attachments, __registerFileInput]
+    [textInput, clearInput, attachments, __registerFileInput],
   );
 
   return (
@@ -378,7 +485,7 @@ export const usePromptInputAttachments = () => {
   const context = local ?? provider;
   if (!context) {
     throw new Error(
-      "usePromptInputAttachments must be used within a PromptInput or PromptInputProvider"
+      "usePromptInputAttachments must be used within a PromptInput or PromptInputProvider",
     );
   }
   return context;
@@ -402,7 +509,7 @@ export const usePromptInputReferencedSources = () => {
   const ctx = useContext(LocalReferencedSourcesContext);
   if (!ctx) {
     throw new Error(
-      "usePromptInputReferencedSources must be used within a LocalReferencedSourcesContext.Provider"
+      "usePromptInputReferencedSources must be used within a LocalReferencedSourcesContext.Provider",
     );
   }
   return ctx;
@@ -425,7 +532,7 @@ export const PromptInputActionAddAttachments = ({
       e.preventDefault();
       attachments.openFileDialog();
     },
-    [attachments]
+    [attachments],
   );
 
   return (
@@ -470,7 +577,7 @@ export const PromptInputActionAddScreenshot = ({
         throw error;
       }
     },
-    [onSelect, attachments]
+    [onSelect, attachments],
   );
 
   return (
@@ -507,7 +614,7 @@ export type PromptInputProps = Omit<
   }) => void;
   onSubmit: (
     message: PromptInputMessage,
-    event: FormEvent<HTMLFormElement>
+    event: FormEvent<HTMLFormElement>,
   ) => void | Promise<void>;
 };
 
@@ -572,7 +679,7 @@ export const PromptInput = ({
         return f.type === pattern;
       });
     },
-    [accept]
+    [accept],
   );
 
   const addLocal = useCallback(
@@ -623,7 +730,7 @@ export const PromptInput = ({
         return [...prev, ...next];
       });
     },
-    [matchesAccept, maxFiles, maxFileSize, onError]
+    [matchesAccept, maxFiles, maxFileSize, onError],
   );
 
   const removeLocal = useCallback(
@@ -635,7 +742,7 @@ export const PromptInput = ({
         }
         return prev.filter((file) => file.id !== id);
       }),
-    []
+    [],
   );
 
   // Wrapper that validates files before calling provider's add
@@ -679,7 +786,7 @@ export const PromptInput = ({
         controller?.attachments.add(capped);
       }
     },
-    [matchesAccept, maxFileSize, maxFiles, onError, files.length, controller]
+    [matchesAccept, maxFileSize, maxFiles, onError, files.length, controller],
   );
 
   const clearAttachments = useCallback(
@@ -694,12 +801,12 @@ export const PromptInput = ({
             }
             return [];
           }),
-    [usingProvider, controller]
+    [usingProvider, controller],
   );
 
   const clearReferencedSources = useCallback(
     () => setReferencedSources([]),
-    []
+    [],
   );
 
   const add = usingProvider ? addWithProviderValidation : addLocal;
@@ -797,7 +904,7 @@ export const PromptInput = ({
         }
       }
     },
-    [usingProvider]
+    [usingProvider],
   );
 
   const handleChange: ChangeEventHandler<HTMLInputElement> = useCallback(
@@ -808,7 +915,7 @@ export const PromptInput = ({
       // Reset input value to allow selecting files that were previously removed
       event.currentTarget.value = "";
     },
-    [add]
+    [add],
   );
 
   const attachmentsCtx = useMemo<AttachmentsContext>(
@@ -820,7 +927,7 @@ export const PromptInput = ({
       openFileDialog,
       remove,
     }),
-    [files, add, remove, clearAttachments, openFileDialog]
+    [files, add, remove, clearAttachments, openFileDialog],
   );
 
   const refsCtx = useMemo<ReferencedSourcesContext>(
@@ -838,7 +945,16 @@ export const PromptInput = ({
       },
       sources: referencedSources,
     }),
-    [referencedSources, clearReferencedSources]
+    [referencedSources, clearReferencedSources],
+  );
+
+  const promptSubmitAdapterRef = useRef<PromptInputSubmitAdapter | null>(null);
+
+  const registerSubmitAdapter = useCallback(
+    (adapter: PromptInputSubmitAdapter | null) => {
+      promptSubmitAdapterRef.current = adapter;
+    },
+    [],
   );
 
   const handleSubmit: FormEventHandler<HTMLFormElement> = useCallback(
@@ -846,13 +962,18 @@ export const PromptInput = ({
       event.preventDefault();
 
       const form = event.currentTarget;
-      const text = usingProvider
-        ? controller.textInput.value
-        : (() => {
-            const formData = new FormData(form);
-            return (formData.get("message") as string) || "";
-          })();
-
+      const adapter = promptSubmitAdapterRef.current;
+      let text = "";
+      if (adapter) {
+        text = adapter.getText();
+      } else if (usingProvider) {
+        text = controller.textInput.value;
+      } else {
+        text = (() => {
+          const formData = new FormData(form);
+          return (formData.get("message") as string) || "";
+        })();
+      }
       // Reset form immediately after capturing text to avoid race condition
       // where user input during async blob conversion would be lost
       if (!usingProvider) {
@@ -872,7 +993,7 @@ export const PromptInput = ({
               };
             }
             return item;
-          })
+          }),
         );
 
         const result = onSubmit({ files: convertedFiles, text }, event);
@@ -882,8 +1003,12 @@ export const PromptInput = ({
           try {
             await result;
             clear();
-            if (usingProvider) {
+            adapter?.clear();
+            if (!adapter && usingProvider) {
               controller.textInput.clear();
+            }
+            if (!adapter && !usingProvider) {
+              form.reset();
             }
           } catch {
             // Don't clear on error - user may want to retry
@@ -891,15 +1016,19 @@ export const PromptInput = ({
         } else {
           // Sync function completed without throwing, clear inputs
           clear();
-          if (usingProvider) {
+          adapter?.clear();
+          if (!adapter && usingProvider) {
             controller.textInput.clear();
+          }
+          if (!adapter && !usingProvider) {
+            form.reset();
           }
         }
       } catch {
         // Don't clear on error - user may want to retry
       }
     },
-    [usingProvider, controller, files, onSubmit, clear]
+    [usingProvider, controller, files, onSubmit, clear],
   );
 
   // Render with or without local provider
@@ -934,9 +1063,11 @@ export const PromptInput = ({
 
   // Always provide LocalAttachmentsContext so children get validated add function
   return (
-    <LocalAttachmentsContext.Provider value={attachmentsCtx}>
-      {withReferencedSources}
-    </LocalAttachmentsContext.Provider>
+    <PromptInputSubmitAdapterContext.Provider value={{ registerSubmitAdapter }}>
+      <LocalAttachmentsContext.Provider value={attachmentsCtx}>
+        {withReferencedSources}
+      </LocalAttachmentsContext.Provider>
+    </PromptInputSubmitAdapterContext.Provider>
   );
 };
 
@@ -986,7 +1117,7 @@ export const PromptInputTextarea = ({
         // Check if the submit button is disabled before submitting
         const { form } = e.currentTarget;
         const submitButton = form?.querySelector(
-          'button[type="submit"]'
+          'button[type="submit"]',
         ) as HTMLButtonElement | null;
         if (submitButton?.disabled) {
           return;
@@ -1008,7 +1139,7 @@ export const PromptInputTextarea = ({
         }
       }
     },
-    [onKeyDown, isComposing, attachments]
+    [onKeyDown, isComposing, attachments],
   );
 
   const handlePaste: ClipboardEventHandler<HTMLTextAreaElement> = useCallback(
@@ -1035,7 +1166,7 @@ export const PromptInputTextarea = ({
         attachments.add(files);
       }
     },
-    [attachments]
+    [attachments],
   );
 
   const handleCompositionEnd = useCallback(() => setIsComposing(false), []);
@@ -1067,6 +1198,284 @@ export const PromptInputTextarea = ({
     />
   );
 };
+
+const PromptInputKeyBindingsPlugin = ({
+  onKeyDown,
+}: {
+  onKeyDown?: (event: KeyboardEvent) => void;
+}) => {
+  const [editor] = useLexicalComposerContext();
+  const attachments = usePromptInputAttachments();
+
+  useEffect(() => {
+    const unregisterEnter = editor.registerCommand(
+      KEY_ENTER_COMMAND,
+      (event: KeyboardEvent | null) => {
+        if (editor.isComposing() || event?.isComposing || event?.shiftKey) {
+          return false;
+        }
+
+        // Check if the submit button is disabled before submitting
+        const form = editor.getRootElement()?.closest("form");
+        const submitButton = form?.querySelector(
+          'button[type="submit"]',
+        ) as HTMLButtonElement | null;
+
+        if (submitButton?.disabled) {
+          event?.preventDefault();
+          return true;
+        }
+
+        event?.preventDefault();
+        form?.requestSubmit();
+        return true;
+      },
+      COMMAND_PRIORITY_LOW,
+    );
+
+    const unregisterBackspace = editor.registerCommand(
+      KEY_BACKSPACE_COMMAND,
+      (event: KeyboardEvent | null) => {
+        // Remove last attachment when Backspace is pressed and textarea is empty
+        if (
+          $getRoot().getTextContent() !== "" ||
+          attachments.files.length === 0
+        ) {
+          return false;
+        }
+        if (
+          $getRoot().getTextContent() === "" &&
+          attachments.files.length > 0
+        ) {
+          event?.preventDefault();
+          const lastAttachment = attachments.files.at(-1);
+          if (lastAttachment) {
+            attachments.remove(lastAttachment.id);
+            return true;
+          }
+        }
+        return false;
+      },
+      COMMAND_PRIORITY_LOW,
+    );
+
+    const unregisters = [unregisterEnter, unregisterBackspace];
+
+    if (onKeyDown) {
+      unregisters.push(
+        editor.registerRootListener((rootElement, prevRootElement) => {
+          if (prevRootElement) {
+            prevRootElement.removeEventListener("keydown", onKeyDown);
+          }
+          if (rootElement) {
+            rootElement.addEventListener("keydown", onKeyDown);
+          }
+        }),
+      );
+    }
+
+    return () => {
+      for (const unregister of unregisters) {
+        unregister();
+      }
+    };
+  }, [editor, attachments, onKeyDown]);
+
+  return null;
+};
+
+export type PromptInputRichtextProps = Omit<
+  ContentEditableProps,
+  "placeholder"
+> & {
+  className?: string;
+  editorConfig?: InitialConfigType;
+  autoFocus?: boolean;
+  onChange?: (editorState: EditorState) => void;
+  onKeyDown?: (event: KeyboardEvent) => void;
+  placeholder?: string;
+  placeholderClassName?: string;
+};
+
+export const PromptInputRichtext = ({
+  className,
+  editorConfig,
+  autoFocus = true,
+  onChange,
+  onKeyDown,
+  placeholder = "What would you like to know?",
+  placeholderClassName,
+  children,
+  ...props
+}: PromptInputRichtextProps) => {
+  const editorRef = useRef<LexicalEditor | null>(null);
+  const attachments = usePromptInputAttachments();
+  const submitAdapterContext = useContext(PromptInputSubmitAdapterContext);
+  const controller = useOptionalPromptInputController();
+  const controllerValue = controller?.textInput.value;
+
+  // register adapter into context using editor ref
+  useEffect(() => {
+    if (!submitAdapterContext) {
+      return;
+    }
+
+    const adapter: PromptInputSubmitAdapter = {
+      clear: () => {
+        editorRef.current?.update(() => {
+          const root = $getRoot();
+          root.clear();
+          root.selectEnd();
+        });
+      },
+      getText: () =>
+        editorRef.current
+          ?.getEditorState()
+          .read(() => $convertToMarkdownString(PROMPT_INPUT_TRANSFORMERS)) ??
+        "",
+      setText: (value) => {
+        syncEditorTextContent(editorRef.current, value);
+      },
+    };
+
+    submitAdapterContext.registerSubmitAdapter(adapter);
+
+    return () => {
+      submitAdapterContext.registerSubmitAdapter(null);
+    };
+  }, [submitAdapterContext]);
+
+  // sync editor text content in provider mode
+  useEffect(() => {
+    if (controllerValue === undefined) {
+      return;
+    }
+    syncEditorTextContent(editorRef.current, controllerValue);
+  }, [controllerValue]);
+
+  const handlePaste: ClipboardEventHandler<HTMLDivElement> = useCallback(
+    (event) => {
+      const items = event.clipboardData?.items;
+
+      if (!items) {
+        return;
+      }
+
+      const files: File[] = [];
+
+      for (const item of items) {
+        if (item.kind === "file") {
+          const file = item.getAsFile();
+          if (file) {
+            files.push(file);
+          }
+        }
+      }
+
+      if (files.length > 0) {
+        event.preventDefault();
+        attachments.add(files);
+      }
+    },
+    [attachments],
+  );
+
+  const onChangeHandler = useCallback(
+    (editorState: EditorState) => {
+      editorState.read(() => {
+        const markdown = $convertToMarkdownString(PROMPT_INPUT_TRANSFORMERS);
+        controller?.textInput.setInput(markdown);
+      });
+      onChange?.(editorState);
+    },
+    [onChange, controller?.textInput],
+  );
+
+  const initialConfig: InitialConfigType = {
+    namespace: "Editor",
+    nodes: [TextNode, LinkNode, AutoLinkNode],
+    onError: (error: Error) => {
+      console.error(error);
+    },
+    theme: {
+      link: "rounded-md bg-blue-100 px-1 py-0.5 font-medium text-blue-600 dark:bg-blue-950 dark:text-blue-300",
+      paragraph: "mb-0",
+      text: {
+        bold: "font-semibold",
+        italic: "italic",
+        underline: "underline",
+      },
+    },
+  };
+
+  return (
+    <LexicalComposer initialConfig={{ ...initialConfig, ...editorConfig }}>
+      <div className="relative w-full">
+        <RichTextPlugin
+          contentEditable={
+            <ContentEditable
+              data-slot="input-group-control"
+              className={cn(
+                "border-input placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:bg-input/30 flex field-sizing-content min-h-16 w-full rounded-md border bg-transparent px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
+                "flex-1 resize-none rounded-none border-0 bg-transparent py-3 shadow-none focus-visible:ring-0 dark:bg-transparent",
+                "ContentEditable field-sizing-content max-h-48 min-h-16 relative block overflow-auto focus:outline-none",
+                "peer:has-[data-lexical-placeholder]:text-red-500",
+                className,
+              )}
+              placeholder={
+                <span
+                  aria-hidden="true"
+                  data-lexical-placeholder
+                  className={cn(
+                    "text-muted-foreground pointer-events-none absolute top-3 left-0 overflow-hidden px-3 text-sm text-ellipsis select-none",
+                    placeholderClassName,
+                  )}
+                >
+                  {placeholder}
+                </span>
+              }
+              aria-placeholder={placeholder}
+              onPaste={handlePaste}
+              {...props}
+            />
+          }
+          ErrorBoundary={LexicalErrorBoundary}
+        />
+        {/*required plugins*/}
+        <OnChangePlugin onChange={onChangeHandler} />
+        <EditorRefPlugin editorRef={editorRef} />
+        <PromptInputKeyBindingsPlugin onKeyDown={onKeyDown} />
+        <HistoryPlugin />
+        {/*good default plugins*/}
+        <LinkPlugin />
+        <AutoLinkPlugin matchers={AUTO_LINK_MATCHERS} />
+        <MarkdownShortcutPlugin transformers={PROMPT_INPUT_TRANSFORMERS} />
+        {/*optional plugins*/}
+        {autoFocus && <AutoFocusPlugin />}
+        {children}
+      </div>
+    </LexicalComposer>
+  );
+};
+
+export const PromptInputRichtextPlaceholder = ({
+  placeholder = "What would you like to know?",
+  className,
+  ...props
+}: ComponentProps<"span"> & {
+  placeholder?: string;
+}) => (
+  <span
+    aria-hidden="true"
+    className={cn(
+      "text-muted-foreground pointer-events-none absolute top-3 left-0 overflow-hidden px-3 text-sm text-ellipsis select-none",
+      className,
+    )}
+    {...props}
+  >
+    {placeholder}
+  </span>
+);
 
 export type PromptInputHeaderProps = Omit<
   ComponentProps<typeof InputGroupAddon>,
@@ -1244,7 +1653,7 @@ export const PromptInputSubmit = ({
       }
       onClick?.(e);
     },
-    [isGenerating, onStop, onClick]
+    [isGenerating, onStop, onClick],
   );
 
   return (
@@ -1280,7 +1689,7 @@ export const PromptInputSelectTrigger = ({
     className={cn(
       "border-none bg-transparent font-medium text-muted-foreground shadow-none transition-colors",
       "hover:bg-accent hover:text-foreground aria-expanded:bg-accent aria-expanded:text-foreground",
-      className
+      className,
     )}
     {...props}
   />
@@ -1330,7 +1739,7 @@ export type PromptInputHoverCardTriggerProps = ComponentProps<
 >;
 
 export const PromptInputHoverCardTrigger = (
-  props: PromptInputHoverCardTriggerProps
+  props: PromptInputHoverCardTriggerProps,
 ) => <HoverCardTrigger {...props} />;
 
 export type PromptInputHoverCardContentProps = ComponentProps<
@@ -1369,7 +1778,7 @@ export const PromptInputTabLabel = ({
   <h3
     className={cn(
       "mb-2 px-3 font-medium text-muted-foreground text-xs",
-      className
+      className,
     )}
     {...props}
   />
@@ -1393,7 +1802,7 @@ export const PromptInputTabItem = ({
   <div
     className={cn(
       "flex items-center gap-2 px-3 py-2 text-xs hover:bg-accent",
-      className
+      className,
     )}
     {...props}
   />
