@@ -180,7 +180,7 @@ const componentItems: RegistryItem[] = tsxFiles.map((componentFile) => {
     files: [
       {
         path: `registry/default/ai-elements/${componentFile.name}`,
-        target: `components/ai-elements/${componentFile.name}.tsx`,
+        target: `@components/ai-elements/${componentFile.name}.tsx`,
         type: "registry:component",
       },
     ],
@@ -203,7 +203,7 @@ const exampleItems: RegistryItem[] = exampleTsxFiles.map((exampleFile) => {
     files: [
       {
         path: `registry/default/examples/${exampleFile.name}`,
-        target: `components/ai-elements/examples/${exampleFile.name}.tsx`,
+        target: `@components/ai-elements/examples/${exampleFile.name}.tsx`,
         type: "registry:block",
       },
     ],
@@ -270,7 +270,7 @@ export const GET = async (request: NextRequest, { params }: RequestProps) => {
         allFiles.push({
           content: file.content,
           path: file.path,
-          target: `components/ai-elements/${componentFile.name}`,
+          target: `@components/ai-elements/${componentFile.name}`,
           type: file.type as RegistryItem["type"],
         });
 
@@ -463,7 +463,7 @@ export const GET = async (request: NextRequest, { params }: RequestProps) => {
       {
         content: file.content,
         path: file.path,
-        target: `components/ai-elements/${item.name}.tsx`,
+        target: `@components/ai-elements/${item.name}.tsx`,
         type: file.type as Exclude<
           RegistryItem["type"],
           "registry:base" | "registry:font"
