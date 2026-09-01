@@ -243,8 +243,8 @@ importers:
         specifier: ^0.577.0
         version: 0.577.0(react@19.2.3)
       media-chrome:
-        specifier: ^4.17.2
-        version: 4.17.2(react@19.2.3)
+        specifier: ^4.18.3
+        version: 4.18.3(react@19.2.3)
       motion:
         specifier: ^12.26.2
         version: 12.26.2(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
@@ -4857,6 +4857,9 @@ packages:
   media-chrome@4.17.2:
     resolution: {integrity: sha512-o/IgiHx0tdSVwRxxqF5H12FK31A/A8T71sv3KdAvh7b6XeBS9dXwqvIFwlR9kdEuqg3n7xpmRIuL83rmYq8FTg==}
 
+  media-chrome@4.18.3:
+    resolution: {integrity: sha512-YuS2wY0Fn+2nXGijJYn4+IE0n9wFe3v6SvOZHGNkoxh32T/cCcrXHUWskA+9tyYTONa6JKwKAOJJeO6QOlJLKw==}
+
   media-tracks@0.3.4:
     resolution: {integrity: sha512-5SUElzGMYXA7bcyZBL1YzLTxH9Iyw1AeYNJxzByqbestrrtB0F3wfiWUr7aROpwodO4fwnxOt78Xjb3o3ONNQg==}
 
@@ -6487,6 +6490,18 @@ packages:
 
   ws@8.19.0:
     resolution: {integrity: sha512-blAT2mjOEIi0ZzruJfIhb3nps74PRWTCz1IjglWEEpQl5XS/UNama6u2/rjFkDDouqr4L67ry+1aGIALViWjDg==}
+    engines: {node: '>=10.0.0'}
+    peerDependencies:
+      bufferutil: ^4.0.1
+      utf-8-validate: '>=5.0.2'
+    peerDependenciesMeta:
+      bufferutil:
+        optional: true
+      utf-8-validate:
+        optional: true
+
+  ws@8.20.0:
+    resolution: {integrity: sha512-sAt8BhgNbzCtgGbt2OxmpuryO63ZoDk/sqaB/znQm94T4fCEsy/yV+7CdC1kJhOU9lboAEU7R3kquuycDoibVA==}
     engines: {node: '>=10.0.0'}
     peerDependencies:
       bufferutil: ^4.0.1
@@ -10969,7 +10984,7 @@ snapshots:
       whatwg-encoding: 3.1.1
       whatwg-mimetype: 4.0.0
       whatwg-url: 14.2.0
-      ws: 8.19.0
+      ws: 8.20.0
       xml-name-validator: 5.0.0
     transitivePeerDependencies:
       - bufferutil
@@ -11354,6 +11369,12 @@ snapshots:
       - react
 
   media-chrome@4.17.2(react@19.2.3):
+    dependencies:
+      ce-la-react: 0.3.2(react@19.2.3)
+    transitivePeerDependencies:
+      - react
+
+  media-chrome@4.18.3(react@19.2.3):
     dependencies:
       ce-la-react: 0.3.2(react@19.2.3)
     transitivePeerDependencies:
@@ -13410,6 +13431,9 @@ snapshots:
   wrappy@1.0.2: {}
 
   ws@8.19.0: {}
+
+  ws@8.20.0:
+    optional: true
 
   wsl-utils@0.3.1:
     dependencies:
