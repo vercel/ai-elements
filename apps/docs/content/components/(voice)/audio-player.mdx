@@ -18,6 +18,7 @@ The `AudioPlayer` component provides a flexible and customizable audio playback 
 - Fully composable architecture with granular control components
 - ButtonGroup integration for cohesive control layout
 - Individual control components (play, seek, volume, etc.)
+- Playback speed control with configurable rates
 - Flexible layout with customizable control bars
 - CSS custom properties for deep theming
 - Shadcn/ui Button component styling
@@ -146,6 +147,25 @@ Seek forward button wrapped in a shadcn Button component.
       description:
         "Any other props are spread to the MediaSeekForwardButton component.",
       type: "React.ComponentProps<typeof MediaSeekForwardButton>",
+    },
+  }}
+/>
+
+### `<AudioPlayerPlaybackRateButton />`
+
+Playback speed button, wrapped in a shadcn Button component.
+
+<TypeTable
+  type={{
+    rates: {
+      description: "Playback rates to cycle through.",
+      type: "ArrayLike<number>",
+      default: "[0.5, 1, 1.2, 1.5, 1.7, 2]",
+    },
+    "...props": {
+      description:
+        "Any other props are spread to the MediaPlaybackRateButton component.",
+      type: 'Omit<React.ComponentProps<typeof MediaPlaybackRateButton>, "rates">',
     },
   }}
 />

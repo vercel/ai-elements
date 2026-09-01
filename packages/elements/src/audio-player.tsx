@@ -13,6 +13,7 @@ import {
   MediaDurationDisplay,
   MediaMuteButton,
   MediaPlayButton,
+  MediaPlaybackRateButton,
   MediaSeekBackwardButton,
   MediaSeekForwardButton,
   MediaTimeDisplay,
@@ -196,6 +197,30 @@ export const AudioPlayerDurationDisplay = ({
       {...props}
     />
   </ButtonGroupText>
+);
+
+export type AudioPlayerPlaybackRateButtonProps = Omit<
+  ComponentProps<typeof MediaPlaybackRateButton>,
+  "rates"
+> & {
+  rates?: ArrayLike<number>;
+};
+
+const DEFAULT_PLAYBACK_RATES = [0.5, 1, 1.2, 1.5, 1.7, 2];
+
+export const AudioPlayerPlaybackRateButton = ({
+  className,
+  rates = DEFAULT_PLAYBACK_RATES,
+  ...props
+}: AudioPlayerPlaybackRateButtonProps) => (
+  <Button asChild size="sm" variant="outline">
+    <MediaPlaybackRateButton
+      className={cn("w-14 select-none bg-transparent px-2 tabular-nums", className)}
+      data-slot="audio-player-playback-rate-button"
+      rates={rates}
+      {...props}
+    />
+  </Button>
 );
 
 export type AudioPlayerMuteButtonProps = ComponentProps<typeof MediaMuteButton>;
