@@ -8,9 +8,8 @@ import {
   TooltipTrigger,
 } from "@repo/shadcn-ui/components/ui/tooltip";
 import { cn } from "@repo/shadcn-ui/lib/utils";
-import type { LucideIcon } from "lucide-react";
 import { XIcon } from "lucide-react";
-import type { ComponentProps, HTMLAttributes } from "react";
+import type { ComponentProps, ComponentType, HTMLAttributes } from "react";
 
 export type ArtifactProps = HTMLAttributes<HTMLDivElement>;
 
@@ -93,7 +92,7 @@ export const ArtifactActions = ({
 export type ArtifactActionProps = ComponentProps<typeof Button> & {
   tooltip?: string;
   label?: string;
-  icon?: LucideIcon;
+  icon?: ComponentType<{ className?: string }>;
 };
 
 export const ArtifactAction = ({
