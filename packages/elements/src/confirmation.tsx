@@ -7,31 +7,10 @@ import type { ToolUIPart } from "ai";
 import type { ComponentProps, ReactNode } from "react";
 import { createContext, useContext, useMemo } from "react";
 
-type ToolUIPartApproval =
-  | {
-      id: string;
-      approved?: never;
-      reason?: never;
-    }
-  | {
-      id: string;
-      approved: boolean;
-      reason?: string;
-    }
-  | {
-      id: string;
-      approved: true;
-      reason?: string;
-    }
-  | {
-      id: string;
-      approved: false;
-      reason?: string;
-    }
-  | undefined;
+type ToolUIPartApproval = NonNullable<ToolUIPart["approval"]>;
 
 interface ConfirmationContextValue {
-  approval: ToolUIPartApproval;
+  approval: ToolUIPartApproval | undefined;
   state: ToolUIPart["state"];
 }
 
@@ -87,14 +66,26 @@ export interface ConfirmationRequestProps {
 }
 
 export const ConfirmationRequest = ({ children }: ConfirmationRequestProps) => {
-  const { state } = useConfirmation();
+  const { approval, state } = useConfirmation();
 
   // Only show when approval is requested
   if (state !== "approval-requested") {
     return null;
   }
 
-  return children;
+  const requestReason =
+    approval &&
+    "requestReason" in approval &&
+    typeof approval.requestReason === "string"
+      ? approval.requestReason
+      : undefined;
+
+  return (
+    <>
+      {requestReason ? <span>{requestReason}</span> : null}
+      {children}
+    </>
+  );
 };
 
 export interface ConfirmationAcceptedProps {
