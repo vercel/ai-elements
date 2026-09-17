@@ -10,6 +10,19 @@ import {
 
 const QUERY_REGEX = /"query"/;
 
+const renderTool = (
+  input: unknown,
+  state: "input-streaming" | "input-available"
+) => (
+  <Tool defaultOpen>
+    <ToolHeader state={state} toolName="search" type="dynamic-tool" />
+    <ToolContent>
+      <ToolInput input={input} />
+      <ToolOutput errorText={undefined} output={undefined} />
+    </ToolContent>
+  </Tool>
+);
+
 describe("tool", () => {
   it("renders children", () => {
     render(<Tool>Content</Tool>);
@@ -182,6 +195,61 @@ describe("toolContent", () => {
 });
 
 describe("toolInput", () => {
+  it("renders nothing when input is undefined", () => {
+    const { container } = render(<ToolInput input={undefined} />);
+
+    expect(container).toBeEmptyDOMElement();
+  });
+
+  it("keeps the tool visible as input starts streaming and becomes available", () => {
+    const { container, rerender } = render(
+      renderTool(undefined, "input-streaming")
+    );
+
+    expect(
+      screen.getByRole("button", { name: "searchPending" })
+    ).toBeInTheDocument();
+    expect(screen.queryByText("Parameters")).not.toBeInTheDocument();
+
+    rerender(renderTool({ query: "test" }, "input-streaming"));
+
+    expect(container.querySelector("code")).toHaveTextContent('"test"');
+
+    rerender(renderTool({ query: "test search" }, "input-available"));
+
+    expect(
+      screen.getByRole("button", { name: "searchRunning" })
+    ).toBeInTheDocument();
+    expect(container.querySelector("code")).toHaveTextContent('"test search"');
+  });
+
+  it("removes previous parameters when a new input starts streaming", () => {
+    const { container, rerender } = render(
+      renderTool({ query: "test search" }, "input-available")
+    );
+
+    rerender(renderTool(undefined, "input-streaming"));
+
+    expect(
+      screen.getByRole("button", { name: "searchPending" })
+    ).toBeInTheDocument();
+    expect(screen.queryByText("Parameters")).not.toBeInTheDocument();
+    expect(container.querySelector("code")).not.toBeInTheDocument();
+  });
+
+  it.each([
+    { input: null, json: "null" },
+    { input: false, json: "false" },
+    { input: 0, json: "0" },
+    { input: "", json: '""' },
+    { input: {}, json: "{}" },
+  ])("renders defined input $json", ({ input, json }) => {
+    const { container } = render(<ToolInput input={input} />);
+
+    expect(screen.getByText("Parameters")).toBeInTheDocument();
+    expect(container.querySelector("code")).toHaveTextContent(json);
+  });
+
   it("renders input parameters", async () => {
     const input = { query: "test search" };
     render(

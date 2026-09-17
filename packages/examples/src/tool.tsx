@@ -57,7 +57,7 @@ const Example = () => (
         type="tool-database_query"
       />
       <ToolContent>
-        <ToolInput input={{}} />
+        <ToolInput input={undefined} />
       </ToolContent>
     </Tool>
 
