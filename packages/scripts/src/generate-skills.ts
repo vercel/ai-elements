@@ -1,3 +1,4 @@
+import matter from "gray-matter";
 // Node.js script - Node.js modules are valid here
 // oxlint-disable-next-line eslint-plugin-import(no-nodejs-modules)
 import { existsSync, mkdirSync, rmSync } from "node:fs";
@@ -6,7 +7,7 @@ import { readdir, readFile, writeFile } from "node:fs/promises";
 // oxlint-disable-next-line eslint-plugin-import(no-nodejs-modules)
 import { basename, join } from "node:path";
 
-import matter from "gray-matter";
+import { replaceTypeTables } from "./type-table.js";
 
 const ROOT_DIR = join(import.meta.dirname, "../../..");
 const CONTENT_DIR = join(ROOT_DIR, "apps/docs/content");
@@ -43,81 +44,6 @@ const replaceInstaller = (content: string): string =>
     (_, component) =>
       `\`\`\`bash\nnpx ai-elements@latest add ${component}\n\`\`\``
   );
-
-const PROP_REGEX = /['"]?([^'":\s]+)['"]?\s*:\s*\{([^}]+)\}/g;
-const DESC_REGEX = /description:\s*['"]([^'"]+)['"]/;
-const TYPE_REGEX = /type:\s*['"]([^'"]+)['"]/;
-const DEFAULT_REGEX = /default:\s*['"]([^'"]+)['"]/;
-const REQUIRED_REGEX = /required:\s*true/;
-
-const parseTypeTableProps = (
-  typeContent: string
-): {
-  name: string;
-  type: string;
-  description: string;
-  required?: boolean;
-  default?: string;
-}[] => {
-  const props: {
-    name: string;
-    type: string;
-    description: string;
-    required?: boolean;
-    default?: string;
-  }[] = [];
-
-  const matches = typeContent.matchAll(PROP_REGEX);
-
-  for (const match of matches) {
-    const [, propName, propBody] = match;
-
-    const descMatch = propBody.match(DESC_REGEX);
-    const typeMatch = propBody.match(TYPE_REGEX);
-    const defaultMatch = propBody.match(DEFAULT_REGEX);
-    const requiredMatch = propBody.match(REQUIRED_REGEX);
-
-    props.push({
-      default: defaultMatch?.[1],
-      description: descMatch?.[1] || "",
-      name: propName,
-      required: !!requiredMatch,
-      type: typeMatch?.[1] || "unknown",
-    });
-  }
-
-  return props;
-};
-
-const replaceTypeTables = (content: string): string => {
-  const typeTableRegex = /<TypeTable\s+type=\{\{([\s\S]*?)\}\}\s*\/>/g;
-
-  return content.replace(typeTableRegex, (_, typeContent) => {
-    const props = parseTypeTableProps(typeContent);
-
-    if (props.length === 0) {
-      return "";
-    }
-
-    const rows = props.map((prop) => {
-      const name = `\`${prop.name}\``;
-      const type = `\`${prop.type}\``;
-      let defaultVal = "-";
-      if (prop.required) {
-        defaultVal = "Required";
-      } else if (prop.default) {
-        defaultVal = `\`${prop.default}\``;
-      }
-      return `| ${name} | ${type} | ${defaultVal} | ${prop.description} |`;
-    });
-
-    return [
-      "| Prop | Type | Default | Description |",
-      "|------|------|---------|-------------|",
-      ...rows,
-    ].join("\n");
-  });
-};
 
 const removeCallouts = (content: string): string =>
   content.replaceAll(/<Callout[^>]*>[\s\S]*?<\/Callout>/g, "");
