@@ -45,14 +45,14 @@ npx ai-elements@latest add plan
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `children` | `string` | - | The title text. Displays with shimmer animation when isStreaming is true. |
-| `...props` | `Omit<React.ComponentProps<typeof CardTitle>, ` | - | Any other props (except children) are spread to the CardTitle component. |
+| `...props` | `Omit<React.ComponentProps<typeof CardTitle>, "children">` | - | Any other props (except children) are spread to the CardTitle component. |
 
 ### `<PlanDescription />`
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `children` | `string` | - | The description text. Displays with shimmer animation when isStreaming is true. |
-| `...props` | `Omit<React.ComponentProps<typeof CardDescription>, ` | - | Any other props (except children) are spread to the CardDescription component. |
+| `...props` | `Omit<React.ComponentProps<typeof CardDescription>, "children">` | - | Any other props (except children) are spread to the CardDescription component. |
 
 ### `<PlanTrigger />`
 
@@ -70,7 +70,7 @@ npx ai-elements@latest add plan
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `...props` | `React.ComponentProps<` | - | Any other props are spread to the div element. |
+| `...props` | `React.ComponentProps<"div">` | - | Any other props are spread to the div element. |
 
 ### `<PlanAction />`
 

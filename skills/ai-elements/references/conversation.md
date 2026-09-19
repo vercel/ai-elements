@@ -154,25 +154,25 @@ export async function POST(req: Request) {
 |------|------|---------|-------------|
 | `contextRef` | `React.Ref<StickToBottomContext>` | - | Optional ref to access the StickToBottom context object. |
 | `instance` | `StickToBottomInstance` | - | Optional instance for controlling the StickToBottom component. |
-| `children` | `((context: StickToBottomContext) => ReactNode) | ReactNode` | - | Render prop or ReactNode for custom rendering with context. |
-| `...props` | `Omit<React.HTMLAttributes<HTMLDivElement>, ` | - | Any other props are spread to the root div. |
+| `children` | `((context: StickToBottomContext) => ReactNode) \| ReactNode` | - | Render prop or ReactNode for custom rendering with context. |
+| `...props` | `Omit<React.HTMLAttributes<HTMLDivElement>, "children">` | - | Any other props are spread to the root div. |
 
 ### `<ConversationContent />`
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `children` | `((context: StickToBottomContext) => ReactNode) | ReactNode` | - | Render prop or ReactNode for custom rendering with context. |
-| `...props` | `Omit<React.HTMLAttributes<HTMLDivElement>, ` | - | Any other props are spread to the root div. |
+| `children` | `((context: StickToBottomContext) => ReactNode) \| ReactNode` | - | Render prop or ReactNode for custom rendering with context. |
+| `...props` | `Omit<React.HTMLAttributes<HTMLDivElement>, "children">` | - | Any other props are spread to the root div. |
 
 ### `<ConversationEmptyState />`
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `title` | `string` | - | The title text to display. |
-| `description` | `string` | - | The description text to display. |
+| `title` | `string` | `"No messages yet"` | The title text to display. |
+| `description` | `string` | `"Start a conversation to see messages here"` | The description text to display. |
 | `icon` | `React.ReactNode` | - | Optional icon to display above the text. |
 | `children` | `React.ReactNode` | - | Optional additional content to render below the text. |
-| `...props` | `ComponentProps<` | - | Any other props are spread to the root div. |
+| `...props` | `ComponentProps<"div">` | - | Any other props are spread to the root div. |
 
 ### `<ConversationScrollButton />`
 
@@ -199,9 +199,9 @@ import { ConversationDownload } from "@/components/ai-elements/conversation";
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `messages` | `UIMessage[]` | Required | Array of messages to include in the download. |
-| `filename` | `string` | - | The filename for the downloaded file. |
+| `filename` | `string` | `"conversation.md"` | The filename for the downloaded file. |
 | `formatMessage` | `(message: UIMessage, index: number) => string` | - | Custom function to format each message in the output. |
-| `...props` | `Omit<ComponentProps<typeof Button>, ` | - | Any other props are spread to the underlying shadcn/ui Button component. |
+| `...props` | `Omit<ComponentProps<typeof Button>, 'onClick'>` | - | Any other props are spread to the underlying shadcn/ui Button component. |
 
 ### `messagesToMarkdown`
 

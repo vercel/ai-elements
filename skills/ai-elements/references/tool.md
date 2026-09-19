@@ -224,9 +224,9 @@ See `scripts/tool-output-error.tsx` for this example.
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `title` | `string` | - | Custom title to display instead of the derived tool name. |
-| `type` | `ToolUIPart[` | Required | The type/name of the tool. |
-| `state` | `ToolUIPart[` | Required | The current state of the tool (input-streaming, input-available, output-available, or output-error). |
-| `toolName` | `string` | - | Required when type is  |
+| `type` | `ToolUIPart["type"] \| DynamicToolUIPart["type"]` | Required | The type/name of the tool. |
+| `state` | `ToolUIPart["state"] \| DynamicToolUIPart["state"]` | Required | The current state of the tool (input-streaming, input-available, output-available, or output-error). |
+| `toolName` | `string` | - | Required when type is "dynamic-tool" to specify the tool name. |
 | `className` | `string` | - | Additional CSS classes to apply to the header. |
 | `...props` | `React.ComponentProps<typeof CollapsibleTrigger>` | - | Any other props are spread to the CollapsibleTrigger. |
 
@@ -240,16 +240,16 @@ See `scripts/tool-output-error.tsx` for this example.
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `input` | `ToolUIPart[` | - | The input parameters passed to the tool, displayed as formatted JSON. |
-| `...props` | `React.ComponentProps<` | - | Any other props are spread to the underlying div. |
+| `input` | `ToolUIPart["input"]` | - | The input parameters passed to the tool, displayed as formatted JSON. |
+| `...props` | `React.ComponentProps<"div">` | - | Any other props are spread to the underlying div. |
 
 ### `<ToolOutput />`
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `output` | `React.ReactNode` | - | The output/result of the tool execution. |
-| `errorText` | `ToolUIPart[` | - | An error message if the tool execution failed. |
-| `...props` | `React.ComponentProps<` | - | Any other props are spread to the underlying div. |
+| `errorText` | `ToolUIPart["errorText"]` | - | An error message if the tool execution failed. |
+| `...props` | `React.ComponentProps<"div">` | - | Any other props are spread to the underlying div. |
 
 ## Type Exports
 

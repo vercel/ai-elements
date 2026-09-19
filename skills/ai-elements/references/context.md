@@ -34,7 +34,7 @@ npx ai-elements@latest add context
 | `maxTokens` | `number` | - | The total context window size in tokens. |
 | `usedTokens` | `number` | - | The number of tokens currently used. |
 | `usage` | `LanguageModelUsage` | - | Detailed token usage breakdown from the AI SDK (input, output, reasoning, cached tokens). |
-| `modelId` | `ModelId` | - | Model identifier for cost calculation (e.g.,  |
+| `modelId` | `ModelId` | - | Model identifier for cost calculation (e.g., "openai:gpt-4", "anthropic:claude-3-opus"). |
 | `...props` | `ComponentProps<HoverCard>` | - | Any other props are spread to the HoverCard component. |
 
 ### `<ContextTrigger />`

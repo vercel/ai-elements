@@ -168,7 +168,7 @@ See `scripts/stack-trace-no-internal.tsx` for this example.
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `children` | `React.ReactNode` | - | Custom content. Defaults to the parsed error type (e.g.,  |
+| `children` | `React.ReactNode` | - | Custom content. Defaults to the parsed error type (e.g., "TypeError"). |
 | `className` | `string` | - | Additional CSS classes. |
 | `...props` | `React.HTMLAttributes<HTMLSpanElement>` | - | Any other props are spread to the span element. |
 

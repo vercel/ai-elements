@@ -36,13 +36,13 @@ npx ai-elements@latest add chain-of-thought
 | `open` | `boolean` | - | Controlled open state of the collapsible. |
 | `defaultOpen` | `boolean` | `false` | Default open state when uncontrolled. |
 | `onOpenChange` | `(open: boolean) => void` | - | Callback when the open state changes. |
-| `...props` | `React.ComponentProps<` | - | Any other props are spread to the root div element. |
+| `...props` | `React.ComponentProps<"div">` | - | Any other props are spread to the root div element. |
 
 ### `<ChainOfThoughtHeader />`
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `children` | `React.ReactNode` | - | Custom header text. |
+| `children` | `React.ReactNode` | `"Chain of Thought"` | Custom header text. |
 | `...props` | `React.ComponentProps<typeof CollapsibleTrigger>` | - | Any other props are spread to the CollapsibleTrigger component. |
 
 ### `<ChainOfThoughtStep />`
@@ -52,14 +52,14 @@ npx ai-elements@latest add chain-of-thought
 | `icon` | `LucideIcon` | `DotIcon` | Icon to display for the step. |
 | `label` | `string` | - | The main text label for the step. |
 | `description` | `string` | - | Optional description text shown below the label. |
-| `status` | `unknown` | - | Visual status of the step. |
-| `...props` | `React.ComponentProps<` | - | Any other props are spread to the root div element. |
+| `status` | `"complete" \| "active" \| "pending"` | `"complete"` | Visual status of the step. |
+| `...props` | `React.ComponentProps<"div">` | - | Any other props are spread to the root div element. |
 
 ### `<ChainOfThoughtSearchResults />`
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `...props` | `React.ComponentProps<` | - | Any props are spread to the container div element. |
+| `...props` | `React.ComponentProps<"div">` | - | Any props are spread to the container div element. |
 
 ### `<ChainOfThoughtSearchResult />`
 
@@ -78,4 +78,4 @@ npx ai-elements@latest add chain-of-thought
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `caption` | `string` | - | Optional caption text displayed below the image. |
-| `...props` | `React.ComponentProps<` | - | Any other props are spread to the container div element. |
+| `...props` | `React.ComponentProps<"div">` | - | Any other props are spread to the container div element. |

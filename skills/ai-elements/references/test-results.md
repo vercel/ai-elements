@@ -50,7 +50,7 @@ See `scripts/test-results-errors.tsx` for this example.
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `summary` | `unknown` | - | Test results summary. |
+| `summary` | `{ passed, failed, skipped, total, duration? }` | - | Test results summary. |
 | `className` | `string` | - | Additional CSS classes. |
 
 ### `<TestSuite />`
@@ -58,7 +58,7 @@ See `scripts/test-results-errors.tsx` for this example.
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `name` | `string` | - | Suite name. |
-| `status` | `unknown` | - | Overall suite status. |
+| `status` | `"passed" \| "failed" \| "skipped" \| "running"` | - | Overall suite status. |
 | `defaultOpen` | `boolean` | - | Initially expanded. |
 
 ### `<Test />`
@@ -66,7 +66,7 @@ See `scripts/test-results-errors.tsx` for this example.
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `name` | `string` | - | Test name. |
-| `status` | `unknown` | - | Test status. |
+| `status` | `"passed" \| "failed" \| "skipped" \| "running"` | - | Test status. |
 | `duration` | `number` | - | Test duration in ms. |
 
 ### `<TestResultsHeader />`

@@ -235,4 +235,4 @@ Returns:
 | `isStreaming` | `boolean` | - | Whether reasoning is currently streaming. |
 | `isOpen` | `boolean` | - | Whether the reasoning panel is open. |
 | `setIsOpen` | `(open: boolean) => void` | - | Function to set the open state. |
-| `duration` | `number | undefined` | - | Duration in seconds (undefined while streaming). |
+| `duration` | `number \| undefined` | - | Duration in seconds (undefined while streaming). |

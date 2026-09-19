@@ -162,7 +162,7 @@ export async function POST(req: Request) {
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `defaultUrl` | `string` | - | The initial URL to load in the preview. |
+| `defaultUrl` | `string` | `""` | The initial URL to load in the preview. |
 | `onUrlChange` | `(url: string) => void` | - | Callback fired when the URL changes. |
 | `...props` | `React.HTMLAttributes<HTMLDivElement>` | - | Any other props are spread to the root div. |
 
@@ -196,5 +196,5 @@ export async function POST(req: Request) {
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `logs` | `Array<{ level: ` | - | Console log entries to display in the console panel. |
+| `logs` | `Array<{ level: "log" \| "warn" \| "error"; message: string; timestamp: Date }>` | - | Console log entries to display in the console panel. |
 | `...props` | `React.HTMLAttributes<HTMLDivElement>` | - | Any other props are spread to the root div. |

@@ -51,7 +51,7 @@ See `scripts/snippet-plain.tsx` for this example.
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `...props` | `Omit<React.ComponentProps<typeof InputGroupInput>, ` | - | Spread to the InputGroupInput component. Value and readOnly are set automatically. |
+| `...props` | `Omit<React.ComponentProps<typeof InputGroupInput>, "readOnly" \| "value">` | - | Spread to the InputGroupInput component. Value and readOnly are set automatically. |
 
 ### `<SnippetCopyButton />`
 
