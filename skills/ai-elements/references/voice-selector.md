@@ -35,7 +35,7 @@ Root Dialog component that provides context for all child components. Manages bo
 |------|------|---------|-------------|
 | `value` | `string` | - | The selected voice ID (controlled). |
 | `defaultValue` | `string` | - | The default selected voice ID (uncontrolled). |
-| `onValueChange` | `(value: string | undefined) => void` | - | Callback fired when the selected voice changes. |
+| `onValueChange` | `(value: string \| undefined) => void` | - | Callback fired when the selected voice changes. |
 | `defaultOpen` | `boolean` | `false` | The default open state (uncontrolled). |
 | `open` | `boolean` | - | The open state (controlled). |
 | `onOpenChange` | `(open: boolean) => void` | - | Callback fired when the open state changes. |
@@ -57,7 +57,7 @@ Container for the Command component and voice list, rendered inside the dialog.
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `title` | `ReactNode` | - | The title for screen readers. Hidden visually but accessible to assistive technologies. |
+| `title` | `ReactNode` | `"Voice Selector"` | The title for screen readers. Hidden visually but accessible to assistive technologies. |
 | `className` | `string` | - | Additional CSS classes to apply to the dialog content. |
 | `...props` | `React.ComponentProps<typeof DialogContent>` | - | Any other props are spread to the DialogContent component. |
 
@@ -130,7 +130,7 @@ Displays the voice name with proper styling.
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `className` | `string` | - | Additional CSS classes to apply. |
-| `...props` | `React.ComponentProps<` | - | Any other props are spread to the span element. |
+| `...props` | `React.ComponentProps<"span">` | - | Any other props are spread to the span element. |
 
 ### `<VoiceSelectorGender />`
 
@@ -138,10 +138,10 @@ Displays the voice gender metadata with icons from Lucide. Supports multiple gen
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `value` | `unknown` | - | The gender value that determines which icon to display. Supported values:  |
+| `value` | `"male" \| "female" \| "transgender" \| "androgyne" \| "non-binary" \| "intersex"` | - | The gender value that determines which icon to display. Supported values: "male" (Mars), "female" (Venus), "transgender", "androgyne", "non-binary", "intersex". Defaults to a small circle if no value matches. |
 | `className` | `string` | - | Additional CSS classes to apply. |
 | `children` | `ReactNode` | - | Override the icon with custom content. |
-| `...props` | `React.ComponentProps<` | - | Any other props are spread to the span element. |
+| `...props` | `React.ComponentProps<"span">` | - | Any other props are spread to the span element. |
 
 ### `<VoiceSelectorAccent />`
 
@@ -149,10 +149,10 @@ Displays the voice accent metadata with emoji flags representing different count
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `value` | `unknown` | - | The accent value that determines which flag emoji to display. Supports 27 different accents including:  |
+| `value` | `"american" \| "british" \| "australian" \| "canadian" \| "irish" \| "scottish" \| "indian" \| "south-african" \| "new-zealand" \| "spanish" \| "french" \| "german" \| "italian" \| "portuguese" \| "brazilian" \| "mexican" \| "argentinian" \| "japanese" \| "chinese" \| "korean" \| "russian" \| "arabic" \| "dutch" \| "swedish" \| "norwegian" \| "danish" \| "finnish" \| "polish" \| "turkish" \| "greek" \| string` | - | The accent value that determines which flag emoji to display. Supports 27 different accents including: "american" 🇺🇸, "british" 🇬🇧, "australian" 🇦🇺, "canadian" 🇨🇦, "irish" 🇮🇪, "scottish" 🏴󠁧󠁢󠁳󠁣󠁴󠁿, "indian" 🇮🇳, "south-african" 🇿🇦, "new-zealand" 🇳🇿, "spanish" 🇪🇸, "french" 🇫🇷, "german" 🇩🇪, "italian" 🇮🇹, "portuguese" 🇵🇹, "brazilian" 🇧🇷, "mexican" 🇲🇽, "argentinian" 🇦🇷, "japanese" 🇯🇵, "chinese" 🇨🇳, "korean" 🇰🇷, "russian" 🇷🇺, "arabic" 🇸🇦, "dutch" 🇳🇱, "swedish" 🇸🇪, "norwegian" 🇳🇴, "danish" 🇩🇰, "finnish" 🇫🇮, "polish" 🇵🇱, "turkish" 🇹🇷, "greek" 🇬🇷. Also accepts any custom string value. |
 | `className` | `string` | - | Additional CSS classes to apply. |
 | `children` | `ReactNode` | - | Override the flag emoji with custom content. |
-| `...props` | `React.ComponentProps<` | - | Any other props are spread to the span element. |
+| `...props` | `React.ComponentProps<"span">` | - | Any other props are spread to the span element. |
 
 ### `<VoiceSelectorAge />`
 
@@ -161,7 +161,7 @@ Displays the voice age metadata with muted styling and tabular numbers for consi
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `className` | `string` | - | Additional CSS classes to apply. |
-| `...props` | `React.ComponentProps<` | - | Any other props are spread to the span element. |
+| `...props` | `React.ComponentProps<"span">` | - | Any other props are spread to the span element. |
 
 ### `<VoiceSelectorDescription />`
 
@@ -170,7 +170,7 @@ Displays a description for the voice with muted styling.
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `className` | `string` | - | Additional CSS classes to apply. |
-| `...props` | `React.ComponentProps<` | - | Any other props are spread to the span element. |
+| `...props` | `React.ComponentProps<"span">` | - | Any other props are spread to the span element. |
 
 ### `<VoiceSelectorAttributes />`
 
@@ -179,7 +179,7 @@ Container for grouping voice attributes (gender, accent, age) together. Use with
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `className` | `string` | - | Additional CSS classes to apply. |
-| `...props` | `React.ComponentProps<` | - | Any other props are spread to the div element. |
+| `...props` | `React.ComponentProps<"div">` | - | Any other props are spread to the div element. |
 
 ### `<VoiceSelectorBullet />`
 
@@ -188,7 +188,7 @@ Displays a bullet separator (•) between voice attributes. Hidden from screen r
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `className` | `string` | - | Additional CSS classes to apply. |
-| `...props` | `React.ComponentProps<` | - | Any other props are spread to the span element. |
+| `...props` | `React.ComponentProps<"span">` | - | Any other props are spread to the span element. |
 
 ### `<VoiceSelectorShortcut />`
 
@@ -208,7 +208,7 @@ A button that allows users to preview/play a voice sample before selecting it. S
 | `loading` | `boolean` | - | Whether the voice preview is loading. Shows loading spinner and disables the button. |
 | `onPlay` | `() => void` | - | Callback fired when the preview button is clicked. |
 | `className` | `string` | - | Additional CSS classes to apply. |
-| `...props` | `Omit<React.ComponentProps<` | - | Any other props are spread to the button element. |
+| `...props` | `Omit<React.ComponentProps<"button">, "children">` | - | Any other props are spread to the button element. |
 
 ## Hooks
 
@@ -235,7 +235,7 @@ export default function CustomVoiceDisplay() {
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `value` | `string | undefined` | - | The currently selected voice ID. |
-| `setValue` | `(value: string | undefined) => void` | - | Function to update the selected voice ID. |
+| `value` | `string \| undefined` | - | The currently selected voice ID. |
+| `setValue` | `(value: string \| undefined) => void` | - | Function to update the selected voice ID. |
 | `open` | `boolean` | - | Whether the dialog is currently open. |
 | `setOpen` | `(open: boolean) => void` | - | Function to control the dialog open state. |

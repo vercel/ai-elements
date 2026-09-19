@@ -85,7 +85,7 @@ npx ai-elements@latest add commit
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `children` | `React.ReactNode` | - | Custom separator content. |
+| `children` | `React.ReactNode` | `"•"` | Custom separator content. |
 | `...props` | `React.HTMLAttributes<HTMLSpanElement>` | - | Spread to the span element. |
 
 ### `<CommitTimestamp />`
@@ -140,7 +140,7 @@ npx ai-elements@latest add commit
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `status` | `unknown` | Required | File change status. |
+| `status` | `"added" \| "modified" \| "deleted" \| "renamed"` | Required | File change status. |
 | `children` | `React.ReactNode` | - | Custom status label. |
 | `...props` | `React.HTMLAttributes<HTMLSpanElement>` | - | Spread to the span element. |
 

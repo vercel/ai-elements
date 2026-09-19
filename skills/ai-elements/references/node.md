@@ -29,7 +29,7 @@ npx ai-elements@latest add node
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `handles` | `unknown` | - | Configuration for connection handles. Target renders on the left, source on the right. |
+| `handles` | `{ target: boolean; source: boolean; }` | - | Configuration for connection handles. Target renders on the left, source on the right. |
 | `className` | `string` | - | Additional CSS classes to apply to the node. |
 | `...props` | `ComponentProps<typeof Card>` | - | Any other props are spread to the underlying Card component. |
 

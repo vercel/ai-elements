@@ -89,7 +89,7 @@ export const CodeSandbox = ({ toolPart }: CodeSandboxProps) => {
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `title` | `string` | `undefined` | The title displayed in the header (e.g., filename). |
-| `state` | `ToolUIPart[` | Required | The current execution state, used to display the appropriate status badge. |
+| `state` | `ToolUIPart["state"]` | Required | The current execution state, used to display the appropriate status badge. |
 | `className` | `string` | - | Additional CSS classes for the header. |
 
 ### `<SandboxContent />`

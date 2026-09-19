@@ -41,7 +41,7 @@ npx ai-elements@latest add environment-variables
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `children` | `React.ReactNode` | - | Custom title text. |
+| `children` | `React.ReactNode` | `"Environment Variables"` | Custom title text. |
 | `...props` | `React.HTMLAttributes<HTMLHeadingElement>` | - | Spread to the h3 element. |
 
 ### `<EnvironmentVariablesToggle />`
@@ -88,7 +88,7 @@ npx ai-elements@latest add environment-variables
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `copyFormat` | `unknown` | - | Format to copy. |
+| `copyFormat` | `"name" \| "value" \| "export"` | `"value"` | Format to copy. |
 | `onCopy` | `() => void` | - | Callback after successful copy. |
 | `onError` | `(error: Error) => void` | - | Callback if copying fails. |
 | `timeout` | `number` | `2000` | Duration to show copied state (ms). |
@@ -98,5 +98,5 @@ npx ai-elements@latest add environment-variables
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `children` | `React.ReactNode` | - | Custom badge text. |
+| `children` | `React.ReactNode` | `"Required"` | Custom badge text. |
 | `...props` | `React.ComponentProps<typeof Badge>` | - | Spread to the Badge component. |

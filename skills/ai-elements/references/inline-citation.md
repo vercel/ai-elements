@@ -214,32 +214,32 @@ For now, the recommended approach is to use `experimental_useObject` (as shown i
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `...props` | `React.ComponentProps<` | - | Any other props are spread to the root span element. |
+| `...props` | `React.ComponentProps<"span">` | - | Any other props are spread to the root span element. |
 
 ### `<InlineCitationText />`
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `...props` | `React.ComponentProps<` | - | Any other props are spread to the underlying span element. |
+| `...props` | `React.ComponentProps<"span">` | - | Any other props are spread to the underlying span element. |
 
 ### `<InlineCitationCard />`
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `...props` | `React.ComponentProps<` | - | Any other props are spread to the HoverCard component. |
+| `...props` | `React.ComponentProps<"span">` | - | Any other props are spread to the HoverCard component. |
 
 ### `<InlineCitationCardTrigger />`
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `sources` | `string[]` | - | Array of source URLs. The length determines the number displayed in the badge. |
-| `...props` | `React.ComponentProps<` | - | Any other props are spread to the underlying button element. |
+| `...props` | `React.ComponentProps<"button">` | - | Any other props are spread to the underlying button element. |
 
 ### `<InlineCitationCardBody />`
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `...props` | `React.ComponentProps<` | - | Any other props are spread to the underlying div. |
+| `...props` | `React.ComponentProps<"div">` | - | Any other props are spread to the underlying div. |
 
 ### `<InlineCitationCarousel />`
 
@@ -251,25 +251,25 @@ For now, the recommended approach is to use `experimental_useObject` (as shown i
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `...props` | `React.ComponentProps<` | - | Any other props are spread to the underlying CarouselContent component. |
+| `...props` | `React.ComponentProps<"div">` | - | Any other props are spread to the underlying CarouselContent component. |
 
 ### `<InlineCitationCarouselItem />`
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `...props` | `React.ComponentProps<` | - | Any other props are spread to the underlying div. |
+| `...props` | `React.ComponentProps<"div">` | - | Any other props are spread to the underlying div. |
 
 ### `<InlineCitationCarouselHeader />`
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `...props` | `React.ComponentProps<` | - | Any other props are spread to the underlying div. |
+| `...props` | `React.ComponentProps<"div">` | - | Any other props are spread to the underlying div. |
 
 ### `<InlineCitationCarouselIndex />`
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `...props` | `React.ComponentProps<` | - | Any other props are spread to the underlying div. Children will override the default index display. |
+| `...props` | `React.ComponentProps<"div">` | - | Any other props are spread to the underlying div. Children will override the default index display. |
 
 ### `<InlineCitationCarouselPrev />`
 
@@ -290,10 +290,10 @@ For now, the recommended approach is to use `experimental_useObject` (as shown i
 | `title` | `string` | - | The title of the source. |
 | `url` | `string` | - | The URL of the source. |
 | `description` | `string` | - | A brief description of the source. |
-| `...props` | `React.ComponentProps<` | - | Any other props are spread to the underlying div. |
+| `...props` | `React.ComponentProps<"div">` | - | Any other props are spread to the underlying div. |
 
 ### `<InlineCitationQuote />`
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `...props` | `React.ComponentProps<` | - | Any other props are spread to the underlying blockquote element. |
+| `...props` | `React.ComponentProps<"blockquote">` | - | Any other props are spread to the underlying blockquote element. |

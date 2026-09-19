@@ -277,13 +277,13 @@ See `scripts/prompt-input-tooltip.tsx` for this example.
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `onSubmit` | `(message: PromptInputMessage, event: FormEvent) => void` | - | Handler called when the form is submitted with message text and files. |
-| `accept` | `string` | - | File types to accept (e.g.,  |
+| `accept` | `string` | - | File types to accept (e.g., "image/*"). Leave undefined for any. |
 | `multiple` | `boolean` | - | Whether to allow multiple file selection. |
 | `globalDrop` | `boolean` | - | When true, accepts file drops anywhere on the document. |
 | `syncHiddenInput` | `boolean` | - | Render a hidden input with given name for native form posts. |
 | `maxFiles` | `number` | - | Maximum number of files allowed. |
 | `maxFileSize` | `number` | - | Maximum file size in bytes. |
-| `onError` | `(err: { code: ` | - | Handler for file validation errors. |
+| `onError` | `(err: { code: "max_files" \| "max_file_size" \| "accept", message: string }) => void` | - | Handler for file validation errors. |
 | `...props` | `React.HTMLAttributes<HTMLFormElement>` | - | Any other props are spread to the root form element. |
 
 ### `<PromptInputTextarea />`
@@ -308,7 +308,7 @@ See `scripts/prompt-input-tooltip.tsx` for this example.
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `tooltip` | `string | { content: ReactNode; shortcut?: string; side?: ` | - | Optional tooltip to display on hover. Can be a string or an object with content, shortcut, and side properties. |
+| `tooltip` | `string \| { content: ReactNode; shortcut?: string; side?: "top" \| "right" \| "bottom" \| "left" }` | - | Optional tooltip to display on hover. Can be a string or an object with content, shortcut, and side properties. |
 | `...props` | `React.ComponentProps<typeof Button>` | - | Any other props are spread to the underlying shadcn/ui Button component. |
 
 #### Tooltip Examples
@@ -405,14 +405,14 @@ Attachment components have been moved to a separate module. See the [Attachment]
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `label` | `string` | - | Label for the menu item. |
+| `label` | `string` | `"Add photos or files"` | Label for the menu item. |
 | `...props` | `React.ComponentProps<typeof DropdownMenuItem>` | - | Any other props are spread to the underlying DropdownMenuItem component. |
 
 ### `<PromptInputActionAddScreenshot />`
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `label` | `string` | - | Label for the menu item. |
+| `label` | `string` | `"Take screenshot"` | Label for the menu item. |
 | `...props` | `React.ComponentProps<typeof DropdownMenuItem>` | - | Any other props are spread to the underlying DropdownMenuItem component. |
 
 ### `<PromptInputProvider />`
@@ -428,7 +428,7 @@ Optional global provider that lifts PromptInput state outside of PromptInput. Wh
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `...props` | `Omit<React.ComponentProps<typeof InputGroupAddon>, ` | - | Any other props (except align) are spread to the InputGroupAddon component. |
+| `...props` | `Omit<React.ComponentProps<typeof InputGroupAddon>, "align">` | - | Any other props (except align) are spread to the InputGroupAddon component. |
 
 ### `<PromptInputHoverCard />`
 
@@ -448,7 +448,7 @@ Optional global provider that lifts PromptInput state outside of PromptInput. Wh
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `align` | `unknown` | - | Alignment of the hover card content. |
+| `align` | `"start" \| "center" \| "end"` | `"start"` | Alignment of the hover card content. |
 | `...props` | `React.ComponentProps<typeof HoverCardContent>` | - | Any other props are spread to the HoverCardContent component. |
 
 ### `<PromptInputTabsList />`

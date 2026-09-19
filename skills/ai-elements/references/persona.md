@@ -58,15 +58,15 @@ The root component that renders the animated AI visual.
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `state` | `unknown` | - | The current state of the AI persona. Controls which animation is displayed. |
-| `variant` | `unknown` | - | The visual style variant to display. |
+| `state` | `"idle" \| "listening" \| "thinking" \| "speaking" \| "asleep"` | `"idle"` | The current state of the AI persona. Controls which animation is displayed. |
+| `variant` | `"obsidian" \| "mana" \| "opal" \| "halo" \| "glint" \| "command"` | `"obsidian"` | The visual style variant to display. |
 | `className` | `string` | - | Additional CSS classes to apply to the component. |
-| `onLoad` | `RiveParameters[` | - | Callback fired when the Rive file starts loading. |
-| `onLoadError` | `RiveParameters[` | - | Callback fired if the Rive file fails to load. |
+| `onLoad` | `RiveParameters["onLoad"]` | - | Callback fired when the Rive file starts loading. |
+| `onLoadError` | `RiveParameters["onLoadError"]` | - | Callback fired if the Rive file fails to load. |
 | `onReady` | `() => void` | - | Callback fired when the Rive animation is ready to play. |
-| `onPause` | `RiveParameters[` | - | Callback fired when the animation is paused. |
-| `onPlay` | `RiveParameters[` | - | Callback fired when the animation starts playing. |
-| `onStop` | `RiveParameters[` | - | Callback fired when the animation is stopped. |
+| `onPause` | `RiveParameters["onPause"]` | - | Callback fired when the animation is paused. |
+| `onPlay` | `RiveParameters["onPlay"]` | - | Callback fired when the animation starts playing. |
+| `onStop` | `RiveParameters["onStop"]` | - | Callback fired when the animation is stopped. |
 
 ## States
 
