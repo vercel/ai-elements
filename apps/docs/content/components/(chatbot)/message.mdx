@@ -177,7 +177,7 @@ focus to the input.
 `MessageQuote` can also display a sent message's reference: omit `onRemove` for a
 read-only quote. Quote text is rendered as text, without interpreting Markdown or
 HTML. Long quotes scroll within the preview and can be focused to scroll with the
-keyboard. Labels can be localized; pass children to `MessageReply` to replace its
+keyboard. Labels can be localized; text children provide the accessible name. Pass `label` or `aria-label` with custom icon children. Pass children to `MessageReply` to replace its
 default icon.
 
 ### State and keyboard behavior
@@ -372,7 +372,8 @@ as user-provided context, just like the rest of the message.
       type: "React.RefObject<HTMLElement | null>",
     },
     label: {
-      description: "Accessible label for the reply action.",
+      description:
+        "Accessible label for the reply action. Defaults to Reply when children are absent; set it for custom icon children.",
       type: "string",
       default: '"Reply"',
     },

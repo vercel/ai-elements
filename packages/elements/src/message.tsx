@@ -107,7 +107,7 @@ export const MessageAction = ({
   const button = (
     <Button size={size} type="button" variant={variant} {...props}>
       {children}
-      <span className="sr-only">{label || tooltip}</span>
+      <span className="sr-only">{label ?? tooltip}</span>
     </Button>
   );
 
@@ -163,7 +163,7 @@ export type MessageReplyProps = MessageActionProps & {
 
 export const MessageReply = ({
   children,
-  label = "Reply",
+  label,
   onClick,
   onPointerDown,
   onPointerCancel,
@@ -218,7 +218,9 @@ export const MessageReply = ({
 
   return (
     <MessageAction
-      label={label}
+      label={
+        label ?? (children === undefined || children === null ? "Reply" : "")
+      }
       onClick={handleClick}
       onPointerCancel={handlePointerCancel}
       onPointerDown={handlePointerDown}

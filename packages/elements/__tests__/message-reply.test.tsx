@@ -39,6 +39,61 @@ const renderReply = (onReply: (text: string) => void) => {
 };
 
 describe("messageReply", () => {
+  it("uses visible reply text without appending the default label", () => {
+    render(
+      <MessageReply onReply={vi.fn()} text="Quote">
+        Respond
+      </MessageReply>
+    );
+    expect(
+      screen.getByRole("button", { exact: true, name: "Respond" })
+    ).toBeInTheDocument();
+  });
+
+  it("uses visible children when a tooltip is supplied", () => {
+    render(
+      <MessageReply tooltip="Reply" onReply={vi.fn()} text="Quote">
+        <span>Respond</span>
+      </MessageReply>
+    );
+    expect(
+      screen.getByRole("button", { exact: true, name: "Respond" })
+    ).toBeInTheDocument();
+  });
+
+  it("labels the default reply icon", () => {
+    render(<MessageReply onReply={vi.fn()} text="Quote" />);
+    expect(
+      screen.getByRole("button", { exact: true, name: "Reply" })
+    ).toBeInTheDocument();
+  });
+
+  it("accepts an explicit label for a custom icon", () => {
+    render(
+      <MessageReply label="Quote message" onReply={vi.fn()} text="Quote">
+        <svg aria-hidden="true" />
+      </MessageReply>
+    );
+    expect(
+      screen.getByRole("button", { exact: true, name: "Quote message" })
+    ).toBeInTheDocument();
+  });
+
+  it("keeps aria-label as the accessible name", () => {
+    render(
+      <MessageReply
+        aria-label="Respond to assistant"
+        onReply={vi.fn()}
+        text="Quote"
+      >
+        Respond
+      </MessageReply>
+    );
+    expect(
+      screen.getByRole("button", { exact: true, name: "Respond to assistant" })
+    ).toBeInTheDocument();
+  });
+
   it("replies with the original message when nothing is selected", async () => {
     const onReply = vi.fn();
     renderReply(onReply);
