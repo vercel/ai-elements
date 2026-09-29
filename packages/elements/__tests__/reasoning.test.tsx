@@ -183,6 +183,47 @@ describe("reasoningTrigger", () => {
     expect(screen.getByText("Thought for a few seconds")).toBeInTheDocument();
   });
 
+  it("does not warn when duration is set after streaming ends", () => {
+    const spy = vi.spyOn(console, "warn").mockImplementation(vi.fn());
+    const { rerender } = render(
+      <Reasoning duration={undefined} isStreaming>
+        <ReasoningTrigger />
+      </Reasoning>
+    );
+
+    rerender(
+      <Reasoning duration={3} isStreaming={false}>
+        <ReasoningTrigger />
+      </Reasoning>
+    );
+
+    expect(screen.getByText("Thought for 3 seconds")).toBeInTheDocument();
+    expect(spy).not.toHaveBeenCalled();
+    spy.mockRestore();
+  });
+
+  it("prefers the duration prop over the measured duration", () => {
+    vi.useFakeTimers();
+    const { rerender } = render(
+      <Reasoning isStreaming>
+        <ReasoningTrigger />
+      </Reasoning>
+    );
+
+    act(() => {
+      vi.advanceTimersByTime(2000);
+    });
+
+    rerender(
+      <Reasoning duration={9} isStreaming={false}>
+        <ReasoningTrigger />
+      </Reasoning>
+    );
+
+    expect(screen.getByText("Thought for 9 seconds")).toBeInTheDocument();
+    vi.useRealTimers();
+  });
+
   it("renders custom children", () => {
     render(
       <Reasoning>
