@@ -1685,6 +1685,73 @@ describe("file validation", () => {
     });
   });
 
+  it("matches file extension patterns against the file name", async () => {
+    setupPromptInputTests();
+    const onSubmit = vi.fn();
+    const onError = vi.fn();
+    const user = userEvent.setup();
+
+    // Browsers often report an empty or generic type for these files
+    const sheetFile = new File(["sheet"], "report.xlsx", { type: "" });
+    const csvFile = new File(["a,b"], "DATA.CSV", {
+      type: "application/octet-stream",
+    });
+    const textFile = new File(["text"], "notes.txt", { type: "text/plain" });
+
+    const AttachmentConsumer = () => {
+      const attachments = usePromptInputAttachments();
+      return (
+        <>
+          <button
+            data-testid="add-sheet"
+            onClick={() => attachments.add([sheetFile])}
+            type="button"
+          >
+            Add Sheet
+          </button>
+          <button
+            data-testid="add-csv"
+            onClick={() => attachments.add([csvFile])}
+            type="button"
+          >
+            Add CSV
+          </button>
+          <button
+            data-testid="add-text"
+            onClick={() => attachments.add([textFile])}
+            type="button"
+          >
+            Add Text
+          </button>
+          <div data-testid="count">{attachments.files.length}</div>
+        </>
+      );
+    };
+
+    render(
+      <PromptInput accept=".xlsx, .csv" onError={onError} onSubmit={onSubmit}>
+        <PromptInputBody>
+          <AttachmentConsumer />
+          <PromptInputTextarea />
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    await user.click(screen.getByTestId("add-sheet"));
+    expect(screen.getByTestId("count")).toHaveTextContent("1");
+
+    await user.click(screen.getByTestId("add-csv"));
+    expect(screen.getByTestId("count")).toHaveTextContent("2");
+    expect(onError).not.toHaveBeenCalled();
+
+    await user.click(screen.getByTestId("add-text"));
+    expect(screen.getByTestId("count")).toHaveTextContent("2");
+    expect(onError).toHaveBeenCalledWith({
+      code: "accept",
+      message: expect.any(String),
+    });
+  });
+
   it("handles accept with extra whitespace in patterns", async () => {
     setupPromptInputTests();
     const onSubmit = vi.fn();
