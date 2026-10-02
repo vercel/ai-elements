@@ -1,3 +1,5 @@
+import type { BundledLanguage } from "shiki";
+
 import { render, screen, waitFor } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 
@@ -63,6 +65,19 @@ describe("codeBlock", () => {
       <CodeBlock code={other} language="javascript" />
     );
     expect(container.textContent).toContain("const other = 2;");
+  });
+
+  it("highlights a language shiki does not bundle as plain text", async () => {
+    const onHighlighted = vi.fn();
+
+    highlightCode(
+      "IF ready THEN start",
+      "pseudocode" as BundledLanguage,
+      onHighlighted
+    );
+    await waitFor(() => {
+      expect(onHighlighted).toHaveBeenCalled();
+    });
   });
 });
 
