@@ -308,7 +308,8 @@ Buttons can display tooltips with optional keyboard shortcut hints. Hover over t
       type: "number",
     },
     onError: {
-      description: "Handler for file validation errors.",
+      description:
+        "Handler for file validation errors. Also called when only some of the added files are rejected; the rest are still added.",
       type: '(err: { code: "max_files" | "max_file_size" | "accept", message: string }) => void',
     },
     "...props": {
