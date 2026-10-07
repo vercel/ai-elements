@@ -248,4 +248,16 @@ describe("reasoningContent", () => {
     );
     expect(container.querySelector(".custom")).toBeInTheDocument();
   });
+
+  it("wraps long words instead of letting them overflow", () => {
+    const longWord = "a".repeat(200);
+    render(
+      <Reasoning defaultOpen>
+        <ReasoningContent>{longWord}</ReasoningContent>
+      </Reasoning>
+    );
+    expect(
+      screen.getByText(longWord).closest(".break-words")
+    ).toBeInTheDocument();
+  });
 });

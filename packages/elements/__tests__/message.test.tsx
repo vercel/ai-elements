@@ -145,6 +145,13 @@ describe("messageResponse", () => {
     render(<MessageResponse># Heading</MessageResponse>);
     expect(screen.getByText("Heading")).toBeInTheDocument();
   });
+
+  it("wraps long words instead of letting them overflow", () => {
+    const { container } = render(
+      <MessageResponse>{"a".repeat(200)}</MessageResponse>
+    );
+    expect(container.firstChild).toHaveClass("break-words");
+  });
 });
 
 describe("messageBranch", () => {
