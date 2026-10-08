@@ -1930,6 +1930,99 @@ describe("file validation", () => {
   });
 });
 
+describe("partially rejected files", () => {
+  const renderWithAttachments = (
+    props: Partial<React.ComponentProps<typeof PromptInput>>,
+    filesToAdd: File[]
+  ) => {
+    const AttachmentConsumer = () => {
+      const attachments = usePromptInputAttachments();
+      return (
+        <>
+          <button
+            data-testid="add-files"
+            onClick={() => attachments.add(filesToAdd)}
+            type="button"
+          >
+            Add Files
+          </button>
+          <div data-testid="count">{attachments.files.length}</div>
+        </>
+      );
+    };
+
+    return (
+      <PromptInput onSubmit={vi.fn()} {...props}>
+        <PromptInputBody>
+          <AttachmentConsumer />
+          <PromptInputTextarea />
+        </PromptInputBody>
+      </PromptInput>
+    );
+  };
+
+  it("reports files that do not match accept and adds the rest", async () => {
+    setupPromptInputTests();
+    const onError = vi.fn();
+    const user = userEvent.setup();
+    const image = new File(["image"], "photo.png", { type: "image/png" });
+    const text = new File(["text"], "notes.txt", { type: "text/plain" });
+
+    render(
+      renderWithAttachments({ accept: "image/*", onError }, [image, text])
+    );
+    await user.click(screen.getByTestId("add-files"));
+
+    expect(screen.getByTestId("count")).toHaveTextContent("1");
+    expect(onError).toHaveBeenCalledWith({
+      code: "accept",
+      message: expect.any(String),
+    });
+  });
+
+  it("reports files over maxFileSize and adds the rest", async () => {
+    setupPromptInputTests();
+    const onError = vi.fn();
+    const user = userEvent.setup();
+    const small = new File(["small"], "small.txt", { type: "text/plain" });
+    const large = new File(["large"], "large.txt", { type: "text/plain" });
+    Object.defineProperty(large, "size", { value: 2000 });
+
+    render(
+      renderWithAttachments({ maxFileSize: 1000, onError }, [small, large])
+    );
+    await user.click(screen.getByTestId("add-files"));
+
+    expect(screen.getByTestId("count")).toHaveTextContent("1");
+    expect(onError).toHaveBeenCalledWith({
+      code: "max_file_size",
+      message: expect.any(String),
+    });
+  });
+
+  it("reports partially rejected files inside PromptInputProvider", async () => {
+    setupPromptInputTests();
+    const onError = vi.fn();
+    const user = userEvent.setup();
+    const { PromptInputProvider } = await import("../src/prompt-input");
+    const image = new File(["image"], "photo.png", { type: "image/png" });
+    const text = new File(["text"], "notes.txt", { type: "text/plain" });
+
+    render(
+      <PromptInputProvider>
+        {renderWithAttachments({ accept: "image/*", onError }, [image, text])}
+      </PromptInputProvider>
+    );
+    await user.click(screen.getByTestId("add-files"));
+
+    expect(screen.getByTestId("count")).toHaveTextContent("1");
+    expect(onError).toHaveBeenCalledWith({
+      code: "accept",
+      message: expect.any(String),
+    });
+  });
+});
+
 describe("drag and drop", () => {
   it("renders with globalDrop prop", () => {
     setupPromptInputTests();
