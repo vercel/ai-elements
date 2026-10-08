@@ -18,7 +18,13 @@ import {
   XIcon,
 } from "lucide-react";
 import type { ComponentProps, HTMLAttributes, ReactNode } from "react";
-import { createContext, useCallback, useContext, useMemo } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useMemo,
+  useState,
+} from "react";
 
 // ============================================================================
 // Types
@@ -88,13 +94,15 @@ export const getAttachmentLabel = (data: AttachmentData): string => {
 const renderAttachmentImage = (
   url: string,
   filename: string | undefined,
-  isGrid: boolean
+  isGrid: boolean,
+  onError: () => void
 ) =>
   isGrid ? (
     <img
       alt={filename || "Image"}
       className="size-full object-cover"
       height={96}
+      onError={onError}
       src={url}
       width={96}
     />
@@ -103,6 +111,7 @@ const renderAttachmentImage = (
       alt={filename || "Image"}
       className="size-full rounded object-cover"
       height={20}
+      onError={onError}
       src={url}
       width={20}
     />
@@ -239,6 +248,13 @@ export const AttachmentPreview = ({
   ...props
 }: AttachmentPreviewProps) => {
   const { data, mediaCategory, variant } = useAttachmentContext();
+  const [failedUrl, setFailedUrl] = useState<string>();
+
+  const imageUrl = data.type === "file" ? data.url : undefined;
+  const handleImageError = useCallback(
+    () => setFailedUrl(imageUrl),
+    [imageUrl]
+  );
 
   const iconSize = variant === "inline" ? "size-3" : "size-4";
 
@@ -247,8 +263,13 @@ export const AttachmentPreview = ({
   );
 
   const renderContent = () => {
-    if (mediaCategory === "image" && data.type === "file" && data.url) {
-      return renderAttachmentImage(data.url, data.filename, variant === "grid");
+    if (mediaCategory === "image" && imageUrl && imageUrl !== failedUrl) {
+      return renderAttachmentImage(
+        imageUrl,
+        data.filename,
+        variant === "grid",
+        handleImageError
+      );
     }
 
     if (mediaCategory === "video" && data.type === "file" && data.url) {
