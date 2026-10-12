@@ -19,10 +19,17 @@ const Example = () => (
       maxTokens={128_000}
       modelId="openai:gpt-5"
       usage={{
-        cachedInputTokens: 0,
+        inputTokenDetails: {
+          cacheReadTokens: 0,
+          cacheWriteTokens: 0,
+          noCacheTokens: 32_000,
+        },
         inputTokens: 32_000,
+        outputTokenDetails: {
+          reasoningTokens: 0,
+          textTokens: 8000,
+        },
         outputTokens: 8000,
-        reasoningTokens: 0,
         totalTokens: 40_000,
       }}
       usedTokens={40_000}
