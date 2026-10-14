@@ -138,7 +138,7 @@ export const ToolOutput = ({
   errorText,
   ...props
 }: ToolOutputProps) => {
-  if (!(output || errorText)) {
+  if ((output === undefined || output === null) && !errorText) {
     return null;
   }
 
