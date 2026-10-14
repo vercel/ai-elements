@@ -704,6 +704,51 @@ describe("promptInputTextarea", () => {
     expect(onSubmit).not.toHaveBeenCalled();
   });
 
+  it("does not submit on Enter while streaming - #439", async () => {
+    setupPromptInputTests();
+    const onSubmit = vi.fn();
+    const user = userEvent.setup();
+
+    render(
+      <PromptInput onSubmit={onSubmit}>
+        <PromptInputBody>
+          <PromptInputTextarea />
+          <PromptInputSubmit onStop={vi.fn()} status="streaming" />
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    const textarea = screen.getByPlaceholderText(
+      "What would you like to know?"
+    );
+    await user.type(textarea, "Test");
+    await user.keyboard("{Enter}");
+
+    expect(onSubmit).not.toHaveBeenCalled();
+  });
+
+  it("does not submit on Enter without a submit button - #439", async () => {
+    setupPromptInputTests();
+    const onSubmit = vi.fn();
+    const user = userEvent.setup();
+
+    render(
+      <PromptInput onSubmit={onSubmit}>
+        <PromptInputBody>
+          <PromptInputTextarea />
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    const textarea = screen.getByPlaceholderText(
+      "What would you like to know?"
+    );
+    await user.type(textarea, "Test");
+    await user.keyboard("{Enter}");
+
+    expect(onSubmit).not.toHaveBeenCalled();
+  });
+
   it("does not submit on Enter during IME composition - #21", () => {
     setupPromptInputTests();
     const onSubmit = vi.fn();
