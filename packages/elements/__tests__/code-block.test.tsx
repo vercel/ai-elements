@@ -1,7 +1,13 @@
+import type { BundledLanguage } from "shiki";
+
 import { render, screen, waitFor } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 
-import { CodeBlock, CodeBlockCopyButton } from "../src/code-block";
+import {
+  CodeBlock,
+  CodeBlockCopyButton,
+  highlightCode,
+} from "../src/code-block";
 
 describe("codeBlock", () => {
   it("renders code content", async () => {
@@ -42,6 +48,36 @@ describe("codeBlock", () => {
     expect(container.firstChild).toHaveClass("custom-class");
     expect(container.firstChild).toHaveClass("group");
     expect(container.firstChild).toHaveClass("relative");
+  });
+
+  it("does not show the tokens of other code with the same length and ends", async () => {
+    const edge = "x".repeat(100);
+    const first = `${edge}\nconst first = 1;\n${edge}`;
+    const other = `${edge}\nconst other = 2;\n${edge}`;
+    const onHighlighted = vi.fn();
+
+    highlightCode(first, "javascript", onHighlighted);
+    await waitFor(() => {
+      expect(onHighlighted).toHaveBeenCalled();
+    });
+
+    const { container } = render(
+      <CodeBlock code={other} language="javascript" />
+    );
+    expect(container.textContent).toContain("const other = 2;");
+  });
+
+  it("highlights a language shiki does not bundle as plain text", async () => {
+    const onHighlighted = vi.fn();
+
+    highlightCode(
+      "IF ready THEN start",
+      "pseudocode" as BundledLanguage,
+      onHighlighted
+    );
+    await waitFor(() => {
+      expect(onHighlighted).toHaveBeenCalled();
+    });
   });
 });
 
