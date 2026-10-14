@@ -78,12 +78,11 @@ const TokenSpan = ({ token }: { token: ThemedToken }) => (
 
 // Line number styles using CSS counters
 const LINE_NUMBER_CLASSES = cn(
-  "block",
+  "contents",
   "before:content-[counter(line)]",
-  "before:inline-block",
   "before:[counter-increment:line]",
-  "before:w-8",
-  "before:mr-4",
+  "before:min-w-12",
+  "before:pr-4",
   "before:text-right",
   "before:text-muted-foreground/50",
   "before:font-mono",
@@ -97,15 +96,22 @@ const LineSpan = ({
 }: {
   keyedLine: KeyedLine;
   showLineNumbers: boolean;
-}) => (
-  <span className={showLineNumbers ? LINE_NUMBER_CLASSES : "block"}>
-    {keyedLine.tokens.length === 0
+}) => {
+  const content =
+    keyedLine.tokens.length === 0
       ? "\n"
       : keyedLine.tokens.map(({ token, key }) => (
           <TokenSpan key={key} token={token} />
-        ))}
-  </span>
-);
+        ));
+
+  return showLineNumbers ? (
+    <span className={LINE_NUMBER_CLASSES}>
+      <span>{content}</span>
+    </span>
+  ) : (
+    <span className="block">{content}</span>
+  );
+};
 
 // Types
 type CodeBlockProps = HTMLAttributes<HTMLDivElement> & {
@@ -279,7 +285,8 @@ const CodeBlockBody = memo(
         <code
           className={cn(
             "font-mono text-sm",
-            showLineNumbers && "[counter-increment:line_0] [counter-reset:line]"
+            showLineNumbers &&
+              "grid grid-cols-[max-content_max-content] [counter-increment:line_0] [counter-reset:line]"
           )}
         >
           {keyedLines.map((keyedLine) => (
