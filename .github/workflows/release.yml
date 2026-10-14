@@ -19,22 +19,8 @@ jobs:
     timeout-minutes: 10
 
     steps:
-      - name: Generate GitHub App Token
-        id: generate-token
-        uses: actions/create-github-app-token@v2
-        with:
-          app-id: ${{ secrets.AI_ELEMENTS_APP_ID }}
-          private-key: ${{ secrets.AI_ELEMENTS_APP_PRIVATE_KEY }}
-
       - name: Checkout Repo
         uses: actions/checkout@v6
-        with:
-          token: ${{ steps.generate-token.outputs.token }}
-
-      - name: Setup Git User
-        run: |
-          git config --global user.email "ai-elements-bot[bot]@users.noreply.github.com"
-          git config --global user.name "ai-elements-bot[bot]"
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v6
@@ -66,8 +52,9 @@ jobs:
         with:
           version: pnpm changeset version
           publish: pnpm changeset publish
+          commitMode: github-api
         env:
-          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: "" # Workaround for https://github.com/changesets/action/pull/545
 
       - name: Deploy to Vercel
