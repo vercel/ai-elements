@@ -1,5 +1,15 @@
 "use client";
 
+import type { UIMessage } from "ai";
+import type {
+  ComponentProps,
+  HTMLAttributes,
+  MouseEventHandler,
+  PointerEventHandler,
+  ReactElement,
+  RefObject,
+} from "react";
+
 import { Button } from "@repo/shadcn-ui/components/ui/button";
 import {
   ButtonGroup,
@@ -16,9 +26,12 @@ import { cjk } from "@streamdown/cjk";
 import { code } from "@streamdown/code";
 import { math } from "@streamdown/math";
 import { mermaid } from "@streamdown/mermaid";
-import type { UIMessage } from "ai";
-import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
-import type { ComponentProps, HTMLAttributes, ReactElement } from "react";
+import {
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  ReplyIcon,
+  XIcon,
+} from "lucide-react";
 import {
   createContext,
   memo,
@@ -26,6 +39,7 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
 import { Streamdown } from "streamdown";
@@ -45,7 +59,7 @@ export const Message = ({ className, from, ...props }: MessageProps) => (
   />
 );
 
-export type MessageContentProps = HTMLAttributes<HTMLDivElement>;
+export type MessageContentProps = ComponentProps<"div">;
 
 export const MessageContent = ({
   children,
@@ -93,7 +107,7 @@ export const MessageAction = ({
   const button = (
     <Button size={size} type="button" variant={variant} {...props}>
       {children}
-      <span className="sr-only">{label || tooltip}</span>
+      <span className="sr-only">{label ?? tooltip}</span>
     </Button>
   );
 
@@ -112,6 +126,158 @@ export const MessageAction = ({
 
   return button;
 };
+
+const getMessageSelection = (element: HTMLElement | null | undefined) => {
+  const selection = element?.ownerDocument.getSelection();
+
+  if (
+    !element ||
+    !selection ||
+    selection.isCollapsed ||
+    selection.rangeCount !== 1
+  ) {
+    return;
+  }
+
+  const range = selection.getRangeAt(0);
+
+  // Never quote text from another message or a selection crossing messages.
+  if (
+    !element.contains(range.startContainer) ||
+    !element.contains(range.endContainer)
+  ) {
+    return;
+  }
+
+  const text = selection.toString();
+  return text.trim() ? text : undefined;
+};
+
+export type MessageReplyProps = MessageActionProps & {
+  /** The complete message to quote when no text is selected. */
+  text: string;
+  /** Limit selected text to this message's content. */
+  selectionRef?: RefObject<HTMLElement | null>;
+  onReply: (text: string) => void;
+};
+
+export const MessageReply = ({
+  children,
+  label,
+  onClick,
+  onPointerDown,
+  onPointerCancel,
+  onReply,
+  selectionRef,
+  text,
+  ...props
+}: MessageReplyProps) => {
+  const selectedText = useRef<string | null>(null);
+
+  const handleClick = useCallback<MouseEventHandler<HTMLButtonElement>>(
+    (event) => {
+      onClick?.(event);
+      const selection =
+        (event.detail > 0 ? selectedText.current : undefined) ??
+        getMessageSelection(selectionRef?.current);
+      selectedText.current = null;
+
+      if (event.defaultPrevented) {
+        return;
+      }
+
+      const quote = selection ?? text;
+      if (quote.trim()) {
+        onReply(quote);
+      }
+    },
+    [onClick, onReply, selectionRef, text]
+  );
+
+  const handlePointerCancel = useCallback<
+    PointerEventHandler<HTMLButtonElement>
+  >(
+    (event) => {
+      selectedText.current = null;
+      onPointerCancel?.(event);
+    },
+    [onPointerCancel]
+  );
+
+  const handlePointerDown = useCallback<PointerEventHandler<HTMLButtonElement>>(
+    (event) => {
+      onPointerDown?.(event);
+      // Capture before the browser moves focus and collapses the selection.
+      selectedText.current =
+        event.button === 0 && !event.defaultPrevented
+          ? (getMessageSelection(selectionRef?.current) ?? null)
+          : null;
+    },
+    [onPointerDown, selectionRef]
+  );
+
+  return (
+    <MessageAction
+      label={
+        label ?? (children === undefined || children === null ? "Reply" : "")
+      }
+      onClick={handleClick}
+      onPointerCancel={handlePointerCancel}
+      onPointerDown={handlePointerDown}
+      {...props}
+    >
+      {children ?? <ReplyIcon className="size-4" />}
+    </MessageAction>
+  );
+};
+
+export type MessageQuoteProps = ComponentProps<"div"> & {
+  label?: string;
+  onRemove?: () => void;
+  removeLabel?: string;
+};
+
+export const MessageQuote = ({
+  children,
+  className,
+  label = "Replying to",
+  onRemove,
+  removeLabel = "Remove quote",
+  ...props
+}: MessageQuoteProps) => (
+  <div
+    aria-label={label}
+    className={cn(
+      "flex w-full min-w-0 items-start gap-2 rounded-md border bg-muted/50 p-3 text-sm",
+      className
+    )}
+    role="group"
+    {...props}
+  >
+    <ReplyIcon
+      aria-hidden="true"
+      className="mt-0.5 size-4 shrink-0 text-muted-foreground"
+    />
+    <div className="min-w-0 flex-1 border-s-2 border-muted-foreground/30 ps-3">
+      <p className="mb-1 font-medium text-xs">{label}</p>
+      <blockquote
+        className="max-h-32 overflow-y-auto whitespace-pre-wrap rounded-sm text-muted-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring [overflow-wrap:anywhere]"
+        tabIndex={0}
+      >
+        {children}
+      </blockquote>
+    </div>
+    {onRemove && (
+      <MessageAction
+        aria-label={removeLabel}
+        className="-me-1 -mt-1 shrink-0"
+        onClick={onRemove}
+      >
+        <XIcon aria-hidden="true" className="size-4" />
+      </MessageAction>
+    )}
+  </div>
+);
 
 interface MessageBranchContextType {
   currentBranch: number;

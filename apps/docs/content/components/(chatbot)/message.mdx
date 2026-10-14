@@ -30,6 +30,7 @@ This is **required** for the MessageResponse component to work properly. Without
 - **Response branching** with navigation controls to switch between multiple AI response versions
 - **Markdown rendering** with GFM support (tables, task lists, strikethrough), math equations, and smart streaming
 - **Action buttons** for common operations (retry, like, dislike, copy, share) with tooltips and state management
+- **Replies and quotes** for referencing a complete message or selected text, with a removable quote preview
 - **File attachments** display with support for images and generic files with preview and remove functionality
 - Code blocks with syntax highlighting and copy-to-clipboard functionality
 - Keyboard accessible with proper ARIA labels
@@ -158,6 +159,76 @@ const ActionsDemo = () => {
 export default ActionsDemo;
 ```
 
+## Quoting and replying
+
+Use `MessageReply` inside `MessageActions` to reply to a message. Pass the original
+message as `text` and, optionally, a ref to `MessageContent` as `selectionRef`.
+When text is selected entirely within that content, `onReply` receives the selected
+plain text. Otherwise, it receives the original `text`, preserving its Markdown.
+
+<Preview path="message-reply" />
+
+The example keeps the quote separate from the draft and renders it with
+`MessageQuote` inside `PromptInputHeader`. The Reply action remains available to
+keyboard and touch users without requiring text selection. Selecting a new quote
+replaces the previous one without changing the draft. Removing a quote returns
+focus to the input.
+
+`MessageQuote` can also display a sent message's reference: omit `onRemove` for a
+read-only quote. Quote text is rendered as text, without interpreting Markdown or
+HTML. Long quotes scroll within the preview and can be focused to scroll with the
+keyboard. Labels can be localized; text children provide the accessible name. Pass `label` or `aria-label` with custom icon children. Pass children to `MessageReply` to replace its
+default icon.
+
+### State and keyboard behavior
+
+Reply state belongs to your application; no provider or changes to the
+`PromptInputMessage` shape are required. Store the message ID alongside the quoted
+text if you need to link back to its source. Use a snapshot of the quote so that
+later edits or streaming updates do not change what the user selected.
+
+The example handles Escape on the composer, not globally. It respects prevented
+events and IME composition, so dismissing a nested menu or composing text does not
+accidentally remove a quote. Escape and the remove button preserve the draft.
+The textarea also guards the IME confirmation Enter event so it does not send the
+reply while the input method is finishing a character.
+
+### Sending quoted context with the AI SDK
+
+The preview above adds replies locally. In your application, explicitly include
+the quote when calling `sendMessage`; displaying `MessageQuote` alone does not
+send context to the model. One option is to prepend a Markdown blockquote to the
+outgoing text:
+
+```tsx
+const handleSubmit = ({ text, files }: PromptInputMessage) => {
+  if (!text.trim()) {
+    return;
+  }
+
+  const quotedText = quote?.text
+    .split("\n")
+    .map((line) => `> ${line}`)
+    .join("\n");
+
+  return sendMessage({
+    text: quotedText ? `${quotedText}\n\n${text}` : text,
+    files,
+  });
+};
+```
+
+Keep a snapshot of the submitted quote and decide when to clear it in your
+application's send lifecycle. With `useChat`, use `onError` and the `isError`,
+`isAbort`, and `isDisconnect` flags passed to `onFinish`: `sendMessage` can resolve
+after a transport error, so awaiting it alone does not confirm success. Use a
+controlled `PromptInputTextarea` if you need to preserve or restore the draft on
+failure, and avoid clearing a newer draft or quote when an earlier request ends.
+
+If your application stores quotes as custom message data instead, ensure your
+server includes that data when constructing model messages. Treat quoted content
+as user-provided context, just like the rest of the message.
+
 ## Props
 
 ### `<Message />`
@@ -181,8 +252,9 @@ export default ActionsDemo;
 <TypeTable
   type={{
     "...props": {
-      description: "Any other props are spread to the content div.",
-      type: "React.HTMLAttributes<HTMLDivElement>",
+      description:
+        "Any other props, including ref, are spread to the content div.",
+      type: 'React.ComponentProps<"div">',
     },
   }}
 />
@@ -278,6 +350,72 @@ export default ActionsDemo;
   }}
 />
 
+### `<MessageReply />`
+
+<TypeTable
+  type={{
+    text: {
+      description:
+        "The complete message to quote when there is no selection within selectionRef.",
+      type: "string",
+      required: true,
+    },
+    onReply: {
+      description:
+        "Called with the selected plain text or the complete message. Manage quote state and composer focus in this callback.",
+      type: "(text: string) => void",
+      required: true,
+    },
+    selectionRef: {
+      description:
+        "Ref to the message content. Only a selection entirely inside this element is used.",
+      type: "React.RefObject<HTMLElement | null>",
+    },
+    label: {
+      description:
+        "Accessible label for the reply action. Defaults to Reply when children are absent; set it for custom icon children.",
+      type: "string",
+      default: '"Reply"',
+    },
+    "...props": {
+      description:
+        "Other MessageAction props, including disabled, tooltip, children, and event handlers. Prevent default in onClick to cancel a reply.",
+      type: "MessageActionProps",
+    },
+  }}
+/>
+
+### `<MessageQuote />`
+
+<TypeTable
+  type={{
+    children: {
+      description:
+        "The quoted content. Pass a string to render it as plain text.",
+      type: "React.ReactNode",
+    },
+    label: {
+      description: "Visible label and accessible name of the quote group.",
+      type: "string",
+      default: '"Replying to"',
+    },
+    onRemove: {
+      description:
+        "Shows a remove button when provided. Remove the quote and restore composer focus in this callback.",
+      type: "() => void",
+    },
+    removeLabel: {
+      description: "Accessible label for the remove button.",
+      type: "string",
+      default: '"Remove quote"',
+    },
+    "...props": {
+      description: "Any other props are spread to the root div.",
+      type: 'React.ComponentProps<"div">',
+    },
+  }}
+/>
+
 ### `<MessageBranch />`
 
 <TypeTable
@@ -314,7 +452,8 @@ export default ActionsDemo;
 <TypeTable
   type={{
     "...props": {
-      description: "Any other props are spread to the underlying ButtonGroup component.",
+      description:
+        "Any other props are spread to the underlying ButtonGroup component.",
       type: "React.ComponentProps<typeof ButtonGroup>",
     },
   }}
