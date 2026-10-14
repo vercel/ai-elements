@@ -4,6 +4,7 @@ import { userEvent } from "@testing-library/user-event";
 import React from "react";
 
 import type { AttachmentData } from "../src/attachments";
+
 import {
   Attachment,
   AttachmentInfo,
@@ -36,6 +37,11 @@ import {
 const DATA_PREFIX_REGEX = /^data:/;
 const BLOB_PREFIX_REGEX = /^blob:/;
 const SUBMIT_REGEX = /submit/i;
+const makeDropEvent = (files: File[]) =>
+  Object.assign(new Event("drop", { bubbles: true, cancelable: true }), {
+    dataTransfer: { files, types: ["Files"] },
+  });
+const DND_EVENT_TYPES = new Set(["dragover", "drop"]);
 
 // Backwards-compatibility aliases for tests (these components were moved to attachment.tsx)
 const PromptInputAttachment = ({
@@ -1959,6 +1965,260 @@ describe("drag and drop", () => {
     );
 
     expect(container.querySelector("form")).toBeInTheDocument();
+  });
+
+  it("keeps document drop listeners stable while typing with a provider", async () => {
+    setupPromptInputTests();
+    const onSubmit = vi.fn();
+    const { PromptInputProvider } = await import("../src/prompt-input");
+    const user = userEvent.setup();
+
+    render(
+      <PromptInputProvider>
+        <PromptInput globalDrop onSubmit={onSubmit}>
+          <PromptInputBody>
+            <PromptInputTextarea />
+          </PromptInputBody>
+        </PromptInput>
+      </PromptInputProvider>
+    );
+
+    const addSpy = vi.spyOn(document, "addEventListener");
+    const removeSpy = vi.spyOn(document, "removeEventListener");
+
+    await user.type(
+      screen.getByPlaceholderText("What would you like to know?"),
+      "hello"
+    );
+
+    expect(
+      addSpy.mock.calls.filter(([type]) => DND_EVENT_TYPES.has(type))
+    ).toHaveLength(0);
+    expect(
+      removeSpy.mock.calls.filter(([type]) => DND_EVENT_TYPES.has(type))
+    ).toHaveLength(0);
+
+    addSpy.mockRestore();
+    removeSpy.mockRestore();
+  });
+
+  it("adds files dropped on the document after typing with a provider", async () => {
+    setupPromptInputTests();
+    const onSubmit = vi.fn();
+    const { PromptInputProvider } = await import("../src/prompt-input");
+    const user = userEvent.setup();
+
+    const AttachmentConsumer = () => {
+      const attachments = usePromptInputAttachments();
+      return <div data-testid="count">{attachments.files.length}</div>;
+    };
+
+    render(
+      <PromptInputProvider>
+        <PromptInput globalDrop onSubmit={onSubmit}>
+          <PromptInputBody>
+            <AttachmentConsumer />
+            <PromptInputTextarea />
+          </PromptInputBody>
+        </PromptInput>
+      </PromptInputProvider>
+    );
+
+    await user.type(
+      screen.getByPlaceholderText("What would you like to know?"),
+      "hello"
+    );
+
+    const file = new File(["image"], "test.png", { type: "image/png" });
+    const dropEvent = Object.assign(
+      new Event("drop", { bubbles: true, cancelable: true }),
+      { dataTransfer: { files: [file], types: ["Files"] } }
+    );
+
+    await act(() => {
+      document.dispatchEvent(dropEvent);
+    });
+
+    await vi.waitFor(() => {
+      expect(screen.getByTestId("count")).toHaveTextContent("1");
+    });
+  });
+
+  it("adds files dropped on the form after typing with a provider", async () => {
+    setupPromptInputTests();
+    const onSubmit = vi.fn();
+    const { PromptInputProvider } = await import("../src/prompt-input");
+    const user = userEvent.setup();
+
+    const AttachmentConsumer = () => {
+      const attachments = usePromptInputAttachments();
+      return <div data-testid="count">{attachments.files.length}</div>;
+    };
+
+    const { container } = render(
+      <PromptInputProvider>
+        <PromptInput onSubmit={onSubmit}>
+          <PromptInputBody>
+            <AttachmentConsumer />
+            <PromptInputTextarea />
+          </PromptInputBody>
+        </PromptInput>
+      </PromptInputProvider>
+    );
+
+    // The form is always rendered by PromptInput; asserted below
+    const form = container.querySelector("form") as HTMLFormElement;
+    expect(form).toBeInTheDocument();
+
+    const addSpy = vi.spyOn(form, "addEventListener");
+    const removeSpy = vi.spyOn(form, "removeEventListener");
+
+    await user.type(
+      screen.getByPlaceholderText("What would you like to know?"),
+      "hello"
+    );
+
+    expect(
+      addSpy.mock.calls.filter(([type]) => DND_EVENT_TYPES.has(type))
+    ).toHaveLength(0);
+    expect(
+      removeSpy.mock.calls.filter(([type]) => DND_EVENT_TYPES.has(type))
+    ).toHaveLength(0);
+
+    addSpy.mockRestore();
+    removeSpy.mockRestore();
+
+    const file = new File(["image"], "test.png", { type: "image/png" });
+    const dropEvent = Object.assign(
+      new Event("drop", { bubbles: true, cancelable: true }),
+      { dataTransfer: { files: [file], types: ["Files"] } }
+    );
+
+    await act(() => {
+      form.dispatchEvent(dropEvent);
+    });
+
+    await vi.waitFor(() => {
+      expect(screen.getByTestId("count")).toHaveTextContent("1");
+    });
+  });
+
+  it("applies the latest accept prop to drops without re-attaching listeners", async () => {
+    setupPromptInputTests();
+    const onSubmit = vi.fn();
+    const onError = vi.fn();
+    const { PromptInputProvider } = await import("../src/prompt-input");
+
+    const AttachmentConsumer = () => {
+      const attachments = usePromptInputAttachments();
+      return <div data-testid="count">{attachments.files.length}</div>;
+    };
+
+    const ui = (accept: string) => (
+      <PromptInputProvider>
+        <PromptInput
+          accept={accept}
+          globalDrop
+          onError={onError}
+          onSubmit={onSubmit}
+        >
+          <PromptInputBody>
+            <AttachmentConsumer />
+            <PromptInputTextarea />
+          </PromptInputBody>
+        </PromptInput>
+      </PromptInputProvider>
+    );
+
+    const { rerender } = render(ui("image/*"));
+
+    const addSpy = vi.spyOn(document, "addEventListener");
+
+    const file = new File(["text"], "notes.txt", { type: "text/plain" });
+
+    await act(() => {
+      document.dispatchEvent(makeDropEvent([file]));
+    });
+
+    expect(onError).toHaveBeenCalledWith(
+      expect.objectContaining({ code: "accept" })
+    );
+    expect(screen.getByTestId("count")).toHaveTextContent("0");
+
+    rerender(ui("text/plain"));
+
+    await act(() => {
+      document.dispatchEvent(makeDropEvent([file]));
+    });
+
+    await vi.waitFor(() => {
+      expect(screen.getByTestId("count")).toHaveTextContent("1");
+    });
+
+    // Listeners were never re-attached across the accept change
+    expect(
+      addSpy.mock.calls.filter(([type]) => DND_EVENT_TYPES.has(type))
+    ).toHaveLength(0);
+    addSpy.mockRestore();
+  });
+
+  it("enforces maxFiles against the current attachment count on stable listeners", async () => {
+    setupPromptInputTests();
+    const onSubmit = vi.fn();
+    const onError = vi.fn();
+    const { PromptInputProvider } = await import("../src/prompt-input");
+
+    const AttachmentConsumer = () => {
+      const attachments = usePromptInputAttachments();
+      return <div data-testid="count">{attachments.files.length}</div>;
+    };
+
+    render(
+      <PromptInputProvider>
+        <PromptInput
+          globalDrop
+          maxFiles={2}
+          onError={onError}
+          onSubmit={onSubmit}
+        >
+          <PromptInputBody>
+            <AttachmentConsumer />
+            <PromptInputTextarea />
+          </PromptInputBody>
+        </PromptInput>
+      </PromptInputProvider>
+    );
+
+    const addSpy = vi.spyOn(document, "addEventListener");
+
+    const first = new File(["a"], "a.png", { type: "image/png" });
+    await act(() => {
+      document.dispatchEvent(makeDropEvent([first]));
+    });
+
+    await vi.waitFor(() => {
+      expect(screen.getByTestId("count")).toHaveTextContent("1");
+    });
+
+    const second = new File(["b"], "b.png", { type: "image/png" });
+    const third = new File(["c"], "c.png", { type: "image/png" });
+    await act(() => {
+      document.dispatchEvent(makeDropEvent([second, third]));
+    });
+
+    // Capacity was 1 after the first drop: one file added, overflow reported
+    await vi.waitFor(() => {
+      expect(screen.getByTestId("count")).toHaveTextContent("2");
+    });
+    expect(onError).toHaveBeenCalledWith(
+      expect.objectContaining({ code: "max_files" })
+    );
+
+    // Both drops went through listeners attached once at mount
+    expect(
+      addSpy.mock.calls.filter(([type]) => DND_EVENT_TYPES.has(type))
+    ).toHaveLength(0);
+    addSpy.mockRestore();
   });
 });
 
