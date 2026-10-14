@@ -49,8 +49,18 @@ export const InlineCitationText = ({
 
 export type InlineCitationCardProps = ComponentProps<typeof HoverCard>;
 
+// Open/close with no delay. Radix's HoverCard takes these props; Base UI's
+// PreviewCard — what `shadcn add` swaps in on a Base UI project — has neither,
+// so naming them in a typed position fails to compile there. Spreading keeps the
+// behaviour on Radix and is inert on Base UI. A caller's own props still win,
+// since they spread last.
+const NO_DELAY = {
+  closeDelay: 0,
+  openDelay: 0,
+} as unknown as ComponentProps<typeof HoverCard>;
+
 export const InlineCitationCard = (props: InlineCitationCardProps) => (
-  <HoverCard closeDelay={0} openDelay={0} {...props} />
+  <HoverCard {...NO_DELAY} {...props} />
 );
 
 export type InlineCitationCardTriggerProps = ComponentProps<typeof Badge> & {
