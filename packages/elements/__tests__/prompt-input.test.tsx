@@ -1054,6 +1054,114 @@ describe("promptInputProvider", () => {
 
     expect(screen.getByTestId("count")).toHaveTextContent("1");
   });
+
+  it("keeps attachment references stable while typing", async () => {
+    setupPromptInputTests();
+    const { PromptInputProvider } = await import("../src/prompt-input");
+    const user = userEvent.setup();
+    const onSubmit = vi.fn();
+    const file = new File(["test"], "test.txt", { type: "text/plain" });
+
+    const fileRefs: AttachmentData[] = [];
+    const AttachmentConsumer = () => {
+      const attachments = usePromptInputAttachments();
+      if (attachments.files.length > 0) {
+        fileRefs.push(attachments.files[0]);
+      }
+      return (
+        <button
+          data-testid="add-file"
+          onClick={() => attachments.add([file])}
+          type="button"
+        >
+          Add
+        </button>
+      );
+    };
+
+    render(
+      <PromptInputProvider>
+        <PromptInput onSubmit={onSubmit}>
+          <PromptInputBody>
+            <AttachmentConsumer />
+            <PromptInputTextarea />
+          </PromptInputBody>
+        </PromptInput>
+      </PromptInputProvider>
+    );
+
+    await user.click(screen.getByTestId("add-file"));
+    expect(fileRefs.length).toBeGreaterThan(0);
+
+    await user.type(screen.getByRole("textbox"), "hello");
+
+    expect(new Set(fileRefs).size).toBe(1);
+  });
+
+  it("does not re-render memoized attachment rows on text input", async () => {
+    setupPromptInputTests();
+    const { PromptInputProvider } = await import("../src/prompt-input");
+    const user = userEvent.setup();
+    const onSubmit = vi.fn();
+    const file = new File(["test"], "test.txt", { type: "text/plain" });
+    const otherFile = new File(["other"], "other.txt", {
+      type: "text/plain",
+    });
+    const chipRenders: string[] = [];
+
+    const Chip = React.memo(({ data }: { data: AttachmentData }) => {
+      chipRenders.push(data.id);
+      return <span data-testid={`chip-${data.id}`}>{data.filename}</span>;
+    });
+    Chip.displayName = "Chip";
+
+    const ChipList = () => {
+      const attachments = usePromptInputAttachments();
+      return (
+        <>
+          <button
+            data-testid="add-file"
+            onClick={() => attachments.add([file])}
+            type="button"
+          >
+            Add
+          </button>
+          <button
+            data-testid="add-other-file"
+            onClick={() => attachments.add([otherFile])}
+            type="button"
+          >
+            Add other
+          </button>
+          {attachments.files.map((f) => (
+            <Chip data={f} key={f.id} />
+          ))}
+        </>
+      );
+    };
+
+    render(
+      <PromptInputProvider>
+        <PromptInput onSubmit={onSubmit}>
+          <PromptInputBody>
+            <ChipList />
+            <PromptInputTextarea />
+          </PromptInputBody>
+        </PromptInput>
+      </PromptInputProvider>
+    );
+
+    await user.click(screen.getByTestId("add-file"));
+    const rendersAfterAdd = chipRenders.length;
+    expect(rendersAfterAdd).toBeGreaterThan(0);
+
+    await user.type(screen.getByRole("textbox"), "hello");
+    expect(chipRenders.length).toBe(rendersAfterAdd);
+
+    await user.click(screen.getByTestId("add-other-file"));
+    expect(chipRenders.length).toBeGreaterThan(rendersAfterAdd);
+    expect(screen.getAllByTestId(/^chip-/)).toHaveLength(2);
+  });
 });
 
 describe("file validation", () => {

@@ -816,7 +816,7 @@ export const PromptInput = ({
       add,
       clear: clearAttachments,
       fileInputRef: inputRef,
-      files: files.map((item) => ({ ...item, id: item.id })),
+      files,
       openFileDialog,
       remove,
     }),
