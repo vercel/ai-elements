@@ -1,5 +1,11 @@
 # ai-elements
 
+## 1.9.1
+
+### Patch Changes
+
+- 5372613: Show a deprecation notice. AI Elements is moving to shadcn/ui and this CLI will be deprecated at the end of November 2026.
+
 ## 1.9.0
 
 ### Minor Changes
