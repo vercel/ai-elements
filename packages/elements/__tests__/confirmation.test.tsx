@@ -76,6 +76,26 @@ describe("confirmationRequest, ConfirmationAccepted, ConfirmationRejected", () =
     expect(screen.queryByText("Rejected")).not.toBeInTheDocument();
   });
 
+  it("renders requestReason when present on approval", () => {
+    render(
+      <Confirmation
+        approval={
+          {
+            id: "test-id",
+            requestReason: "Needs human review before running",
+          } as { id: string }
+        }
+        state="approval-requested"
+      >
+        <ConfirmationRequest>Custom approval message</ConfirmationRequest>
+      </Confirmation>
+    );
+    expect(
+      screen.getByText("Needs human review before running")
+    ).toBeInTheDocument();
+    expect(screen.getByText("Custom approval message")).toBeInTheDocument();
+  });
+
   it("renders ConfirmationAccepted when approved and state is approval-responded", () => {
     render(
       <Confirmation
