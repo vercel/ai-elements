@@ -1997,6 +1997,7 @@ describe("paste functionality", () => {
 
     // Mock clipboardData items
     pasteEvent.clipboardData = {
+      getData: () => "",
       items: [
         {
           getAsFile: () => file,
@@ -2012,6 +2013,96 @@ describe("paste functionality", () => {
     await vi.waitFor(() => {
       expect(screen.getByTestId("count")).toHaveTextContent("1");
     });
+  });
+
+  it("pastes the text of a spreadsheet selection instead of its image", async () => {
+    setupPromptInputTests();
+    const onSubmit = vi.fn();
+
+    const AttachmentConsumer = () => {
+      const attachments = usePromptInputAttachments();
+      return <div data-testid="count">{attachments.files.length}</div>;
+    };
+
+    render(
+      <PromptInput onSubmit={onSubmit}>
+        <PromptInputBody>
+          <AttachmentConsumer />
+          <PromptInputTextarea />
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    const textarea = screen.getByPlaceholderText(
+      "What would you like to know?"
+    );
+    textarea.focus();
+
+    const clipboardData = new DataTransfer();
+    clipboardData.setData("text/plain", "Q1\t42");
+    clipboardData.setData(
+      "text/html",
+      "<table><tr><td>Q1</td><td>42</td></tr></table>"
+    );
+    clipboardData.items.add(
+      new File(["image"], "image.png", { type: "image/png" })
+    );
+    const pasteEvent = new ClipboardEvent("paste", {
+      bubbles: true,
+      cancelable: true,
+      clipboardData,
+    });
+
+    await act(() => {
+      textarea.dispatchEvent(pasteEvent);
+    });
+
+    expect(pasteEvent.defaultPrevented).toBeFalsy();
+    expect(screen.getByTestId("count")).toHaveTextContent("0");
+  });
+
+  it("attaches a copied file whose name is also on the clipboard as text", async () => {
+    setupPromptInputTests();
+    const onSubmit = vi.fn();
+
+    const AttachmentConsumer = () => {
+      const attachments = usePromptInputAttachments();
+      return <div data-testid="count">{attachments.files.length}</div>;
+    };
+
+    render(
+      <PromptInput onSubmit={onSubmit}>
+        <PromptInputBody>
+          <AttachmentConsumer />
+          <PromptInputTextarea />
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    const textarea = screen.getByPlaceholderText(
+      "What would you like to know?"
+    );
+    textarea.focus();
+
+    const clipboardData = new DataTransfer();
+    clipboardData.setData("text/plain", "report.png");
+    clipboardData.items.add(
+      new File(["image"], "report.png", { type: "image/png" })
+    );
+    const pasteEvent = new ClipboardEvent("paste", {
+      bubbles: true,
+      cancelable: true,
+      clipboardData,
+    });
+
+    await act(() => {
+      textarea.dispatchEvent(pasteEvent);
+    });
+
+    await vi.waitFor(() => {
+      expect(screen.getByTestId("count")).toHaveTextContent("1");
+    });
+    expect(pasteEvent.defaultPrevented).toBeTruthy();
   });
 
   it("handles paste with no files", () => {

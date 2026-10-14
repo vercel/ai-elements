@@ -1019,6 +1019,14 @@ export const PromptInputTextarea = ({
         return;
       }
 
+      // Copied spreadsheet cells also carry a picture of the selection; paste their text instead
+      if (
+        event.clipboardData.getData("text/plain") &&
+        event.clipboardData.getData("text/html")
+      ) {
+        return;
+      }
+
       const files: File[] = [];
 
       for (const item of items) {
