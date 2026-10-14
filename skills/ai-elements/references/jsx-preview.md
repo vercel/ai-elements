@@ -87,18 +87,18 @@ export const GeneratedUIWithComponents = ({ jsx }: { jsx: string }) => (
 | `components` | `Record<string, React.ComponentType>` | - | Custom components available within the rendered JSX. |
 | `bindings` | `Record<string, unknown>` | - | Variables and functions available within the JSX scope. |
 | `onError` | `(error: Error) => void` | - | Callback fired when a parsing or rendering error occurs. |
-| `...props` | `React.ComponentProps<` | - | Any other props are spread to the underlying div element. |
+| `...props` | `React.ComponentProps<'div'>` | - | Any other props are spread to the underlying div element. |
 
 ### `<JSXPreviewContent />`
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `renderError` | `JsxParserProps[` | - | Custom error renderer passed to react-jsx-parser. |
-| `...props` | `React.ComponentProps<` | - | Any other props are spread to the underlying div element. |
+| `renderError` | `JsxParserProps['renderError']` | - | Custom error renderer passed to react-jsx-parser. |
+| `...props` | `React.ComponentProps<'div'>` | - | Any other props are spread to the underlying div element. |
 
 ### `<JSXPreviewError />`
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `children` | `ReactNode | ((error: Error) => ReactNode)` | - | Custom error content or render function receiving the error. |
-| `...props` | `React.ComponentProps<` | - | Any other props are spread to the underlying div element. |
+| `children` | `ReactNode \| ((error: Error) => ReactNode)` | - | Custom error content or render function receiving the error. |
+| `...props` | `React.ComponentProps<'div'>` | - | Any other props are spread to the underlying div element. |

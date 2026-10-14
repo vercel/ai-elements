@@ -55,7 +55,7 @@ See `scripts/schema-display-nested.tsx` for this example.
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `method` | `unknown` | - | HTTP method. |
+| `method` | `"GET" \| "POST" \| "PUT" \| "PATCH" \| "DELETE"` | - | HTTP method. |
 | `path` | `string` | - | API endpoint path. |
 | `description` | `string` | - | Endpoint description. |
 | `parameters` | `SchemaParameter[]` | - | URL/query parameters. |

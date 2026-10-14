@@ -217,8 +217,8 @@ See `scripts/confirmation-rejected.tsx` for this example.
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `approval` | `ToolUIPart[` | - | The approval object containing the approval ID and status. If not provided or undefined, the component will not render. |
-| `state` | `ToolUIPart[` | - | The current state of the tool (input-streaming, input-available, approval-requested, approval-responded, output-denied, or output-available). Will not render for input-streaming or input-available states. |
+| `approval` | `ToolUIPart["approval"]` | - | The approval object containing the approval ID and status. If not provided or undefined, the component will not render. |
+| `state` | `ToolUIPart["state"]` | - | The current state of the tool (input-streaming, input-available, approval-requested, approval-responded, output-denied, or output-available). Will not render for input-streaming or input-available states. |
 | `className` | `string` | - | Additional CSS classes to apply to the Alert component. |
 | `...props` | `React.ComponentProps<typeof Alert>` | - | Any other props are spread to the Alert component. |
 
@@ -234,26 +234,26 @@ A styled description element for displaying a title or label within the confirma
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `children` | `React.ReactNode` | - | The content to display when approval is requested. Only renders when state is  |
+| `children` | `React.ReactNode` | - | The content to display when approval is requested. Only renders when state is "approval-requested". |
 
 ### `<ConfirmationAccepted />`
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `children` | `React.ReactNode` | - | The content to display when approval is accepted. Only renders when approval.approved is true and state is  |
+| `children` | `React.ReactNode` | - | The content to display when approval is accepted. Only renders when approval.approved is true and state is "approval-responded", "output-denied", or "output-available". |
 
 ### `<ConfirmationRejected />`
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `children` | `React.ReactNode` | - | The content to display when approval is rejected. Only renders when approval.approved is false and state is  |
+| `children` | `React.ReactNode` | - | The content to display when approval is rejected. Only renders when approval.approved is false and state is "approval-responded", "output-denied", or "output-available". |
 
 ### `<ConfirmationActions />`
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `className` | `string` | - | Additional CSS classes to apply to the actions container. |
-| `...props` | `React.ComponentProps<` | - | Any other props are spread to the div element. Only renders when state is  |
+| `...props` | `React.ComponentProps<"div">` | - | Any other props are spread to the div element. Only renders when state is "approval-requested". |
 
 ### `<ConfirmationAction />`
 

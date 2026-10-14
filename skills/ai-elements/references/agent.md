@@ -89,28 +89,28 @@ export default function Page() {
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `...props` | `React.ComponentProps<` | - | Any props are spread to the root div. |
+| `...props` | `React.ComponentProps<"div">` | - | Any props are spread to the root div. |
 
 ### `<AgentHeader />`
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `name` | `string` | Required | The name of the agent. |
-| `model` | `string` | - | The model identifier (e.g.  |
-| `...props` | `React.ComponentProps<` | - | Any other props are spread to the container div. |
+| `model` | `string` | - | The model identifier (e.g. "anthropic/claude-sonnet-4-5"). |
+| `...props` | `React.ComponentProps<"div">` | - | Any other props are spread to the container div. |
 
 ### `<AgentContent />`
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `...props` | `React.ComponentProps<` | - | Any other props are spread to the container div. |
+| `...props` | `React.ComponentProps<"div">` | - | Any other props are spread to the container div. |
 
 ### `<AgentInstructions />`
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `children` | `string` | Required | The instruction text. |
-| `...props` | `React.ComponentProps<` | - | Any other props are spread to the container div. |
+| `...props` | `React.ComponentProps<"div">` | - | Any other props are spread to the container div. |
 
 ### `<AgentTools />`
 
@@ -131,4 +131,4 @@ export default function Page() {
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `schema` | `string` | Required | The output schema as a string (displayed with syntax highlighting). |
-| `...props` | `React.ComponentProps<` | - | Any other props are spread to the container div. |
+| `...props` | `React.ComponentProps<"div">` | - | Any other props are spread to the container div. |

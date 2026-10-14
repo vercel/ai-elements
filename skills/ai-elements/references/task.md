@@ -213,10 +213,10 @@ export async function POST(req: Request) {
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `...props` | `React.ComponentProps<` | - | Any other props are spread to the underlying div. |
+| `...props` | `React.ComponentProps<"div">` | - | Any other props are spread to the underlying div. |
 
 ### `<TaskItemFile />`
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `...props` | `React.ComponentProps<` | - | Any other props are spread to the underlying div. |
+| `...props` | `React.ComponentProps<"div">` | - | Any other props are spread to the underlying div. |

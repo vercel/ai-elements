@@ -38,7 +38,7 @@ npx ai-elements@latest add package-info
 | `name` | `string` | Required | Package name. |
 | `currentVersion` | `string` | - | Current installed version. |
 | `newVersion` | `string` | - | New version being installed. |
-| `changeType` | `unknown` | - | Type of version change. |
+| `changeType` | `"major" \| "minor" \| "patch" \| "added" \| "removed"` | - | Type of version change. |
 | `...props` | `React.HTMLAttributes<HTMLDivElement>` | - | Spread to the container div. |
 
 ### `<PackageInfoHeader />`

@@ -47,7 +47,7 @@ Root MediaController component. Accepts all MediaController props except `audio`
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `style` | `CSSProperties` | - | Custom CSS properties can be passed to override media-chrome theming variables. |
-| `...props` | `Omit<React.ComponentProps<typeof MediaController>, ` | - | Any other props are spread to the MediaController component. |
+| `...props` | `Omit<React.ComponentProps<typeof MediaController>, "audio">` | - | Any other props are spread to the MediaController component. |
 
 ### `<AudioPlayerElement />`
 
@@ -56,8 +56,8 @@ The audio element that contains the media source. Accepts either a remote URL or
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `src` | `string` | - | The URL of the audio file to play (for remote audio). |
-| `data` | `SpeechResult[` | - | AI SDK Speech Result audio data with base64 encoding (for AI-generated audio). |
-| `...props` | `Omit<React.ComponentProps<` | - | Any other props are spread to the audio element (excluding src when using data). |
+| `data` | `SpeechResult["audio"]` | - | AI SDK Speech Result audio data with base64 encoding (for AI-generated audio). |
+| `...props` | `Omit<React.ComponentProps<"audio">, "src">` | - | Any other props are spread to the audio element (excluding src when using data). |
 
 ### `<AudioPlayerControlBar />`
 

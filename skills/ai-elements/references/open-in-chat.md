@@ -46,7 +46,7 @@ npx ai-elements@latest add open-in-chat
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `children` | `React.ReactNode` | - | Custom trigger button. |
+| `children` | `React.ReactNode` | `"Open in chat" button with chevron icon` | Custom trigger button. |
 | `...props` | `React.ComponentProps<typeof DropdownMenuTrigger>` | - | Props to spread to the underlying DropdownMenuTrigger component. |
 
 ### `<OpenInContent />`

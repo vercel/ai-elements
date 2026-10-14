@@ -35,7 +35,7 @@ The component extends the shadcn/ui Button component, so all Button props are av
 |------|------|---------|-------------|
 | `onTranscriptionChange` | `(text: string) => void` | - | Callback fired when final transcription text is available. Only fires for completed phrases, not interim results. |
 | `onAudioRecorded` | `(audioBlob: Blob) => Promise<string>` | - | Callback for MediaRecorder fallback. Required for Firefox/Safari support. Receives recorded audio blob and should return transcribed text from an external service (e.g., OpenAI Whisper). |
-| `lang` | `string` | - | Language for speech recognition. |
+| `lang` | `string` | `"en-US"` | Language for speech recognition. |
 | `...props` | `React.ComponentProps<typeof Button>` | - | Any other props are spread to the Button component, including variant, size, disabled, etc. |
 
 ## Behavior

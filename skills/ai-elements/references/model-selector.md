@@ -41,7 +41,7 @@ npx ai-elements@latest add model-selector
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `title` | `ReactNode` | - | Accessible title for the dialog (rendered in sr-only). |
+| `title` | `ReactNode` | `"Model Selector"` | Accessible title for the dialog (rendered in sr-only). |
 | `...props` | `React.ComponentProps<typeof DialogContent>` | - | Any other props are spread to the underlying DialogContent component. |
 
 ### `<ModelSelectorDialog />`
@@ -96,17 +96,17 @@ npx ai-elements@latest add model-selector
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `provider` | `string` | Required | The AI provider name. Supports major providers like  |
-| `...props` | `Omit<React.ComponentProps<` | - | Any other props are spread to the underlying img element (except src and alt which are generated). |
+| `provider` | `string` | Required | The AI provider name. Supports major providers like "openai", "anthropic", "google", "mistral", etc. |
+| `...props` | `Omit<React.ComponentProps<"img">, "src" \| "alt">` | - | Any other props are spread to the underlying img element (except src and alt which are generated). |
 
 ### `<ModelSelectorLogoGroup />`
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `...props` | `React.ComponentProps<` | - | Any other props are spread to the underlying div element. |
+| `...props` | `React.ComponentProps<"div">` | - | Any other props are spread to the underlying div element. |
 
 ### `<ModelSelectorName />`
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `...props` | `React.ComponentProps<` | - | Any other props are spread to the underlying span element. |
+| `...props` | `React.ComponentProps<"span">` | - | Any other props are spread to the underlying span element. |

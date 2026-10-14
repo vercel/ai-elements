@@ -121,4 +121,4 @@ See `scripts/suggestion-input.tsx` for this example.
 |------|------|---------|-------------|
 | `suggestion` | `string` | Required | The suggestion string to display and emit on click. |
 | `onClick` | `(suggestion: string) => void` | - | Callback fired when the suggestion is clicked. |
-| `...props` | `Omit<React.ComponentProps<typeof Button>, ` | - | Any other props are spread to the underlying shadcn/ui Button component. |
+| `...props` | `Omit<React.ComponentProps<typeof Button>, "onClick">` | - | Any other props are spread to the underlying shadcn/ui Button component. |

@@ -90,7 +90,7 @@ Container component that sets the layout variant.
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `variant` | `unknown` | - | The display layout variant. |
+| `variant` | `"grid" \| "inline" \| "list"` | `"grid"` | The display layout variant. |
 | `...props` | `React.HTMLAttributes<HTMLDivElement>` | - | Spread to the underlying div element. |
 
 ### `<Attachment />`
@@ -99,7 +99,7 @@ Individual attachment item wrapper.
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `data` | `unknown` | - | The attachment data (FileUIPart or SourceDocumentUIPart with id). |
+| `data` | `(FileUIPart & { id: string }) \| (SourceDocumentUIPart & { id: string })` | - | The attachment data (FileUIPart or SourceDocumentUIPart with id). |
 | `onRemove` | `() => void` | - | Callback fired when the remove button is clicked. |
 | `...props` | `React.HTMLAttributes<HTMLDivElement>` | - | Spread to the underlying div element. |
 
@@ -127,7 +127,7 @@ Remove button that appears on hover.
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `label` | `string` | - | Screen reader label for the button. |
+| `label` | `string` | `"Remove"` | Screen reader label for the button. |
 | `...props` | `React.ComponentProps<typeof Button>` | - | Spread to the underlying Button component. |
 
 ### `<AttachmentHoverCard />`
@@ -154,7 +154,7 @@ Content displayed in the hover card.
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `align` | `unknown` | - | Alignment of the hover card content. |
+| `align` | `"start" \| "center" \| "end"` | `"start"` | Alignment of the hover card content. |
 | `...props` | `React.ComponentProps<typeof HoverCardContent>` | - | Spread to the underlying HoverCardContent component. |
 
 ### `<AttachmentEmpty />`

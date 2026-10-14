@@ -35,7 +35,7 @@ Root component that provides context and manages transcript state. Uses render p
 | `currentTime` | `number` | `0` | Current playback time in seconds (controlled). |
 | `onSeek` | `(time: number) => void` | - | Callback fired when a segment is clicked or when currentTime changes. |
 | `children` | `(segment: TranscriptionSegment, index: number) => ReactNode` | - | Render function that receives each segment and its index. |
-| `...props` | `Omit<React.ComponentProps<` | - | Any other props are spread to the root div element. |
+| `...props` | `Omit<React.ComponentProps<"div">, "children">` | - | Any other props are spread to the root div element. |
 
 ### `<TranscriptionSegment />`
 
@@ -45,7 +45,7 @@ Individual segment button with automatic state styling and click-to-seek functio
 |------|------|---------|-------------|
 | `segment` | `TranscriptionSegment` | - | The transcription segment data. |
 | `index` | `number` | - | The segment index. |
-| `...props` | `React.ComponentProps<` | - | Any other props are spread to the button element. |
+| `...props` | `React.ComponentProps<"button">` | - | Any other props are spread to the button element. |
 
 ## Behavior
 

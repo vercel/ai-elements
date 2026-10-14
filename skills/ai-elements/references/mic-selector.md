@@ -54,7 +54,7 @@ Displays the currently selected microphone name or a placeholder.
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `...props` | `React.ComponentProps<` | - | Any other props are spread to the span element. |
+| `...props` | `React.ComponentProps<"span">` | - | Any other props are spread to the span element. |
 
 ### `<MicSelectorContent />`
 
@@ -80,7 +80,7 @@ Wrapper for the list of microphone items. Uses render props pattern to provide a
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `children` | `(devices: MediaDeviceInfo[]) => ReactNode` | - | Render function that receives the array of available devices. |
-| `...props` | `Omit<React.ComponentProps<typeof CommandList>, ` | - | Any other props are spread to the CommandList component. |
+| `...props` | `Omit<React.ComponentProps<typeof CommandList>, "children">` | - | Any other props are spread to the CommandList component. |
 
 ### `<MicSelectorEmpty />`
 
@@ -88,7 +88,7 @@ Message shown when no microphones match the search.
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `children` | `ReactNode` | - | The message to display. |
+| `children` | `ReactNode` | `"No microphone found."` | The message to display. |
 | `...props` | `React.ComponentProps<typeof CommandEmpty>` | - | Any other props are spread to the CommandEmpty component. |
 
 ### `<MicSelectorItem />`
@@ -107,7 +107,7 @@ Displays a formatted microphone label with intelligent device ID parsing. Automa
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `device` | `MediaDeviceInfo` | - | The MediaDeviceInfo object for the device. |
-| `...props` | `React.ComponentProps<` | - | Any other props are spread to the span element. |
+| `...props` | `React.ComponentProps<"span">` | - | Any other props are spread to the span element. |
 
 ## Hooks
 
@@ -143,7 +143,7 @@ export default function Example() {
 |------|------|---------|-------------|
 | `devices` | `MediaDeviceInfo[]` | - | Array of available audio input devices. |
 | `loading` | `boolean` | - | Whether devices are currently being loaded. |
-| `error` | `string | null` | - | Error message if device loading failed. |
+| `error` | `string \| null` | - | Error message if device loading failed. |
 | `hasPermission` | `boolean` | - | Whether microphone permission has been granted. |
 | `loadDevices` | `() => Promise<void>` | - | Function to request microphone permission and load device names. |
 

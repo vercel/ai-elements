@@ -38,7 +38,7 @@ See `scripts/queue-prompt-input.tsx` for this example.
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `...props` | `React.ComponentProps<` | - | Any other props are spread to the root div. |
+| `...props` | `React.ComponentProps<"div">` | - | Any other props are spread to the root div. |
 
 ### `<QueueSection />`
 
@@ -51,7 +51,7 @@ See `scripts/queue-prompt-input.tsx` for this example.
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `...props` | `React.ComponentProps<` | - | Any other props are spread to the button element. |
+| `...props` | `React.ComponentProps<"button">` | - | Any other props are spread to the button element. |
 
 ### `<QueueSectionLabel />`
 
@@ -60,7 +60,7 @@ See `scripts/queue-prompt-input.tsx` for this example.
 | `label` | `string` | - | The label text to display. |
 | `count` | `number` | - | The count to display before the label. |
 | `icon` | `React.ReactNode` | - | An optional icon to display before the count. |
-| `...props` | `React.ComponentProps<` | - | Any other props are spread to the span element. |
+| `...props` | `React.ComponentProps<"span">` | - | Any other props are spread to the span element. |
 
 ### `<QueueSectionContent />`
 
@@ -78,58 +78,58 @@ See `scripts/queue-prompt-input.tsx` for this example.
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `...props` | `React.ComponentProps<` | - | Any other props are spread to the li element. |
+| `...props` | `React.ComponentProps<"li">` | - | Any other props are spread to the li element. |
 
 ### `<QueueItemIndicator />`
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `completed` | `boolean` | `false` | Whether the item is completed. Affects the indicator styling. |
-| `...props` | `React.ComponentProps<` | - | Any other props are spread to the span element. |
+| `...props` | `React.ComponentProps<"span">` | - | Any other props are spread to the span element. |
 
 ### `<QueueItemContent />`
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `completed` | `boolean` | `false` | Whether the item is completed. Affects text styling with strikethrough and opacity. |
-| `...props` | `React.ComponentProps<` | - | Any other props are spread to the span element. |
+| `...props` | `React.ComponentProps<"span">` | - | Any other props are spread to the span element. |
 
 ### `<QueueItemDescription />`
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `completed` | `boolean` | `false` | Whether the item is completed. Affects text styling. |
-| `...props` | `React.ComponentProps<` | - | Any other props are spread to the div element. |
+| `...props` | `React.ComponentProps<"div">` | - | Any other props are spread to the div element. |
 
 ### `<QueueItemActions />`
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `...props` | `React.ComponentProps<` | - | Any other props are spread to the div element. |
+| `...props` | `React.ComponentProps<"div">` | - | Any other props are spread to the div element. |
 
 ### `<QueueItemAction />`
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `...props` | `Omit<React.ComponentProps<typeof Button>, ` | - | Any other props (except variant and size) are spread to the Button component. |
+| `...props` | `Omit<React.ComponentProps<typeof Button>, "variant" \| "size">` | - | Any other props (except variant and size) are spread to the Button component. |
 
 ### `<QueueItemAttachment />`
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `...props` | `React.ComponentProps<` | - | Any other props are spread to the div element. |
+| `...props` | `React.ComponentProps<"div">` | - | Any other props are spread to the div element. |
 
 ### `<QueueItemImage />`
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `...props` | `React.ComponentProps<` | - | Any other props are spread to the img element. |
+| `...props` | `React.ComponentProps<"img">` | - | Any other props are spread to the img element. |
 
 ### `<QueueItemFile />`
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `...props` | `React.ComponentProps<` | - | Any other props are spread to the span element. |
+| `...props` | `React.ComponentProps<"span">` | - | Any other props are spread to the span element. |
 
 ## Type Exports
 

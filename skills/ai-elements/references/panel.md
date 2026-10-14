@@ -28,6 +28,6 @@ npx ai-elements@latest add panel
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `position` | `unknown` | - | Position of the panel on the canvas. |
+| `position` | `'top-left' \| 'top-center' \| 'top-right' \| 'bottom-left' \| 'bottom-center' \| 'bottom-right'` | - | Position of the panel on the canvas. |
 | `className` | `string` | - | Additional CSS classes to apply to the panel. |
 | `...props` | `ComponentProps<typeof Panel>` | - | Any other props from @xyflow/react Panel component. |

@@ -151,7 +151,7 @@ export default ActionsDemo;
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `from` | `UIMessage[` | - | The role of the message sender ( |
+| `from` | `UIMessage["role"]` | - | The role of the message sender ("user", "assistant", or "system"). |
 | `...props` | `React.HTMLAttributes<HTMLDivElement>` | - | Any other props are spread to the root div. |
 
 ### `<MessageContent />`
@@ -168,8 +168,8 @@ export default ActionsDemo;
 | `parseIncompleteMarkdown` | `boolean` | `true` | Whether to parse and fix incomplete markdown syntax (e.g., unclosed code blocks or lists). |
 | `className` | `string` | - | CSS class names to apply to the wrapper div element. |
 | `components` | `object` | - | Custom React components to use for rendering markdown elements (e.g., custom heading, paragraph, code block components). |
-| `allowedImagePrefixes` | `string[]` | `[` | Array of allowed URL prefixes for images. Use [ |
-| `allowedLinkPrefixes` | `string[]` | `[` | Array of allowed URL prefixes for links. Use [ |
+| `allowedImagePrefixes` | `string[]` | `["*"]` | Array of allowed URL prefixes for images. Use ["*"] to allow all images. |
+| `allowedLinkPrefixes` | `string[]` | `["*"]` | Array of allowed URL prefixes for links. Use ["*"] to allow all links. |
 | `defaultOrigin` | `string` | - | Default origin to use for relative URLs in links and images. |
 | `rehypePlugins` | `array` | `[rehypeKatex]` | Array of rehype plugins to use for processing HTML. Includes KaTeX for math rendering by default. |
 | `remarkPlugins` | `array` | `[remarkGfm, remarkMath]` | Array of remark plugins to use for processing markdown. Includes GitHub Flavored Markdown and math support by default. |
@@ -233,5 +233,5 @@ A container for placing actions and branch selectors below a message. Lays out c
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `...props` | `React.ComponentProps<` | - | Any other props are spread to the root div. |
+| `...props` | `React.ComponentProps<"div">` | - | Any other props are spread to the root div. |
 ```

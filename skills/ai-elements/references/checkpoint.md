@@ -178,6 +178,6 @@ const restoreAndBranch = (messageIndex: number) => {
 |------|------|---------|-------------|
 | `children` | `React.ReactNode` | - | The text or content to display in the trigger button. |
 | `tooltip` | `string` | - | Optional tooltip text shown on hover. |
-| `variant` | `string` | - | The button variant style. |
-| `size` | `string` | - | The button size. |
+| `variant` | `string` | `"ghost"` | The button variant style. |
+| `size` | `string` | `"sm"` | The button size. |
 | `...props` | `React.ComponentProps<typeof Button>` | - | Any other props are spread to the underlying shadcn/ui Button component. |
