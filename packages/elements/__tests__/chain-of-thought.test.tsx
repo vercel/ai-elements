@@ -68,6 +68,26 @@ describe("chainOfThought", () => {
 
     expect(onOpenChange).toHaveBeenCalledWith(true);
   });
+
+  it("points the header's aria-controls at the content", async () => {
+    const user = userEvent.setup();
+
+    render(
+      <ChainOfThought>
+        <ChainOfThoughtHeader />
+        <ChainOfThoughtContent>Steps</ChainOfThoughtContent>
+      </ChainOfThought>
+    );
+
+    const trigger = screen.getByRole("button");
+    await user.click(trigger);
+
+    expect(trigger).toHaveAttribute("aria-expanded", "true");
+    expect(trigger).toHaveAttribute(
+      "aria-controls",
+      screen.getByText("Steps").id
+    );
+  });
 });
 
 describe("chainOfThoughtHeader", () => {
