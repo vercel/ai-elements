@@ -25,6 +25,11 @@ const getCommandPrefix = () => {
   return "npx -y";
 };
 
+// oxlint-disable-next-line eslint-plugin-jest(require-hook)
+console.warn(
+  "\n⚠ AI Elements is moving to shadcn/ui. This CLI will be deprecated at the end of November 2026.\n  Learn more: https://ui.shadcn.com/docs/ai-elements\n"
+);
+
 const commandPrefix = getCommandPrefix();
 
 // Parse command line arguments

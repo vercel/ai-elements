@@ -1,5 +1,8 @@
 # ▲ AI Elements
 
+> [!WARNING]
+> **AI Elements is moving to shadcn/ui.** This project will be deprecated at the end of November 2026 and replaced by [AI Elements from shadcn/ui](https://ui.shadcn.com/docs/ai-elements). New projects should use the shadcn/ui version once it's available.
+
 [AI Elements](https://elements.ai-sdk.dev) is a component library built on top of [shadcn/ui](https://ui.shadcn.com/) to help you build AI-native applications faster.
 
 ## Overview
