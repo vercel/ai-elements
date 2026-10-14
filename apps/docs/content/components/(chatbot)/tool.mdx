@@ -277,7 +277,7 @@ Shows a tool that encountered an error during execution. Opens by default to dis
   type={{
     input: {
       description:
-        "The input parameters passed to the tool, displayed as formatted JSON.",
+        "The input parameters passed to the tool, displayed as formatted JSON. Renders nothing when input is undefined, such as before parameters arrive during input-streaming.",
       type: 'ToolUIPart["input"]',
     },
     "...props": {
