@@ -263,7 +263,7 @@ describe("contextReasoningUsage", () => {
         defaultOpen
         maxTokens={100}
         modelId="gpt-4"
-        usage={{ reasoningTokens: 10 }}
+        usage={{ outputTokenDetails: { reasoningTokens: 10 } }}
         usedTokens={50}
       >
         <ContextContent>
@@ -279,7 +279,7 @@ describe("contextReasoningUsage", () => {
       <Context
         defaultOpen
         maxTokens={100}
-        usage={{ reasoningTokens: 10 }}
+        usage={{ outputTokenDetails: { reasoningTokens: 10 } }}
         usedTokens={10}
       >
         <ContextContent>
@@ -320,7 +320,7 @@ describe("contextCacheUsage", () => {
         defaultOpen
         maxTokens={100}
         modelId="gpt-4"
-        usage={{ cachedInputTokens: 20 }}
+        usage={{ inputTokenDetails: { cacheReadTokens: 20 } }}
         usedTokens={50}
       >
         <ContextContent>
@@ -336,7 +336,7 @@ describe("contextCacheUsage", () => {
       <Context
         defaultOpen
         maxTokens={100}
-        usage={{ cachedInputTokens: 20 }}
+        usage={{ inputTokenDetails: { cacheReadTokens: 20 } }}
         usedTokens={20}
       >
         <ContextContent>
