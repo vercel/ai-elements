@@ -490,7 +490,7 @@ export type PromptInputProps = Omit<
   HTMLAttributes<HTMLFormElement>,
   "onSubmit" | "onError"
 > & {
-  // e.g., "image/*" or leave undefined for any
+  // e.g., "image/*", ".pdf" or leave undefined for any
   accept?: string;
   multiple?: boolean;
   // When true, accepts drops anywhere on document. Default false (opt-in).
@@ -564,6 +564,10 @@ export const PromptInput = ({
         .filter(Boolean);
 
       return patterns.some((pattern) => {
+        if (pattern.startsWith(".")) {
+          // e.g: .xlsx -> matched against the file name, case-insensitive
+          return f.name.toLowerCase().endsWith(pattern.toLowerCase());
+        }
         if (pattern.endsWith("/*")) {
           // e.g: image/* -> image/
           const prefix = pattern.slice(0, -1);
