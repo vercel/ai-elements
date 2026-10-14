@@ -586,6 +586,13 @@ export const PromptInput = ({
         });
         return;
       }
+      if (accepted.length < incoming.length) {
+        onError?.({
+          code: "accept",
+          message:
+            "Some files do not match the accepted types and were not added.",
+        });
+      }
       const withinSize = (f: File) =>
         maxFileSize ? f.size <= maxFileSize : true;
       const sized = accepted.filter(withinSize);
@@ -595,6 +602,12 @@ export const PromptInput = ({
           message: "All files exceed the maximum size.",
         });
         return;
+      }
+      if (sized.length < accepted.length) {
+        onError?.({
+          code: "max_file_size",
+          message: "Some files exceed the maximum size and were not added.",
+        });
       }
 
       setItems((prev) => {
@@ -650,6 +663,13 @@ export const PromptInput = ({
         });
         return;
       }
+      if (accepted.length < incoming.length) {
+        onError?.({
+          code: "accept",
+          message:
+            "Some files do not match the accepted types and were not added.",
+        });
+      }
       const withinSize = (f: File) =>
         maxFileSize ? f.size <= maxFileSize : true;
       const sized = accepted.filter(withinSize);
@@ -659,6 +679,12 @@ export const PromptInput = ({
           message: "All files exceed the maximum size.",
         });
         return;
+      }
+      if (sized.length < accepted.length) {
+        onError?.({
+          code: "max_file_size",
+          message: "Some files exceed the maximum size and were not added.",
+        });
       }
 
       const currentCount = files.length;
