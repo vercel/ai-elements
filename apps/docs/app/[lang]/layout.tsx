@@ -1,6 +1,7 @@
 import "../global.css";
 import { cn } from "@repo/shadcn-ui/lib/utils";
 
+import { DeprecationBanner } from "@/components/geistdocs/deprecation-banner";
 import { Footer } from "@/components/geistdocs/footer";
 import { Navbar } from "@/components/geistdocs/navbar";
 import { GeistdocsProvider } from "@/components/geistdocs/provider";
@@ -20,6 +21,7 @@ const Layout = async ({ children, params }: LayoutProps<"/[lang]">) => {
     >
       <body>
         <GeistdocsProvider basePath={basePath} lang={lang}>
+          <DeprecationBanner />
           <Navbar />
           {children}
           <Footer />
