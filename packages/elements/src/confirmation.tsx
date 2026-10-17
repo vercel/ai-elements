@@ -1,10 +1,11 @@
 "use client";
 
+import type { ToolUIPart } from "ai";
+import type { ComponentProps, ReactNode } from "react";
+
 import { Alert, AlertDescription } from "@repo/shadcn-ui/components/ui/alert";
 import { Button } from "@repo/shadcn-ui/components/ui/button";
 import { cn } from "@repo/shadcn-ui/lib/utils";
-import type { ToolUIPart } from "ai";
-import type { ComponentProps, ReactNode } from "react";
 import { createContext, useContext, useMemo } from "react";
 
 type ToolUIPartApproval =
@@ -164,6 +165,13 @@ export const ConfirmationActions = ({
 
 export type ConfirmationActionProps = ComponentProps<typeof Button>;
 
-export const ConfirmationAction = (props: ConfirmationActionProps) => (
-  <Button className="h-8 px-3 text-sm" type="button" {...props} />
+export const ConfirmationAction = ({
+  className,
+  ...props
+}: ConfirmationActionProps) => (
+  <Button
+    className={cn("h-8 px-3 text-sm", className)}
+    type="button"
+    {...props}
+  />
 );

@@ -230,6 +230,22 @@ describe("confirmationActions", () => {
     const actionsContainer = screen.getByText("Accept").parentElement;
     expect(actionsContainer).toHaveClass("custom-class");
   });
+
+  it("merges custom className on actions without dropping compact sizing", () => {
+    render(
+      <Confirmation approval={{ id: "test-id" }} state="approval-requested">
+        <ConfirmationActions>
+          <ConfirmationAction className="text-destructive" variant="outline">
+            Reject
+          </ConfirmationAction>
+          <ConfirmationAction variant="default">Accept</ConfirmationAction>
+        </ConfirmationActions>
+      </Confirmation>
+    );
+    const reject = screen.getByText("Reject");
+    expect(reject).toHaveClass("text-destructive", "h-8", "px-3", "text-sm");
+    expect(screen.getByText("Accept")).toHaveClass("h-8", "px-3", "text-sm");
+  });
 });
 
 describe("confirmationAccepted", () => {
