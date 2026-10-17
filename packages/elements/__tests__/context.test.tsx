@@ -33,6 +33,48 @@ describe("context", () => {
     expect(screen.getByText("50%")).toBeInTheDocument();
   });
 
+  it.each([
+    { maxTokens: 0, usedTokens: 0 },
+    { maxTokens: 0, usedTokens: 50 },
+    { maxTokens: 100, usedTokens: -1 },
+  ])(
+    "clamps to 0% for usedTokens=$usedTokens maxTokens=$maxTokens",
+    ({ maxTokens, usedTokens }) => {
+      const { container } = render(
+        <Context maxTokens={maxTokens} usedTokens={usedTokens}>
+          <ContextTrigger />
+        </Context>
+      );
+      expect(screen.getByText("0%")).toBeInTheDocument();
+      const ring = container.querySelector("circle[stroke-dashoffset]");
+      // Empty ring: offset equals the full circumference (2π × r=10 ≈ 62.83)
+      expect(Number(ring?.getAttribute("stroke-dashoffset"))).toBeCloseTo(
+        62.83,
+        1
+      );
+    }
+  );
+
+  it("clamps over-budget usage to a full 100% indicator", () => {
+    const { container } = render(
+      <Context defaultOpen maxTokens={100} usedTokens={150}>
+        <ContextTrigger />
+        <ContextContent>
+          <ContextContentHeader />
+        </ContextContent>
+      </Context>
+    );
+    expect(screen.getAllByText("100%").length).toBeGreaterThan(0);
+    const ring = container.querySelector("circle[stroke-dashoffset]");
+    // Full ring: zero offset
+    expect(Number(ring?.getAttribute("stroke-dashoffset"))).toBeCloseTo(0);
+    const bar = document.querySelector<HTMLElement>(
+      '[data-slot="progress-indicator"]'
+    );
+    // Full bar: no leftward translation (150% used to yield translateX(50%))
+    expect(bar?.style.transform).toBe("translateX(0%)");
+  });
+
   it("throws error when components used outside Context provider", () => {
     // Suppress console.error for this test
     const spy = vi.spyOn(console, "error").mockImplementation(vi.fn());
