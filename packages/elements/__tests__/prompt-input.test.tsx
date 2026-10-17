@@ -4,6 +4,7 @@ import { userEvent } from "@testing-library/user-event";
 import React from "react";
 
 import type { AttachmentData } from "../src/attachments";
+
 import {
   Attachment,
   AttachmentInfo,
@@ -785,7 +786,80 @@ describe("promptInputButton", () => {
         </PromptInputBody>
       </PromptInput>
     );
-    expect(screen.getByRole("button", { name: "Action" })).toBeInTheDocument();
+    const button = screen.getByRole("button", { name: "Action" });
+    expect(button).toBeInTheDocument();
+    expect(button).toHaveAttribute("data-size", "sm");
+    expect(button.className).not.toContain("size-8");
+  });
+
+  it("sizes a single wrapped text label as a text button", () => {
+    setupPromptInputTests();
+    const onSubmit = vi.fn();
+    render(
+      <PromptInput onSubmit={onSubmit}>
+        <PromptInputBody>
+          <PromptInputButton>
+            <span>Label</span>
+          </PromptInputButton>
+        </PromptInputBody>
+      </PromptInput>
+    );
+    const button = screen.getByRole("button", { name: "Label" });
+    expect(button).toHaveAttribute("data-size", "sm");
+    expect(button.className).not.toContain("size-8");
+  });
+
+  it("sizes a lone icon as a square icon button", () => {
+    setupPromptInputTests();
+    const onSubmit = vi.fn();
+    render(
+      <PromptInput onSubmit={onSubmit}>
+        <PromptInputBody>
+          <PromptInputButton>
+            <svg>
+              <title>Icon</title>
+            </svg>
+          </PromptInputButton>
+        </PromptInputBody>
+      </PromptInput>
+    );
+    const button = screen.getByRole("button", { name: "Icon" });
+    expect(button).toHaveAttribute("data-size", "icon-sm");
+    expect(button.className).toContain("size-8");
+  });
+
+  it("sizes icon-plus-text as a text button", () => {
+    setupPromptInputTests();
+    const onSubmit = vi.fn();
+    render(
+      <PromptInput onSubmit={onSubmit}>
+        <PromptInputBody>
+          <PromptInputButton>
+            <svg>
+              <title>Icon</title>
+            </svg>
+            Search
+          </PromptInputButton>
+        </PromptInputBody>
+      </PromptInput>
+    );
+    const button = screen.getByRole("button", { name: /search/i });
+    expect(button).toHaveAttribute("data-size", "sm");
+  });
+
+  it("respects an explicit size prop over the heuristic", () => {
+    setupPromptInputTests();
+    const onSubmit = vi.fn();
+    render(
+      <PromptInput onSubmit={onSubmit}>
+        <PromptInputBody>
+          <PromptInputButton size="icon-sm">Action</PromptInputButton>
+        </PromptInputBody>
+      </PromptInput>
+    );
+    const button = screen.getByRole("button", { name: "Action" });
+    expect(button).toHaveAttribute("data-size", "icon-sm");
+    expect(button.className).toContain("size-8");
   });
 
   it("renders button with string tooltip", async () => {
