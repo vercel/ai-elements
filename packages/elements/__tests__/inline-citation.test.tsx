@@ -92,6 +92,39 @@ describe("inlineCitationCardTrigger", () => {
     );
     expect(screen.getByText("unknown")).toBeInTheDocument();
   });
+
+  it("renders raw source for a bare domain without a scheme", () => {
+    expect(() =>
+      render(
+        <InlineCitationCard>
+          <InlineCitationCardTrigger sources={["example.com/nlp"]} />
+        </InlineCitationCard>
+      )
+    ).not.toThrow();
+    expect(screen.getByText("example.com/nlp")).toBeInTheDocument();
+  });
+
+  it("renders raw source for a relative path", () => {
+    expect(() =>
+      render(
+        <InlineCitationCard>
+          <InlineCitationCardTrigger sources={["/nlp-advances"]} />
+        </InlineCitationCard>
+      )
+    ).not.toThrow();
+    expect(screen.getByText("/nlp-advances")).toBeInTheDocument();
+  });
+
+  it("renders raw source for a non-URL string", () => {
+    expect(() =>
+      render(
+        <InlineCitationCard>
+          <InlineCitationCardTrigger sources={["not a url"]} />
+        </InlineCitationCard>
+      )
+    ).not.toThrow();
+    expect(screen.getByText("not a url")).toBeInTheDocument();
+  });
 });
 
 describe("inlineCitationCardBody", () => {
