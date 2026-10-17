@@ -27,6 +27,11 @@ import {
   InputGroupTextarea,
 } from "@repo/shadcn-ui/components/ui/input-group";
 import {
+  Popover,
+  PopoverAnchor,
+  PopoverContent,
+} from "@repo/shadcn-ui/components/ui/popover";
+import {
   Select,
   SelectContent,
   SelectItem,
@@ -51,16 +56,21 @@ import {
 } from "lucide-react";
 import { nanoid } from "nanoid";
 import type {
-  ChangeEvent,
   ChangeEventHandler,
   ClipboardEventHandler,
   ComponentProps,
+  CompositionEventHandler,
   FormEvent,
   FormEventHandler,
+  FocusEventHandler,
   HTMLAttributes,
   KeyboardEventHandler,
+  MouseEventHandler,
+  PointerEventHandler,
   PropsWithChildren,
+  ReactEventHandler,
   ReactNode,
+  Ref,
   RefObject,
 } from "react";
 import {
@@ -69,6 +79,8 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useId,
+  useLayoutEffect,
   useMemo,
   useRef,
   useState,
@@ -77,6 +89,19 @@ import {
 // ============================================================================
 // Helpers
 // ============================================================================
+
+const DEFAULT_SUGGESTION_PREFIXES = [" ", "\n", "\t"] as const;
+
+const setRefValue = <T,>(ref: Ref<T> | undefined, value: T | null): void => {
+  if (typeof ref === "function") {
+    ref(value);
+    return;
+  }
+
+  if (ref) {
+    ref.current = value;
+  }
+};
 
 const convertBlobUrlToDataUrl = async (url: string): Promise<string | null> => {
   try {
@@ -407,6 +432,822 @@ export const usePromptInputReferencedSources = () => {
   }
   return ctx;
 };
+
+// ============================================================================
+// Suggestions
+// ============================================================================
+
+const SUGGESTION_WHITESPACE_REGEX = /\s/u;
+const SUGGESTION_LINE_BREAK_REGEX = /[\r\n]/u;
+
+export interface PromptInputSuggestionRange {
+  start: number;
+  end: number;
+}
+
+export interface PromptInputSuggestionMatch {
+  trigger: string;
+  query: string;
+  range: PromptInputSuggestionRange;
+}
+
+export interface PromptInputSuggestionTrigger {
+  trigger: string;
+  allowSpaces?: boolean;
+  allowedPrefixes?: readonly string[] | null;
+  maxQueryLength?: number;
+  minQueryLength?: number;
+  startOfLine?: boolean;
+}
+
+export interface PromptInputSuggestionSelectDetails {
+  close: () => void;
+  match: PromptInputSuggestionMatch;
+  replace: (text: string) => void;
+  value: string;
+}
+
+export interface PromptInputSuggestionsContextValue {
+  activeValue: string | null;
+  close: () => void;
+  match: PromptInputSuggestionMatch | null;
+  open: boolean;
+  replace: (text: string) => void;
+}
+
+export type PromptInputSuggestionsProps = PropsWithChildren<{
+  onMatchChange?: (match: PromptInputSuggestionMatch | null) => void;
+  onOpenChange?: (open: boolean) => void;
+  triggers: readonly PromptInputSuggestionTrigger[];
+}>;
+
+interface RegisteredSuggestionItem {
+  disabled: boolean;
+  element: RefObject<HTMLButtonElement | null>;
+  id: string;
+  select: () => void;
+  value: string;
+}
+
+interface SuggestionItemUpdate {
+  disabled: boolean;
+  value: string;
+}
+
+interface PromptInputSuggestionsInternalContext extends PromptInputSuggestionsContextValue {
+  activeId: string | null;
+  handleKeyDown: KeyboardEventHandler<HTMLTextAreaElement>;
+  isTextareaTarget: (target: EventTarget | null) => boolean;
+  listboxId: string;
+  registerItem: (item: RegisteredSuggestionItem) => () => void;
+  reset: () => void;
+  setActiveId: (id: string) => void;
+  setFocused: (focused: boolean) => void;
+  setTextarea: (textarea: HTMLTextAreaElement | null) => void;
+  updateItem: (id: string, update: SuggestionItemUpdate) => void;
+  updateMatch: (
+    value: string,
+    selectionStart: number | null,
+    selectionEnd: number | null
+  ) => void;
+}
+
+const PromptInputSuggestionsContext =
+  createContext<PromptInputSuggestionsInternalContext | null>(null);
+
+const usePromptInputSuggestionsInternal = () =>
+  useContext(PromptInputSuggestionsContext);
+
+const usePromptInputSuggestionsContext = () => {
+  const context = usePromptInputSuggestionsInternal();
+  if (!context) {
+    throw new Error(
+      "usePromptInputSuggestions must be used within PromptInputSuggestions"
+    );
+  }
+  return context;
+};
+
+export const usePromptInputSuggestions =
+  (): PromptInputSuggestionsContextValue => usePromptInputSuggestionsContext();
+
+const isSameSuggestionMatch = (
+  first: PromptInputSuggestionMatch | null,
+  second: PromptInputSuggestionMatch | null
+): boolean =>
+  first?.trigger === second?.trigger &&
+  first?.query === second?.query &&
+  first?.range.start === second?.range.start &&
+  first?.range.end === second?.range.end;
+
+const findSuggestionMatch = (
+  value: string,
+  selectionStart: number | null,
+  selectionEnd: number | null,
+  triggers: readonly PromptInputSuggestionTrigger[]
+): PromptInputSuggestionMatch | null => {
+  if (
+    selectionStart === null ||
+    selectionEnd === null ||
+    selectionStart !== selectionEnd
+  ) {
+    return null;
+  }
+
+  const valueBeforeCaret = value.slice(0, selectionStart);
+  let closestMatch: PromptInputSuggestionMatch | null = null;
+
+  for (const configuration of triggers) {
+    const { trigger } = configuration;
+    if (trigger.length === 0) {
+      continue;
+    }
+
+    const triggerIndex = valueBeforeCaret.lastIndexOf(trigger);
+    if (triggerIndex === -1) {
+      continue;
+    }
+
+    const previousCharacter = valueBeforeCaret.at(triggerIndex - 1);
+    const isAtStart = triggerIndex === 0;
+    const hasAllowedPrefix =
+      configuration.allowedPrefixes === null ||
+      isAtStart ||
+      (previousCharacter !== undefined &&
+        (configuration.allowedPrefixes ?? DEFAULT_SUGGESTION_PREFIXES).includes(
+          previousCharacter
+        ));
+    const isAtLineStart = isAtStart || previousCharacter === "\n";
+
+    if (
+      (configuration.startOfLine ? !isAtLineStart : !hasAllowedPrefix) ||
+      (closestMatch && triggerIndex < closestMatch.range.start)
+    ) {
+      continue;
+    }
+
+    const query = valueBeforeCaret.slice(triggerIndex + trigger.length);
+    const containsInvalidWhitespace = configuration.allowSpaces
+      ? SUGGESTION_LINE_BREAK_REGEX.test(query)
+      : SUGGESTION_WHITESPACE_REGEX.test(query);
+    const minQueryLength = configuration.minQueryLength ?? 0;
+
+    if (
+      containsInvalidWhitespace ||
+      query.length < minQueryLength ||
+      (configuration.maxQueryLength !== undefined &&
+        query.length > configuration.maxQueryLength)
+    ) {
+      continue;
+    }
+
+    closestMatch = {
+      query,
+      range: {
+        end: selectionStart,
+        start: triggerIndex,
+      },
+      trigger,
+    };
+  }
+
+  return closestMatch;
+};
+
+const sortSuggestionItems = (
+  items: RegisteredSuggestionItem[]
+): RegisteredSuggestionItem[] =>
+  items.sort((first, second) => {
+    const firstElement = first.element.current;
+    const secondElement = second.element.current;
+    if (!(firstElement && secondElement)) {
+      return 0;
+    }
+
+    const position = firstElement.compareDocumentPosition(secondElement);
+    return position === Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1;
+  });
+
+export const PromptInputSuggestions = ({
+  children,
+  onMatchChange,
+  onOpenChange,
+  triggers,
+}: PromptInputSuggestionsProps) => {
+  const listboxId = useId();
+  const formRef = useRef<HTMLFormElement | null>(null);
+  const itemsRef = useRef(new Map<string, RegisteredSuggestionItem>());
+  const matchRef = useRef<PromptInputSuggestionMatch | null>(null);
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+  const [activeItem, setActiveItem] = useState<{
+    id: string;
+    value: string;
+  } | null>(null);
+  const [dismissedMatch, setDismissedMatch] = useState<{
+    start: number;
+    trigger: string;
+  } | null>(null);
+  const [focused, setFocused] = useState(false);
+  const [match, setMatch] = useState<PromptInputSuggestionMatch | null>(null);
+  const activeId = activeItem?.id ?? null;
+  const activeValue = activeItem?.value ?? null;
+
+  const activateItem = useCallback((item: RegisteredSuggestionItem) => {
+    setActiveItem((currentActiveItem) =>
+      currentActiveItem?.id === item.id &&
+      currentActiveItem.value === item.value
+        ? currentActiveItem
+        : { id: item.id, value: item.value }
+    );
+  }, []);
+
+  const open = Boolean(
+    focused &&
+    match &&
+    !(
+      dismissedMatch?.start === match.range.start &&
+      dismissedMatch.trigger === match.trigger
+    )
+  );
+
+  const getEnabledItems = useCallback(
+    () =>
+      sortSuggestionItems(
+        [...itemsRef.current.values()].filter(
+          (item) => !item.disabled && item.element.current
+        )
+      ),
+    []
+  );
+
+  const reset = useCallback(() => {
+    matchRef.current = null;
+    setActiveItem(null);
+    setDismissedMatch(null);
+    setMatch(null);
+  }, []);
+
+  const close = useCallback(() => {
+    const currentMatch = matchRef.current;
+    if (currentMatch) {
+      setDismissedMatch({
+        start: currentMatch.range.start,
+        trigger: currentMatch.trigger,
+      });
+    }
+    setActiveItem(null);
+  }, []);
+
+  const isTextareaTarget = useCallback(
+    (target: EventTarget | null) => target === textareaRef.current,
+    []
+  );
+
+  const setTextarea = useCallback(
+    (nextTextarea: HTMLTextAreaElement | null) => {
+      if (!nextTextarea) {
+        textareaRef.current = null;
+        formRef.current?.removeEventListener("reset", reset);
+        formRef.current = null;
+        reset();
+        setFocused(false);
+        return;
+      }
+
+      const nextForm = nextTextarea?.form ?? null;
+      if (formRef.current !== nextForm) {
+        formRef.current?.removeEventListener("reset", reset);
+        nextForm?.addEventListener("reset", reset);
+        formRef.current = nextForm;
+      }
+      textareaRef.current = nextTextarea;
+    },
+    [reset]
+  );
+
+  useEffect(
+    () => () => {
+      formRef.current?.removeEventListener("reset", reset);
+    },
+    [reset]
+  );
+
+  const updateMatch = useCallback(
+    (
+      value: string,
+      selectionStart: number | null,
+      selectionEnd: number | null
+    ) => {
+      const nextMatch = findSuggestionMatch(
+        value,
+        selectionStart,
+        selectionEnd,
+        triggers
+      );
+      const currentMatch = matchRef.current;
+
+      if (isSameSuggestionMatch(currentMatch, nextMatch)) {
+        return;
+      }
+
+      const movedToNewContext =
+        currentMatch?.trigger !== nextMatch?.trigger ||
+        currentMatch?.range.start !== nextMatch?.range.start;
+      if (movedToNewContext) {
+        setActiveItem(null);
+      }
+
+      if (
+        !nextMatch ||
+        dismissedMatch?.trigger !== nextMatch.trigger ||
+        dismissedMatch.start !== nextMatch.range.start
+      ) {
+        setDismissedMatch(null);
+      }
+
+      matchRef.current = nextMatch;
+      setMatch(nextMatch);
+    },
+    [dismissedMatch, triggers]
+  );
+
+  const replace = useCallback(
+    (replacement: string) => {
+      const currentMatch = matchRef.current;
+      const target = textareaRef.current;
+      if (!(currentMatch && target)) {
+        return;
+      }
+
+      const nextValue = `${target.value.slice(
+        0,
+        currentMatch.range.start
+      )}${replacement}${target.value.slice(currentMatch.range.end)}`;
+      const nextCaret = currentMatch.range.start + replacement.length;
+      const valueSetter = Object.getOwnPropertyDescriptor(
+        HTMLTextAreaElement.prototype,
+        "value"
+      )?.set;
+
+      reset();
+      if (valueSetter) {
+        valueSetter.call(target, nextValue);
+      } else {
+        target.value = nextValue;
+      }
+
+      target.focus({ preventScroll: true });
+      target.setSelectionRange(nextCaret, nextCaret);
+      target.dispatchEvent(new Event("input", { bubbles: true }));
+      queueMicrotask(() => target.setSelectionRange(nextCaret, nextCaret));
+    },
+    [reset]
+  );
+
+  const registerItem = useCallback(
+    (item: RegisteredSuggestionItem) => {
+      itemsRef.current.set(item.id, item);
+      setActiveItem((currentActiveItem) => {
+        const currentItem = currentActiveItem
+          ? itemsRef.current.get(currentActiveItem.id)
+          : undefined;
+        const nextItem =
+          currentItem && !currentItem.disabled
+            ? currentItem
+            : getEnabledItems().at(0);
+
+        if (!nextItem) {
+          return null;
+        }
+
+        if (
+          currentActiveItem?.id === nextItem.id &&
+          currentActiveItem.value === nextItem.value
+        ) {
+          return currentActiveItem;
+        }
+
+        return { id: nextItem.id, value: nextItem.value };
+      });
+
+      return () => {
+        itemsRef.current.delete(item.id);
+        setActiveItem((currentActiveItem) => {
+          if (currentActiveItem?.id !== item.id) {
+            return currentActiveItem;
+          }
+
+          const nextItem = getEnabledItems().at(0);
+          return nextItem ? { id: nextItem.id, value: nextItem.value } : null;
+        });
+      };
+    },
+    [getEnabledItems]
+  );
+
+  const updateItem = useCallback(
+    (id: string, update: SuggestionItemUpdate) => {
+      const item = itemsRef.current.get(id);
+      if (!item) {
+        return;
+      }
+
+      item.disabled = update.disabled;
+      item.value = update.value;
+      setActiveItem((currentActiveItem) => {
+        if (!currentActiveItem) {
+          const nextItem = getEnabledItems().at(0);
+          return nextItem ? { id: nextItem.id, value: nextItem.value } : null;
+        }
+
+        if (currentActiveItem.id !== id) {
+          return currentActiveItem;
+        }
+
+        if (update.disabled) {
+          const nextItem = getEnabledItems().at(0);
+          return nextItem ? { id: nextItem.id, value: nextItem.value } : null;
+        }
+
+        return currentActiveItem.value === update.value
+          ? currentActiveItem
+          : { id, value: update.value };
+      });
+    },
+    [getEnabledItems]
+  );
+
+  const setActiveId = useCallback(
+    (id: string) => {
+      const item = itemsRef.current.get(id);
+      if (item && !item.disabled) {
+        activateItem(item);
+      }
+    },
+    [activateItem]
+  );
+
+  const moveActiveItem = useCallback(
+    (direction: 1 | -1): boolean => {
+      const items = getEnabledItems();
+      if (items.length === 0) {
+        return false;
+      }
+
+      const currentIndex = items.findIndex((item) => item.id === activeId);
+      let nextIndex = (currentIndex + direction + items.length) % items.length;
+      if (currentIndex === -1) {
+        nextIndex = direction === 1 ? 0 : items.length - 1;
+      }
+      const nextItem = items[nextIndex];
+      if (!nextItem) {
+        return false;
+      }
+
+      activateItem(nextItem);
+      nextItem.element.current?.scrollIntoView?.({ block: "nearest" });
+      return true;
+    },
+    [activateItem, activeId, getEnabledItems]
+  );
+
+  const handleKeyDown: KeyboardEventHandler<HTMLTextAreaElement> = useCallback(
+    (event) => {
+      if (!open) {
+        return;
+      }
+
+      if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+        if (moveActiveItem(event.key === "ArrowDown" ? 1 : -1)) {
+          event.preventDefault();
+        }
+        return;
+      }
+
+      if (event.key === "Enter" && !event.shiftKey) {
+        const activeItem = activeId
+          ? itemsRef.current.get(activeId)
+          : undefined;
+        if (activeItem && !activeItem.disabled) {
+          event.preventDefault();
+          activeItem.select();
+        }
+        return;
+      }
+
+      if (event.key === "Escape") {
+        event.preventDefault();
+        close();
+        return;
+      }
+
+      if (event.key === "Tab") {
+        close();
+      }
+    },
+    [activeId, close, moveActiveItem, open]
+  );
+
+  const handlePopoverOpenChange = useCallback(
+    (nextOpen: boolean) => {
+      if (!nextOpen) {
+        close();
+      }
+    },
+    [close]
+  );
+
+  const context = useMemo<PromptInputSuggestionsInternalContext>(
+    () => ({
+      activeId,
+      activeValue,
+      close,
+      handleKeyDown,
+      isTextareaTarget,
+      listboxId,
+      match,
+      open,
+      registerItem,
+      replace,
+      reset,
+      setActiveId,
+      setFocused,
+      setTextarea,
+      updateItem,
+      updateMatch,
+    }),
+    [
+      activeId,
+      activeValue,
+      close,
+      handleKeyDown,
+      isTextareaTarget,
+      listboxId,
+      match,
+      open,
+      registerItem,
+      replace,
+      reset,
+      setActiveId,
+      setTextarea,
+      updateItem,
+      updateMatch,
+    ]
+  );
+
+  useEffect(() => onMatchChange?.(match), [match, onMatchChange]);
+  useEffect(() => onOpenChange?.(open), [onOpenChange, open]);
+
+  return (
+    <PromptInputSuggestionsContext.Provider value={context}>
+      <Popover onOpenChange={handlePopoverOpenChange} open={open}>
+        {children}
+      </Popover>
+    </PromptInputSuggestionsContext.Provider>
+  );
+};
+
+export type PromptInputSuggestionContentProps = ComponentProps<
+  typeof PopoverContent
+>;
+
+export const PromptInputSuggestionContent = ({
+  "aria-label": ariaLabel = "Suggestions",
+  align = "start",
+  className,
+  onCloseAutoFocus,
+  onInteractOutside,
+  onOpenAutoFocus,
+  side = "top",
+  sideOffset = 8,
+  ...props
+}: PromptInputSuggestionContentProps) => {
+  const context = usePromptInputSuggestionsContext();
+  const { isTextareaTarget } = context;
+
+  const handleCloseAutoFocus = useCallback<
+    NonNullable<PromptInputSuggestionContentProps["onCloseAutoFocus"]>
+  >(
+    (event) => {
+      onCloseAutoFocus?.(event);
+      if (!event.defaultPrevented) {
+        event.preventDefault();
+      }
+    },
+    [onCloseAutoFocus]
+  );
+
+  const handleInteractOutside = useCallback<
+    NonNullable<PromptInputSuggestionContentProps["onInteractOutside"]>
+  >(
+    (event) => {
+      onInteractOutside?.(event);
+      if (isTextareaTarget(event.detail.originalEvent.target)) {
+        event.preventDefault();
+      }
+    },
+    [isTextareaTarget, onInteractOutside]
+  );
+
+  const handleOpenAutoFocus = useCallback<
+    NonNullable<PromptInputSuggestionContentProps["onOpenAutoFocus"]>
+  >(
+    (event) => {
+      onOpenAutoFocus?.(event);
+      if (!event.defaultPrevented) {
+        event.preventDefault();
+      }
+    },
+    [onOpenAutoFocus]
+  );
+
+  return (
+    <PopoverContent
+      {...props}
+      align={align}
+      aria-label={ariaLabel}
+      className={cn("max-h-72 w-80 overflow-y-auto p-1", className)}
+      id={context.listboxId}
+      onCloseAutoFocus={handleCloseAutoFocus}
+      onInteractOutside={handleInteractOutside}
+      onOpenAutoFocus={handleOpenAutoFocus}
+      role="listbox"
+      side={side}
+      sideOffset={sideOffset}
+    />
+  );
+};
+
+export type PromptInputSuggestionItemProps = Omit<
+  ComponentProps<"button">,
+  "onSelect" | "value"
+> & {
+  onSelect?: (details: PromptInputSuggestionSelectDetails) => void;
+  replaceWith?:
+    | string
+    | false
+    | ((match: PromptInputSuggestionMatch) => string);
+  value: string;
+};
+
+export const PromptInputSuggestionItem = ({
+  children,
+  className,
+  disabled = false,
+  id: idProp,
+  onClick,
+  onPointerDown,
+  onPointerMove,
+  onSelect,
+  ref,
+  replaceWith,
+  value,
+  ...props
+}: PromptInputSuggestionItemProps) => {
+  const context = usePromptInputSuggestionsContext();
+  const { close, match, registerItem, replace, setActiveId, updateItem } =
+    context;
+
+  const generatedId = useId();
+  const id = idProp ?? generatedId;
+  const disabledRef = useRef(disabled);
+  const elementRef = useRef<HTMLButtonElement | null>(null);
+  const valueRef = useRef(value);
+  const isActive = context.activeId === id;
+
+  const select = useCallback(() => {
+    if (!match || disabled) {
+      return;
+    }
+
+    let didReplace = false;
+    const replaceSelection = (replacement: string) => {
+      didReplace = true;
+      replace(replacement);
+    };
+
+    onSelect?.({
+      close,
+      match,
+      replace: replaceSelection,
+      value,
+    });
+
+    if (replaceWith !== false && !didReplace) {
+      const replacement =
+        typeof replaceWith === "function"
+          ? replaceWith(match)
+          : (replaceWith ?? `${match.trigger}${value} `);
+      replace(replacement);
+    }
+    close();
+  }, [close, disabled, match, onSelect, replace, replaceWith, value]);
+
+  const selectRef = useRef(select);
+
+  useLayoutEffect(() => {
+    selectRef.current = select;
+  }, [select]);
+
+  useLayoutEffect(
+    () =>
+      registerItem({
+        disabled: disabledRef.current,
+        element: elementRef,
+        id,
+        select: () => selectRef.current(),
+        value: valueRef.current,
+      }),
+    [id, registerItem]
+  );
+
+  useLayoutEffect(() => {
+    disabledRef.current = disabled;
+    valueRef.current = value;
+    updateItem(id, { disabled, value });
+  }, [disabled, id, updateItem, value]);
+
+  const handleClick: MouseEventHandler<HTMLButtonElement> = useCallback(
+    (event) => {
+      onClick?.(event);
+      if (!event.defaultPrevented) {
+        select();
+      }
+    },
+    [onClick, select]
+  );
+
+  const handlePointerDown: PointerEventHandler<HTMLButtonElement> = useCallback(
+    (event) => {
+      onPointerDown?.(event);
+      if (!event.defaultPrevented && !disabled) {
+        event.preventDefault();
+      }
+    },
+    [disabled, onPointerDown]
+  );
+
+  const handlePointerMove: PointerEventHandler<HTMLButtonElement> = useCallback(
+    (event) => {
+      onPointerMove?.(event);
+      if (!event.defaultPrevented && !disabled) {
+        setActiveId(id);
+      }
+    },
+    [disabled, id, onPointerMove, setActiveId]
+  );
+
+  const handleRef = useCallback(
+    (element: HTMLButtonElement | null) => {
+      elementRef.current = element;
+      setRefValue(ref, element);
+    },
+    [ref]
+  );
+
+  return (
+    <button
+      {...props}
+      aria-selected={isActive}
+      className={cn(
+        "relative flex w-full cursor-default items-center gap-2 rounded-sm px-2 py-1.5 text-left text-sm outline-hidden",
+        "hover:bg-accent hover:text-accent-foreground",
+        "data-[active=true]:bg-accent data-[active=true]:text-accent-foreground",
+        "disabled:pointer-events-none disabled:opacity-50",
+        className
+      )}
+      data-active={isActive}
+      disabled={disabled}
+      id={id}
+      onClick={handleClick}
+      onPointerDown={handlePointerDown}
+      onPointerMove={handlePointerMove}
+      ref={handleRef}
+      role="option"
+      tabIndex={-1}
+      type="button"
+    >
+      {children}
+    </button>
+  );
+};
+
+export type PromptInputSuggestionEmptyProps = HTMLAttributes<HTMLDivElement>;
+
+export const PromptInputSuggestionEmpty = ({
+  className,
+  role = "status",
+  ...props
+}: PromptInputSuggestionEmptyProps) => (
+  <div
+    {...props}
+    className={cn(
+      "px-2 py-6 text-center text-muted-foreground text-sm",
+      className
+    )}
+    role={role}
+  />
+);
 
 export type PromptInputActionAddAttachmentsProps = ComponentProps<
   typeof DropdownMenuItem
@@ -954,37 +1795,89 @@ export type PromptInputTextareaProps = ComponentProps<
 >;
 
 export const PromptInputTextarea = ({
-  onChange,
-  onKeyDown,
+  "aria-activedescendant": ariaActiveDescendant,
+  "aria-autocomplete": ariaAutocomplete,
+  "aria-controls": ariaControls,
+  "aria-expanded": ariaExpanded,
+  "aria-haspopup": ariaHasPopup,
   className,
+  name = "message",
+  onBlur,
+  onChange,
+  onCompositionEnd,
+  onCompositionStart,
+  onFocus,
+  onKeyDown,
+  onPaste,
+  onSelect,
   placeholder = "What would you like to know?",
+  ref,
+  role,
+  value,
   ...props
 }: PromptInputTextareaProps) => {
   const controller = useOptionalPromptInputController();
   const attachments = usePromptInputAttachments();
-  const [isComposing, setIsComposing] = useState(false);
+  const suggestions = usePromptInputSuggestionsInternal();
+  const handleSuggestionKeyDown = suggestions?.handleKeyDown;
+  const resetSuggestions = suggestions?.reset;
+  const setSuggestionFocused = suggestions?.setFocused;
+  const setSuggestionTextarea = suggestions?.setTextarea;
+  const updateSuggestionMatch = suggestions?.updateMatch;
+  const isComposingRef = useRef(false);
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+
+  const handleRef = useCallback(
+    (textarea: HTMLTextAreaElement | null) => {
+      textareaRef.current = textarea;
+      if (textarea) {
+        setSuggestionTextarea?.(textarea);
+      }
+      setRefValue(ref, textarea);
+    },
+    [ref, setSuggestionTextarea]
+  );
+
+  const updateSuggestions = useCallback(
+    (textarea: HTMLTextAreaElement) => {
+      updateSuggestionMatch?.(
+        textarea.value,
+        textarea.selectionStart,
+        textarea.selectionEnd
+      );
+    },
+    [updateSuggestionMatch]
+  );
 
   const handleKeyDown: KeyboardEventHandler<HTMLTextAreaElement> = useCallback(
-    (e) => {
+    (event) => {
+      setSuggestionTextarea?.(event.currentTarget);
+
       // Call the external onKeyDown handler first
-      onKeyDown?.(e);
+      onKeyDown?.(event);
 
       // If the external handler prevented default, don't run internal logic
-      if (e.defaultPrevented) {
+      if (event.defaultPrevented) {
         return;
       }
 
-      if (e.key === "Enter") {
-        if (isComposing || e.nativeEvent.isComposing) {
+      if (isComposingRef.current || event.nativeEvent.isComposing) {
+        return;
+      }
+
+      handleSuggestionKeyDown?.(event);
+      if (event.defaultPrevented) {
+        return;
+      }
+
+      if (event.key === "Enter") {
+        if (event.shiftKey) {
           return;
         }
-        if (e.shiftKey) {
-          return;
-        }
-        e.preventDefault();
+        event.preventDefault();
 
         // Check if the submit button is disabled before submitting
-        const { form } = e.currentTarget;
+        const { form } = event.currentTarget;
         const submitButton = form?.querySelector(
           'button[type="submit"]'
         ) as HTMLButtonElement | null;
@@ -997,22 +1890,27 @@ export const PromptInputTextarea = ({
 
       // Remove last attachment when Backspace is pressed and textarea is empty
       if (
-        e.key === "Backspace" &&
-        e.currentTarget.value === "" &&
+        event.key === "Backspace" &&
+        event.currentTarget.value === "" &&
         attachments.files.length > 0
       ) {
-        e.preventDefault();
+        event.preventDefault();
         const lastAttachment = attachments.files.at(-1);
         if (lastAttachment) {
           attachments.remove(lastAttachment.id);
         }
       }
     },
-    [onKeyDown, isComposing, attachments]
+    [attachments, handleSuggestionKeyDown, onKeyDown, setSuggestionTextarea]
   );
 
   const handlePaste: ClipboardEventHandler<HTMLTextAreaElement> = useCallback(
     (event) => {
+      onPaste?.(event);
+      if (event.defaultPrevented) {
+        return;
+      }
+
       const items = event.clipboardData?.items;
 
       if (!items) {
@@ -1035,36 +1933,124 @@ export const PromptInputTextarea = ({
         attachments.add(files);
       }
     },
-    [attachments]
+    [attachments, onPaste]
   );
 
-  const handleCompositionEnd = useCallback(() => setIsComposing(false), []);
-  const handleCompositionStart = useCallback(() => setIsComposing(true), []);
+  const handleChange: ChangeEventHandler<HTMLTextAreaElement> = useCallback(
+    (event) => {
+      controller?.textInput.setInput(event.currentTarget.value);
+      onChange?.(event);
 
-  const controlledProps = controller
-    ? {
-        onChange: (e: ChangeEvent<HTMLTextAreaElement>) => {
-          controller.textInput.setInput(e.currentTarget.value);
-          onChange?.(e);
-        },
-        value: controller.textInput.value,
+      const nativeEventIsComposing =
+        "isComposing" in event.nativeEvent &&
+        event.nativeEvent.isComposing === true;
+      if (!(isComposingRef.current || nativeEventIsComposing)) {
+        updateSuggestions(event.currentTarget);
       }
-    : {
-        onChange,
-      };
+    },
+    [controller, onChange, updateSuggestions]
+  );
 
-  return (
+  const handleCompositionStart: CompositionEventHandler<HTMLTextAreaElement> =
+    useCallback(
+      (event) => {
+        onCompositionStart?.(event);
+        isComposingRef.current = true;
+        resetSuggestions?.();
+      },
+      [onCompositionStart, resetSuggestions]
+    );
+
+  const handleCompositionEnd: CompositionEventHandler<HTMLTextAreaElement> =
+    useCallback(
+      (event) => {
+        onCompositionEnd?.(event);
+        isComposingRef.current = false;
+        updateSuggestions(event.currentTarget);
+      },
+      [onCompositionEnd, updateSuggestions]
+    );
+
+  const handleFocus: FocusEventHandler<HTMLTextAreaElement> = useCallback(
+    (event) => {
+      onFocus?.(event);
+      setSuggestionTextarea?.(event.currentTarget);
+      setSuggestionFocused?.(true);
+      updateSuggestions(event.currentTarget);
+    },
+    [onFocus, setSuggestionFocused, setSuggestionTextarea, updateSuggestions]
+  );
+
+  const handleBlur: FocusEventHandler<HTMLTextAreaElement> = useCallback(
+    (event) => {
+      onBlur?.(event);
+      setSuggestionFocused?.(false);
+    },
+    [onBlur, setSuggestionFocused]
+  );
+
+  const handleSelect: ReactEventHandler<HTMLTextAreaElement> = useCallback(
+    (event) => {
+      onSelect?.(event);
+      if (!isComposingRef.current) {
+        updateSuggestions(event.currentTarget);
+      }
+    },
+    [onSelect, updateSuggestions]
+  );
+
+  useEffect(
+    () => () => {
+      setSuggestionTextarea?.(null);
+    },
+    [setSuggestionTextarea]
+  );
+
+  useEffect(() => {
+    const textarea = textareaRef.current;
+    if (textarea) {
+      updateSuggestions(textarea);
+    }
+  }, [controller?.textInput.value, updateSuggestions, value]);
+
+  const textarea = (
     <InputGroupTextarea
+      {...props}
+      aria-activedescendant={
+        ariaActiveDescendant ??
+        (suggestions?.open ? (suggestions.activeId ?? undefined) : undefined)
+      }
+      aria-autocomplete={ariaAutocomplete ?? (suggestions ? "list" : undefined)}
+      aria-controls={
+        ariaControls ?? (suggestions ? suggestions.listboxId : undefined)
+      }
+      aria-expanded={
+        ariaExpanded ?? (suggestions ? suggestions.open : undefined)
+      }
+      aria-haspopup={ariaHasPopup ?? (suggestions ? "listbox" : undefined)}
       className={cn("field-sizing-content max-h-48 min-h-16", className)}
-      name="message"
+      name={name}
+      onBlur={handleBlur}
+      onChange={handleChange}
       onCompositionEnd={handleCompositionEnd}
       onCompositionStart={handleCompositionStart}
+      onFocus={handleFocus}
       onKeyDown={handleKeyDown}
       onPaste={handlePaste}
+      onSelect={handleSelect}
       placeholder={placeholder}
-      {...props}
-      {...controlledProps}
+      ref={handleRef}
+      role={role ?? (suggestions ? "combobox" : undefined)}
+      value={controller ? controller.textInput.value : value}
     />
+  );
+
+  return suggestions ? (
+    <PopoverAnchor asChild data-slot="input-group-control">
+      {textarea}
+    </PopoverAnchor>
+  ) : (
+    textarea
   );
 };
 

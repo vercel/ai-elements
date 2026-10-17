@@ -19,7 +19,10 @@ import {
   ModelSelectorName,
   ModelSelectorTrigger,
 } from "@/components/ai-elements/model-selector";
-import type { PromptInputMessage } from "@/components/ai-elements/prompt-input";
+import type {
+  PromptInputMessage,
+  PromptInputSuggestionTrigger,
+} from "@/components/ai-elements/prompt-input";
 import {
   PromptInput,
   PromptInputActionAddAttachments,
@@ -31,10 +34,15 @@ import {
   PromptInputButton,
   PromptInputFooter,
   PromptInputProvider,
+  PromptInputSuggestionContent,
+  PromptInputSuggestionEmpty,
+  PromptInputSuggestionItem,
+  PromptInputSuggestions,
   PromptInputSubmit,
   PromptInputTextarea,
   PromptInputTools,
   usePromptInputAttachments,
+  usePromptInputSuggestions,
 } from "@/components/ai-elements/prompt-input";
 import { CheckIcon, GlobeIcon } from "lucide-react";
 import { memo, useCallback, useState } from "react";
@@ -79,6 +87,53 @@ const models = [
 
 const SUBMITTING_TIMEOUT = 200;
 const STREAMING_TIMEOUT = 2000;
+
+interface PromptSuggestion {
+  description: string;
+  label: string;
+  value: string;
+}
+
+const fileSuggestions: PromptSuggestion[] = [
+  {
+    description: "Prompt composer and suggestion primitives",
+    label: "prompt-input.tsx",
+    value: "packages/elements/src/prompt-input.tsx",
+  },
+  {
+    description: "Conversation layout and scroll behavior",
+    label: "conversation.tsx",
+    value: "packages/elements/src/conversation.tsx",
+  },
+  {
+    description: "Chat message rendering components",
+    label: "message.tsx",
+    value: "packages/elements/src/message.tsx",
+  },
+];
+
+const commandSuggestions: PromptSuggestion[] = [
+  {
+    description: "Search project files and documentation",
+    label: "Search",
+    value: "search",
+  },
+  {
+    description: "Summarize the current conversation",
+    label: "Summarize",
+    value: "summarize",
+  },
+  {
+    description: "Explain the selected code or concept",
+    label: "Explain",
+    value: "explain",
+  },
+];
+
+const suggestionTriggers = [
+  { trigger: "@" },
+  { startOfLine: true, trigger: "/" },
+] satisfies readonly PromptInputSuggestionTrigger[];
 
 interface AttachmentItemProps {
   attachment: {
@@ -159,6 +214,60 @@ const PromptInputAttachmentsDisplay = () => {
   );
 };
 
+const PromptInputSuggestionsDisplay = () => {
+  const { match } = usePromptInputSuggestions();
+
+  if (!match) {
+    return null;
+  }
+
+  const suggestions =
+    match.trigger === "@" ? fileSuggestions : commandSuggestions;
+  const normalizedQuery = match.query.toLowerCase();
+  const filteredSuggestions = suggestions.filter((suggestion) =>
+    `${suggestion.label} ${suggestion.value} ${suggestion.description}`
+      .toLowerCase()
+      .includes(normalizedQuery)
+  );
+  const groupLabel = match.trigger === "@" ? "Files" : "Commands";
+
+  return (
+    <PromptInputSuggestionContent aria-label={`${groupLabel} suggestions`}>
+      <div className="flex items-center justify-between px-2 py-1.5 text-muted-foreground text-xs">
+        <span>{groupLabel}</span>
+        <span>Use arrow keys to navigate</span>
+      </div>
+      {filteredSuggestions.length > 0 ? (
+        filteredSuggestions.map((suggestion) => (
+          <PromptInputSuggestionItem
+            key={suggestion.value}
+            value={suggestion.value}
+          >
+            <span
+              aria-hidden="true"
+              className="flex size-6 shrink-0 items-center justify-center rounded-md bg-muted font-medium text-muted-foreground text-xs"
+            >
+              {match.trigger}
+            </span>
+            <span className="min-w-0">
+              <span className="block truncate font-medium">
+                {suggestion.label}
+              </span>
+              <span className="block truncate text-muted-foreground text-xs">
+                {suggestion.description}
+              </span>
+            </span>
+          </PromptInputSuggestionItem>
+        ))
+      ) : (
+        <PromptInputSuggestionEmpty>
+          No {groupLabel.toLowerCase()} found.
+        </PromptInputSuggestionEmpty>
+      )}
+    </PromptInputSuggestionContent>
+  );
+};
+
 const Example = () => {
   const [model, setModel] = useState<string>(models[0].id);
   const [modelSelectorOpen, setModelSelectorOpen] = useState(false);
@@ -198,67 +307,70 @@ const Example = () => {
   return (
     <div className="size-full">
       <PromptInputProvider>
-        <PromptInput globalDrop multiple onSubmit={handleSubmit}>
-          <PromptInputAttachmentsDisplay />
-          <PromptInputBody>
-            <PromptInputTextarea />
-          </PromptInputBody>
-          <PromptInputFooter>
-            <PromptInputTools>
-              <PromptInputActionMenu>
-                <PromptInputActionMenuTrigger />
-                <PromptInputActionMenuContent>
-                  <PromptInputActionAddAttachments />
-                  <PromptInputActionAddScreenshot />
-                </PromptInputActionMenuContent>
-              </PromptInputActionMenu>
-              <PromptInputButton>
-                <GlobeIcon size={16} />
-                <span>Search</span>
-              </PromptInputButton>
-              <ModelSelector
-                onOpenChange={setModelSelectorOpen}
-                open={modelSelectorOpen}
-              >
-                <ModelSelectorTrigger asChild>
-                  <PromptInputButton>
-                    {selectedModelData?.chefSlug && (
-                      <ModelSelectorLogo
-                        provider={selectedModelData.chefSlug}
-                      />
-                    )}
-                    {selectedModelData?.name && (
-                      <ModelSelectorName>
-                        {selectedModelData.name}
-                      </ModelSelectorName>
-                    )}
-                  </PromptInputButton>
-                </ModelSelectorTrigger>
-                <ModelSelectorContent>
-                  <ModelSelectorInput placeholder="Search models..." />
-                  <ModelSelectorList>
-                    <ModelSelectorEmpty>No models found.</ModelSelectorEmpty>
-                    {["OpenAI", "Anthropic", "Google"].map((chef) => (
-                      <ModelSelectorGroup heading={chef} key={chef}>
-                        {models
-                          .filter((m) => m.chef === chef)
-                          .map((m) => (
-                            <ModelItem
-                              key={m.id}
-                              m={m}
-                              onSelect={handleModelSelect}
-                              selectedModel={model}
-                            />
-                          ))}
-                      </ModelSelectorGroup>
-                    ))}
-                  </ModelSelectorList>
-                </ModelSelectorContent>
-              </ModelSelector>
-            </PromptInputTools>
-            <PromptInputSubmit status={status} />
-          </PromptInputFooter>
-        </PromptInput>
+        <PromptInputSuggestions triggers={suggestionTriggers}>
+          <PromptInput globalDrop multiple onSubmit={handleSubmit}>
+            <PromptInputAttachmentsDisplay />
+            <PromptInputBody>
+              <PromptInputTextarea placeholder="Ask anything, type @ for files or / for commands" />
+            </PromptInputBody>
+            <PromptInputFooter>
+              <PromptInputTools>
+                <PromptInputActionMenu>
+                  <PromptInputActionMenuTrigger />
+                  <PromptInputActionMenuContent>
+                    <PromptInputActionAddAttachments />
+                    <PromptInputActionAddScreenshot />
+                  </PromptInputActionMenuContent>
+                </PromptInputActionMenu>
+                <PromptInputButton>
+                  <GlobeIcon size={16} />
+                  <span>Search</span>
+                </PromptInputButton>
+                <ModelSelector
+                  onOpenChange={setModelSelectorOpen}
+                  open={modelSelectorOpen}
+                >
+                  <ModelSelectorTrigger asChild>
+                    <PromptInputButton>
+                      {selectedModelData?.chefSlug && (
+                        <ModelSelectorLogo
+                          provider={selectedModelData.chefSlug}
+                        />
+                      )}
+                      {selectedModelData?.name && (
+                        <ModelSelectorName>
+                          {selectedModelData.name}
+                        </ModelSelectorName>
+                      )}
+                    </PromptInputButton>
+                  </ModelSelectorTrigger>
+                  <ModelSelectorContent>
+                    <ModelSelectorInput placeholder="Search models..." />
+                    <ModelSelectorList>
+                      <ModelSelectorEmpty>No models found.</ModelSelectorEmpty>
+                      {["OpenAI", "Anthropic", "Google"].map((chef) => (
+                        <ModelSelectorGroup heading={chef} key={chef}>
+                          {models
+                            .filter((m) => m.chef === chef)
+                            .map((m) => (
+                              <ModelItem
+                                key={m.id}
+                                m={m}
+                                onSelect={handleModelSelect}
+                                selectedModel={model}
+                              />
+                            ))}
+                        </ModelSelectorGroup>
+                      ))}
+                    </ModelSelectorList>
+                  </ModelSelectorContent>
+                </ModelSelector>
+              </PromptInputTools>
+              <PromptInputSubmit status={status} />
+            </PromptInputFooter>
+          </PromptInput>
+          <PromptInputSuggestionsDisplay />
+        </PromptInputSuggestions>
       </PromptInputProvider>
     </div>
   );
