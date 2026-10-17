@@ -691,6 +691,71 @@ describe("persona - Dynamic Color", () => {
     });
   });
 
+  it("prefers explicit light class over a dark OS preference", async () => {
+    setupPersonaTests();
+    const mockSetRgb = vi.fn();
+    mockUseViewModelInstanceColor.mockReturnValue({ setRgb: mockSetRgb });
+
+    const matchMediaSpy = vi.spyOn(window, "matchMedia").mockReturnValue({
+      addEventListener: vi.fn(),
+      matches: true,
+      removeEventListener: vi.fn(),
+    } as unknown as MediaQueryList);
+    document.documentElement.classList.add("light");
+
+    render(<Persona state="idle" variant="obsidian" />);
+
+    await waitFor(() => {
+      expect(mockSetRgb).toHaveBeenCalledWith(0, 0, 0);
+    });
+
+    document.documentElement.classList.remove("light");
+    matchMediaSpy.mockRestore();
+  });
+
+  it("prefers explicit dark class over a light OS preference", async () => {
+    setupPersonaTests();
+    const mockSetRgb = vi.fn();
+    mockUseViewModelInstanceColor.mockReturnValue({ setRgb: mockSetRgb });
+
+    const matchMediaSpy = vi.spyOn(window, "matchMedia").mockReturnValue({
+      addEventListener: vi.fn(),
+      matches: false,
+      removeEventListener: vi.fn(),
+    } as unknown as MediaQueryList);
+    document.documentElement.classList.add("dark");
+
+    render(<Persona state="idle" variant="obsidian" />);
+
+    await waitFor(() => {
+      expect(mockSetRgb).toHaveBeenCalledWith(255, 255, 255);
+    });
+
+    document.documentElement.classList.remove("dark");
+    matchMediaSpy.mockRestore();
+  });
+
+  it("falls back to the OS preference when no theme class is set", async () => {
+    setupPersonaTests();
+    const mockSetRgb = vi.fn();
+    mockUseViewModelInstanceColor.mockReturnValue({ setRgb: mockSetRgb });
+
+    const matchMediaSpy = vi.spyOn(window, "matchMedia").mockReturnValue({
+      addEventListener: vi.fn(),
+      matches: true,
+      removeEventListener: vi.fn(),
+    } as unknown as MediaQueryList);
+    document.documentElement.classList.remove("light", "dark");
+
+    render(<Persona state="idle" variant="obsidian" />);
+
+    await waitFor(() => {
+      expect(mockSetRgb).toHaveBeenCalledWith(255, 255, 255);
+    });
+
+    matchMediaSpy.mockRestore();
+  });
+
   it("does not set RGB for non-dynamic-color variants", async () => {
     setupPersonaTests();
     const mockSetRgb = vi.fn();
