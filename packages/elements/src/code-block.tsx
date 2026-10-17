@@ -1,5 +1,13 @@
 "use client";
 
+import type { ComponentProps, CSSProperties, HTMLAttributes } from "react";
+import type {
+  BundledLanguage,
+  BundledTheme,
+  HighlighterGeneric,
+  ThemedToken,
+} from "shiki";
+
 import { Button } from "@repo/shadcn-ui/components/ui/button";
 import {
   Select,
@@ -10,7 +18,6 @@ import {
 } from "@repo/shadcn-ui/components/ui/select";
 import { cn } from "@repo/shadcn-ui/lib/utils";
 import { CheckIcon, CopyIcon } from "lucide-react";
-import type { ComponentProps, CSSProperties, HTMLAttributes } from "react";
 import {
   createContext,
   memo,
@@ -21,12 +28,6 @@ import {
   useRef,
   useState,
 } from "react";
-import type {
-  BundledLanguage,
-  BundledTheme,
-  HighlighterGeneric,
-  ThemedToken,
-} from "shiki";
 import { createHighlighter } from "shiki";
 
 // Shiki uses bitflags for font styles: 1=italic, 2=bold, 4=underline
@@ -141,6 +142,9 @@ const tokensCache = new Map<string, TokenizedCode>();
 // Subscribers for async token updates
 const subscribers = new Map<string, Set<(result: TokenizedCode) => void>>();
 
+// Keys with an in-flight highlight job, to avoid duplicate tokenization
+const pendingHighlights = new Set<string>();
+
 const getTokensCacheKey = (code: string, language: BundledLanguage) => {
   const start = code.slice(0, 100);
   const end = code.length > 100 ? code.slice(-100) : "";
@@ -161,6 +165,12 @@ const getHighlighter = (
   });
 
   highlighterCache.set(language, highlighterPromise);
+  // Evict on failure so a later attempt can retry instead of reusing
+  // a permanently rejected promise
+  // oxlint-disable-next-line eslint-plugin-promise(prefer-await-to-then)
+  highlighterPromise.catch(() => {
+    highlighterCache.delete(language);
+  });
   return highlighterPromise;
 };
 
@@ -203,7 +213,14 @@ export const highlightCode = (
     subscribers.get(tokensCacheKey)?.add(callback);
   }
 
-  // Start highlighting in background - fire-and-forget async pattern
+  // Start highlighting in background - fire-and-forget async pattern.
+  // Skip if a job for this key is already in flight; its completion will
+  // populate the cache and notify all subscribers, including ours.
+  if (pendingHighlights.has(tokensCacheKey)) {
+    return null;
+  }
+  pendingHighlights.add(tokensCacheKey);
+
   getHighlighter(language)
     // oxlint-disable-next-line eslint-plugin-promise(prefer-await-to-then)
     .then((highlighter) => {
@@ -226,6 +243,7 @@ export const highlightCode = (
 
       // Cache the result
       tokensCache.set(tokensCacheKey, tokenized);
+      pendingHighlights.delete(tokensCacheKey);
 
       // Notify all subscribers
       const subs = subscribers.get(tokensCacheKey);
@@ -239,6 +257,7 @@ export const highlightCode = (
     // oxlint-disable-next-line eslint-plugin-promise(prefer-await-to-then), eslint-plugin-promise(prefer-await-to-callbacks)
     .catch((error) => {
       console.error("Failed to highlight code:", error);
+      pendingHighlights.delete(tokensCacheKey);
       subscribers.delete(tokensCacheKey);
     });
 
