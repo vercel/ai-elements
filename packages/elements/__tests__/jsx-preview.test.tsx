@@ -1,6 +1,8 @@
 import { render, screen } from "@testing-library/react";
+import { StrictMode } from "react";
 
 import type { JSXPreviewProps } from "../src/jsx-preview";
+
 import {
   JSXPreview,
   JSXPreviewContent,
@@ -276,6 +278,70 @@ describe("jSXPreview streaming mode", () => {
       </JSXPreview>
     );
     expect(screen.getByText("Text")).toBeInTheDocument();
+  });
+
+  it("keeps the last good preview when a streamed chunk fails to parse", () => {
+    // Parser reports errors synchronously during render; the resulting React
+    // "update while rendering" dev warning is expected here
+    const consoleError = vi.spyOn(console, "error").mockImplementation(vi.fn());
+    const onError = vi.fn();
+
+    const { rerender } = render(
+      <JSXPreview isStreaming jsx="<div>Good</div>" onError={onError}>
+        <JSXPreviewContent />
+      </JSXPreview>
+    );
+    expect(screen.getByText("Good")).toBeInTheDocument();
+
+    rerender(
+      <JSXPreview isStreaming jsx="<div>{bad syntax</div>" onError={onError}>
+        <JSXPreviewContent />
+      </JSXPreview>
+    );
+    expect(screen.getByText("Good")).toBeInTheDocument();
+    expect(onError).not.toHaveBeenCalled();
+
+    rerender(
+      <JSXPreview isStreaming jsx="<div>Recovered</div>" onError={onError}>
+        <JSXPreviewContent />
+      </JSXPreview>
+    );
+    expect(screen.getByText("Recovered")).toBeInTheDocument();
+
+    consoleError.mockRestore();
+  });
+
+  it("keeps the last good preview across a bad chunk in Strict Mode", () => {
+    const consoleError = vi.spyOn(console, "error").mockImplementation(vi.fn());
+
+    const { rerender } = render(
+      <StrictMode>
+        <JSXPreview isStreaming jsx="<div>Good</div>">
+          <JSXPreviewContent />
+        </JSXPreview>
+      </StrictMode>
+    );
+    expect(screen.getByText("Good")).toBeInTheDocument();
+
+    rerender(
+      <StrictMode>
+        <JSXPreview isStreaming jsx="<div>{bad syntax</div>">
+          <JSXPreviewContent />
+        </JSXPreview>
+      </StrictMode>
+    );
+    expect(screen.getByText("Good")).toBeInTheDocument();
+
+    rerender(
+      <StrictMode>
+        <JSXPreview isStreaming jsx="<div>Recovered</div>">
+          <JSXPreviewContent />
+        </JSXPreview>
+      </StrictMode>
+    );
+    expect(screen.getByText("Recovered")).toBeInTheDocument();
+
+    consoleError.mockRestore();
   });
 });
 
