@@ -1,5 +1,8 @@
 "use client";
 
+import type { LanguageModelUsage } from "ai";
+import type { ComponentProps } from "react";
+
 import { Button } from "@repo/shadcn-ui/components/ui/button";
 import {
   HoverCard,
@@ -8,8 +11,6 @@ import {
 } from "@repo/shadcn-ui/components/ui/hover-card";
 import { Progress } from "@repo/shadcn-ui/components/ui/progress";
 import { cn } from "@repo/shadcn-ui/lib/utils";
-import type { LanguageModelUsage } from "ai";
-import type { ComponentProps } from "react";
 import { createContext, useContext, useMemo } from "react";
 import { getUsage } from "tokenlens";
 
@@ -201,8 +202,10 @@ export const ContextContentFooter = ({
     ? getUsage({
         modelId,
         usage: {
+          cacheReads: usage?.cachedInputTokens ?? 0,
           input: usage?.inputTokens ?? 0,
           output: usage?.outputTokens ?? 0,
+          reasoningTokens: usage?.reasoningTokens ?? 0,
         },
       }).costUSD?.totalUSD
     : undefined;
