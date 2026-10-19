@@ -21,6 +21,7 @@ import {
   PromptInputActionMenuTrigger,
   PromptInputBody,
   PromptInputButton,
+  PromptInputProvider,
   PromptInputSelect,
   PromptInputSelectContent,
   PromptInputSelectItem,
@@ -1053,6 +1054,98 @@ describe("promptInputProvider", () => {
     await user.click(screen.getByRole("button"));
 
     expect(screen.getByTestId("count")).toHaveTextContent("1");
+  });
+
+  const startPendingSubmission = async () => {
+    setupPromptInputTests();
+    const user = userEvent.setup();
+
+    let resolveSubmit!: () => void;
+    let rejectSubmit!: (reason?: unknown) => void;
+    // oxlint-disable-next-line eslint-plugin-promise(avoid-new)
+    const submission = new Promise<void>((resolve, reject) => {
+      resolveSubmit = resolve;
+      rejectSubmit = reject;
+    });
+    const onSubmit = vi.fn(() => submission);
+
+    render(
+      <PromptInputProvider>
+        <PromptInput onSubmit={onSubmit}>
+          <PromptInputBody>
+            <PromptInputTextarea />
+            <PromptInputSubmit />
+          </PromptInputBody>
+        </PromptInput>
+      </PromptInputProvider>
+    );
+
+    const textarea = screen.getByRole("textbox");
+
+    await user.type(textarea, "first");
+    await user.keyboard("{Enter}");
+
+    return {
+      onSubmit,
+      rejectSubmit,
+      resolveSubmit,
+      submission,
+      textarea,
+      user,
+    };
+  };
+
+  it("preserves text edited during an async submission", async () => {
+    const { onSubmit, user, textarea, submission, resolveSubmit } =
+      await startPendingSubmission();
+
+    await vi.waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledOnce();
+    });
+
+    await user.clear(textarea);
+    await user.type(textarea, "second");
+
+    await act(async () => {
+      resolveSubmit();
+      await submission;
+    });
+
+    expect(textarea).toHaveValue("second");
+  });
+
+  it("clears unchanged text after successful async submission", async () => {
+    const { onSubmit, textarea, submission, resolveSubmit } =
+      await startPendingSubmission();
+
+    await vi.waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledOnce();
+    });
+
+    expect(textarea).toHaveValue("first");
+
+    await act(async () => {
+      resolveSubmit();
+      await submission;
+    });
+
+    expect(textarea).toHaveValue("");
+  });
+
+  it("preserves text after failed async submission", async () => {
+    const { onSubmit, textarea, submission, rejectSubmit } =
+      await startPendingSubmission();
+
+    await vi.waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledOnce();
+    });
+
+    await act(async () => {
+      rejectSubmit(new Error("Submission failed"));
+      await expect(submission).rejects.toThrow("Submission failed");
+    });
+
+    expect(textarea).toHaveValue("first");
   });
 });
 
