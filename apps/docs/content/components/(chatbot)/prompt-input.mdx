@@ -270,6 +270,14 @@ Buttons can display tooltips with optional keyboard shortcut hints. Hover over t
 
 <Preview path="prompt-input-tooltip" />
 
+### Richtext input
+
+`PromptInputRichtext` is an alternative text input to `PromptInputTextarea` when you want an extensible composer-style input with markdown shortcuts, autolink support, and Lexical plugins.
+
+<Preview path="prompt-input-richtext" />
+
+`PromptInputRichtext` integrates with `PromptInputProvider`, so the editor content can stay in sync with external state. On submit, the rich text content is serialized back to markdown and returned as `message.text`.
+
 ## Props
 
 ### `<PromptInput />`
@@ -329,6 +337,59 @@ Buttons can display tooltips with optional keyboard shortcut hints. Hover over t
     },
   }}
 />
+
+### `<PromptInputRichtext />`
+
+Lexical-powered rich text input for `PromptInput`. It supports markdown import/export, URL autolinking, keyboard submit behavior, attachment paste, and custom Lexical plugins.
+
+<TypeTable
+  type={{
+    editorConfig: {
+      description:
+        "Optional Lexical initial config merged with the default PromptInput configuration.",
+      type: "InitialConfigType",
+    },
+    autoFocus: {
+      description: "Whether to focus the editor on mount.",
+      type: "boolean",
+      default: "true",
+    },
+    onChange: {
+      description:
+        "Called when the Lexical editor state changes. In provider mode, markdown text is also synced to controller state.",
+      type: "(editorState: EditorState) => void",
+    },
+    onKeyDown: {
+      description:
+        "Optional keydown handler attached to the editor root element.",
+      type: "(event: KeyboardEvent) => void",
+    },
+    placeholder: {
+      description: "Placeholder text shown when the editor is empty.",
+      type: "string",
+      default: '"What would you like to know?"',
+    },
+    placeholderClassName: {
+      description: "Additional class names for the placeholder element.",
+      type: "string",
+    },
+    className: {
+      description: "Additional class names for the content editable element.",
+      type: "string",
+    },
+    children: {
+      description: "Optional Lexical plugins rendered inside the composer.",
+      type: "React.ReactNode",
+    },
+    "...props": {
+      description:
+        "Any other props are spread to the underlying Lexical `ContentEditable` element.",
+      type: 'Omit<ContentEditableProps, "placeholder">',
+    },
+  }}
+/>
+
+`PromptInputRichtext` submits on `Enter`, inserts a newline on `Shift+Enter`, removes the last attachment with `Backspace` when empty, and converts pasted files into prompt attachments.
 
 ### `<PromptInputFooter />`
 
