@@ -1,5 +1,20 @@
 "use client";
 
+import type { ChatStatus, FileUIPart, SourceDocumentUIPart } from "ai";
+import type {
+  ChangeEvent,
+  ChangeEventHandler,
+  ClipboardEventHandler,
+  ComponentProps,
+  FormEvent,
+  FormEventHandler,
+  HTMLAttributes,
+  KeyboardEventHandler,
+  PropsWithChildren,
+  ReactNode,
+  RefObject,
+} from "react";
+
 import {
   Command,
   CommandEmpty,
@@ -40,7 +55,6 @@ import {
   TooltipTrigger,
 } from "@repo/shadcn-ui/components/ui/tooltip";
 import { cn } from "@repo/shadcn-ui/lib/utils";
-import type { ChatStatus, FileUIPart, SourceDocumentUIPart } from "ai";
 import {
   CornerDownLeftIcon,
   ImageIcon,
@@ -50,19 +64,6 @@ import {
   XIcon,
 } from "lucide-react";
 import { nanoid } from "nanoid";
-import type {
-  ChangeEvent,
-  ChangeEventHandler,
-  ClipboardEventHandler,
-  ComponentProps,
-  FormEvent,
-  FormEventHandler,
-  HTMLAttributes,
-  KeyboardEventHandler,
-  PropsWithChildren,
-  ReactNode,
-  RefObject,
-} from "react";
 import {
   Children,
   createContext,
@@ -191,6 +192,7 @@ export interface TextInputContext {
   value: string;
   setInput: (v: string) => void;
   clear: () => void;
+  clearIfValueMatches: (submittedText: string) => void;
 }
 
 export interface PromptInputControllerProps {
@@ -252,6 +254,10 @@ export const PromptInputProvider = ({
   // ----- textInput state
   const [textInput, setTextInput] = useState(initialTextInput);
   const clearInput = useCallback(() => setTextInput(""), []);
+
+  const clearInputIfValueMatches = useCallback((submittedText: string) => {
+    setTextInput((current) => (current === submittedText ? "" : current));
+  }, []);
 
   // ----- attachments state (global when wrapped)
   const [attachmentFiles, setAttachmentFiles] = useState<
@@ -349,11 +355,18 @@ export const PromptInputProvider = ({
       attachments,
       textInput: {
         clear: clearInput,
+        clearIfValueMatches: clearInputIfValueMatches,
         setInput: setTextInput,
         value: textInput,
       },
     }),
-    [textInput, clearInput, attachments, __registerFileInput]
+    [
+      textInput,
+      clearInput,
+      clearInputIfValueMatches,
+      attachments,
+      __registerFileInput,
+    ]
   );
 
   return (
@@ -883,7 +896,7 @@ export const PromptInput = ({
             await result;
             clear();
             if (usingProvider) {
-              controller.textInput.clear();
+              controller.textInput.clearIfValueMatches(text);
             }
           } catch {
             // Don't clear on error - user may want to retry
@@ -892,7 +905,7 @@ export const PromptInput = ({
           // Sync function completed without throwing, clear inputs
           clear();
           if (usingProvider) {
-            controller.textInput.clear();
+            controller.textInput.clearIfValueMatches(text);
           }
         }
       } catch {
