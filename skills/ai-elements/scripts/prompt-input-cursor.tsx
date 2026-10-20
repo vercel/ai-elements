@@ -53,7 +53,6 @@ import { Button } from "@/components/ui/button";
 import type { SourceDocumentUIPart } from "ai";
 import {
   AtSignIcon,
-  CheckIcon,
   FilesIcon,
   GlobeIcon,
   ImageIcon,
@@ -152,7 +151,12 @@ interface ModelItemProps {
 const ModelItem = memo(({ m, selectedModel, onSelect }: ModelItemProps) => {
   const handleSelect = useCallback(() => onSelect(m.id), [onSelect, m.id]);
   return (
-    <ModelSelectorItem key={m.id} onSelect={handleSelect} value={m.id}>
+    <ModelSelectorItem
+      checked={selectedModel === m.id}
+      key={m.id}
+      onSelect={handleSelect}
+      value={m.id}
+    >
       <ModelSelectorLogo provider={m.chefSlug} />
       <ModelSelectorName>{m.name}</ModelSelectorName>
       <ModelSelectorLogoGroup>
@@ -160,11 +164,6 @@ const ModelItem = memo(({ m, selectedModel, onSelect }: ModelItemProps) => {
           <ModelSelectorLogo key={provider} provider={provider} />
         ))}
       </ModelSelectorLogoGroup>
-      {selectedModel === m.id ? (
-        <CheckIcon className="ml-auto size-4" />
-      ) : (
-        <div className="ml-auto size-4" />
-      )}
     </ModelSelectorItem>
   );
 });

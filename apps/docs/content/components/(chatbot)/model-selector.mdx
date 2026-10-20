@@ -130,6 +130,12 @@ The `ModelSelector` component provides a searchable command palette interface fo
 
 <TypeTable
   type={{
+    checked: {
+      description:
+        "Whether this item is the currently selected model. Shows the built-in check indicator.",
+      type: "boolean",
+      optional: true,
+    },
     "...props": {
       description:
         "Any other props are spread to the underlying CommandItem component.",

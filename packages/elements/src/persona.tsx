@@ -1,7 +1,9 @@
 "use client";
 
-import { cn } from "@repo/shadcn-ui/lib/utils";
 import type { RiveParameters } from "@rive-app/react-webgl2";
+import type { FC, ReactNode } from "react";
+
+import { cn } from "@repo/shadcn-ui/lib/utils";
 import {
   useRive,
   useStateMachineInput,
@@ -9,7 +11,6 @@ import {
   useViewModelInstance,
   useViewModelInstanceColor,
 } from "@rive-app/react-webgl2";
-import type { FC, ReactNode } from "react";
 import { memo, useEffect, useMemo, useRef, useState } from "react";
 
 // Delays Rive initialization by one frame so that React Strict Mode's

@@ -1,6 +1,7 @@
 import { render, screen } from "@testing-library/react";
 
 import type { JSXPreviewProps } from "../src/jsx-preview";
+
 import {
   JSXPreview,
   JSXPreviewContent,

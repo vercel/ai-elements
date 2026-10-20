@@ -1,6 +1,7 @@
+import type { ComponentProps } from "react";
+
 import { cn } from "@repo/shadcn-ui/lib/utils";
 import { NodeToolbar, Position } from "@xyflow/react";
-import type { ComponentProps } from "react";
 
 type ToolbarProps = ComponentProps<typeof NodeToolbar>;
 

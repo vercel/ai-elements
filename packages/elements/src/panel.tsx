@@ -1,6 +1,7 @@
+import type { ComponentProps } from "react";
+
 import { cn } from "@repo/shadcn-ui/lib/utils";
 import { Panel as PanelPrimitive } from "@xyflow/react";
-import type { ComponentProps } from "react";
 
 type PanelProps = ComponentProps<typeof PanelPrimitive>;
 

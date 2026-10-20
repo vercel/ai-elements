@@ -1,5 +1,7 @@
 "use client";
 
+import type { ReactNode } from "react";
+
 import { SiReact } from "@icons-pack/react-simple-icons";
 import {
   Task,
@@ -9,7 +11,6 @@ import {
   TaskTrigger,
 } from "@repo/elements/task";
 import { nanoid } from "nanoid";
-import type { ReactNode } from "react";
 
 const Example = () => {
   const tasks: { key: string; value: ReactNode }[] = [

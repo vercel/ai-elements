@@ -1,5 +1,7 @@
 "use client";
 
+import type { ComponentProps } from "react";
+
 import { useControllableState } from "@radix-ui/react-use-controllable-state";
 import { Button } from "@repo/shadcn-ui/components/ui/button";
 import {
@@ -14,7 +16,6 @@ import {
   ChevronDownIcon,
   CopyIcon,
 } from "lucide-react";
-import type { ComponentProps } from "react";
 import {
   createContext,
   memo,

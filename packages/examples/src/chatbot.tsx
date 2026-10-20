@@ -1,5 +1,8 @@
 "use client";
 
+import type { PromptInputMessage } from "@repo/elements/prompt-input";
+import type { ToolUIPart } from "ai";
+
 import {
   Attachment,
   AttachmentPreview,
@@ -35,7 +38,6 @@ import {
   ModelSelectorName,
   ModelSelectorTrigger,
 } from "@repo/elements/model-selector";
-import type { PromptInputMessage } from "@repo/elements/prompt-input";
 import {
   PromptInput,
   PromptInputActionAddAttachments,
@@ -64,8 +66,7 @@ import {
 } from "@repo/elements/sources";
 import { SpeechInput } from "@repo/elements/speech-input";
 import { Suggestion, Suggestions } from "@repo/elements/suggestion";
-import type { ToolUIPart } from "ai";
-import { CheckIcon, GlobeIcon } from "lucide-react";
+import { GlobeIcon } from "lucide-react";
 import { nanoid } from "nanoid";
 import { useCallback, useMemo, useState } from "react";
 import { toast } from "sonner";
@@ -416,7 +417,11 @@ const ModelItem = ({
   }, [onSelect, m.id]);
 
   return (
-    <ModelSelectorItem onSelect={handleSelect} value={m.id}>
+    <ModelSelectorItem
+      checked={isSelected}
+      onSelect={handleSelect}
+      value={m.id}
+    >
       <ModelSelectorLogo provider={m.chefSlug} />
       <ModelSelectorName>{m.name}</ModelSelectorName>
       <ModelSelectorLogoGroup>
@@ -424,11 +429,6 @@ const ModelItem = ({
           <ModelSelectorLogo key={provider} provider={provider} />
         ))}
       </ModelSelectorLogoGroup>
-      {isSelected ? (
-        <CheckIcon className="ml-auto size-4" />
-      ) : (
-        <div className="ml-auto size-4" />
-      )}
     </ModelSelectorItem>
   );
 };

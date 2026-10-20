@@ -1,6 +1,7 @@
 "use client";
 
 import type { PromptInputMessage } from "@repo/elements/prompt-input";
+
 import {
   PromptInput,
   PromptInputButton,
