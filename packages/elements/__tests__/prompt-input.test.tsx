@@ -3294,3 +3294,68 @@ describe("integration tests", () => {
     ).toBeInTheDocument();
   });
 });
+
+describe("promptInput hosted file uploads", () => {
+  it("submits the hosted URL returned by onFileAdd", async () => {
+    setupPromptInputTests();
+    const onSubmit = vi.fn();
+    const onFileAdd = vi.fn().mockResolvedValue("https://cdn.example.com/image.png");
+    const user = userEvent.setup();
+
+    render(
+      <PromptInput onSubmit={onSubmit} onFileAdd={onFileAdd}>
+        <PromptInputBody>
+          <PromptInputTextarea />
+          <PromptInputSubmit />
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    const file = new File(["image"], "image.png", { type: "image/png" });
+    await user.upload(screen.getByLabelText("Upload files"), file);
+    await vi.waitFor(() => expect(onFileAdd).toHaveBeenCalledWith(file));
+    await user.click(screen.getByRole("button", { name: SUBMIT_REGEX }));
+
+    await vi.waitFor(() => expect(onSubmit).toHaveBeenCalledOnce());
+    expect(onSubmit.mock.calls[0][0].files[0]?.url).toBe(
+      "https://cdn.example.com/image.png"
+    );
+  });
+
+  it("disables submit while a file upload is pending", async () => {
+    setupPromptInputTests();
+    const onSubmit = vi.fn();
+    let resolveUpload!: (url: string) => void;
+    const onFileAdd = vi.fn(
+      () =>
+        new Promise<string>((resolve) => {
+          resolveUpload = resolve;
+        })
+    );
+    const user = userEvent.setup();
+
+    render(
+      <PromptInput onSubmit={onSubmit} onFileAdd={onFileAdd}>
+        <PromptInputBody>
+          <PromptInputTextarea />
+          <PromptInputSubmit />
+        </PromptInputBody>
+      </PromptInput>
+    );
+
+    const file = new File(["image"], "image.png", { type: "image/png" });
+    await user.upload(screen.getByLabelText("Upload files"), file);
+    await vi.waitFor(() => expect(onFileAdd).toHaveBeenCalledOnce());
+
+    const submitButton = screen.getByRole("button", { name: SUBMIT_REGEX });
+    expect(submitButton).toBeDisabled();
+    await user.click(submitButton);
+    expect(onSubmit).not.toHaveBeenCalled();
+
+    await act(async () => {
+      resolveUpload("https://cdn.example.com/image.png");
+    });
+    await vi.waitFor(() => expect(submitButton).toBeEnabled());
+  });
+});
+

@@ -185,6 +185,8 @@ export interface AttachmentsContext {
   clear: () => void;
   openFileDialog: () => void;
   fileInputRef: RefObject<HTMLInputElement | null>;
+  addUploaded: (files: FileUIPart[]) => void;
+  isUploading?: boolean;
 }
 
 export interface TextInputContext {
@@ -261,6 +263,13 @@ export const PromptInputProvider = ({
   // oxlint-disable-next-line eslint(no-empty-function)
   const openRef = useRef<() => void>(() => {});
 
+  const addUploaded = useCallback((files: FileUIPart[]) => {
+    setAttachmentFiles((prev) => [
+      ...prev,
+      ...files.map((file) => ({ ...file, id: nanoid() })),
+    ]);
+  }, []);
+
   const add = useCallback((files: File[] | FileList) => {
     const incoming = [...files];
     if (incoming.length === 0) {
@@ -326,13 +335,14 @@ export const PromptInputProvider = ({
   const attachments = useMemo<AttachmentsContext>(
     () => ({
       add,
+      addUploaded,
       clear,
       fileInputRef,
       files: attachmentFiles,
       openFileDialog,
       remove,
     }),
-    [attachmentFiles, add, remove, clear, openFileDialog]
+    [attachmentFiles, add, addUploaded, remove, clear, openFileDialog]
   );
 
   const __registerFileInput = useCallback(
@@ -501,6 +511,8 @@ export type PromptInputProps = Omit<
   maxFiles?: number;
   // bytes
   maxFileSize?: number;
+  onFileAdd?: (file: File) => Promise<string>;
+  onFileRemove?: (fileUrl: string) => Promise<void>;
   onError?: (err: {
     code: "max_files" | "max_file_size" | "accept";
     message: string;
@@ -520,6 +532,8 @@ export const PromptInput = ({
   maxFiles,
   maxFileSize,
   onError,
+  onFileAdd,
+  onFileRemove,
   onSubmit,
   children,
   ...props
@@ -534,6 +548,7 @@ export const PromptInput = ({
 
   // ----- Local attachments (only used when no provider)
   const [items, setItems] = useState<(FileUIPart & { id: string })[]>([]);
+  const [isUploading, setIsUploading] = useState(false);
   const files = usingProvider ? controller.attachments.files : items;
 
   // ----- Local referenced sources (always local to PromptInput)
@@ -597,33 +612,53 @@ export const PromptInput = ({
         return;
       }
 
-      setItems((prev) => {
-        const capacity =
-          typeof maxFiles === "number"
-            ? Math.max(0, maxFiles - prev.length)
-            : undefined;
-        const capped =
-          typeof capacity === "number" ? sized.slice(0, capacity) : sized;
-        if (typeof capacity === "number" && sized.length > capacity) {
-          onError?.({
-            code: "max_files",
-            message: "Too many files. Some were not added.",
-          });
-        }
-        const next: (FileUIPart & { id: string })[] = [];
-        for (const file of capped) {
-          next.push({
-            filename: file.name,
-            id: nanoid(),
-            mediaType: file.type,
-            type: "file",
-            url: URL.createObjectURL(file),
-          });
-        }
-        return [...prev, ...next];
-      });
+      const capacity =
+        typeof maxFiles === "number"
+          ? Math.max(0, maxFiles - files.length)
+          : undefined;
+      const capped =
+        typeof capacity === "number" ? sized.slice(0, capacity) : sized;
+      if (typeof capacity === "number" && sized.length > capacity) {
+        onError?.({
+          code: "max_files",
+          message: "Too many files. Some were not added.",
+        });
+      }
+      if (!capped.length) return;
+      setIsUploading(!!onFileAdd);
+      Promise.all(
+        capped.map(async (file) => ({
+          filename: file.name,
+          mediaType: file.type,
+          type: "file" as const,
+          url: onFileAdd ? await onFileAdd(file) : URL.createObjectURL(file),
+        }))
+      )
+        .then((uploaded) => {
+          if (usingProvider) {
+            controller?.attachments.addUploaded(uploaded);
+          } else {
+            setItems((prev) => [
+              ...prev,
+              ...uploaded.map((file) => ({ ...file, id: nanoid() })),
+            ]);
+          }
+        })
+        .catch(() => {
+          // Keep existing attachments if an upload fails.
+        })
+        .finally(() => setIsUploading(false));
     },
-    [matchesAccept, maxFiles, maxFileSize, onError]
+    [
+      matchesAccept,
+      maxFiles,
+      maxFileSize,
+      onError,
+      files.length,
+      onFileAdd,
+      usingProvider,
+      controller,
+    ]
   );
 
   const removeLocal = useCallback(
@@ -676,10 +711,37 @@ export const PromptInput = ({
       }
 
       if (capped.length > 0) {
-        controller?.attachments.add(capped);
+        if (!onFileAdd) {
+          controller?.attachments.add(capped);
+          return;
+        }
+        setIsUploading(true);
+        Promise.all(
+          capped.map(async (file) => ({
+            filename: file.name,
+            mediaType: file.type,
+            type: "file" as const,
+            url: await onFileAdd(file),
+          }))
+        )
+          .then((uploaded) => {
+            controller?.attachments.addUploaded(uploaded);
+          })
+          .catch(() => {
+            // Keep existing attachments if an upload fails.
+          })
+          .finally(() => setIsUploading(false));
       }
     },
-    [matchesAccept, maxFileSize, maxFiles, onError, files.length, controller]
+    [
+      matchesAccept,
+      maxFileSize,
+      maxFiles,
+      onError,
+      files.length,
+      controller,
+      onFileAdd,
+    ]
   );
 
   const clearAttachments = useCallback(
@@ -703,7 +765,16 @@ export const PromptInput = ({
   );
 
   const add = usingProvider ? addWithProviderValidation : addLocal;
-  const remove = usingProvider ? controller.attachments.remove : removeLocal;
+  const remove = useCallback((id: string) => {
+    const found = files.find((file) => file.id === id);
+    if (found?.url && !found.url.startsWith("blob:") && onFileRemove) {
+      void onFileRemove(found.url).catch(() => {
+        // UI removal should not be blocked by remote cleanup failures.
+      });
+    }
+    if (usingProvider) controller.attachments.remove(id);
+    else removeLocal(id);
+  }, [files, onFileRemove, usingProvider, controller, removeLocal]);
   const openFileDialog = usingProvider
     ? controller.attachments.openFileDialog
     : openFileDialogLocal;
@@ -817,10 +888,15 @@ export const PromptInput = ({
       clear: clearAttachments,
       fileInputRef: inputRef,
       files: files.map((item) => ({ ...item, id: item.id })),
+      isUploading,
+      addUploaded: (uploaded) => {
+        if (usingProvider) controller?.attachments.addUploaded(uploaded);
+        else setItems((prev) => [...prev, ...uploaded.map((file) => ({ ...file, id: nanoid() }))]);
+      },
       openFileDialog,
       remove,
     }),
-    [files, add, remove, clearAttachments, openFileDialog]
+    [files, add, remove, clearAttachments, openFileDialog, isUploading, usingProvider, controller]
   );
 
   const refsCtx = useMemo<ReferencedSourcesContext>(
@@ -844,6 +920,7 @@ export const PromptInput = ({
   const handleSubmit: FormEventHandler<HTMLFormElement> = useCallback(
     async (event) => {
       event.preventDefault();
+      if (isUploading) return;
 
       const form = event.currentTarget;
       const text = usingProvider
@@ -899,7 +976,7 @@ export const PromptInput = ({
         // Don't clear on error - user may want to retry
       }
     },
-    [usingProvider, controller, files, onSubmit, clear]
+    [usingProvider, controller, files, onSubmit, clear, isUploading]
   );
 
   // Render with or without local provider
@@ -1223,6 +1300,7 @@ export const PromptInputSubmit = ({
   children,
   ...props
 }: PromptInputSubmitProps) => {
+  const attachments = usePromptInputAttachments();
   const isGenerating = status === "submitted" || status === "streaming";
 
   let Icon = <CornerDownLeftIcon className="size-4" />;
@@ -1251,6 +1329,7 @@ export const PromptInputSubmit = ({
     <InputGroupButton
       aria-label={isGenerating ? "Stop" : "Submit"}
       className={cn(className)}
+      disabled={attachments.isUploading || props.disabled}
       onClick={handleClick}
       size={size}
       type={isGenerating && onStop ? "button" : "submit"}
