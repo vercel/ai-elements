@@ -2,9 +2,10 @@
 
 import { Button } from "@repo/shadcn-ui/components/ui/button";
 import { cn } from "@repo/shadcn-ui/lib/utils";
+import { useVirtualizer } from "@tanstack/react-virtual";
 import type { UIMessage } from "ai";
 import { ArrowDownIcon, DownloadIcon } from "lucide-react";
-import type { ComponentProps } from "react";
+import type { ComponentProps, Key, ReactNode } from "react";
 import { useCallback } from "react";
 import { StickToBottom, useStickToBottomContext } from "use-stick-to-bottom";
 
@@ -33,6 +34,91 @@ export const ConversationContent = ({
     {...props}
   />
 );
+
+export type ConversationVirtualizedContentProps<TItem> = Omit<
+  ConversationContentProps,
+  "children"
+> & {
+  items: TItem[];
+  children: (item: TItem, index: number) => ReactNode;
+  estimateSize?: (item: TItem, index: number) => number;
+  getItemKey?: (item: TItem, index: number) => Key;
+  gap?: number;
+  overscan?: number;
+  itemClassName?: string;
+};
+
+const DEFAULT_VIRTUALIZED_MESSAGE_SIZE = 120;
+const DEFAULT_VIRTUALIZED_MESSAGE_GAP = 32;
+const DEFAULT_VIRTUALIZED_OVERSCAN = 8;
+
+export const ConversationVirtualizedContent = <TItem,>({
+  className,
+  children,
+  estimateSize,
+  gap = DEFAULT_VIRTUALIZED_MESSAGE_GAP,
+  getItemKey,
+  itemClassName,
+  items,
+  overscan = DEFAULT_VIRTUALIZED_OVERSCAN,
+  ...props
+}: ConversationVirtualizedContentProps<TItem>) => {
+  const { scrollRef } = useStickToBottomContext();
+
+  const virtualizer = useVirtualizer<HTMLElement, HTMLDivElement>({
+    count: items.length,
+    estimateSize: (index) => {
+      const item = items[index];
+
+      if (item === undefined) {
+        return DEFAULT_VIRTUALIZED_MESSAGE_SIZE;
+      }
+
+      return estimateSize?.(item, index) ?? DEFAULT_VIRTUALIZED_MESSAGE_SIZE;
+    },
+    gap,
+    getItemKey: (index) => {
+      const item = items[index];
+      return item === undefined || !getItemKey
+        ? index
+        : getItemKey(item, index);
+    },
+    getScrollElement: () => scrollRef.current,
+    overscan,
+  });
+
+  return (
+    <StickToBottom.Content
+      className={cn("relative min-h-full p-4", className)}
+      {...props}
+    >
+      <div
+        className="relative w-full"
+        style={{ height: virtualizer.getTotalSize() }}
+      >
+        {virtualizer.getVirtualItems().map((virtualItem) => {
+          const item = items[virtualItem.index];
+
+          if (item === undefined) {
+            return null;
+          }
+
+          return (
+            <div
+              className={cn("absolute top-0 left-0 w-full", itemClassName)}
+              data-index={virtualItem.index}
+              key={virtualItem.key}
+              ref={virtualizer.measureElement}
+              style={{ transform: `translateY(${virtualItem.start}px)` }}
+            >
+              {children(item, virtualItem.index)}
+            </div>
+          );
+        })}
+      </div>
+    </StickToBottom.Content>
+  );
+};
 
 export type ConversationEmptyStateProps = ComponentProps<"div"> & {
   title?: string;

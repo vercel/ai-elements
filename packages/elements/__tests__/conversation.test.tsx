@@ -1,5 +1,7 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
+import type * as StickToBottomModule from "use-stick-to-bottom";
+import type { StickToBottomContext } from "use-stick-to-bottom";
 
 import {
   Conversation,
@@ -7,63 +9,122 @@ import {
   ConversationDownload,
   ConversationEmptyState,
   ConversationScrollButton,
+  ConversationVirtualizedContent,
   messagesToMarkdown,
 } from "../src/conversation";
 
 // Mock use-stick-to-bottom with module-level state using vi.hoisted
 const {
-  mockState,
   mockScrollToBottom,
-  StickToBottomMock,
+  mockState,
+  getMockContext,
   StickToBottomContent,
+  StickToBottomMock,
 } = vi.hoisted(() => {
   const state = { isAtBottom: true };
   const scrollToBottom = vi.fn();
+  const stopScroll = vi.fn();
+  let targetScrollTop: unknown = null;
 
-  interface MockProps {
-    children?: React.ReactNode;
-    [key: string]: unknown;
+  // oxlint-disable-next-line eslint-plugin-unicorn(consistent-function-scoping)
+  const createRef = () => {
+    const ref = ((node: HTMLElement | null) => {
+      ref.current = node;
+    }) as React.MutableRefObject<HTMLElement | null> &
+      React.RefCallback<HTMLElement>;
+    ref.current = null;
+    return ref;
+  };
+
+  const scrollRef = createRef();
+  const contentRef = createRef();
+
+  const getContext = (): StickToBottomContext => ({
+    contentRef,
+    escapedFromLock: false,
+    isAtBottom: state.isAtBottom,
+    scrollRef,
+    scrollToBottom,
+    state: {
+      accumulated: 0,
+      calculatedTargetScrollTop: 0,
+      escapedFromLock: false,
+      isAtBottom: state.isAtBottom,
+      isNearBottom: true,
+      resizeDifference: 0,
+      scrollDifference: 0,
+      scrollTop: 0,
+      targetScrollTop: 0,
+      velocity: 0,
+    },
+    stopScroll,
+    get targetScrollTop() {
+      return targetScrollTop as StickToBottomContext["targetScrollTop"];
+    },
+    set targetScrollTop(value: StickToBottomContext["targetScrollTop"]) {
+      targetScrollTop = value;
+    },
+  });
+
+  interface MockProps extends Omit<
+    React.HTMLAttributes<HTMLDivElement>,
+    "children"
+  > {
+    children?:
+      | React.ReactNode
+      | ((context: StickToBottomContext) => React.ReactNode);
+  }
+
+  interface MockContentProps extends MockProps {
+    scrollClassName?: string;
   }
 
   // These components must be defined inside vi.hoisted() for mock setup
   // oxlint-disable-next-line eslint-plugin-unicorn(consistent-function-scoping)
   const StickyMock = ({ children, ...props }: MockProps) => (
     <div role="log" {...props}>
-      {children}
+      {typeof children === "function" ? children(getContext()) : children}
     </div>
   );
 
   // oxlint-disable-next-line eslint-plugin-unicorn(consistent-function-scoping)
-  const StickyContent = ({ children, ...props }: MockProps) => (
-    <div {...props}>{children}</div>
+  const StickyContent = ({
+    children,
+    scrollClassName,
+    ...props
+  }: MockContentProps) => (
+    <div
+      className={scrollClassName}
+      ref={scrollRef}
+      style={{ height: 400, overflow: "auto", width: 400 }}
+    >
+      <div {...props} ref={contentRef}>
+        {typeof children === "function" ? children(getContext()) : children}
+      </div>
+    </div>
   );
 
   return {
     StickToBottomContent: StickyContent,
     StickToBottomMock: StickyMock,
+    getMockContext: getContext,
     mockScrollToBottom: scrollToBottom,
     mockState: state,
   };
 });
 
-// oxlint-disable-next-line typescript-eslint(consistent-type-imports)
-vi.mock<typeof import("use-stick-to-bottom")>(
-  import("use-stick-to-bottom"),
-  () => {
-    const MockComponent = StickToBottomMock as typeof StickToBottomMock & {
-      Content: typeof StickToBottomContent;
-    };
-    MockComponent.Content = StickToBottomContent;
+vi.mock<typeof StickToBottomModule>(import("use-stick-to-bottom"), () => {
+  const MockComponent = StickToBottomMock as typeof StickToBottomMock & {
+    Content: typeof StickToBottomContent;
+  };
+  MockComponent.Content = StickToBottomContent;
 
-    return {
-      StickToBottom: MockComponent,
-      useStickToBottomContext: () => ({
-        isAtBottom: mockState.isAtBottom,
-        scrollToBottom: mockScrollToBottom,
-      }),
-    };
-  }
-);
+  return {
+    StickToBottom:
+      MockComponent as unknown as typeof StickToBottomModule.StickToBottom,
+    useStickToBottomContext: getMockContext,
+  };
+});
 
 // Custom format function for messagesToMarkdown test
 const customFormatMessage = (msg: {
@@ -114,6 +175,60 @@ describe("conversationContent", () => {
       </Conversation>
     );
     expect(screen.getByText("Content")).toBeInTheDocument();
+  });
+});
+
+const estimateVirtualizedMessageSize = () => 40;
+
+const getVirtualizedMessageKey = (item: { id: string }) => item.id;
+
+describe("conversationVirtualizedContent", () => {
+  const messages = Array.from({ length: 100 }, (_, index) => ({
+    content: `Message ${index}`,
+    id: `message-${index}`,
+  }));
+
+  it("renders visible items", async () => {
+    render(
+      <Conversation>
+        <ConversationVirtualizedContent
+          estimateSize={estimateVirtualizedMessageSize}
+          getItemKey={getVirtualizedMessageKey}
+          items={messages}
+          overscan={1}
+        >
+          {(item) => <div>{item.content}</div>}
+        </ConversationVirtualizedContent>
+      </Conversation>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText("Message 0")).toBeInTheDocument();
+    });
+
+    expect(screen.queryByText("Message 99")).not.toBeInTheDocument();
+  });
+
+  it("applies custom content and item class names", async () => {
+    const { container } = render(
+      <Conversation>
+        <ConversationVirtualizedContent
+          className="virtual-content"
+          estimateSize={estimateVirtualizedMessageSize}
+          itemClassName="virtual-item"
+          items={messages.slice(0, 3)}
+        >
+          {(item) => <div>{item.content}</div>}
+        </ConversationVirtualizedContent>
+      </Conversation>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText("Message 0")).toBeInTheDocument();
+    });
+
+    expect(container.querySelector(".virtual-content")).toBeInTheDocument();
+    expect(container.querySelector(".virtual-item")).toBeInTheDocument();
   });
 });
 
@@ -282,14 +397,7 @@ describe(messagesToMarkdown, () => {
       id: "multi",
       parts: [
         { text: "Hello ", type: "text" as const },
-        {
-          args: {},
-          result: {},
-          state: "result" as const,
-          toolInvocationId: "1",
-          toolName: "test",
-          type: "tool-invocation" as const,
-        },
+        { type: "step-start" as const },
         { text: "world", type: "text" as const },
       ],
       role: "assistant" as const,

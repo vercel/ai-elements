@@ -6,6 +6,7 @@ import {
   ConversationDownload,
   ConversationEmptyState,
   ConversationScrollButton,
+  ConversationVirtualizedContent,
 } from "@repo/elements/conversation";
 import { Message, MessageContent } from "@repo/elements/message";
 import { MessageSquareIcon } from "lucide-react";
@@ -120,6 +121,10 @@ const messages: {
   },
 ];
 
+const estimateMessageSize = () => 72;
+
+const getMessageKey = (message: { key: string }) => message.key;
+
 const Example = () => {
   const [visibleMessages, setVisibleMessages] = useState<
     {
@@ -153,21 +158,27 @@ const Example = () => {
 
   return (
     <Conversation className="relative size-full">
-      <ConversationContent>
-        {visibleMessages.length === 0 ? (
+      {visibleMessages.length === 0 ? (
+        <ConversationContent>
           <ConversationEmptyState
             description="Messages will appear here as the conversation progresses."
             icon={<MessageSquareIcon className="size-6" />}
             title="Start a conversation"
           />
-        ) : (
-          visibleMessages.map(({ key, content, role }) => (
+        </ConversationContent>
+      ) : (
+        <ConversationVirtualizedContent
+          estimateSize={estimateMessageSize}
+          getItemKey={getMessageKey}
+          items={visibleMessages}
+        >
+          {({ key, content, role }) => (
             <Message from={role} key={key}>
               <MessageContent>{content}</MessageContent>
             </Message>
-          ))
-        )}
-      </ConversationContent>
+          )}
+        </ConversationVirtualizedContent>
+      )}
       <ConversationDownload messages={visibleMessages} />
       <ConversationScrollButton />
     </Conversation>
