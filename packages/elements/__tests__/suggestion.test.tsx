@@ -46,6 +46,24 @@ describe("suggestion", () => {
     expect(onClick).toHaveBeenCalledWith("Test suggestion");
   });
 
+  it("centers the clicked suggestion", async () => {
+    const scrollIntoView = vi
+      .spyOn(Element.prototype, "scrollIntoView")
+      .mockImplementation(vi.fn());
+    const user = userEvent.setup();
+
+    render(<Suggestion suggestion="Test suggestion" />);
+
+    const button = screen.getByRole("button");
+    await user.click(button);
+
+    expect(scrollIntoView).toHaveBeenCalledWith({
+      behavior: "smooth",
+      block: "nearest",
+      inline: "center",
+    });
+  });
+
   it("applies default variant and size", () => {
     render(<Suggestion suggestion="Test" />);
     const button = screen.getByRole("button");
